@@ -42,7 +42,7 @@ export default function CategoryMenu() {
               <li key={category.slug}>
                 <Link
                   href={`/collections/${category.slug}`}
-                  className="inline-flex items-center py-5 underline-offset-4 transition-colors hover:text-white hover:underline"
+                  className="inline-flex items-center py-5 underline-offset-4 transition-colors hover:text-sky-500 hover:underline"
                 >
                   {category.name}
                 </Link>

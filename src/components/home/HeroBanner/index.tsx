@@ -42,7 +42,7 @@ export default function HeroBanner() {
           </p>
           <Link
             href="/collections/sale"
-            className="mt-5 inline-block rounded bg-sky-600 px-6 py-3 text-sm font-bold text-white transition hover:scale-105 hover:bg-sky-600"
+            className="mt-5 inline-block rounded bg-sky-600 px-8 py-3 text-sm font-bold text-white transition hover:scale-105 hover:bg-sky-500"
           >
             مشاهده حراج
           </Link>
