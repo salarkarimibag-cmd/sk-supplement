@@ -1,6 +1,7 @@
-import ProductCard from "@/components/ProductCard";
-import Newsletter from "@/components/Newsletter";
-import HeroBanner from "@/components/HeroBanner";
+import ProductCard from "@/components/product/ProductCard";
+import Newsletter from "@/components/home/Newsletter";
+import HeroBanner from "@/components/home/HeroBanner";
+import CategoryShowcase from "@/components/home/CategoryShowcase";
 import type { Product } from "@/models/Product";
 
 // TODO: fetch featured products from /api/products instead of hardcoding.
@@ -25,6 +26,26 @@ const featuredProducts: Product[] = [
     imageUrl: "/images/placeholder.svg",
     stock: 10,
   },
+  {
+    id: "3",
+    name: "کراتین مونوهیدرات",
+    slug: "creatine-monohydrate",
+    description: "",
+    price: 650000,
+    categorySlug: "creatine",
+    imageUrl: "/images/placeholder.svg",
+    stock: 10,
+  },
+  {
+    id: "4",
+    name: "آمینو اسید BCAA",
+    slug: "bcaa-amino",
+    description: "",
+    price: 720000,
+    categorySlug: "aminos",
+    imageUrl: "/images/placeholder.svg",
+    stock: 10,
+  },
 ];
 
 export default function Home() {
@@ -34,8 +55,10 @@ export default function Home() {
 
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6">
         <section>
-          <h2 className="mb-4 text-xl font-semibold">آخرین محصولات</h2>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+          <h2 className="mb-10 text-center text-3xl font-extrabold tracking-tight uppercase sm:text-4xl">
+            آخرین محصولات
+          </h2>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-4">
             {featuredProducts.map((product) => (
               <ProductCard
                 key={product.id}
@@ -47,6 +70,12 @@ export default function Home() {
             ))}
           </div>
         </section>
+
+        <section>
+          <CategoryShowcase />
+        </section>
+
+        <p className="shine">True Strength</p>
 
         <Newsletter />
       </div>

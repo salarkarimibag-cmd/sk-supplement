@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import CategoryMenu from "./CategoryMenu";
-import MobileMenu from "./MobileMenu";
+import CategoryMenu from "../CategoryMenu";
+import MobileMenu from "../MobileMenu";
 
 export default function Header() {
   return (

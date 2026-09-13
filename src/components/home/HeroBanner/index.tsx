@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import GradientOverlay from "@/components/ui/GradientOverlay";
 
 export default function HeroBanner() {
   return (
@@ -29,7 +30,7 @@ export default function HeroBanner() {
       {/* soft blend over the seam between the two images */}
       <div className="absolute inset-y-0 left-1/2 w-24 -translate-x-1/2 bg-gradient-to-r from-black/0 via-black/50 to-black/0" />
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+      <GradientOverlay from="from-black/70" via="via-black/30" />
 
       <div className="absolute inset-x-0 bottom-0">
         <div className="mx-auto max-w-6xl px-6 py-10 text-right">
