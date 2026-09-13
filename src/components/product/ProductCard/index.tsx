@@ -32,7 +32,7 @@ export default function ProductCard({
             className="object-contain"
           />
         </div>
-        <h3 className="mt-4 text-sm font-bold underline-offset-4 transition-colors group-hover:text-sky-600 group-has-[button:hover]/card:underline">
+        <h3 className="mt-4 line-clamp-2 min-h-10 text-sm font-bold underline-offset-4 transition-colors group-hover:text-sky-600 group-has-[button:hover]/card:underline">
           {name}
         </h3>
         {rating !== undefined && reviewCount !== undefined && (

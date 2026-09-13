@@ -13,28 +13,28 @@ const tiles: Tile[] = [
   {
     slug: "pre-workout",
     name: "پیش‌تمرین‌ها",
-    image: "/images/PRE-WORKOUTS-04.webp",
+    image: "/images/category-pre-workout.webp",
     className: "col-span-2 md:col-span-1 md:row-span-2",
   },
   {
     slug: "fat-burner",
     name: "چربی‌سوزها",
-    image: "/images/FAT_BURNERS-02_e789a4a4-db36-431c-aee6-ad39a74ad19e.webp",
+    image: "/images/category-fat-burner.webp",
   },
   {
     slug: "aminos",
     name: "آمینو اسیدها",
-    image: "/images/AMINOS-02_d102a416-8f6e-402d-87de-653329e04859.webp",
+    image: "/images/category-aminos.webp",
   },
   {
     slug: "protein",
     name: "پروتئین",
-    image: "/images/PROTEINS-02.webp",
+    image: "/images/category-protein.webp",
   },
   {
     slug: "shop",
     name: "مشاهده همه",
-    image: "/images/SHOP_ALL-02.webp",
+    image: "/images/category-shop-all.webp",
   },
 ];
 
