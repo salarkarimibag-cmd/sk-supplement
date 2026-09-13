@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "قوانین ارسال",
+  description: "قوانین و زمان‌بندی ارسال سفارش‌ها در SK Supplement.",
+};
+
 export default function ShippingPolicyPage() {
   return (
     <div className="mx-auto w-full max-w-3xl px-6 py-12">

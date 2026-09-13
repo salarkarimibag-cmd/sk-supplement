@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "درباره ما",
+  description: "معرفی SK Supplement، فروشگاه آنلاین مکمل‌های ورزشی.",
+};
+
 export default function AboutUsPage() {
   return (
     <div className="mx-auto w-full max-w-3xl px-6 py-12">

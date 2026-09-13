@@ -1,3 +1,13 @@
+import type { Metadata } from "next";
+
+// TODO: replace with the real post title once blogs are wired up to the database.
+export async function generateMetadata(
+  props: PageProps<"/blogs/[slug]">
+): Promise<Metadata> {
+  const { slug } = await props.params;
+  return { title: slug };
+}
+
 // TODO: fetch the blog post with this slug from the database once blogs are wired up.
 export default async function BlogPostPage(props: PageProps<"/blogs/[slug]">) {
   const { slug } = await props.params;

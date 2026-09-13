@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "مقالات",
+  description: "آخرین مقالات آموزشی SK Supplement درباره‌ی تغذیه و مکمل‌های ورزشی.",
+};
+
 export default function BlogsPage() {
   return (
     <div className="mx-auto w-full max-w-3xl px-6 py-12">

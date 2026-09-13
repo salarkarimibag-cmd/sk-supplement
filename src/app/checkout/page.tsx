@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "تسویه حساب",
+  robots: { index: false, follow: false },
+};
+
 // TODO: submit the order to /api/orders, then redirect to /api/payment (ZarinPal).
 export default function CheckoutPage() {
   return (

@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "تماس با ما",
+  description: "راه‌های ارتباط با تیم پشتیبانی SK Supplement.",
+};
+
 export default function ContactUsPage() {
   return (
     <div className="mx-auto w-full max-w-3xl px-6 py-12">

@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "قوانین و مقررات",
+  description: "قوانین و مقررات استفاده از فروشگاه SK Supplement.",
+};
+
 export default function TermsOfServicePage() {
   return (
     <div className="mx-auto w-full max-w-3xl px-6 py-12">

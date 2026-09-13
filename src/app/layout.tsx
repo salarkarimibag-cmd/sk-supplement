@@ -15,7 +15,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SK Supplement",
+  title: {
+    default: "SK Supplement | فروشگاه آنلاین مکمل‌های ورزشی",
+    template: "%s | SK Supplement",
+  },
   description: "فروشگاه آنلاین مکمل‌های ورزشی",
 };
 

@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "قوانین بازگشت وجه",
+  description: "قوانین و شرایط بازگشت وجه در فروشگاه SK Supplement.",
+};
+
 export default function RefundPolicyPage() {
   return (
     <div className="mx-auto w-full max-w-3xl px-6 py-12">

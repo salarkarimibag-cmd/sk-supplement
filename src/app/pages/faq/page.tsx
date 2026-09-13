@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "سوالات متداول",
+  description: "پاسخ سوالات متداول درباره‌ی خرید، ارسال و محصولات SK Supplement.",
+};
+
 export default function FaqPage() {
   return (
     <div className="mx-auto w-full max-w-3xl px-6 py-12">
