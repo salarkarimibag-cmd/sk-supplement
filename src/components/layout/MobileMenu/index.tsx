@@ -50,7 +50,7 @@ export default function MobileMenu() {
       <div
         style={{ top: topOffset }}
         aria-hidden={!isOpen}
-        className={`fixed inset-x-0 bottom-0 z-40 flex flex-col bg-white transition-transform duration-300 ease-in-out md:hidden ${
+        className={`fixed inset-x-0 bottom-0 z-40 flex flex-col bg-white transition-transform duration-300 ease-in-out md:hidden dark:bg-zinc-900 ${
           isOpen ? "translate-x-0" : "pointer-events-none translate-x-full"
         }`}
       >
@@ -63,7 +63,7 @@ export default function MobileMenu() {
                     <button
                       type="button"
                       onClick={() => setActiveSlug(category.slug)}
-                      className="flex w-full cursor-pointer items-center justify-between px-6 py-4 text-lg transition-colors hover:bg-zinc-100 hover:text-sky-600"
+                      className="flex w-full cursor-pointer items-center justify-between px-6 py-4 text-lg transition-colors hover:bg-zinc-100 hover:text-sky-600 dark:hover:bg-zinc-800"
                     >
                       {category.name}
                       <ChevronLeft aria-hidden="true" className="h-5 w-5 text-zinc-400" />
@@ -72,7 +72,7 @@ export default function MobileMenu() {
                     <Link
                       href={`/collections/${category.slug}`}
                       onClick={close}
-                      className="block px-6 py-4 text-lg transition-colors hover:bg-zinc-100 hover:text-sky-600"
+                      className="block px-6 py-4 text-lg transition-colors hover:bg-zinc-100 hover:text-sky-600 dark:hover:bg-zinc-800"
                     >
                       {category.name}
                     </Link>
@@ -85,7 +85,7 @@ export default function MobileMenu() {
               <button
                 type="button"
                 onClick={() => setActiveSlug(null)}
-                className="flex w-full cursor-pointer items-center gap-2 px-6 py-4 text-lg font-semibold transition-colors hover:bg-zinc-100 hover:text-sky-600"
+                className="flex w-full cursor-pointer items-center gap-2 px-6 py-4 text-lg font-semibold transition-colors hover:bg-zinc-100 hover:text-sky-600 dark:hover:bg-zinc-800"
               >
                 <ArrowLeft aria-hidden="true" className="h-5 w-5" />
                 {activeCategory.name}
@@ -97,7 +97,7 @@ export default function MobileMenu() {
                     <Link
                       href={`/collections/${column.viewAllSlug}`}
                       onClick={close}
-                      className="block px-6 py-4 text-base transition-colors hover:bg-zinc-100 hover:text-sky-600"
+                      className="block px-6 py-4 text-base transition-colors hover:bg-zinc-100 hover:text-sky-600 dark:hover:bg-zinc-800"
                     >
                       {column.title}
                     </Link>
@@ -108,7 +108,7 @@ export default function MobileMenu() {
           )}
         </nav>
 
-        <div className="border-t border-black/[.08] bg-zinc-50 px-6 py-5">
+        <div className="border-t border-black/[.08] bg-zinc-50 px-6 py-5 dark:border-white/8 dark:bg-zinc-800">
           <Link
             href="/account/login"
             onClick={close}

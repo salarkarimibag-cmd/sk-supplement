@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import StarRating from "@/components/ui/StarRating";
+import { useCart } from "@/context/CartContext";
 
 export interface ProductCardProps {
   id: string;
@@ -21,6 +24,8 @@ export default function ProductCard({
   reviewCount,
   inStock = true,
 }: ProductCardProps) {
+  const { addItem } = useCart();
+
   return (
     <div className="group/card flex flex-col">
       <Link href={`/products/${id}`} className="group block">
@@ -48,7 +53,8 @@ export default function ProductCard({
       {inStock ? (
         <button
           type="button"
-          className="mt-3 w-full border border-sky-600 py-3 text-sm font-semibold text-sky-600 transition-shadow hover:shadow-[0_0_0_1px_var(--color-sky-600)]"
+          onClick={() => addItem({ id, name, price, imageUrl })}
+          className="mt-3 w-full cursor-pointer border border-sky-600 py-3 text-sm font-semibold text-sky-600 transition-shadow hover:shadow-[0_0_0_1px_var(--color-sky-600)]"
         >
           افزودن به سبد
         </button>

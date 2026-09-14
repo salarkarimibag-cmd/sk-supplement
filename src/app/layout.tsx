@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Vazirmatn } from "next/font/google";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import SiteChrome from "@/components/layout/SiteChrome";
+import CartDrawer from "@/components/cart/CartDrawer";
+import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
 
 const vazirmatn = Vazirmatn({
@@ -22,17 +23,31 @@ export const metadata: Metadata = {
   description: "فروشگاه آنلاین مکمل‌های ورزشی",
 };
 
+// Runs before hydration so the correct theme applies on first paint (no flash of the wrong theme).
+const themeInitScript = `
+  (function () {
+    var stored = localStorage.getItem("theme");
+    var isDark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    document.documentElement.classList.toggle("dark", isDark);
+  })();
+`;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="fa"
       dir="rtl"
       className={`${vazirmatn.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="flex min-h-full flex-col">
-        <Header />
-        <main className="flex flex-1 flex-col">{children}</main>
-        <Footer />
+        <CartProvider>
+          <SiteChrome>{children}</SiteChrome>
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );

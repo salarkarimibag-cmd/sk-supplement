@@ -84,15 +84,15 @@ export default function CategoryMenu() {
                 <div
                   id={`mega-menu-${category.slug}`}
                   dir="rtl"
-                  className="absolute inset-x-0 top-full z-50 border-t border-zinc-800 bg-white shadow-2xl"
+                  className="absolute inset-x-0 top-full z-50 border-t border-zinc-800 bg-white shadow-2xl dark:bg-zinc-900"
                 >
                   <div className="mx-auto grid max-w-7xl grid-cols-3 gap-8 px-6 py-8 lg:grid-cols-6">
                     {category.columns.map((column) => (
                       <div key={column.title}>
-                        <h3 className="mb-3 text-xs font-bold tracking-wide text-zinc-900 uppercase">
+                        <h3 className="mb-3 text-xs font-bold tracking-wide text-zinc-900 uppercase dark:text-zinc-100">
                           {column.title}
                         </h3>
-                        <ul className="space-y-2 text-sm text-zinc-600">
+                        <ul className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
                           {column.links.map((link) => (
                             <li key={link.slug}>
                               <Link
