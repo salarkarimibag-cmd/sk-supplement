@@ -36,8 +36,17 @@ export default function ProductCard({
             fill
             className="object-contain"
           />
+          {!inStock && (
+            <span className="absolute bottom-3 right-3 rounded-full bg-zinc-900 px-3 py-1 text-xs font-bold text-white dark:bg-white dark:text-zinc-900">
+              ناموجود
+            </span>
+          )}
         </div>
-        <h3 className="mt-4 line-clamp-2 min-h-10 text-sm font-bold underline-offset-4 transition-colors group-hover:text-sky-600 group-has-[button:hover]/card:underline">
+        <h3
+          className={`mt-4 line-clamp-2 text-sm font-bold underline-offset-4 transition-colors group-hover:text-sky-600 group-has-[button:hover]/card:underline ${
+            rating !== undefined ? "min-h-10" : ""
+          }`}
+        >
           {name}
         </h3>
         {rating !== undefined && reviewCount !== undefined && (
