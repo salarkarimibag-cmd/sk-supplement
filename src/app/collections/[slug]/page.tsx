@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import ProductCard from "@/components/product/ProductCard";
 import FilterDropdown from "@/components/collections/FilterDropdown";
+import SortSelect from "@/components/collections/SortSelect";
 import ProteinInfoSection from "@/components/collections/ProteinInfoSection";
 import AminosInfoSection from "@/components/collections/AminosInfoSection";
 import FatBurnerInfoSection from "@/components/collections/FatBurnerInfoSection";
 import PreWorkoutInfoSection from "@/components/collections/PreWorkoutInfoSection";
-import { categoryInfo, defaultFilterOptions, filterOptionsBySlug, productsBySlug } from "@/data/catalog";
+import { categoryInfo, productsBySlug } from "@/data/catalog";
+import { countByAttribute, filterProducts, sortProducts, toParamArray } from "@/lib/catalogFilters";
 
 // TODO: replace with the real category name once categories are fetched from the database.
 export async function generateMetadata(
@@ -18,9 +20,20 @@ export async function generateMetadata(
 
 export default async function CollectionPage(props: PageProps<"/collections/[slug]">) {
   const { slug } = await props.params;
+  const { sort, flavor, size } = await props.searchParams;
   const info = categoryInfo[slug];
-  const products = productsBySlug[slug] ?? [];
-  const filterOptions = filterOptionsBySlug[slug] ?? defaultFilterOptions;
+  const categoryProducts = productsBySlug[slug] ?? [];
+
+  const selectedFlavors = toParamArray(flavor);
+  const selectedSizes = toParamArray(size);
+  const sortValue = Array.isArray(sort) ? sort[0] : (sort ?? "featured");
+
+  const products = sortProducts(
+    filterProducts(categoryProducts, { flavors: selectedFlavors, sizes: selectedSizes }),
+    sortValue
+  );
+  const flavorOptions = countByAttribute(categoryProducts, "flavor");
+  const sizeOptions = countByAttribute(categoryProducts, "size");
 
   if (!info) {
     return (
@@ -46,27 +59,18 @@ export default async function CollectionPage(props: PageProps<"/collections/[slu
         <h1 className="text-3xl font-extrabold sm:text-4xl">{info.title}</h1>
         <p className="mt-4 max-w-2xl text-zinc-600 dark:text-zinc-400">{info.description}</p>
 
-        {/* TODO: wire up real filtering/sorting once products carry flavor/size options and come from the API. */}
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4 py-4">
           <div className="flex items-center gap-4">
             <span className="text-sm text-zinc-500">فیلتر:</span>
-            <FilterDropdown label="طعم" options={filterOptions.flavors} />
-            {filterOptions.sizes && <FilterDropdown label="سایز" options={filterOptions.sizes} />}
+            <FilterDropdown label="طعم" paramName="flavor" options={flavorOptions} />
+            {sizeOptions.length > 0 && (
+              <FilterDropdown label="سایز" paramName="size" options={sizeOptions} />
+            )}
           </div>
 
           <div className="flex items-center gap-4">
             <span className="text-sm text-zinc-500">مرتب‌سازی:</span>
-            <select
-              aria-label="مرتب‌سازی"
-              className="cursor-pointer bg-transparent text-sm"
-            >
-              <option>پرفروش‌ترین</option>
-              <option>جدیدترین</option>
-              <option>ارزان‌ترین</option>
-              <option>گران‌ترین</option>
-              <option>الفبا (آ-ی)</option>
-              <option>الفبا (ی-آ)</option>
-            </select>
+            <SortSelect />
             <span className="text-sm text-zinc-500">{products.length} محصول</span>
           </div>
         </div>

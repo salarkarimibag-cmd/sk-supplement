@@ -1,17 +1,23 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import type { FilterOptionCount } from "@/lib/catalogFilters";
 
 interface FilterDropdownProps {
   label: string;
-  options: string[];
+  /** URL search param this dropdown reads/writes, e.g. "flavor" or "size". */
+  paramName: string;
+  options: FilterOptionCount[];
 }
 
-// TODO: wire selections up to real filtering once products carry these attributes.
-export default function FilterDropdown({ label, options }: FilterDropdownProps) {
+export default function FilterDropdown({ label, paramName, options }: FilterDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState<Set<string>>(new Set());
   const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const selected = new Set(searchParams.getAll(paramName));
 
   useEffect(() => {
     if (!isOpen) return;
@@ -26,16 +32,27 @@ export default function FilterDropdown({ label, options }: FilterDropdownProps) 
     return () => document.removeEventListener("mousedown", handlePointerDown);
   }, [isOpen]);
 
-  function toggleOption(option: string) {
-    setSelected((current) => {
-      const next = new Set(current);
-      if (next.has(option)) {
-        next.delete(option);
-      } else {
-        next.add(option);
-      }
-      return next;
-    });
+  function pushParams(next: Set<string>) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete(paramName);
+    for (const value of next) params.append(paramName, value);
+    params.delete("page");
+    const query = params.toString();
+    router.push(query ? `${pathname}?${query}` : pathname);
+  }
+
+  function toggleOption(value: string) {
+    const next = new Set(selected);
+    if (next.has(value)) {
+      next.delete(value);
+    } else {
+      next.add(value);
+    }
+    pushParams(next);
+  }
+
+  function clearAll() {
+    pushParams(new Set());
   }
 
   return (
@@ -48,6 +65,7 @@ export default function FilterDropdown({ label, options }: FilterDropdownProps) 
         }`}
       >
         {label}
+        {selected.size > 0 && <span className="text-xs text-sky-600">({selected.size})</span>}
         <svg
           aria-hidden="true"
           viewBox="0 0 20 20"
@@ -70,7 +88,7 @@ export default function FilterDropdown({ label, options }: FilterDropdownProps) 
             </span>
             <button
               type="button"
-              onClick={() => setSelected(new Set())}
+              onClick={clearAll}
               className="cursor-pointer text-sm text-sky-600 hover:underline"
             >
               پاک کردن
@@ -78,19 +96,23 @@ export default function FilterDropdown({ label, options }: FilterDropdownProps) 
           </div>
 
           <ul className="max-h-64 overflow-y-auto py-2">
-            {options.map((option) => (
-              <li key={option}>
-                <label className="flex cursor-pointer items-center gap-3 px-4 py-2 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800">
-                  <input
-                    type="checkbox"
-                    checked={selected.has(option)}
-                    onChange={() => toggleOption(option)}
-                    className="h-4 w-4 cursor-pointer accent-sky-600"
-                  />
-                  {option}
-                </label>
-              </li>
-            ))}
+            {options.length === 0 ? (
+              <li className="px-4 py-2 text-sm text-zinc-500">گزینه‌ای موجود نیست</li>
+            ) : (
+              options.map((option) => (
+                <li key={option.value}>
+                  <label className="flex cursor-pointer items-center gap-3 px-4 py-2 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800">
+                    <input
+                      type="checkbox"
+                      checked={selected.has(option.value)}
+                      onChange={() => toggleOption(option.value)}
+                      className="h-4 w-4 cursor-pointer accent-sky-600"
+                    />
+                    {option.value} ({option.count})
+                  </label>
+                </li>
+              ))
+            )}
           </ul>
         </div>
       )}

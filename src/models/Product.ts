@@ -8,4 +8,6 @@ export interface Product {
   categorySlug: string;
   imageUrl: string;
   stock: number;
+  flavor?: string;
+  size?: string;
 }

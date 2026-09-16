@@ -14,8 +14,8 @@ export const categoryInfo: Record<string, CategoryInfo> = {
     title: "پروتئین‌ها",
     description:
       "پروتئینی که برای سوخت‌رسانی به تمرین‌هایتان نیاز دارید را از محصولات SK Supplement تهیه کنید. طیف پودرها و شیک‌های پروتئینی ما برای هر برنامه‌ی تمرینی مناسب است.",
-    bannerImage: "/images/category-protein.webp",
-    bannerAspect: "3 / 1",
+    bannerImage: "/images/collection-banner-protein.webp",
+    bannerAspect: "4.8 / 1",
   },
   "pre-workout": {
     title: "پیش‌تمرین‌ها",
@@ -85,9 +85,26 @@ export const filterOptionsBySlug: Record<string, FilterOptions> = {
 
 export type CatalogProduct = Product & { rating: number; reviewCount: number; inStock: boolean };
 
+/** Strips a trailing count like " (۲)" off a filter option label. */
+function stripCount(label: string): string {
+  return label.replace(/\s*\(.+?\)\s*$/, "").trim();
+}
+
+/** Cycles through the given flavors/sizes to give every product in a list a variant. */
+function withVariants(
+  products: Omit<CatalogProduct, "flavor" | "size">[],
+  flavors: string[],
+  sizes?: string[]
+): CatalogProduct[] {
+  return products.map((product, index) => ({
+    ...product,
+    flavor: flavors[index % flavors.length],
+    size: sizes ? sizes[index % sizes.length] : undefined,
+  }));
+}
+
 // TODO: fetch products from /api/products instead of this hardcoded catalog.
-export const productsBySlug: Record<string, CatalogProduct[]> = {
-  protein: [
+const rawProteinProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
     {
       id: "p1",
       name: "وی پروتئین ایزوله",
@@ -205,8 +222,9 @@ export const productsBySlug: Record<string, CatalogProduct[]> = {
       reviewCount: 8,
       inStock: false,
     },
-  ],
-  aminos: [
+];
+
+const rawAminosProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
     {
       id: "a1",
       name: "بست EAA - آمینو اسید ضروری",
@@ -324,8 +342,9 @@ export const productsBySlug: Record<string, CatalogProduct[]> = {
       reviewCount: 6,
       inStock: false,
     },
-  ],
-  "fat-burner": [
+];
+
+const rawFatBurnerProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
     {
       id: "f1",
       name: "راکسی‌لین - چربی‌سوز و تمرکز",
@@ -443,8 +462,9 @@ export const productsBySlug: Record<string, CatalogProduct[]> = {
       reviewCount: 7,
       inStock: false,
     },
-  ],
-  "pre-workout": [
+];
+
+const rawPreWorkoutProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
     {
       id: "pw1",
       name: "پیش‌تمرین OG - فرمول کلاسیک",
@@ -523,5 +543,18 @@ export const productsBySlug: Record<string, CatalogProduct[]> = {
       reviewCount: 10,
       inStock: false,
     },
-  ],
+  ];
+
+export const productsBySlug: Record<string, CatalogProduct[]> = {
+  protein: withVariants(rawProteinProducts, defaultFilterOptions.flavors, defaultFilterOptions.sizes),
+  aminos: withVariants(rawAminosProducts, filterOptionsBySlug.aminos.flavors.map(stripCount)),
+  "fat-burner": withVariants(
+    rawFatBurnerProducts,
+    filterOptionsBySlug["fat-burner"].flavors.map(stripCount),
+    filterOptionsBySlug["fat-burner"].sizes?.map(stripCount)
+  ),
+  "pre-workout": withVariants(
+    rawPreWorkoutProducts,
+    filterOptionsBySlug["pre-workout"].flavors.map(stripCount)
+  ),
 };

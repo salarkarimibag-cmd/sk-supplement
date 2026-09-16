@@ -1,41 +1,52 @@
 import type { Metadata } from "next";
 import ProductCard from "@/components/product/ProductCard";
 import FilterDropdown from "@/components/collections/FilterDropdown";
+import SortSelect from "@/components/collections/SortSelect";
 import Pagination from "@/components/ui/Pagination";
-import { defaultFilterOptions, filterOptionsBySlug, productsBySlug } from "@/data/catalog";
+import { productsBySlug } from "@/data/catalog";
+import { countByAttribute, filterProducts, sortProducts, toParamArray } from "@/lib/catalogFilters";
 
 export const metadata: Metadata = { title: "همه محصولات" };
 
 // TODO: fetch the full catalog from /api/products instead of flattening the local mock data.
 const allProducts = Object.values(productsBySlug).flat();
 
-const allFlavors = [
-  ...new Set([
-    ...defaultFilterOptions.flavors,
-    ...Object.values(filterOptionsBySlug).flatMap((options) => options.flavors),
-  ]),
-];
-
-const allSizes = [
-  ...new Set([
-    ...(defaultFilterOptions.sizes ?? []),
-    ...Object.values(filterOptionsBySlug).flatMap((options) => options.sizes ?? []),
-  ]),
-];
-
 const PAGE_SIZE = 12;
 
 export default async function ProductsPage(props: PageProps<"/products">) {
-  const { page: pageParam } = await props.searchParams;
-  const requestedPage = Number(Array.isArray(pageParam) ? pageParam[0] : pageParam) || 1;
+  const { page: pageParam, sort, flavor, size } = await props.searchParams;
 
-  const totalPages = Math.max(1, Math.ceil(allProducts.length / PAGE_SIZE));
+  const selectedFlavors = toParamArray(flavor);
+  const selectedSizes = toParamArray(size);
+  const sortValue = Array.isArray(sort) ? sort[0] : (sort ?? "featured");
+
+  const filteredProducts = filterProducts(allProducts, {
+    flavors: selectedFlavors,
+    sizes: selectedSizes,
+  });
+  const sortedProducts = sortProducts(filteredProducts, sortValue);
+
+  const flavorOptions = countByAttribute(allProducts, "flavor");
+  const sizeOptions = countByAttribute(allProducts, "size");
+
+  const requestedPage = Number(Array.isArray(pageParam) ? pageParam[0] : pageParam) || 1;
+  const totalPages = Math.max(1, Math.ceil(sortedProducts.length / PAGE_SIZE));
   const currentPage = Math.min(Math.max(requestedPage, 1), totalPages);
 
-  const pageProducts = allProducts.slice(
+  const pageProducts = sortedProducts.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE
   );
+
+  function hrefForPage(page: number) {
+    const params = new URLSearchParams();
+    for (const value of selectedFlavors) params.append("flavor", value);
+    for (const value of selectedSizes) params.append("size", value);
+    if (sortValue !== "featured") params.set("sort", sortValue);
+    if (page !== 1) params.set("page", String(page));
+    const query = params.toString();
+    return query ? `/products?${query}` : "/products";
+  }
 
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-12">
@@ -45,25 +56,17 @@ export default async function ProductsPage(props: PageProps<"/products">) {
         یک صفحه ببینید و مکملی که برای برنامه‌ی تمرینی‌تان نیاز دارید را پیدا کنید.
       </p>
 
-      {/* TODO: wire up real filtering/sorting once products carry flavor/size options and come from the API. */}
       <div className="mt-8 flex flex-wrap items-center justify-between gap-4 py-4">
         <div className="flex items-center gap-4">
           <span className="text-sm text-zinc-500">فیلتر:</span>
-          <FilterDropdown label="طعم" options={allFlavors} />
-          <FilterDropdown label="سایز" options={allSizes} />
+          <FilterDropdown label="طعم" paramName="flavor" options={flavorOptions} />
+          <FilterDropdown label="سایز" paramName="size" options={sizeOptions} />
         </div>
 
         <div className="flex items-center gap-4">
           <span className="text-sm text-zinc-500">مرتب‌سازی:</span>
-          <select aria-label="مرتب‌سازی" className="cursor-pointer bg-transparent text-sm">
-            <option>پرفروش‌ترین</option>
-            <option>جدیدترین</option>
-            <option>ارزان‌ترین</option>
-            <option>گران‌ترین</option>
-            <option>الفبا (آ-ی)</option>
-            <option>الفبا (ی-آ)</option>
-          </select>
-          <span className="text-sm text-zinc-500">{allProducts.length} محصول</span>
+          <SortSelect />
+          <span className="text-sm text-zinc-500">{sortedProducts.length} محصول</span>
         </div>
       </div>
 
@@ -84,11 +87,7 @@ export default async function ProductsPage(props: PageProps<"/products">) {
         </div>
       )}
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        hrefForPage={(page) => (page === 1 ? "/products" : `/products?page=${page}`)}
-      />
+      <Pagination currentPage={currentPage} totalPages={totalPages} hrefForPage={hrefForPage} />
     </div>
   );
 }
