@@ -44,7 +44,7 @@ export default function CategoryShowcase() {
       {tiles.map((tile) => (
         <Link
           key={tile.slug}
-          href={`/collections/${tile.slug}`}
+          href={tile.slug === "shop" ? "/products" : `/collections/${tile.slug}`}
           className={`group relative flex aspect-square items-end overflow-hidden p-5 md:aspect-auto md:h-auto ${tile.className ?? ""}`}
         >
           <Image
