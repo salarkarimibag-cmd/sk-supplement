@@ -6,7 +6,7 @@ export default function PromoBanner() {
     <section className="relative h-[420px] overflow-hidden bg-black sm:h-[460px]">
       <div className="absolute inset-y-0 left-0 w-full sm:w-1/2">
         <Image
-          src="/images/promo-banner.jpg"
+          src="/images/promo-banner.webp"
           alt=""
           fill
           sizes="(min-width: 640px) 50vw, 100vw"

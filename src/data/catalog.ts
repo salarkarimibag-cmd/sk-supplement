@@ -558,3 +558,10 @@ export const productsBySlug: Record<string, CatalogProduct[]> = {
     filterOptionsBySlug["pre-workout"].flavors.map(stripCount)
   ),
 };
+
+// TODO: fetch a single product from /api/products/<id> instead of scanning the local mock data.
+export function getProductById(id: string): CatalogProduct | undefined {
+  return Object.values(productsBySlug)
+    .flat()
+    .find((product) => product.id === id);
+}

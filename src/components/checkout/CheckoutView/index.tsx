@@ -5,18 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 
-// TODO: once /api/orders and /api/payment (ZarinPal) are implemented, submit
-// the order here and redirect to the returned ZarinPal payment URL.
-async function submitOrder() {
-  const response = await fetch("/api/orders", { method: "POST", body: "{}" });
-  return response.json();
-}
-
 function CheckoutLogo() {
   return (
     <div className="pb-6">
       <Link href="/" className="inline-flex items-center">
-        <Image src="/images/logo-checkout.png" alt="SK Supplement" width={746} height={424} className="h-24 w-auto" />
+        <Image src="/images/logo-checkout.webp" alt="SK Supplement" width={746} height={424} className="h-24 w-auto" />
       </Link>
     </div>
   );
@@ -31,10 +24,30 @@ export default function CheckoutView() {
     event.preventDefault();
     setIsSubmitting(true);
     setError(null);
+
+    const formData = new FormData(event.currentTarget);
+
     try {
-      await submitOrder();
-      setError("این قابلیت هنوز به درگاه پرداخت زرین‌پال وصل نشده است.");
-    } finally {
+      const response = await fetch("/api/payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: totalPrice,
+          email: formData.get("email"),
+          mobile: formData.get("mobile"),
+        }),
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.url) {
+        setError(data.message ?? "اتصال به درگاه پرداخت زرین‌پال ناموفق بود.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      window.location.href = data.url;
+    } catch {
+      setError("خطایی در اتصال به درگاه پرداخت رخ داد.");
       setIsSubmitting(false);
     }
   }
@@ -67,6 +80,7 @@ export default function CheckoutView() {
           <h2 className="text-lg font-bold">اطلاعات تماس</h2>
           <input
             type="email"
+            name="email"
             required
             placeholder="ایمیل"
             className="mt-3 w-full rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
@@ -114,6 +128,7 @@ export default function CheckoutView() {
             />
             <input
               type="tel"
+              name="mobile"
               required
               placeholder="شماره موبایل"
               className="rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"

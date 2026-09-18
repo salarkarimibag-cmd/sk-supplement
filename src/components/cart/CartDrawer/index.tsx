@@ -26,7 +26,7 @@ export default function CartDrawer() {
         }`}
       >
         <Image
-          src="/images/cart-drawer-bg.jpg"
+          src="/images/cart-drawer-bg.webp"
           alt=""
           fill
           className="object-cover opacity-70"

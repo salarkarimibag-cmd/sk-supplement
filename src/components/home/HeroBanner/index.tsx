@@ -7,7 +7,7 @@ export default function HeroBanner() {
     <section className="relative flex h-[420px] overflow-hidden bg-black sm:h-[480px] md:h-[560px]">
       <div className="relative h-full w-1/2">
         <Image
-          src="/images/hero-banner-1.jpg"
+          src="/images/hero-banner-1.webp"
           alt=""
           fill
           priority
@@ -18,7 +18,7 @@ export default function HeroBanner() {
 
       <div className="relative h-full w-1/2">
         <Image
-          src="/images/hero-banner-2.jpg"
+          src="/images/hero-banner-2.webp"
           alt=""
           fill
           priority
