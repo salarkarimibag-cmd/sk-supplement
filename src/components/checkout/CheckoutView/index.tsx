@@ -1,9 +1,28 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+
+const checkoutSchema = z.object({
+  email: z.string().min(1, "ایمیل الزامی است.").email("ایمیل نامعتبر است."),
+  firstName: z.string().min(1, "نام الزامی است."),
+  lastName: z.string().min(1, "نام خانوادگی الزامی است."),
+  province: z.string().min(1, "استان الزامی است."),
+  city: z.string().min(1, "شهر الزامی است."),
+  address: z.string().min(1, "آدرس الزامی است."),
+  postalCode: z.string().min(1, "کد پستی الزامی است."),
+  mobile: z.string().min(10, "شماره موبایل نامعتبر است."),
+});
+
+type CheckoutValues = z.infer<typeof checkoutSchema>;
+
+const inputClass =
+  "w-full rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900";
 
 function CheckoutLogo() {
   return (
@@ -17,15 +36,15 @@ function CheckoutLogo() {
 
 export default function CheckoutView() {
   const { items, totalPrice } = useCart();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<CheckoutValues>({ resolver: zodResolver(checkoutSchema) });
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setIsSubmitting(true);
-    setError(null);
-
-    const formData = new FormData(event.currentTarget);
+  async function onSubmit(values: CheckoutValues) {
+    setServerError(null);
 
     try {
       const response = await fetch("/api/payment", {
@@ -33,17 +52,14 @@ export default function CheckoutView() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           amount: totalPrice,
-          contact: {
-            email: formData.get("email"),
-            mobile: formData.get("mobile"),
-          },
+          contact: { email: values.email, mobile: values.mobile },
           shippingAddress: {
-            firstName: formData.get("firstName"),
-            lastName: formData.get("lastName"),
-            province: formData.get("province"),
-            city: formData.get("city"),
-            address: formData.get("address"),
-            postalCode: formData.get("postalCode"),
+            firstName: values.firstName,
+            lastName: values.lastName,
+            province: values.province,
+            city: values.city,
+            address: values.address,
+            postalCode: values.postalCode,
           },
           items: items.map((item) => ({
             productId: item.id,
@@ -55,15 +71,14 @@ export default function CheckoutView() {
       const data = await response.json();
 
       if (!response.ok || !data.url) {
-        setError(data.message ?? "اتصال به درگاه پرداخت زرین‌پال ناموفق بود.");
-        setIsSubmitting(false);
+        setServerError(data.message ?? "اتصال به درگاه پرداخت زرین‌پال ناموفق بود.");
         return;
       }
 
+      // eslint-disable-next-line react-hooks/immutability -- real navigation to an external payment gateway, not a render-phase mutation
       window.location.href = data.url;
     } catch {
-      setError("خطایی در اتصال به درگاه پرداخت رخ داد.");
-      setIsSubmitting(false);
+      setServerError("خطایی در اتصال به درگاه پرداخت رخ داد.");
     }
   }
 
@@ -90,70 +105,73 @@ export default function CheckoutView() {
       <div className="bg-[rgb(255_255_255)] px-6 py-12 dark:bg-zinc-950">
       <div className="mx-auto max-w-xl">
       <CheckoutLogo />
-      <form onSubmit={handleSubmit} className="mt-10 flex flex-col gap-8">
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-10 flex flex-col gap-8">
         <div>
           <h2 className="text-lg font-bold">اطلاعات تماس</h2>
-          <input
-            type="email"
-            name="email"
-            required
-            placeholder="ایمیل"
-            className="mt-3 w-full rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
-          />
+          <div className="mt-3">
+            <input type="email" placeholder="ایمیل" {...register("email")} className={inputClass} />
+            {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>}
+          </div>
         </div>
 
         <div>
           <h2 className="text-lg font-bold">اطلاعات ارسال</h2>
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <input
-              type="text"
-              name="firstName"
-              required
-              placeholder="نام"
-              className="rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
-            />
-            <input
-              type="text"
-              name="lastName"
-              required
-              placeholder="نام خانوادگی"
-              className="rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
-            />
-            <input
-              type="text"
-              name="province"
-              required
-              placeholder="استان"
-              className="rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
-            />
-            <input
-              type="text"
-              name="city"
-              required
-              placeholder="شهر"
-              className="rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
-            />
-            <input
-              type="text"
-              name="address"
-              required
-              placeholder="آدرس"
-              className="col-span-2 rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
-            />
-            <input
-              type="text"
-              name="postalCode"
-              required
-              placeholder="کد پستی"
-              className="rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
-            />
-            <input
-              type="tel"
-              name="mobile"
-              required
-              placeholder="شماره موبایل"
-              className="rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
-            />
+            <div>
+              <input type="text" placeholder="نام" {...register("firstName")} className={inputClass} />
+              {errors.firstName && (
+                <p className="mt-1 text-xs text-red-600">{errors.firstName.message}</p>
+              )}
+            </div>
+            <div>
+              <input
+                type="text"
+                placeholder="نام خانوادگی"
+                {...register("lastName")}
+                className={inputClass}
+              />
+              {errors.lastName && (
+                <p className="mt-1 text-xs text-red-600">{errors.lastName.message}</p>
+              )}
+            </div>
+            <div>
+              <input type="text" placeholder="استان" {...register("province")} className={inputClass} />
+              {errors.province && (
+                <p className="mt-1 text-xs text-red-600">{errors.province.message}</p>
+              )}
+            </div>
+            <div>
+              <input type="text" placeholder="شهر" {...register("city")} className={inputClass} />
+              {errors.city && <p className="mt-1 text-xs text-red-600">{errors.city.message}</p>}
+            </div>
+            <div className="col-span-2">
+              <input type="text" placeholder="آدرس" {...register("address")} className={inputClass} />
+              {errors.address && (
+                <p className="mt-1 text-xs text-red-600">{errors.address.message}</p>
+              )}
+            </div>
+            <div>
+              <input
+                type="text"
+                placeholder="کد پستی"
+                {...register("postalCode")}
+                className={inputClass}
+              />
+              {errors.postalCode && (
+                <p className="mt-1 text-xs text-red-600">{errors.postalCode.message}</p>
+              )}
+            </div>
+            <div>
+              <input
+                type="tel"
+                placeholder="شماره موبایل"
+                {...register("mobile")}
+                className={inputClass}
+              />
+              {errors.mobile && (
+                <p className="mt-1 text-xs text-red-600">{errors.mobile.message}</p>
+              )}
+            </div>
           </div>
         </div>
 
@@ -165,7 +183,7 @@ export default function CheckoutView() {
           </div>
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {serverError && <p className="text-sm text-red-600">{serverError}</p>}
 
         <button
           type="submit"

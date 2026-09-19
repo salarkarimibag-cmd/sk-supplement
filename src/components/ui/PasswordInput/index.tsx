@@ -1,31 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { forwardRef, useState, type InputHTMLAttributes } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
-interface PasswordInputProps {
-  name: string;
-  placeholder: string;
-  required?: boolean;
-  minLength?: number;
-}
+type PasswordInputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type">;
 
-export default function PasswordInput({
-  name,
-  placeholder,
-  required,
-  minLength,
-}: PasswordInputProps) {
+const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(function PasswordInput(
+  props,
+  ref
+) {
   const [visible, setVisible] = useState(false);
 
   return (
     <div className="relative">
       <input
+        {...props}
+        ref={ref}
         type={visible ? "text" : "password"}
-        name={name}
-        required={required}
-        minLength={minLength}
-        placeholder={placeholder}
         className="w-full rounded border border-zinc-300 px-4 py-3 pe-11 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
       />
       <button
@@ -38,4 +29,6 @@ export default function PasswordInput({
       </button>
     </div>
   );
-}
+});
+
+export default PasswordInput;
