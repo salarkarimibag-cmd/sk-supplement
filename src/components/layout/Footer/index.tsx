@@ -9,7 +9,7 @@ export default function Footer() {
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-6 sm:grid-cols-2 md:grid-cols-4">
         <div className="flex flex-col items-center text-center">
           <Image
-            src="/images/logo.png"
+            src="/images/logo.webp"
             alt="SK Supplement"
             width={680}
             height={380}

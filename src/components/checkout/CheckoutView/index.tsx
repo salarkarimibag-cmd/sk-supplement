@@ -33,8 +33,23 @@ export default function CheckoutView() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           amount: totalPrice,
-          email: formData.get("email"),
-          mobile: formData.get("mobile"),
+          contact: {
+            email: formData.get("email"),
+            mobile: formData.get("mobile"),
+          },
+          shippingAddress: {
+            firstName: formData.get("firstName"),
+            lastName: formData.get("lastName"),
+            province: formData.get("province"),
+            city: formData.get("city"),
+            address: formData.get("address"),
+            postalCode: formData.get("postalCode"),
+          },
+          items: items.map((item) => ({
+            productId: item.id,
+            quantity: item.quantity,
+            unitPrice: item.price,
+          })),
         }),
       });
       const data = await response.json();
@@ -92,36 +107,42 @@ export default function CheckoutView() {
           <div className="mt-3 grid grid-cols-2 gap-3">
             <input
               type="text"
+              name="firstName"
               required
               placeholder="نام"
               className="rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
             />
             <input
               type="text"
+              name="lastName"
               required
               placeholder="نام خانوادگی"
               className="rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
             />
             <input
               type="text"
+              name="province"
               required
               placeholder="استان"
               className="rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
             />
             <input
               type="text"
+              name="city"
               required
               placeholder="شهر"
               className="rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
             />
             <input
               type="text"
+              name="address"
               required
               placeholder="آدرس"
               className="col-span-2 rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
             />
             <input
               type="text"
+              name="postalCode"
               required
               placeholder="کد پستی"
               className="rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"

@@ -36,7 +36,7 @@ export default function Header() {
 
                 <Link href="/" className="-ml-2 flex items-center md:ml-0">
                   <Image
-                    src="/images/logo.png"
+                    src="/images/logo.webp"
                     alt="SK Supplement"
                     width={680}
                     height={380}

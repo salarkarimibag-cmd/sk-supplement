@@ -4,19 +4,20 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import StarRating from "@/components/ui/StarRating";
 import ProductDetailPanel from "@/components/product/ProductDetailPanel";
-import { categoryInfo, getProductById } from "@/data/catalog";
+import { categoryInfo } from "@/data/catalog";
+import { getProductById } from "@/lib/products";
 
 export async function generateMetadata(
   props: PageProps<"/products/[id]">
 ): Promise<Metadata> {
   const { id } = await props.params;
-  const product = getProductById(id);
+  const product = await getProductById(id);
   return { title: product?.name ?? "محصول یافت نشد" };
 }
 
 export default async function ProductPage(props: PageProps<"/products/[id]">) {
   const { id } = await props.params;
-  const product = getProductById(id);
+  const product = await getProductById(id);
 
   if (!product) notFound();
 

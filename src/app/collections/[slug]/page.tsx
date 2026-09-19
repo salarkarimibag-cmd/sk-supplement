@@ -7,7 +7,8 @@ import ProteinInfoSection from "@/components/collections/ProteinInfoSection";
 import AminosInfoSection from "@/components/collections/AminosInfoSection";
 import FatBurnerInfoSection from "@/components/collections/FatBurnerInfoSection";
 import PreWorkoutInfoSection from "@/components/collections/PreWorkoutInfoSection";
-import { categoryInfo, productsBySlug } from "@/data/catalog";
+import { categoryInfo } from "@/data/catalog";
+import { getProductsByCategory } from "@/lib/products";
 import { countByAttribute, filterProducts, sortProducts, toParamArray } from "@/lib/catalogFilters";
 
 // TODO: replace with the real category name once categories are fetched from the database.
@@ -22,7 +23,7 @@ export default async function CollectionPage(props: PageProps<"/collections/[slu
   const { slug } = await props.params;
   const { sort, flavor, size } = await props.searchParams;
   const info = categoryInfo[slug];
-  const categoryProducts = productsBySlug[slug] ?? [];
+  const categoryProducts = await getProductsByCategory(slug);
 
   const selectedFlavors = toParamArray(flavor);
   const selectedSizes = toParamArray(size);

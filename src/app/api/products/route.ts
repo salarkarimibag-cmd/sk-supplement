@@ -1,7 +1,15 @@
-import type { Product } from "@/models/Product";
+import { getAllProducts, getProductsByCategory, searchProducts } from "@/lib/products";
 
-// TODO: read from MongoDB via `connectToDatabase()` instead of returning an empty list.
-export async function GET() {
-  const products: Product[] = [];
-  return Response.json(products);
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const categorySlug = searchParams.get("categorySlug");
+  const q = searchParams.get("q");
+
+  if (categorySlug) {
+    return Response.json(await getProductsByCategory(categorySlug));
+  }
+  if (q) {
+    return Response.json(await searchProducts(q));
+  }
+  return Response.json(await getAllProducts());
 }

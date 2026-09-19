@@ -3,18 +3,16 @@ import ProductCard from "@/components/product/ProductCard";
 import FilterDropdown from "@/components/collections/FilterDropdown";
 import SortSelect from "@/components/collections/SortSelect";
 import Pagination from "@/components/ui/Pagination";
-import { productsBySlug } from "@/data/catalog";
+import { getAllProducts } from "@/lib/products";
 import { countByAttribute, filterProducts, sortProducts, toParamArray } from "@/lib/catalogFilters";
 
 export const metadata: Metadata = { title: "همه محصولات" };
-
-// TODO: fetch the full catalog from /api/products instead of flattening the local mock data.
-const allProducts = Object.values(productsBySlug).flat();
 
 const PAGE_SIZE = 12;
 
 export default async function ProductsPage(props: PageProps<"/products">) {
   const { page: pageParam, sort, flavor, size } = await props.searchParams;
+  const allProducts = await getAllProducts();
 
   const selectedFlavors = toParamArray(flavor);
   const selectedSizes = toParamArray(size);

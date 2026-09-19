@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import ProductCard from "@/components/product/ProductCard";
 import Pagination from "@/components/ui/Pagination";
-import { productsBySlug } from "@/data/catalog";
+import { searchProducts } from "@/lib/products";
 
 export const metadata: Metadata = { title: "نتایج جستجو" };
-
-// TODO: fetch the full catalog from /api/products instead of flattening the local mock data.
-const allProducts = Object.values(productsBySlug).flat();
 
 const PAGE_SIZE = 12;
 
@@ -14,9 +11,7 @@ export default async function SearchPage(props: PageProps<"/search">) {
   const { q, page: pageParam } = await props.searchParams;
   const query = (Array.isArray(q) ? q[0] : (q ?? "")).trim();
 
-  const results = query
-    ? allProducts.filter((product) => product.name.includes(query))
-    : [];
+  const results = query ? await searchProducts(query) : [];
 
   const requestedPage = Number(Array.isArray(pageParam) ? pageParam[0] : pageParam) || 1;
   const totalPages = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
