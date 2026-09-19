@@ -58,3 +58,15 @@ p.shine {
     background-position: 500%;
   }
 }
+
+@keyframes add-to-cart-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

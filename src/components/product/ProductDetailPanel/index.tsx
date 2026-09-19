@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Check } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import type { CatalogProduct } from "@/data/catalog";
 
@@ -68,9 +69,19 @@ export default function ProductDetailPanel({ product }: ProductDetailPanelProps)
       <button
         type="button"
         onClick={handleAddToCart}
-        className="flex-1 cursor-pointer border border-sky-600 py-3.5 text-sm font-semibold text-sky-600 transition-shadow hover:shadow-[0_0_0_1px_var(--color-sky-600)]"
+        className={`flex h-12 flex-1 cursor-pointer items-center justify-center gap-1.5 text-sm font-semibold transition-shadow ${
+          justAdded
+            ? "animate-[add-to-cart-pop_300ms_ease-out] border border-sky-600 bg-sky-600 text-white"
+            : "border border-sky-600 text-sky-600 hover:shadow-[0_0_0_1px_var(--color-sky-600)]"
+        }`}
       >
-        {justAdded ? "به سبد اضافه شد ✓" : "افزودن به سبد"}
+        {justAdded ? (
+          <>
+            <Check className="h-4 w-4" /> افزوده شد
+          </>
+        ) : (
+          "افزودن به سبد"
+        )}
       </button>
     </div>
   );

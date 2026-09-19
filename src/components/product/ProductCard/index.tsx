@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Check } from "lucide-react";
 import StarRating from "@/components/ui/StarRating";
 import { useCart } from "@/context/CartContext";
 
@@ -25,6 +27,18 @@ export default function ProductCard({
   inStock = true,
 }: ProductCardProps) {
   const { addItem } = useCart();
+  const [justAdded, setJustAdded] = useState(false);
+
+  useEffect(() => {
+    if (!justAdded) return;
+    const timeout = setTimeout(() => setJustAdded(false), 1500);
+    return () => clearTimeout(timeout);
+  }, [justAdded]);
+
+  function handleAddToCart() {
+    addItem({ id, name, price, imageUrl });
+    setJustAdded(true);
+  }
 
   return (
     <div className="group/card flex flex-col">
@@ -62,16 +76,26 @@ export default function ProductCard({
       {inStock ? (
         <button
           type="button"
-          onClick={() => addItem({ id, name, price, imageUrl })}
-          className="mt-3 w-full cursor-pointer border border-sky-600 py-3 text-sm font-semibold text-sky-600 transition-shadow hover:shadow-[0_0_0_1px_var(--color-sky-600)]"
+          onClick={handleAddToCart}
+          className={`mt-3 flex h-11 w-full cursor-pointer items-center justify-center gap-1.5 text-sm font-semibold transition-shadow ${
+            justAdded
+              ? "animate-[add-to-cart-pop_300ms_ease-out] border border-sky-600 bg-sky-600 text-white"
+              : "border border-sky-600 text-sky-600 hover:shadow-[0_0_0_1px_var(--color-sky-600)]"
+          }`}
         >
-          افزودن به سبد
+          {justAdded ? (
+            <>
+              <Check className="h-4 w-4" /> افزوده شد
+            </>
+          ) : (
+            "افزودن به سبد"
+          )}
         </button>
       ) : (
         <button
           type="button"
           disabled
-          className="mt-3 w-full cursor-not-allowed border border-zinc-300 py-3 text-sm font-semibold text-zinc-400 dark:border-zinc-700 dark:text-zinc-500"
+          className="mt-3 flex h-11 w-full cursor-not-allowed items-center justify-center border border-zinc-300 text-sm font-semibold text-zinc-400 dark:border-zinc-700 dark:text-zinc-500"
         >
           ناموجود
         </button>
