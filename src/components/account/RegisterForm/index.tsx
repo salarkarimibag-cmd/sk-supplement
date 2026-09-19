@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import PasswordInput from "@/components/ui/PasswordInput";
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -15,6 +16,12 @@ export default function RegisterForm() {
     setError(null);
 
     const formData = new FormData(event.currentTarget);
+
+    if (formData.get("password") !== formData.get("confirmPassword")) {
+      setError("رمز عبور و تکرار آن یکسان نیستند.");
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       const response = await fetch("/api/auth/register", {
@@ -67,14 +74,13 @@ export default function RegisterForm() {
           placeholder="شماره موبایل"
           className="rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
         />
-        <input
-          type="password"
+        <PasswordInput
           name="password"
           required
           minLength={8}
           placeholder="رمز عبور (حداقل ۸ کاراکتر)"
-          className="rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
         />
+        <PasswordInput name="confirmPassword" required minLength={8} placeholder="تکرار رمز عبور" />
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 

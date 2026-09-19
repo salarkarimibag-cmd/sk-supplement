@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import PasswordInput from "@/components/ui/PasswordInput";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -51,13 +52,7 @@ export default function LoginForm() {
           placeholder="ایمیل"
           className="rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
         />
-        <input
-          type="password"
-          name="password"
-          required
-          placeholder="رمز عبور"
-          className="rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
-        />
+        <PasswordInput name="password" required placeholder="رمز عبور" />
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 
