@@ -1,6 +1,7 @@
 import { connectToDatabase } from "@/lib/db";
 import { OrderModel } from "@/models/Order";
 import { requestZarinPalPayment } from "@/lib/zarinpal";
+import { getSessionUser } from "@/lib/auth";
 
 interface PaymentRequestBody {
   amount?: number;
@@ -33,6 +34,7 @@ export async function POST(request: Request) {
   }
 
   await connectToDatabase();
+  const sessionUser = await getSessionUser();
 
   const origin = new URL(request.url).origin;
   const callbackUrl = `${origin}/checkout/callback?amount=${body.amount}`;
@@ -53,6 +55,7 @@ export async function POST(request: Request) {
   // (called by ZarinPal, not the browser) never sees the cart or this form
   // data again — only `authority` links it back to this order.
   await OrderModel.create({
+    userId: sessionUser?.id,
     items: body.items,
     contact: body.contact,
     shippingAddress: body.shippingAddress,

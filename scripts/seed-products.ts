@@ -14,7 +14,8 @@ async function main() {
 
   let count = 0;
   for (const product of products) {
-    const { inStock: _inStock, ...doc } = product;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- drop the mock-only inStock field
+    const { inStock, ...doc } = product;
     await ProductModel.findOneAndUpdate({ id: doc.id }, doc, {
       upsert: true,
       setDefaultsOnInsert: true,

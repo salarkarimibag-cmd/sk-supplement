@@ -9,7 +9,6 @@ interface MongooseCache {
 // serverless invocations in prod, so the connection is cached on `global`
 // to avoid opening a new MongoDB connection each time this module loads.
 declare global {
-  // eslint-disable-next-line no-var
   var _mongoose: MongooseCache | undefined;
 }
 
