@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Image from "next/image";
 import Link from "next/link";
+import { ShoppingBag } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
 const checkoutSchema = z.object({
@@ -34,14 +35,52 @@ function CheckoutLogo() {
   );
 }
 
+interface AppliedDiscount {
+  code: string;
+  amount: number;
+}
+
 export default function CheckoutView() {
-  const { items, totalPrice } = useCart();
+  const { items, totalPrice, totalCount } = useCart();
   const [serverError, setServerError] = useState<string | null>(null);
+  const [discountCodeInput, setDiscountCodeInput] = useState("");
+  const [appliedDiscount, setAppliedDiscount] = useState<AppliedDiscount | null>(null);
+  const [discountError, setDiscountError] = useState<string | null>(null);
+  const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<CheckoutValues>({ resolver: zodResolver(checkoutSchema) });
+
+  const finalTotal = totalPrice - (appliedDiscount?.amount ?? 0);
+
+  async function handleApplyDiscount() {
+    if (!discountCodeInput.trim()) return;
+    setIsApplyingDiscount(true);
+    setDiscountError(null);
+
+    try {
+      const response = await fetch("/api/discounts/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: discountCodeInput, subtotal: totalPrice }),
+      });
+      const data = await response.json();
+
+      if (!data.valid) {
+        setAppliedDiscount(null);
+        setDiscountError(data.message ?? "کد تخفیف نامعتبر است.");
+        return;
+      }
+
+      setAppliedDiscount({ code: data.code, amount: data.discountAmount });
+    } catch {
+      setDiscountError("خطایی در اعمال کد تخفیف رخ داد.");
+    } finally {
+      setIsApplyingDiscount(false);
+    }
+  }
 
   async function onSubmit(values: CheckoutValues) {
     setServerError(null);
@@ -51,7 +90,9 @@ export default function CheckoutView() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: totalPrice,
+          amount: finalTotal,
+          discountCode: appliedDiscount?.code,
+          discountAmount: appliedDiscount?.amount,
           contact: { email: values.email, mobile: values.mobile },
           shippingAddress: {
             firstName: values.firstName,
@@ -102,7 +143,19 @@ export default function CheckoutView() {
     <div className="lg:grid lg:grid-cols-2">
       <h1 className="sr-only">تسویه حساب</h1>
 
-      <div className="bg-[rgb(255_255_255)] px-6 py-12 dark:bg-zinc-950">
+      <div className="relative bg-[rgb(255_255_255)] px-6 py-12 dark:bg-zinc-950">
+      <Link
+        href="/cart"
+        aria-label="سبد خرید"
+        className="absolute top-6 left-6 flex h-11 w-11 items-center justify-center rounded-full bg-sky-600 text-white shadow-sm transition hover:bg-sky-500"
+      >
+        <ShoppingBag className="h-5 w-5" />
+        {totalCount > 0 && (
+          <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-[10px] font-bold text-zinc-900">
+            {totalCount}
+          </span>
+        )}
+      </Link>
       <div className="mx-auto max-w-xl">
       <CheckoutLogo />
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-10 flex flex-col gap-8">
@@ -217,19 +270,44 @@ export default function CheckoutView() {
           ))}
         </ul>
 
-        <div className="mt-6 flex gap-2">
-          <input
-            type="text"
-            placeholder="کد تخفیف"
-            className="flex-1 rounded border border-zinc-300 px-4 py-2.5 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900"
-          />
-          {/* TODO: validate against /api/discounts once discount codes exist. */}
-          <button
-            type="button"
-            className="cursor-pointer rounded border border-zinc-300 px-4 text-sm font-semibold dark:border-zinc-700"
-          >
-            اعمال
-          </button>
+        <div className="mt-6">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={discountCodeInput}
+              onChange={(event) => setDiscountCodeInput(event.target.value)}
+              placeholder="کد تخفیف"
+              disabled={!!appliedDiscount}
+              className="flex-1 rounded border border-zinc-300 px-4 py-2.5 text-sm outline-none focus:border-sky-600 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-900"
+            />
+            {appliedDiscount ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setAppliedDiscount(null);
+                  setDiscountCodeInput("");
+                }}
+                className="cursor-pointer rounded border border-zinc-300 px-4 text-sm font-semibold dark:border-zinc-700"
+              >
+                حذف
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleApplyDiscount}
+                disabled={isApplyingDiscount}
+                className="cursor-pointer rounded border border-zinc-300 px-4 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-700"
+              >
+                {isApplyingDiscount ? "در حال بررسی..." : "اعمال"}
+              </button>
+            )}
+          </div>
+          {discountError && <p className="mt-2 text-xs text-red-600">{discountError}</p>}
+          {appliedDiscount && (
+            <p className="mt-2 text-xs text-emerald-600">
+              کد «{appliedDiscount.code}» اعمال شد.
+            </p>
+          )}
         </div>
 
         <div className="mt-6 flex flex-col gap-2 border-t border-zinc-200 pt-4 text-sm dark:border-zinc-800">
@@ -237,13 +315,19 @@ export default function CheckoutView() {
             <span className="text-zinc-600 dark:text-zinc-400">جمع جزء</span>
             <span>{totalPrice.toLocaleString("fa-IR")} تومان</span>
           </div>
+          {appliedDiscount && (
+            <div className="flex items-center justify-between text-emerald-600">
+              <span>تخفیف</span>
+              <span>-{appliedDiscount.amount.toLocaleString("fa-IR")} تومان</span>
+            </div>
+          )}
           <div className="flex items-center justify-between">
             <span className="text-zinc-600 dark:text-zinc-400">ارسال</span>
             <span className="text-zinc-500">در مرحله‌ی بعد محاسبه می‌شود</span>
           </div>
           <div className="mt-2 flex items-center justify-between border-t border-zinc-200 pt-3 text-base font-bold dark:border-zinc-800">
             <span>جمع کل</span>
-            <span>{totalPrice.toLocaleString("fa-IR")} تومان</span>
+            <span>{finalTotal.toLocaleString("fa-IR")} تومان</span>
           </div>
         </div>
       </div>

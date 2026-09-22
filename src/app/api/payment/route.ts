@@ -15,6 +15,8 @@ interface PaymentRequestBody {
     postalCode?: string;
   };
   items?: { productId?: string; quantity?: number; unitPrice?: number }[];
+  discountCode?: string;
+  discountAmount?: number;
 }
 
 export async function POST(request: Request) {
@@ -60,6 +62,8 @@ export async function POST(request: Request) {
     contact: body.contact,
     shippingAddress: body.shippingAddress,
     totalPrice: body.amount,
+    discountCode: body.discountCode,
+    discountAmount: body.discountAmount,
     status: "pending",
     paymentAuthority: result.authority,
   });

@@ -44,6 +44,8 @@ const OrderSchema = new Schema(
       default: "pending",
     },
     totalPrice: { type: Number, required: true },
+    discountCode: { type: String, required: false },
+    discountAmount: { type: Number, required: false },
     // ZarinPal's payment authority, set before redirecting to the gateway;
     // used to look the order back up when ZarinPal calls the callback URL.
     paymentAuthority: { type: String, required: true, index: true },
