@@ -72,3 +72,9 @@ export async function getSessionUser() {
     .lean({ virtuals: true });
   return user;
 }
+
+/** Like getSessionUser(), but returns null unless the session belongs to an admin. */
+export async function getSessionAdmin() {
+  const user = await getSessionUser();
+  return user?.isAdmin ? user : null;
+}

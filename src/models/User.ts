@@ -6,6 +6,7 @@ export interface User {
   email: string;
   phone: string;
   passwordHash: string;
+  isAdmin: boolean;
   createdAt: string;
 }
 
@@ -15,6 +16,7 @@ const UserSchema = new Schema<User>(
     email: { type: String, required: true, unique: true, index: true },
     phone: { type: String, required: true },
     passwordHash: { type: String, required: true },
+    isAdmin: { type: Boolean, required: true, default: false },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );

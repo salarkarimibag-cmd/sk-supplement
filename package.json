@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "tsx scripts/seed-products.ts",
-    "seed:discounts": "tsx scripts/seed-discounts.ts"
+    "seed:discounts": "tsx scripts/seed-discounts.ts",
+    "set-admin": "tsx scripts/set-admin.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
