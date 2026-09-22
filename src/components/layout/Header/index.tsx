@@ -9,7 +9,12 @@ import { useCart } from "@/context/CartContext";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import SearchBar from "@/components/layout/SearchBar";
 
-export default function Header() {
+export interface HeaderUser {
+  id: string;
+  fullName: string;
+}
+
+export default function Header({ user }: { user: HeaderUser | null }) {
   const { totalCount, openCart } = useCart();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -73,9 +78,11 @@ export default function Header() {
                 </button>
 
                 <Link
-                  href="/account/login"
-                  aria-label="حساب کاربری"
-                  className="group hidden hover:text-sky-500 md:block"
+                  href={user ? "/account/profile" : "/account/login"}
+                  aria-label={user ? `حساب کاربری (${user.fullName})` : "حساب کاربری"}
+                  className={`group relative hidden hover:text-sky-500 md:block ${
+                    user ? "text-sky-500" : ""
+                  }`}
                 >
                   <svg
                     aria-hidden="true"
@@ -91,6 +98,9 @@ export default function Header() {
                       strokeLinecap="round"
                     />
                   </svg>
+                  {user && (
+                    <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-sky-500" />
+                  )}
                 </Link>
 
                 <button

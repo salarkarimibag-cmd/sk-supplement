@@ -3,6 +3,7 @@ import { Geist_Mono, Vazirmatn } from "next/font/google";
 import SiteChrome from "@/components/layout/SiteChrome";
 import CartDrawer from "@/components/cart/CartDrawer";
 import { CartProvider } from "@/context/CartContext";
+import { getSessionUser } from "@/lib/auth";
 import "./globals.css";
 
 const vazirmatn = Vazirmatn({
@@ -32,7 +33,13 @@ const themeInitScript = `
   })();
 `;
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const sessionUser = await getSessionUser();
+  // getSessionUser() returns a Mongoose lean document whose `_id` is an
+  // ObjectId (has a toJSON method) — React can't pass that across the
+  // server/client boundary, so we convert to a plain object first.
+  const user = sessionUser ? { id: String(sessionUser._id), fullName: sessionUser.fullName } : null;
+
   return (
     <html
       lang="fa"
@@ -45,7 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="flex min-h-full flex-col">
         <CartProvider>
-          <SiteChrome>{children}</SiteChrome>
+          <SiteChrome user={user}>{children}</SiteChrome>
           <CartDrawer />
         </CartProvider>
       </body>
