@@ -67,10 +67,13 @@ export async function getSessionUser() {
   if (!userId) return null;
 
   await connectToDatabase();
-  const user = await UserModel.findById(userId)
-    .select("-passwordHash")
-    .lean({ virtuals: true });
-  return user;
+  const user = await UserModel.findById(userId).select("-passwordHash").lean();
+  if (!user) return null;
+
+  // `.lean()` skips Mongoose's `id` virtual (it only exists on hydrated
+  // documents, or with the mongoose-lean-virtuals plugin, which isn't
+  // installed here), so it has to be added back manually.
+  return { ...user, id: String(user._id) };
 }
 
 /** Like getSessionUser(), but returns null unless the session belongs to an admin. */

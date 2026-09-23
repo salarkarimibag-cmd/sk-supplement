@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getSessionUser } from "@/lib/auth";
 import LogoutButton from "@/components/account/LogoutButton";
 
@@ -31,7 +32,13 @@ export default async function ProfilePage() {
         </div>
       </dl>
 
-      <div className="mt-8">
+      <div className="mt-8 flex items-center gap-4">
+        <Link
+          href="/account/orders"
+          className="rounded border border-zinc-300 px-4 py-2 text-sm font-semibold hover:border-sky-600 hover:text-sky-600 dark:border-zinc-700"
+        >
+          سفارش‌های من
+        </Link>
         <LogoutButton />
       </div>
     </div>

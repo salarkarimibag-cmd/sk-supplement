@@ -35,10 +35,10 @@ const themeInitScript = `
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const sessionUser = await getSessionUser();
-  // getSessionUser() returns a Mongoose lean document whose `_id` is an
-  // ObjectId (has a toJSON method) — React can't pass that across the
-  // server/client boundary, so we convert to a plain object first.
-  const user = sessionUser ? { id: String(sessionUser._id), fullName: sessionUser.fullName } : null;
+  // getSessionUser() also carries Mongoose-specific fields (e.g. `_id` as an
+  // ObjectId, which has a toJSON method) that React can't pass across the
+  // server/client boundary, so only the plain fields Header needs go through.
+  const user = sessionUser ? { id: sessionUser.id, fullName: sessionUser.fullName } : null;
 
   return (
     <html
