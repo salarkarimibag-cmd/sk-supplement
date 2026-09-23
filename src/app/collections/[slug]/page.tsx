@@ -7,22 +7,22 @@ import ProteinInfoSection from "@/components/collections/ProteinInfoSection";
 import AminosInfoSection from "@/components/collections/AminosInfoSection";
 import FatBurnerInfoSection from "@/components/collections/FatBurnerInfoSection";
 import PreWorkoutInfoSection from "@/components/collections/PreWorkoutInfoSection";
-import { categoryInfo } from "@/data/catalog";
+import { getCategoryContent } from "@/lib/categoryContent";
 import { getProductsByCategory } from "@/lib/products";
 import { countByAttribute, filterProducts, sortProducts, toParamArray } from "@/lib/catalogFilters";
 
-// TODO: replace with the real category name once categories are fetched from the database.
 export async function generateMetadata(
   props: PageProps<"/collections/[slug]">
 ): Promise<Metadata> {
   const { slug } = await props.params;
-  return { title: categoryInfo[slug]?.title ?? `دسته‌بندی: ${slug}` };
+  const info = await getCategoryContent(slug);
+  return { title: info?.title ?? `دسته‌بندی: ${slug}` };
 }
 
 export default async function CollectionPage(props: PageProps<"/collections/[slug]">) {
   const { slug } = await props.params;
   const { sort, flavor, size } = await props.searchParams;
-  const info = categoryInfo[slug];
+  const info = await getCategoryContent(slug);
   const categoryProducts = await getProductsByCategory(slug);
 
   const selectedFlavors = toParamArray(flavor);

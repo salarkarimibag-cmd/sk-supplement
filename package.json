@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "tsx scripts/seed-products.ts",
+    "seed:categories": "tsx scripts/seed-categories.ts",
     "seed:discounts": "tsx scripts/seed-discounts.ts",
     "set-admin": "tsx scripts/set-admin.ts"
   },

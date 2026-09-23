@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import StarRating from "@/components/ui/StarRating";
 import ProductDetailPanel from "@/components/product/ProductDetailPanel";
-import { categoryInfo } from "@/data/catalog";
+import { getCategoryContent } from "@/lib/categoryContent";
 import { getProductById } from "@/lib/products";
 
 export async function generateMetadata(
@@ -21,7 +21,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
 
   if (!product) notFound();
 
-  const category = categoryInfo[product.categorySlug];
+  const category = await getCategoryContent(product.categorySlug);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-12">

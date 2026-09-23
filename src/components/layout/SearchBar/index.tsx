@@ -4,13 +4,20 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { categoryInfo, productsBySlug } from "@/data/catalog";
+import { productsBySlug } from "@/data/catalog";
 
 const allProducts = Object.values(productsBySlug).flat();
-const categories = Object.entries(categoryInfo).map(([slug, info]) => ({
-  slug,
-  title: info.title,
-}));
+
+// Category titles are now stored in the database (src/models/Category.ts),
+// but this is a client component with no direct DB access, so the small,
+// rarely-changing set of category names used for search suggestions is kept
+// here rather than plumbing an API call through just for this.
+const categories = [
+  { slug: "protein", title: "پروتئین‌ها" },
+  { slug: "pre-workout", title: "پیش‌تمرین‌ها" },
+  { slug: "fat-burner", title: "چربی‌سوزها" },
+  { slug: "aminos", title: "آمینو اسیدها" },
+];
 
 const searchablePages = [
   { title: "درباره ما", href: "/pages/about-us" },

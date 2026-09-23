@@ -1,43 +1,5 @@
 import type { Product } from "@/models/Product";
 
-export interface CategoryInfo {
-  title: string;
-  description: string;
-  bannerImage: string;
-  /** CSS aspect-ratio value matching the banner image's natural dimensions. */
-  bannerAspect: string;
-}
-
-// TODO: replace with real category content fetched from the database.
-export const categoryInfo: Record<string, CategoryInfo> = {
-  protein: {
-    title: "پروتئین‌ها",
-    description:
-      "پروتئینی که برای سوخت‌رسانی به تمرین‌هایتان نیاز دارید را از محصولات SK Supplement تهیه کنید. طیف پودرها و شیک‌های پروتئینی ما برای هر برنامه‌ی تمرینی مناسب است.",
-    bannerImage: "/images/collection-banner-protein.webp",
-    bannerAspect: "4.8 / 1",
-  },
-  "pre-workout": {
-    title: "پیش‌تمرین‌ها",
-    description: "انرژی و تمرکز لازم برای بهترین عملکرد در باشگاه را با پیش‌تمرین‌های ما تجربه کنید.",
-    bannerImage: "/images/collection-banner-pre-workout.webp",
-    bannerAspect: "4.8 / 1",
-  },
-  "fat-burner": {
-    title: "چربی‌سوزها",
-    description:
-      "چربی بسوزانید و مسیر کاهش وزنتان را با مجموعه‌ی چربی‌سوزهای SK Supplement تقویت کنید. محصولات ما برای همراهی با رژیم غذایی و برنامه‌ی تمرینی‌تان طراحی شده‌اند.",
-    bannerImage: "/images/collection-banner-fat-burner.webp",
-    bannerAspect: "4.8 / 1",
-  },
-  aminos: {
-    title: "آمینو اسیدها",
-    description: "ریکاوری بهتر و عضله‌سازی موثرتر با آمینو اسیدهای ضروری بدن.",
-    bannerImage: "/images/collection-banner-aminos.webp",
-    bannerAspect: "3 / 1",
-  },
-};
-
 export interface FilterOptions {
   flavors: string[];
   sizes?: string[];
