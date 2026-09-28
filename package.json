@@ -9,6 +9,7 @@
     "lint": "eslint",
     "seed": "tsx scripts/seed-products.ts",
     "seed:categories": "tsx scripts/seed-categories.ts",
+    "seed:blogs": "tsx scripts/seed-blogs.ts",
     "seed:discounts": "tsx scripts/seed-discounts.ts",
     "set-admin": "tsx scripts/set-admin.ts"
   },
