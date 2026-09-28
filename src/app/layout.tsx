@@ -4,6 +4,7 @@ import SiteChrome from "@/components/layout/SiteChrome";
 import CartDrawer from "@/components/cart/CartDrawer";
 import { CartProvider } from "@/context/CartContext";
 import { getSessionUser } from "@/lib/auth";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const vazirmatn = Vazirmatn({
@@ -16,12 +17,34 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteTitle = "SK Supplement | فروشگاه آنلاین مکمل‌های ورزشی";
+const siteDescription = "فروشگاه آنلاین مکمل‌های ورزشی";
+
 export const metadata: Metadata = {
+  // Lets Next.js resolve relative openGraph/twitter image paths (and other
+  // page-level metadata) into absolute URLs; without it, social previews
+  // silently fall back to an unrelated default host.
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "SK Supplement | فروشگاه آنلاین مکمل‌های ورزشی",
+    default: siteTitle,
     template: "%s | SK Supplement",
   },
-  description: "فروشگاه آنلاین مکمل‌های ورزشی",
+  description: siteDescription,
+  openGraph: {
+    title: siteTitle,
+    description: siteDescription,
+    url: SITE_URL,
+    siteName: "SK Supplement",
+    images: ["/images/promo-banner.webp"],
+    locale: "fa_IR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitle,
+    description: siteDescription,
+    images: ["/images/promo-banner.webp"],
+  },
 };
 
 // Runs before hydration so the correct theme applies on first paint (no flash of the wrong theme).
