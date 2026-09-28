@@ -19,7 +19,7 @@ const ProductSchema = new Schema<Product>({
   id: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   slug: { type: String, required: true, unique: true, index: true },
-  description: { type: String, required: true, default: "" },
+  description: { type: String, required: false, default: "" },
   price: { type: Number, required: true },
   categorySlug: { type: String, required: true, index: true },
   imageUrl: { type: String, required: true },
