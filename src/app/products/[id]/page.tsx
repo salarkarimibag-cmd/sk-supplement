@@ -87,7 +87,15 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
           </p>
 
           <div className="mt-8">
-            <ProductDetailPanel product={product} />
+            <ProductDetailPanel
+              product={{
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                imageUrl: product.imageUrl,
+                inStock: product.inStock,
+              }}
+            />
           </div>
         </div>
       </div>

@@ -3,10 +3,15 @@
 import { useEffect, useState } from "react";
 import { Check } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import type { CatalogProduct } from "@/data/catalog";
 
 interface ProductDetailPanelProps {
-  product: CatalogProduct;
+  product: {
+    id: string;
+    name: string;
+    price: number;
+    imageUrl: string;
+    inStock: boolean;
+  };
 }
 
 export default function ProductDetailPanel({ product }: ProductDetailPanelProps) {
