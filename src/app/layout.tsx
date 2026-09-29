@@ -4,6 +4,7 @@ import SiteChrome from "@/components/layout/SiteChrome";
 import CartDrawer from "@/components/cart/CartDrawer";
 import { CartProvider } from "@/context/CartContext";
 import { getSessionUser } from "@/lib/auth";
+import { getAllCategories } from "@/lib/categoryContent";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -57,11 +58,15 @@ const themeInitScript = `
 `;
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const sessionUser = await getSessionUser();
-  // getSessionUser() also carries Mongoose-specific fields (e.g. `_id` as an
-  // ObjectId, which has a toJSON method) that React can't pass across the
-  // server/client boundary, so only the plain fields Header needs go through.
+  const [sessionUser, allCategories] = await Promise.all([getSessionUser(), getAllCategories()]);
+  // getSessionUser()/getAllCategories() also carry Mongoose-specific fields
+  // (e.g. `_id` as an ObjectId, which has a toJSON method) that React can't
+  // pass across the server/client boundary, so only plain fields go through.
   const user = sessionUser ? { id: sessionUser.id, fullName: sessionUser.fullName } : null;
+  const categories = allCategories.map((category) => ({
+    slug: category.slug,
+    title: category.title,
+  }));
 
   return (
     <html
@@ -75,7 +80,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="flex min-h-full flex-col">
         <CartProvider>
-          <SiteChrome user={user}>{children}</SiteChrome>
+          <SiteChrome user={user} categories={categories}>
+            {children}
+          </SiteChrome>
           <CartDrawer />
         </CartProvider>
       </body>

@@ -26,7 +26,7 @@ export default function PromoBanner() {
             پک‌های ترکیبی با صرفه‌جویی بالا را از دست ندهید!
           </p>
           <Link
-            href="/collections/shop"
+            href="/products"
             className="mt-6 inline-block rounded bg-sky-600 px-8 py-3 text-sm font-bold text-white transition hover:scale-105 hover:bg-sky-500"
           >
             خرید کنید

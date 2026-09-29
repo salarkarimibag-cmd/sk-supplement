@@ -41,7 +41,7 @@ export default function HeroBanner() {
             بهترین مکمل‌های ورزشی با تخفیف ویژه، فقط برای مدت محدود.
           </p>
           <Link
-            href="/collections/sale"
+            href="/products"
             className="mt-5 inline-block rounded bg-sky-600 px-8 py-3 text-sm font-bold text-white transition hover:scale-105 hover:bg-sky-500"
           >
             مشاهده حراج

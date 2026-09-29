@@ -10,7 +10,9 @@ export const defaultFilterOptions: FilterOptions = {
   sizes: ["۲۱ وعده", "۲۳ وعده", "۵۰ وعده", "۶۹ وعده", "۷۰ وعده"],
 };
 
-// TODO: replace with real flavor/size options (and their in-stock counts) fetched with the products.
+// Used only to generate flavor/size variants for the seed fixtures below —
+// real collection pages compute their filter options live from actual
+// product data (see src/lib/catalogFilters.ts), not from this.
 export const filterOptionsBySlug: Record<string, FilterOptions> = {
   "fat-burner": {
     flavors: [
@@ -65,7 +67,8 @@ function withVariants(
   }));
 }
 
-// TODO: fetch products from /api/products instead of this hardcoded catalog.
+// Fixture data for scripts/seed-products.ts only — every live page fetches
+// products from MongoDB via src/lib/products.ts, not from this file.
 const rawProteinProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
     {
       id: "p1",
@@ -520,10 +523,3 @@ export const productsBySlug: Record<string, CatalogProduct[]> = {
     filterOptionsBySlug["pre-workout"].flavors.map(stripCount)
   ),
 };
-
-// TODO: fetch a single product from /api/products/<id> instead of scanning the local mock data.
-export function getProductById(id: string): CatalogProduct | undefined {
-  return Object.values(productsBySlug)
-    .flat()
-    .find((product) => product.id === id);
-}

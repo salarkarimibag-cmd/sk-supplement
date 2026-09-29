@@ -4,20 +4,8 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { productsBySlug } from "@/data/catalog";
-
-const allProducts = Object.values(productsBySlug).flat();
-
-// Category titles are now stored in the database (src/models/Category.ts),
-// but this is a client component with no direct DB access, so the small,
-// rarely-changing set of category names used for search suggestions is kept
-// here rather than plumbing an API call through just for this.
-const categories = [
-  { slug: "protein", title: "پروتئین‌ها" },
-  { slug: "pre-workout", title: "پیش‌تمرین‌ها" },
-  { slug: "fat-burner", title: "چربی‌سوزها" },
-  { slug: "aminos", title: "آمینو اسیدها" },
-];
+import type { NavCategory } from "@/components/layout/Header";
+import type { CatalogProduct } from "@/data/catalog";
 
 const searchablePages = [
   { title: "درباره ما", href: "/pages/about-us" },
@@ -68,20 +56,27 @@ function ResultLink({ href, onNavigate, children }: ResultLinkProps) {
 
 interface SearchBarProps {
   onClose: () => void;
+  categories: NavCategory[];
 }
 
-export default function SearchBar({ onClose }: SearchBarProps) {
+export default function SearchBar({ onClose, categories }: SearchBarProps) {
   const [query, setQuery] = useState("");
+  const [products, setProducts] = useState<CatalogProduct[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
+  useEffect(() => {
+    fetch("/api/products")
+      .then((response) => response.json())
+      .then(setProducts)
+      .catch(() => setProducts([]));
+  }, []);
+
   const trimmedQuery = query.trim();
 
   const matchedProducts = trimmedQuery
-    ? allProducts
-        .filter((product) => product.name.includes(trimmedQuery))
-        .slice(0, MAX_RESULTS)
+    ? products.filter((product) => product.name.includes(trimmedQuery)).slice(0, MAX_RESULTS)
     : [];
   const matchedCategories = trimmedQuery
     ? categories

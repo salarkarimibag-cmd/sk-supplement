@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowLeft, ChevronLeft, Menu, User, X } from "lucide-react";
-import { categories } from "@/lib/categories";
+import { Menu, User, X } from "lucide-react";
+import type { NavCategory } from "@/components/layout/Header";
 
-export default function MobileMenu() {
+export default function MobileMenu({ categories }: { categories: NavCategory[] }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeSlug, setActiveSlug] = useState<string | null>(null);
   const [topOffset, setTopOffset] = useState(0);
 
   useEffect(() => {
@@ -23,10 +22,7 @@ export default function MobileMenu() {
 
   function close() {
     setIsOpen(false);
-    setActiveSlug(null);
   }
-
-  const activeCategory = categories.find((category) => category.slug === activeSlug);
 
   return (
     <>
@@ -55,57 +51,28 @@ export default function MobileMenu() {
         }`}
       >
         <nav dir="rtl" aria-label="منوی موبایل" className="flex-1 overflow-y-auto">
-          {!activeCategory ? (
-            <ul>
-              {categories.map((category) => (
-                <li key={category.slug}>
-                  {category.columns ? (
-                    <button
-                      type="button"
-                      onClick={() => setActiveSlug(category.slug)}
-                      className="flex w-full cursor-pointer items-center justify-between px-6 py-4 text-lg transition-colors hover:bg-zinc-100 hover:text-sky-600 dark:hover:bg-zinc-800"
-                    >
-                      {category.name}
-                      <ChevronLeft aria-hidden="true" className="h-5 w-5 text-zinc-400" />
-                    </button>
-                  ) : (
-                    <Link
-                      href={`/collections/${category.slug}`}
-                      onClick={close}
-                      className="block px-6 py-4 text-lg transition-colors hover:bg-zinc-100 hover:text-sky-600 dark:hover:bg-zinc-800"
-                    >
-                      {category.name}
-                    </Link>
-                  )}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div>
-              <button
-                type="button"
-                onClick={() => setActiveSlug(null)}
-                className="flex w-full cursor-pointer items-center gap-2 px-6 py-4 text-lg font-semibold transition-colors hover:bg-zinc-100 hover:text-sky-600 dark:hover:bg-zinc-800"
+          <ul>
+            {categories.map((category) => (
+              <li key={category.slug}>
+                <Link
+                  href={`/collections/${category.slug}`}
+                  onClick={close}
+                  className="block px-6 py-4 text-lg transition-colors hover:bg-zinc-100 hover:text-sky-600 dark:hover:bg-zinc-800"
+                >
+                  {category.title}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link
+                href="/blogs"
+                onClick={close}
+                className="block px-6 py-4 text-lg transition-colors hover:bg-zinc-100 hover:text-sky-600 dark:hover:bg-zinc-800"
               >
-                <ArrowLeft aria-hidden="true" className="h-5 w-5" />
-                {activeCategory.name}
-              </button>
-
-              <ul>
-                {activeCategory.columns!.map((column) => (
-                  <li key={column.title}>
-                    <Link
-                      href={`/collections/${column.viewAllSlug}`}
-                      onClick={close}
-                      className="block px-6 py-4 text-base transition-colors hover:bg-zinc-100 hover:text-sky-600 dark:hover:bg-zinc-800"
-                    >
-                      {column.title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+                بلاگ
+              </Link>
+            </li>
+          </ul>
         </nav>
 
         <div className="border-t border-black/[.08] bg-zinc-50 px-6 py-5 dark:border-white/8 dark:bg-zinc-800">

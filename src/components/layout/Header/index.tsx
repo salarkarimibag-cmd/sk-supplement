@@ -14,7 +14,18 @@ export interface HeaderUser {
   fullName: string;
 }
 
-export default function Header({ user }: { user: HeaderUser | null }) {
+export interface NavCategory {
+  slug: string;
+  title: string;
+}
+
+export default function Header({
+  user,
+  categories,
+}: {
+  user: HeaderUser | null;
+  categories: NavCategory[];
+}) {
   const { totalCount, openCart } = useCart();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -33,11 +44,11 @@ export default function Header({ user }: { user: HeaderUser | null }) {
       <header dir="ltr" className="sticky top-0 z-50 bg-black">
         <div className="mx-auto flex min-h-23 max-w-7xl items-center justify-between gap-6 px-6 py-1.5">
           {isSearchOpen ? (
-            <SearchBar onClose={() => setIsSearchOpen(false)} />
+            <SearchBar onClose={() => setIsSearchOpen(false)} categories={categories} />
           ) : (
             <>
               <div className="flex items-center gap-0 md:gap-2">
-                <MobileMenu />
+                <MobileMenu categories={categories} />
 
                 <Link href="/" className="-ml-2 flex items-center md:ml-0">
                   <Image
@@ -51,7 +62,7 @@ export default function Header({ user }: { user: HeaderUser | null }) {
                 </Link>
 
                 <div className="hidden md:block">
-                  <CategoryMenu />
+                  <CategoryMenu categories={categories} />
                 </div>
               </div>
 
