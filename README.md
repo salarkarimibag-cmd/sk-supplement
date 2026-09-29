@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SK Supplement
 
-## Getting Started
+An online store for sports supplements, built with Next.js (App Router), TypeScript, Tailwind CSS v4, and MongoDB via Mongoose. The storefront is in Persian (RTL).
 
-First, run the development server:
+## Tech stack
+
+- **Framework:** Next.js 16 (App Router), React 19, TypeScript
+- **Styling:** Tailwind CSS v4
+- **Database:** MongoDB (via Mongoose) — Atlas or any MongoDB instance
+- **Auth:** Session cookies signed with `jose` (JWT), passwords hashed with `bcryptjs`
+- **Payments:** ZarinPal
+- **Forms:** `react-hook-form` + `zod` (customer-facing forms only; admin forms use plain controlled state)
+
+## Getting started
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Set up environment variables
+
+Copy `.env.example` to `.env.local` and fill in the values:
+
+```bash
+cp .env.example .env.local
+```
+
+| Variable | Description |
+| --- | --- |
+| `MONGODB_URI` | Connection string from MongoDB Atlas (Atlas → Connect → Drivers), or any MongoDB instance. |
+| `SESSION_SECRET` | Signs login session cookies. Generate one with: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
+| `ZARINPAL_MERCHANT_ID` | Your ZarinPal merchant id. Leave empty to see a clear "not configured" error instead of a silent failure. |
+| `ZARINPAL_SANDBOX` | `true` (default) hits ZarinPal's sandbox — safe for testing, no real money moves. Set to `false` once you have a real merchant id to go live. |
+| `NEXT_PUBLIC_SITE_URL` | Used for SEO metadata (sitemap, robots.txt, canonical/Open Graph URLs). Use `http://localhost:3000` in development; set to the real domain once one exists. |
+
+### 3. Seed the database
+
+Run these once against a fresh database (each is safe to re-run — they upsert, not duplicate):
+
+```bash
+npm run seed              # products
+npm run seed:more-products # a few extra products (creatine/health-wellness/vitamins)
+npm run seed:categories   # category content (title, description, banner)
+npm run seed:blogs        # blog posts
+npm run seed:discounts    # discount codes (WELCOME10, SK50000)
+```
+
+### 4. Create an admin account
+
+Register a normal account through `/account/register`, then promote it to admin:
+
+```bash
+npm run set-admin -- you@example.com
+```
+
+Admin-only pages (`/admin/products`, `/admin/discounts`) require logging in with that account. If you were already logged in when you ran this, log out and back in.
+
+### 5. Run the dev server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the dev server |
+| `npm run build` | Production build |
+| `npm run start` | Run the production build |
+| `npm run lint` | Lint with ESLint |
+| `npm run seed` | Seed products |
+| `npm run seed:more-products` | Seed extra products (creatine/health-wellness/vitamins) |
+| `npm run seed:categories` | Seed category content |
+| `npm run seed:blogs` | Seed blog posts |
+| `npm run seed:discounts` | Seed discount codes |
+| `npm run set-admin -- <email>` | Promote a registered user to admin |
 
-## Learn More
+There is no automated test suite in this repository yet.
 
-To learn more about Next.js, take a look at the following resources:
+## Notes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Contact form submissions and newsletter signups are stored in MongoDB (`contactmessages`, `subscribers` collections) but nothing sends an email/SMS notification yet — check them directly in Atlas (or add an admin view later).
+- Product images are plain paths into `/public/images/` (e.g. `/images/whey.webp`) — there's no file upload; the admin product form takes a text field for the image path.
+- Before going live: set `ZARINPAL_SANDBOX=false` with a real merchant id, and update `NEXT_PUBLIC_SITE_URL` to the real domain.
