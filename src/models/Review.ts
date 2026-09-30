@@ -6,6 +6,7 @@ export interface Review {
   comment: string;
   approved: boolean;
   ip: string;
+  deviceId: string;
   createdAt: string;
 }
 
@@ -16,6 +17,11 @@ const ReviewSchema = new Schema<Review>(
     comment: { type: String, required: true, trim: true },
     approved: { type: Boolean, required: true, default: false },
     ip: { type: String, required: true },
+    // A random id stored in a cookie on the visitor's browser. Used as a
+    // second rate-limit signal alongside `ip`, since `ip` alone is read from
+    // the client-controllable X-Forwarded-For header and can be spoofed
+    // per-request unless a trusted reverse proxy sanitizes it.
+    deviceId: { type: String, required: true },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );

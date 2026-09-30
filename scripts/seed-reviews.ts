@@ -14,6 +14,7 @@ const reviews = [
     comment: "ارسال خیلی سریع بود و بسته‌بندی محصول هم عالی بود. حتماً باز هم خرید می‌کنم.",
     approved: true,
     ip: "seed",
+    deviceId: "seed",
   },
   {
     name: "امید",
@@ -21,6 +22,7 @@ const reviews = [
     comment: "چند ساله از این فروشگاه خرید می‌کنم، کیفیت محصولات همیشه ثابت و قابل اعتماده.",
     approved: true,
     ip: "seed",
+    deviceId: "seed",
   },
   {
     name: "سالار",
@@ -28,6 +30,7 @@ const reviews = [
     comment: "پشتیبانی سایت خیلی خوب جواب می‌ده و تا حالا هیچ مشکلی توی سفارش‌هام نداشتم.",
     approved: true,
     ip: "seed",
+    deviceId: "seed",
   },
   {
     name: "نیلوفر",
@@ -35,6 +38,7 @@ const reviews = [
     comment: "کیفیت محصول خوب بود، فقط کاش تنوع طعم‌ها بیشتر می‌شد.",
     approved: true,
     ip: "seed",
+    deviceId: "seed",
   },
 ];
 
