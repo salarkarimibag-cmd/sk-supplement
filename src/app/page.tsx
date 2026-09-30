@@ -4,11 +4,13 @@ import HeroBanner from "@/components/home/HeroBanner";
 import PromoBanner from "@/components/home/PromoBanner";
 import CategoryShowcase from "@/components/home/CategoryShowcase";
 import Testimonials from "@/components/home/Testimonials";
+import ReviewForm from "@/components/reviews/ReviewForm";
 import LatestArticles from "@/components/home/LatestArticles";
 import { getAllProducts } from "@/lib/products";
+import { getApprovedReviews } from "@/lib/reviews";
 
 export default async function Home() {
-  const allProducts = await getAllProducts();
+  const [allProducts, reviews] = await Promise.all([getAllProducts(), getApprovedReviews()]);
   const featuredProducts = allProducts.slice(0, 4);
   const bestSellers = [...allProducts]
     .sort((a, b) => b.reviewCount - a.reviewCount)
@@ -69,7 +71,13 @@ export default async function Home() {
           </div>
         </section>
 
-        <Testimonials />
+        <section>
+          <h2 className="mb-10 text-center text-3xl font-extrabold tracking-tight uppercase sm:text-4xl">
+            نظرات مشتریان
+          </h2>
+          <Testimonials reviews={reviews} />
+          <ReviewForm />
+        </section>
 
         <LatestArticles />
       </div>

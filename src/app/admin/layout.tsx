@@ -35,6 +35,12 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         >
           کدهای تخفیف
         </Link>
+        <Link
+          href="/admin/reviews"
+          className="border-b-2 border-transparent px-1 pb-3 text-sm font-semibold text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:text-zinc-400"
+        >
+          نظرات
+        </Link>
       </nav>
 
       <div className="mt-8">{children}</div>

@@ -1,20 +1,8 @@
-const testimonials = [
-  {
-    title: "خدمات مشتری و پشتیبانی عالی",
-    quote: "همیشه راضی بودم!",
-    name: "سالار",
-  },
-  {
-    title: "برند مورد اعتماد من!",
-    quote: "برند مورد اعتماد من برای یک دهه!",
-    name: "امید",
-  },
-  {
-    title: "ارسال سریع و به‌موقع",
-    quote: "ارسال سریع و به‌موقع",
-    name: "محمد",
-  },
-];
+interface Review {
+  name: string;
+  rating: number;
+  comment: string;
+}
 
 function Star() {
   return (
@@ -24,22 +12,21 @@ function Star() {
   );
 }
 
-export default function Testimonials() {
+export default function Testimonials({ reviews }: { reviews: Review[] }) {
+  if (reviews.length === 0) return null;
+
   return (
     <div className="grid grid-cols-1 gap-10 text-center sm:grid-cols-3">
-      {testimonials.map((testimonial) => (
-        <div key={testimonial.name}>
+      {reviews.map((review, index) => (
+        <div key={index}>
           <div className="flex justify-center gap-1 text-sky-500">
-            {Array.from({ length: 5 }, (_, index) => (
-              <Star key={index} />
+            {Array.from({ length: review.rating }, (_, starIndex) => (
+              <Star key={starIndex} />
             ))}
           </div>
-          <h3 className="mt-4 text-lg font-bold text-zinc-700 dark:text-zinc-200">
-            {testimonial.title}
-          </h3>
-          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{testimonial.quote}</p>
+          <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-400">{review.comment}</p>
           <p className="mt-2 text-sm font-semibold text-zinc-500 italic dark:text-zinc-400">
-            — {testimonial.name}
+            — {review.name}
           </p>
         </div>
       ))}
