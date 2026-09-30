@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { CircleDollarSign } from "lucide-react";
 import { FacebookIcon, InstagramIcon, XIcon, YoutubeIcon } from "@/components/ui/SocialIcons";
 import EmailSignupForm from "@/components/ui/EmailSignupForm";
 
@@ -74,7 +75,10 @@ export default function Footer() {
         </div>
 
         <div>
-          <h3 className="text-base font-bold uppercase">ضمانت بازگشت وجه ۱۰۰٪</h3>
+          <h3 className="flex items-center gap-1.5 text-base font-bold uppercase">
+            <CircleDollarSign className="h-5 w-5 text-sky-500" aria-hidden="true" />
+            ضمانت بازگشت وجه ۱۰۰٪
+          </h3>
           <p className="mt-4 text-sm text-zinc-400">
             از خریدتان راضی نیستید؟ تا 10 روز کالا را برای بازگشت وجه ارسال کنید.{" "}
             <Link href="/pages/refund-policy" className="text-sky-500 hover:underline">
