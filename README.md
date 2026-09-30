@@ -89,3 +89,4 @@ There is no automated test suite in this repository yet.
 - Contact form submissions and newsletter signups are stored in MongoDB (`contactmessages`, `subscribers` collections) but nothing sends an email/SMS notification yet — check them directly in Atlas (or add an admin view later).
 - Product images are plain paths into `/public/images/` (e.g. `/images/whey.webp`) — there's no file upload; the admin product form takes a text field for the image path.
 - Before going live: set `ZARINPAL_SANDBOX=false` with a real merchant id, and update `NEXT_PUBLIC_SITE_URL` to the real domain.
+- Customer reviews are moderated at `/admin/reviews`. Unapproved reviews are automatically deleted 30 days after submission (a MongoDB TTL index on `Review.createdAt`) so a stale/unmoderated queue doesn't pile up — approved reviews are kept indefinitely.

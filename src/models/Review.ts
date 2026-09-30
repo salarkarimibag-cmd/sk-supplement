@@ -20,6 +20,14 @@ const ReviewSchema = new Schema<Review>(
   { timestamps: { createdAt: true, updatedAt: false } }
 );
 
+// Auto-deletes unapproved (pending) reviews 30 days after submission, so an
+// unmoderated spam queue doesn't pile up forever. Approved reviews are
+// excluded via the partial filter and kept indefinitely.
+ReviewSchema.index(
+  { createdAt: 1 },
+  { expireAfterSeconds: 30 * 24 * 60 * 60, partialFilterExpression: { approved: false } }
+);
+
 // Avoids Mongoose's "Cannot overwrite model" error when this module is
 // re-evaluated on every hot reload in dev.
 export const ReviewModel = mongoose.models.Review ?? mongoose.model("Review", ReviewSchema);
