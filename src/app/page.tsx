@@ -8,13 +8,12 @@ import Testimonials from "@/components/home/Testimonials";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import LatestArticles from "@/components/home/LatestArticles";
 import { getAllProducts } from "@/lib/products";
-import { getApprovedReviews, getApprovedReviewsCount } from "@/lib/reviews";
+import { getHomepageReviews } from "@/lib/reviews";
 
 export default async function Home() {
-  const [allProducts, reviews, reviewsCount] = await Promise.all([
+  const [allProducts, { reviews, totalCount: reviewsCount }] = await Promise.all([
     getAllProducts(),
-    getApprovedReviews(),
-    getApprovedReviewsCount(),
+    getHomepageReviews(),
   ]);
   const featuredProducts = allProducts.slice(0, 4);
   const bestSellers = [...allProducts]

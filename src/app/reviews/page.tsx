@@ -1,15 +1,23 @@
 import type { Metadata } from "next";
 import Testimonials from "@/components/home/Testimonials";
 import ReviewForm from "@/components/reviews/ReviewForm";
-import { getAllApprovedReviews } from "@/lib/reviews";
+import Pagination from "@/components/ui/Pagination";
+import { getApprovedReviewsPage } from "@/lib/reviews";
 
 export const metadata: Metadata = {
   title: "نظرات مشتریان",
   description: "نظرات مشتریان SK Supplement درباره‌ی محصولات و خدمات فروشگاه.",
 };
 
-export default async function ReviewsPage() {
-  const reviews = await getAllApprovedReviews();
+export default async function ReviewsPage(props: PageProps<"/reviews">) {
+  const { page: pageParam } = await props.searchParams;
+  const requestedPage = Number(Array.isArray(pageParam) ? pageParam[0] : pageParam) || 1;
+
+  const { reviews, currentPage, totalPages } = await getApprovedReviewsPage(requestedPage);
+
+  function hrefForPage(page: number) {
+    return page === 1 ? "/reviews" : `/reviews?page=${page}`;
+  }
 
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-12">
@@ -22,6 +30,7 @@ export default async function ReviewsPage() {
       ) : (
         <div className="mt-10">
           <Testimonials reviews={reviews} />
+          <Pagination currentPage={currentPage} totalPages={totalPages} hrefForPage={hrefForPage} />
         </div>
       )}
 
