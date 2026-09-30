@@ -24,6 +24,7 @@ export default function Testimonials({ reviews }: { reviews: Review[] }) {
           style={{ animationDelay: `${Math.min(index, 8) * 80}ms` }}
         >
           <div className="flex justify-center gap-1 text-sky-500">
+            <span className="sr-only">{`امتیاز: ${review.rating} از ۵`}</span>
             {Array.from({ length: review.rating }, (_, starIndex) => (
               <Star key={starIndex} />
             ))}

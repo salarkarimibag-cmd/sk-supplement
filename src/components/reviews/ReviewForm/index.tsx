@@ -45,7 +45,11 @@ export default function ReviewForm() {
 
   if (status === "success") {
     return (
-      <p className="mx-auto mt-6 flex max-w-xl items-center justify-center gap-2 text-center text-sm font-bold text-emerald-600 dark:text-emerald-500">
+      <p
+        role="status"
+        aria-live="polite"
+        className="mx-auto mt-6 flex max-w-xl items-center justify-center gap-2 text-center text-sm font-bold text-emerald-600 dark:text-emerald-500"
+      >
         {feedback}
         <ThumbsUp className="h-5 w-5 shrink-0" />
       </p>
@@ -54,7 +58,11 @@ export default function ReviewForm() {
 
   return (
     <form onSubmit={handleSubmit} className="mx-auto mt-6 flex max-w-xl flex-col gap-4">
+      <label htmlFor="review-name" className="sr-only">
+        نام شما
+      </label>
       <input
+        id="review-name"
         type="text"
         required
         placeholder="نام شما"
@@ -63,13 +71,19 @@ export default function ReviewForm() {
         className={inputClass}
       />
 
-      <div className="flex items-center justify-center gap-1 text-sky-500">
+      <div
+        role="radiogroup"
+        aria-label="امتیاز شما"
+        className="flex items-center justify-center gap-1 text-sky-500"
+      >
         {Array.from({ length: 5 }, (_, index) => {
           const value = index + 1;
           return (
             <button
               key={value}
               type="button"
+              role="radio"
+              aria-checked={value === rating}
               aria-label={`امتیاز ${value} از ۵`}
               onClick={() => setRating(value)}
               className="cursor-pointer"
@@ -83,7 +97,11 @@ export default function ReviewForm() {
         })}
       </div>
 
+      <label htmlFor="review-comment" className="sr-only">
+        نظر شما درباره ما
+      </label>
       <textarea
+        id="review-comment"
         required
         placeholder="نظر شما درباره ما"
         rows={4}
@@ -93,7 +111,9 @@ export default function ReviewForm() {
       />
 
       {status === "error" && feedback && (
-        <p className="text-center text-sm text-red-600">{feedback}</p>
+        <p role="alert" className="text-center text-sm text-red-600">
+          {feedback}
+        </p>
       )}
 
       <button
