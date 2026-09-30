@@ -2,12 +2,16 @@ import mongoose, { Schema } from "mongoose";
 
 export interface Subscriber {
   email: string;
+  ip: string;
+  deviceId: string;
   createdAt: string;
 }
 
 const SubscriberSchema = new Schema<Subscriber>(
   {
     email: { type: String, required: true, unique: true, lowercase: true, trim: true, index: true },
+    ip: { type: String, required: true },
+    deviceId: { type: String, required: true },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );
