@@ -18,7 +18,11 @@ export default function Testimonials({ reviews }: { reviews: Review[] }) {
   return (
     <div className="grid grid-cols-1 gap-10 text-center sm:grid-cols-3">
       {reviews.map((review, index) => (
-        <div key={index}>
+        <div
+          key={index}
+          className="animate-[fade-in-up_0.5s_ease-out_backwards]"
+          style={{ animationDelay: `${Math.min(index, 8) * 80}ms` }}
+        >
           <div className="flex justify-center gap-1 text-sky-500">
             {Array.from({ length: review.rating }, (_, starIndex) => (
               <Star key={starIndex} />

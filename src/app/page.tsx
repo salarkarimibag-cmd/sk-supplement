@@ -1,3 +1,4 @@
+import Link from "next/link";
 import ProductCard from "@/components/product/ProductCard";
 import Newsletter from "@/components/home/Newsletter";
 import HeroBanner from "@/components/home/HeroBanner";
@@ -7,10 +8,14 @@ import Testimonials from "@/components/home/Testimonials";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import LatestArticles from "@/components/home/LatestArticles";
 import { getAllProducts } from "@/lib/products";
-import { getApprovedReviews } from "@/lib/reviews";
+import { getApprovedReviews, getApprovedReviewsCount } from "@/lib/reviews";
 
 export default async function Home() {
-  const [allProducts, reviews] = await Promise.all([getAllProducts(), getApprovedReviews()]);
+  const [allProducts, reviews, reviewsCount] = await Promise.all([
+    getAllProducts(),
+    getApprovedReviews(),
+    getApprovedReviewsCount(),
+  ]);
   const featuredProducts = allProducts.slice(0, 4);
   const bestSellers = [...allProducts]
     .sort((a, b) => b.reviewCount - a.reviewCount)
@@ -76,6 +81,18 @@ export default async function Home() {
             نظرات مشتریان
           </h2>
           <Testimonials reviews={reviews} />
+
+          {reviewsCount > reviews.length && (
+            <div className="mt-8 text-center">
+              <Link
+                href="/reviews"
+                className="inline-block rounded border border-sky-600 px-6 py-2.5 text-sm font-semibold text-sky-600 transition hover:bg-sky-600 hover:text-white"
+              >
+                مشاهده همه نظرات
+              </Link>
+            </div>
+          )}
+
           <ReviewForm />
         </section>
 
