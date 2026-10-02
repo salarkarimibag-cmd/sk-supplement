@@ -41,6 +41,18 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         >
           نظرات
         </Link>
+        <Link
+          href="/admin/messages"
+          className="border-b-2 border-transparent px-1 pb-3 text-sm font-semibold text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:text-zinc-400"
+        >
+          پیام‌های تماس
+        </Link>
+        <Link
+          href="/admin/subscribers"
+          className="border-b-2 border-transparent px-1 pb-3 text-sm font-semibold text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:text-zinc-400"
+        >
+          مشترکین خبرنامه
+        </Link>
       </nav>
 
       <div className="mt-8">{children}</div>
