@@ -1,15 +1,24 @@
 import type { Metadata } from "next";
-import { getAllProducts } from "@/lib/products";
+import { getProductsPage } from "@/lib/products";
 import { getAllCategories } from "@/lib/categoryContent";
 import ProductManager from "@/components/admin/ProductManager";
+import Pagination from "@/components/ui/Pagination";
 
 export const metadata: Metadata = {
   title: "مدیریت محصولات",
   robots: { index: false, follow: false },
 };
 
-export default async function AdminProductsPage() {
-  const [products, categories] = await Promise.all([getAllProducts(), getAllCategories()]);
+const PAGE_SIZE = 10;
+
+export default async function AdminProductsPage(props: PageProps<"/admin/products">) {
+  const { page: pageParam } = await props.searchParams;
+  const requestedPage = Number(Array.isArray(pageParam) ? pageParam[0] : pageParam) || 1;
+
+  const [{ products, currentPage, totalPages }, categories] = await Promise.all([
+    getProductsPage(requestedPage, PAGE_SIZE),
+    getAllCategories(),
+  ]);
 
   const initialProducts = products.map((product) => ({
     id: product.id,
@@ -31,10 +40,15 @@ export default async function AdminProductsPage() {
     title: category.title,
   }));
 
+  function hrefForPage(page: number) {
+    return page === 1 ? "/admin/products" : `/admin/products?page=${page}`;
+  }
+
   return (
     <div>
       <h2 className="text-lg font-bold">مدیریت محصولات</h2>
       <ProductManager initialProducts={initialProducts} categoryOptions={categoryOptions} />
+      <Pagination currentPage={currentPage} totalPages={totalPages} hrefForPage={hrefForPage} />
     </div>
   );
 }

@@ -12,6 +12,25 @@ export async function getAllProducts(): Promise<CatalogProduct[]> {
   return products.map(withInStock);
 }
 
+export async function getProductsPage(
+  page: number,
+  pageSize: number
+): Promise<{ products: CatalogProduct[]; currentPage: number; totalPages: number }> {
+  await connectToDatabase();
+
+  const totalCount = await ProductModel.countDocuments();
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+  const currentPage = Math.min(Math.max(page, 1), totalPages);
+
+  const products = await ProductModel.find()
+    .sort({ name: 1 })
+    .skip((currentPage - 1) * pageSize)
+    .limit(pageSize)
+    .lean<Product[]>();
+
+  return { products: products.map(withInStock), currentPage, totalPages };
+}
+
 export async function getProductsByCategory(categorySlug: string): Promise<CatalogProduct[]> {
   await connectToDatabase();
   const products = await ProductModel.find({ categorySlug }).lean<Product[]>();
