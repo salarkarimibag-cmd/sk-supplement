@@ -74,6 +74,8 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run build` | Production build |
 | `npm run start` | Run the production build |
 | `npm run lint` | Lint with ESLint |
+| `npm test` | Run the Vitest unit test suite once |
+| `npm run test:watch` | Run Vitest in watch mode |
 | `npm run seed` | Seed products |
 | `npm run seed:more-products` | Seed extra products (creatine/health-wellness/vitamins) |
 | `npm run seed:categories` | Seed category content |
@@ -82,7 +84,9 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run seed:reviews` | Seed sample approved customer reviews |
 | `npm run set-admin -- <email>` | Promote a registered user to admin |
 
-There is no automated test suite in this repository yet.
+## Testing
+
+Unit tests (Vitest) cover pure logic in `src/lib/*.ts` — things like discount calculation, product sorting/filtering, and IP parsing — colocated as `*.test.ts` next to the code they test. No database, server, or browser is involved. There's no end-to-end or component test coverage yet.
 
 ## Notes
 

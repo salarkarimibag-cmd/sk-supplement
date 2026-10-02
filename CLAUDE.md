@@ -10,8 +10,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run build` — production build
 - `npm run start` — run the production build
 - `npm run lint` — lint with ESLint (flat config in `eslint.config.mjs`, extends `eslint-config-next`)
+- `npm test` — run the Vitest unit test suite once
+- `npm run test:watch` — run Vitest in watch mode
 
-There is no test setup in this repository yet.
+Tests are unit tests for pure logic in `src/lib/*.ts` (colocated as `*.test.ts`) — no database or browser involved.
 
 ## Architecture
 

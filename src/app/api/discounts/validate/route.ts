@@ -1,5 +1,6 @@
 import { connectToDatabase } from "@/lib/db";
 import { DiscountCodeModel } from "@/models/DiscountCode";
+import { checkDiscount } from "@/lib/discounts";
 
 interface ValidateBody {
   code?: string;
@@ -17,17 +18,7 @@ export async function POST(request: Request) {
 
   const discount = await DiscountCodeModel.findOne({ code: body.code.toUpperCase().trim() });
 
-  if (!discount || !discount.active) {
-    return Response.json({ valid: false, message: "کد تخفیف نامعتبر است." });
-  }
-  if (discount.expiresAt && discount.expiresAt.getTime() < Date.now()) {
-    return Response.json({ valid: false, message: "کد تخفیف منقضی شده است." });
-  }
+  const result = checkDiscount(discount, body.subtotal);
 
-  const discountAmount =
-    discount.type === "percent"
-      ? Math.round((body.subtotal * discount.value) / 100)
-      : Math.min(discount.value, body.subtotal);
-
-  return Response.json({ valid: true, code: discount.code, discountAmount });
+  return Response.json(result);
 }
