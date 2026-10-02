@@ -2,6 +2,7 @@ import { connectToDatabase } from "@/lib/db";
 import { OrderModel } from "@/models/Order";
 import { requestZarinPalPayment } from "@/lib/zarinpal";
 import { getSessionUser } from "@/lib/auth";
+import { SITE_URL } from "@/lib/site";
 
 interface PaymentRequestBody {
   amount?: number;
@@ -38,8 +39,10 @@ export async function POST(request: Request) {
   await connectToDatabase();
   const sessionUser = await getSessionUser();
 
-  const origin = new URL(request.url).origin;
-  const callbackUrl = `${origin}/checkout/callback?amount=${body.amount}`;
+  // Built from SITE_URL rather than request.url: behind a reverse proxy,
+  // request.url can carry the internal address (e.g. http://localhost:3000)
+  // instead of the public domain ZarinPal must redirect the buyer back to.
+  const callbackUrl = `${SITE_URL}/checkout/callback?amount=${body.amount}`;
 
   const result = await requestZarinPalPayment({
     amountToman: body.amount,
