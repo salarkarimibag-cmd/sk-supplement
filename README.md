@@ -33,7 +33,7 @@ cp .env.example .env.local
 | `SESSION_SECRET` | Signs login session cookies. Generate one with: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
 | `ZARINPAL_MERCHANT_ID` | Your ZarinPal merchant id. Leave empty to see a clear "not configured" error instead of a silent failure. |
 | `ZARINPAL_SANDBOX` | `true` (default) hits ZarinPal's sandbox — safe for testing, no real money moves. Set to `false` once you have a real merchant id to go live. |
-| `NEXT_PUBLIC_SITE_URL` | Used for SEO metadata (sitemap, robots.txt, canonical/Open Graph URLs). Use `http://localhost:3000` in development and `https://sksupplement.ir` in production. |
+| `NEXT_PUBLIC_SITE_URL` | Used for SEO metadata (sitemap, robots.txt, canonical/Open Graph URLs). Use `http://localhost:3000` in development and `https://sksupplement.shop` in production. |
 
 ### 3. Seed the database
 
@@ -92,5 +92,5 @@ Unit tests (Vitest) cover pure logic in `src/lib/*.ts` — things like discount 
 
 - Contact form submissions and newsletter signups can be viewed and deleted at `/admin/messages` and `/admin/subscribers`, but nothing sends an email/SMS notification when a new one comes in yet.
 - Product images are plain paths into `/public/images/` (e.g. `/images/whey.webp`) — there's no file upload; the admin product form takes a text field for the image path.
-- Before going live: set `ZARINPAL_SANDBOX=false` with a real merchant id, `NEXT_PUBLIC_SITE_URL=https://sksupplement.ir` is already set in the committed `.env.production`; don't copy your development `.env.local` to the server as-is, since `.env.local` takes precedence over `.env.production` and would override it with `localhost`.
+- Before going live: set `ZARINPAL_SANDBOX=false` with a real merchant id, `NEXT_PUBLIC_SITE_URL=https://sksupplement.shop` is already set in the committed `.env.production`; don't copy your development `.env.local` to the server as-is, since `.env.local` takes precedence over `.env.production` and would override it with `localhost`.
 - Customer reviews are moderated at `/admin/reviews`. Unapproved reviews are automatically deleted 30 days after submission (a MongoDB TTL index on `Review.createdAt`) so a stale/unmoderated queue doesn't pile up — approved reviews are kept indefinitely.
