@@ -11,7 +11,7 @@ const posts: BlogPost[] = [
     slug: "two-week-ab-touch-up",
     title: "برنامه‌ی دو هفته‌ای تقویت شکم",
     excerpt: "یک برنامه‌ی رایگان دو هفته‌ای بدون نیاز به تجهیزات، با پنج حرکت و راهنمای روز به روز.",
-    coverImage: "/images/placeholder.svg",
+    coverImage: "/images/blog-two-week-ab-touch-up.jpg",
     author: "SK Supplement",
     publishedAt: new Date("2025-07-24"),
     content: `عضلات شکم مثل هر عضله‌ی دیگری به تمرین منظم و اصولی نیاز دارن، نه فقط تمرین‌های شدید و پراکنده. این برنامه‌ی دو هفته‌ای طوری طراحی شده که با پنج حرکت ساده و بدون نیاز به هیچ وسیله‌ای، هم شکم رو تقویت کنه و هم عادت تمرین روزانه رو در شما جا بندازه.
@@ -28,7 +28,7 @@ const posts: BlogPost[] = [
     slug: "apple-cider-vinegar",
     title: "سرکه سیب و فواید آن برای گوارش",
     excerpt: "سرکه سیب چه فایده‌ای برای گوارش و کاهش وزن دارد؟ و چرا کپسول بهتر از مایع است.",
-    coverImage: "/images/placeholder.svg",
+    coverImage: "/images/blog-apple-cider-vinegar.jpg",
     author: "SK Supplement",
     publishedAt: new Date("2025-07-09"),
     content: `سرکه سیب یکی از قدیمی‌ترین مکمل‌های طبیعی است که سال‌هاست برای کمک به گوارش و کنترل وزن استفاده می‌شود. ماده‌ی اصلی موثر در آن اسید استیک است که می‌تواند روی سرعت تخلیه‌ی معده و احساس سیری تاثیر بگذارد.
@@ -45,7 +45,7 @@ const posts: BlogPost[] = [
     slug: "whey-protein-beginners-guide",
     title: "راهنمای کامل پروتئین وی برای تازه‌کارها",
     excerpt: "پروتئین وی چیست، چه تفاوتی با سایر پروتئین‌ها داره، و چطور باید مصرفش کنید؟",
-    coverImage: "/images/placeholder.svg",
+    coverImage: "/images/blog-whey-protein-beginners-guide.jpg",
     author: "SK Supplement",
     publishedAt: new Date("2025-08-05"),
     content: `پروتئین وی (Whey Protein) یکی از محبوب‌ترین مکمل‌های ورزشی دنیاست و از جداسازی پروتئین موجود در آب‌پنیر شیر به دست می‌آید. این پروتئین به دلیل جذب سریع و داشتن تمام اسیدهای آمینه‌ی ضروری، یکی از بهترین گزینه‌ها برای ریکاوری عضلات بعد از تمرین محسوب می‌شود.
@@ -60,7 +60,7 @@ const posts: BlogPost[] = [
     slug: "creatine-monohydrate-basics",
     title: "کراتین مونوهیدرات: چرا و چطور مصرف کنیم؟",
     excerpt: "یکی از پرمطالعه‌ترین و موثرترین مکمل‌های ورزشی دنیا، با یه راهنمای ساده برای شروع.",
-    coverImage: "/images/placeholder.svg",
+    coverImage: "/images/blog-creatine-monohydrate-basics.jpg",
     author: "SK Supplement",
     publishedAt: new Date("2025-08-20"),
     content: `کراتین مونوهیدرات یکی از پرمطالعه‌ترین مکمل‌های ورزشی در دنیاست و ده‌ها سال تحقیق علمی، ایمنی و اثربخشی آن را برای افزایش قدرت و حجم عضلانی تایید کرده‌اند. کراتین به‌صورت طبیعی در بدن و در گوشت قرمز و ماهی هم وجود دارد، اما مقدار آن برای عملکرد ورزشی بالا معمولاً کافی نیست.
@@ -75,7 +75,7 @@ const posts: BlogPost[] = [
     slug: "pre-workout-timing",
     title: "بهترین زمان مصرف پیش‌تمرین کی هست؟",
     excerpt: "چرا زمان‌بندی مصرف پیش‌تمرین به اندازه‌ی خود مکمل مهمه، و چطور با حساسیت به کافئین کنار بیایید.",
-    coverImage: "/images/placeholder.svg",
+    coverImage: "/images/blog-pre-workout-timing.jpg",
     author: "SK Supplement",
     publishedAt: new Date("2025-09-02"),
     content: `مکمل‌های پیش‌تمرین معمولاً ترکیبی از کافئین، بتا-آلانین و سیترولین هستند که هدفشان افزایش انرژی، تمرکز و استقامت در طول تمرین است. اما برای گرفتن بهترین نتیجه، زمان‌بندی مصرف به همان اندازه‌ی انتخاب محصول مهم است.
