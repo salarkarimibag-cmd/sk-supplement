@@ -21,7 +21,8 @@ export default async function BlogPostPage(props: PageProps<"/blogs/[slug]">) {
   if (!post) notFound();
 
   const paragraphs = post.content.split("\n\n");
-  const user = post.pdfUrl ? await getSessionUser() : null;
+  const hasPdf = Boolean(post.pdfUrlMen || post.pdfUrlWomen);
+  const user = hasPdf ? await getSessionUser() : null;
 
   return (
     <div className="mx-auto w-full max-w-3xl px-6 py-12">
@@ -41,19 +42,33 @@ export default async function BlogPostPage(props: PageProps<"/blogs/[slug]">) {
         ))}
       </div>
 
-      {post.pdfUrl && (
+      {hasPdf && (
         <div className="mt-8 flex flex-col items-start gap-3 border border-zinc-200 p-5 dark:border-zinc-800">
           {user ? (
             <>
               <p className="text-sm font-semibold">نسخه‌ی PDF این برنامه رو دانلود کن</p>
-              <a
-                href={post.pdfUrl}
-                download
-                className="inline-flex items-center gap-2 bg-sky-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-sky-500"
-              >
-                <FileDown className="h-4 w-4" />
-                دانلود PDF
-              </a>
+              <div className="flex flex-wrap gap-3">
+                {post.pdfUrlMen && (
+                  <a
+                    href={post.pdfUrlMen}
+                    download
+                    className="inline-flex items-center gap-2 bg-sky-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-sky-500"
+                  >
+                    <FileDown className="h-4 w-4" />
+                    دانلود نسخه‌ی آقایان
+                  </a>
+                )}
+                {post.pdfUrlWomen && (
+                  <a
+                    href={post.pdfUrlWomen}
+                    download
+                    className="inline-flex items-center gap-2 bg-pink-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-pink-500"
+                  >
+                    <FileDown className="h-4 w-4" />
+                    دانلود نسخه‌ی بانوان
+                  </a>
+                )}
+              </div>
             </>
           ) : (
             <>

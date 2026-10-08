@@ -9,8 +9,9 @@ export interface BlogPost {
   coverImage: string;
   author: string;
   publishedAt: Date;
-  /** Path under /public to a downloadable PDF attachment; only shown to logged-in users. */
-  pdfUrl?: string;
+  /** Paths under /public to downloadable PDF attachments; only shown to logged-in users. */
+  pdfUrlMen?: string;
+  pdfUrlWomen?: string;
 }
 
 const BlogPostSchema = new Schema<BlogPost>({
@@ -21,7 +22,8 @@ const BlogPostSchema = new Schema<BlogPost>({
   coverImage: { type: String, required: true },
   author: { type: String, required: true },
   publishedAt: { type: Date, required: true },
-  pdfUrl: { type: String, required: false },
+  pdfUrlMen: { type: String, required: false },
+  pdfUrlWomen: { type: String, required: false },
 });
 
 // Avoids Mongoose's "Cannot overwrite model" error when this module is
