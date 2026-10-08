@@ -90,7 +90,7 @@ const posts: BlogPost[] = [
     slug: "beginner-4-day-workout-plan",
     title: "برنامه‌ی تمرینی ۴ روزه برای تازه‌کارها",
     excerpt: "یک برنامه‌ی ساده و اصولی برای کسانی که تازه باشگاه رفتن رو شروع کردن، همراه با چندتا توصیه‌ی مهم.",
-    coverImage: "/images/placeholder.svg",
+    coverImage: "/images/blog-beginner-4-day-workout-plan.jpg",
     author: "SK Supplement",
     publishedAt: new Date("2025-09-18"),
     pdfUrl: "/files/beginner-4-day-workout-plan.pdf",
