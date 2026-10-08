@@ -10,6 +10,7 @@ export interface BlogPost {
   author: string;
   publishedAt: Date;
   /** Paths under /public to downloadable PDF attachments; only shown to logged-in users. */
+  pdfUrl?: string;
   pdfUrlMen?: string;
   pdfUrlWomen?: string;
 }
@@ -22,6 +23,7 @@ const BlogPostSchema = new Schema<BlogPost>({
   coverImage: { type: String, required: true },
   author: { type: String, required: true },
   publishedAt: { type: Date, required: true },
+  pdfUrl: { type: String, required: false },
   pdfUrlMen: { type: String, required: false },
   pdfUrlWomen: { type: String, required: false },
 });

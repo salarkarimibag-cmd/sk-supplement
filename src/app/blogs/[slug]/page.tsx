@@ -21,7 +21,7 @@ export default async function BlogPostPage(props: PageProps<"/blogs/[slug]">) {
   if (!post) notFound();
 
   const paragraphs = post.content.split("\n\n");
-  const hasPdf = Boolean(post.pdfUrlMen || post.pdfUrlWomen);
+  const hasPdf = Boolean(post.pdfUrl || post.pdfUrlMen || post.pdfUrlWomen);
   const user = hasPdf ? await getSessionUser() : null;
 
   return (
@@ -48,6 +48,16 @@ export default async function BlogPostPage(props: PageProps<"/blogs/[slug]">) {
             <>
               <p className="text-sm font-semibold">نسخه‌ی PDF این برنامه رو دانلود کن</p>
               <div className="flex flex-wrap gap-3">
+                {post.pdfUrl && (
+                  <a
+                    href={post.pdfUrl}
+                    download
+                    className="inline-flex items-center gap-2 bg-sky-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-sky-500"
+                  >
+                    <FileDown className="h-4 w-4" />
+                    دانلود PDF
+                  </a>
+                )}
                 {post.pdfUrlMen && (
                   <a
                     href={post.pdfUrlMen}
