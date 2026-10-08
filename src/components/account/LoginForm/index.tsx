@@ -15,7 +15,7 @@ const loginSchema = z.object({
 
 type LoginValues = z.infer<typeof loginSchema>;
 
-export default function LoginForm() {
+export default function LoginForm({ redirectTo }: { redirectTo: string }) {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const {
@@ -40,7 +40,7 @@ export default function LoginForm() {
         return;
       }
 
-      router.push("/account/profile");
+      router.push(redirectTo);
       router.refresh();
     } catch {
       setServerError("خطایی رخ داد. دوباره تلاش کنید.");
@@ -80,7 +80,9 @@ export default function LoginForm() {
 
       <p className="mt-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
         حساب کاربری ندارید؟{" "}
-        <Link href="/account/register" className="text-sky-600 hover:underline">
+        <Link
+          href={`/account/register?next=${encodeURIComponent(redirectTo)}`}
+          className="text-sky-600 hover:underline">
           ثبت‌نام کنید
         </Link>
       </p>

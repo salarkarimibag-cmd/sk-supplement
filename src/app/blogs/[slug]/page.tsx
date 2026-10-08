@@ -87,7 +87,7 @@ export default async function BlogPostPage(props: PageProps<"/blogs/[slug]">) {
                 دانلود نسخه‌ی PDF این برنامه فقط برای اعضای سایته
               </p>
               <Link
-                href="/account/login"
+                href={`/account/login?next=${encodeURIComponent(`/blogs/${slug}`)}`}
                 className="inline-flex items-center gap-2 border border-sky-600 px-5 py-2.5 text-sm font-bold text-sky-600 transition hover:bg-sky-600 hover:text-white"
               >
                 ورود یا ثبت‌نام برای دانلود

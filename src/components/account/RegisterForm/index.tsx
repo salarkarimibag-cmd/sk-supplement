@@ -23,7 +23,7 @@ const registerSchema = z
 
 type RegisterValues = z.infer<typeof registerSchema>;
 
-export default function RegisterForm() {
+export default function RegisterForm({ redirectTo }: { redirectTo: string }) {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const {
@@ -53,7 +53,7 @@ export default function RegisterForm() {
         return;
       }
 
-      router.push("/account/profile");
+      router.push(redirectTo);
       router.refresh();
     } catch {
       setServerError("خطایی رخ داد. دوباره تلاش کنید.");
@@ -122,7 +122,9 @@ export default function RegisterForm() {
 
       <p className="mt-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
         حساب کاربری دارید؟{" "}
-        <Link href="/account/login" className="text-sky-600 hover:underline">
+        <Link
+          href={`/account/login?next=${encodeURIComponent(redirectTo)}`}
+          className="text-sky-600 hover:underline">
           وارد شوید
         </Link>
       </p>
