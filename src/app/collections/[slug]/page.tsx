@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ComponentType } from "react";
 import Image from "next/image";
 import ProductCard from "@/components/product/ProductCard";
 import FilterDropdown from "@/components/collections/FilterDropdown";
@@ -7,9 +8,23 @@ import ProteinInfoSection from "@/components/collections/ProteinInfoSection";
 import AminosInfoSection from "@/components/collections/AminosInfoSection";
 import FatBurnerInfoSection from "@/components/collections/FatBurnerInfoSection";
 import PreWorkoutInfoSection from "@/components/collections/PreWorkoutInfoSection";
+import CreatineInfoSection from "@/components/collections/CreatineInfoSection";
+import HealthWellnessInfoSection from "@/components/collections/HealthWellnessInfoSection";
+import VitaminsInfoSection from "@/components/collections/VitaminsInfoSection";
 import { getCategoryContent } from "@/lib/categoryContent";
 import { getProductsByCategory } from "@/lib/products";
 import { countByAttribute, filterProducts, sortProducts, toParamArray } from "@/lib/catalogFilters";
+
+// Long-form explanatory content shown below the product grid, keyed by category slug.
+const infoSectionBySlug: Record<string, ComponentType> = {
+  protein: ProteinInfoSection,
+  aminos: AminosInfoSection,
+  "fat-burner": FatBurnerInfoSection,
+  "pre-workout": PreWorkoutInfoSection,
+  creatine: CreatineInfoSection,
+  "health-wellness": HealthWellnessInfoSection,
+  vitamins: VitaminsInfoSection,
+};
 
 export async function generateMetadata(
   props: PageProps<"/collections/[slug]">
@@ -35,6 +50,7 @@ export default async function CollectionPage(props: PageProps<"/collections/[slu
   );
   const flavorOptions = countByAttribute(categoryProducts, "flavor");
   const sizeOptions = countByAttribute(categoryProducts, "size");
+  const InfoSection = infoSectionBySlug[slug];
 
   if (!info) {
     return (
@@ -96,11 +112,7 @@ export default async function CollectionPage(props: PageProps<"/collections/[slu
         )}
       </div>
 
-      {/* TODO: generalize this long-form content per category once every slug has its own copy. */}
-      {slug === "protein" && <ProteinInfoSection />}
-      {slug === "aminos" && <AminosInfoSection />}
-      {slug === "fat-burner" && <FatBurnerInfoSection />}
-      {slug === "pre-workout" && <PreWorkoutInfoSection />}
+      {InfoSection && <InfoSection />}
     </div>
   );
 }
