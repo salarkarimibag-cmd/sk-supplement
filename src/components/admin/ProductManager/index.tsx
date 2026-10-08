@@ -290,7 +290,7 @@ export default function ProductManager({
           placeholder="توضیحات"
           value={form.description}
           onChange={(event) => setForm({ ...form, description: event.target.value })}
-          rows={2}
+          rows={4}
           className={`col-span-2 sm:col-span-4 ${inputClass}`}
         />
 

@@ -81,7 +81,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
             </div>
           )}
 
-          <p className="mt-6 leading-relaxed text-zinc-600 dark:text-zinc-400">
+          <p className="mt-6 leading-relaxed whitespace-pre-line text-zinc-600 dark:text-zinc-400">
             {product.description ||
               `${product.name} یکی از محصولات ${category ? `دسته‌ی ${category.title}` : "SK Supplement"} است که کیفیت و اثربخشی آن مورد تایید مشتریان است.`}
           </p>

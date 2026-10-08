@@ -12,6 +12,7 @@
     "seed": "tsx scripts/seed-products.ts",
     "seed:more-products": "tsx scripts/seed-more-products.ts",
     "seed:categories": "tsx scripts/seed-categories.ts",
+    "seed:descriptions": "tsx scripts/seed-product-descriptions.ts",
     "seed:blogs": "tsx scripts/seed-blogs.ts",
     "seed:discounts": "tsx scripts/seed-discounts.ts",
     "seed:reviews": "tsx scripts/seed-reviews.ts",
