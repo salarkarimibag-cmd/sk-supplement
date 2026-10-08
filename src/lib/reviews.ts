@@ -7,7 +7,7 @@ export interface PublicReview {
   comment: string;
 }
 
-const HOMEPAGE_REVIEW_COUNT = 6;
+const HOMEPAGE_REVIEW_COUNT = 3;
 
 interface HomepageReviewsFacetResult {
   reviews: PublicReview[];
