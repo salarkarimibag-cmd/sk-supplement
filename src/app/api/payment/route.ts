@@ -79,7 +79,8 @@ export async function POST(request: Request) {
   // Built from SITE_URL rather than request.url: behind a reverse proxy,
   // request.url can carry the internal address (e.g. http://localhost:3000)
   // instead of the public domain ZarinPal must redirect the buyer back to.
-  const callbackUrl = `${SITE_URL}/checkout/callback?amount=${totalPrice}`;
+  // No amount in the URL: the callback reads it from the saved order.
+  const callbackUrl = `${SITE_URL}/checkout/callback`;
 
   const result = await requestZarinPalPayment({
     amountToman: totalPrice,
