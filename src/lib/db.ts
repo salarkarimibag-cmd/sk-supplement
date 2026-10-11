@@ -23,7 +23,10 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
     if (!MONGODB_URI) {
       throw new Error("MONGODB_URI is not set. Add it to .env.local (see .env.example).");
     }
-    cached.promise = mongoose.connect(MONGODB_URI, { dbName: "sk-supplement" });
+    // Production keeps the default; local dev and Vercel Preview set
+    // MONGODB_DB=sk-supplement-dev so testing never touches real data.
+    const dbName = process.env.MONGODB_DB ?? "sk-supplement";
+    cached.promise = mongoose.connect(MONGODB_URI, { dbName });
   }
 
   cached.conn = await cached.promise;
