@@ -43,7 +43,7 @@ export default async function AdminDiscountsPage(props: PageProps<"/admin/discou
   return (
     <div>
       <h2 className="text-lg font-bold">مدیریت کدهای تخفیف</h2>
-      <DiscountManager initialCodes={initialCodes} />
+      <DiscountManager key={currentPage} initialCodes={initialCodes} />
       <Pagination currentPage={currentPage} totalPages={totalPages} hrefForPage={hrefForPage} />
     </div>
   );

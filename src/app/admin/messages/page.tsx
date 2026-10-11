@@ -43,7 +43,7 @@ export default async function AdminMessagesPage(props: PageProps<"/admin/message
   return (
     <div>
       <h2 className="text-lg font-bold">پیام‌های تماس</h2>
-      <MessageManager initialMessages={initialMessages} />
+      <MessageManager key={currentPage} initialMessages={initialMessages} />
       <Pagination currentPage={currentPage} totalPages={totalPages} hrefForPage={hrefForPage} />
     </div>
   );

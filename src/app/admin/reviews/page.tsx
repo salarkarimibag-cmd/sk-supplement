@@ -44,7 +44,7 @@ export default async function AdminReviewsPage(props: PageProps<"/admin/reviews"
   return (
     <div>
       <h2 className="text-lg font-bold">مدیریت نظرات مشتریان</h2>
-      <ReviewManager initialReviews={initialReviews} />
+      <ReviewManager key={currentPage} initialReviews={initialReviews} />
       <Pagination currentPage={currentPage} totalPages={totalPages} hrefForPage={hrefForPage} />
     </div>
   );
