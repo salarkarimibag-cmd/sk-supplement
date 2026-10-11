@@ -47,7 +47,11 @@ export default async function AdminProductsPage(props: PageProps<"/admin/product
   return (
     <div>
       <h2 className="text-lg font-bold">مدیریت محصولات</h2>
-      <ProductManager initialProducts={initialProducts} categoryOptions={categoryOptions} />
+      <ProductManager
+        key={currentPage}
+        initialProducts={initialProducts}
+        categoryOptions={categoryOptions}
+      />
       <Pagination currentPage={currentPage} totalPages={totalPages} hrefForPage={hrefForPage} />
     </div>
   );

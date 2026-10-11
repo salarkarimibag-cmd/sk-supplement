@@ -41,7 +41,7 @@ export default async function AdminSubscribersPage(props: PageProps<"/admin/subs
   return (
     <div>
       <h2 className="text-lg font-bold">مشترکین خبرنامه</h2>
-      <SubscriberManager initialSubscribers={initialSubscribers} />
+      <SubscriberManager key={currentPage} initialSubscribers={initialSubscribers} />
       <Pagination currentPage={currentPage} totalPages={totalPages} hrefForPage={hrefForPage} />
     </div>
   );
