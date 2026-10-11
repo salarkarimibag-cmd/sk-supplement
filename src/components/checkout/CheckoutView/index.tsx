@@ -89,10 +89,10 @@ export default function CheckoutView() {
       const response = await fetch("/api/payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        // Prices and totals are left out on purpose: the server looks them
+        // up itself, so only product ids, quantities and the code are sent.
         body: JSON.stringify({
-          amount: finalTotal,
           discountCode: appliedDiscount?.code,
-          discountAmount: appliedDiscount?.amount,
           contact: { email: values.email, mobile: values.mobile },
           shippingAddress: {
             firstName: values.firstName,
@@ -105,7 +105,6 @@ export default function CheckoutView() {
           items: items.map((item) => ({
             productId: item.id,
             quantity: item.quantity,
-            unitPrice: item.price,
           })),
         }),
       });
