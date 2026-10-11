@@ -6,7 +6,7 @@ import { connectToDatabase } from "../src/lib/db";
 import { UserModel } from "../src/models/User";
 
 async function main() {
-  const email = process.argv[2];
+  const email = process.argv[2]?.trim().toLowerCase();
   if (!email) {
     console.error("Usage: npx tsx scripts/set-admin.ts <email>");
     process.exit(1);

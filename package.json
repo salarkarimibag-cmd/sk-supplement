@@ -16,7 +16,8 @@
     "seed:blogs": "tsx scripts/seed-blogs.ts",
     "seed:discounts": "tsx scripts/seed-discounts.ts",
     "seed:reviews": "tsx scripts/seed-reviews.ts",
-    "set-admin": "tsx scripts/set-admin.ts"
+    "set-admin": "tsx scripts/set-admin.ts",
+    "normalize-emails": "tsx scripts/normalize-emails.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
