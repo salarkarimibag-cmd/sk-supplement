@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import PaymentResult from "@/components/checkout/PaymentResult";
 import { connectToDatabase } from "@/lib/db";
-import { OrderModel } from "@/models/Order";
+import { OrderModel, type Order } from "@/models/Order";
 import { verifyZarinPalPayment } from "@/lib/zarinpal";
 
 export const metadata: Metadata = {
@@ -19,30 +19,50 @@ export default async function CheckoutCallbackPage(
   const searchParams = await props.searchParams;
   const authority = first(searchParams.Authority);
   const status = first(searchParams.Status);
-  const amount = Number(first(searchParams.amount));
+
+  if (!authority) {
+    return <PaymentResult success={false} message="اطلاعات پرداخت ناقص بود." />;
+  }
 
   await connectToDatabase();
 
-  // ZarinPal sends Status=OK only when the user completed payment; anything
-  // else (NOK, or a missing/incomplete callback) means it was cancelled or invalid.
-  if (status !== "OK" || !authority || !amount) {
-    if (authority) {
-      await OrderModel.updateOne({ paymentAuthority: authority }, { status: "failed" });
-    }
-    return <PaymentResult success={false} message="پرداخت لغو شد یا اطلاعات آن ناقص بود." />;
+  // Everything about the payment (its amount above all) comes from the order
+  // saved by /api/payment, never from this URL: the buyer can edit any query
+  // parameter before ZarinPal's redirect lands here.
+  const order = await OrderModel.findOne({ paymentAuthority: authority }).lean<Order>();
+  if (!order) {
+    return <PaymentResult success={false} message="سفارشی برای این پرداخت پیدا نشد." />;
   }
 
-  const result = await verifyZarinPalPayment({ amountToman: amount, authority });
+  // Already settled (e.g. the buyer refreshed this page): show the stored
+  // outcome instead of verifying again or letting a crafted Status=NOK undo it.
+  if (order.status !== "pending") {
+    return order.status === "paid" || order.status === "shipped" ? (
+      <PaymentResult success={true} refId={order.paymentRefId ?? undefined} />
+    ) : (
+      <PaymentResult success={false} message="این پرداخت ناموفق بوده یا لغو شده است." />
+    );
+  }
+
+  // Every update below filters on `status: "pending"` too, so an order can
+  // only leave the pending state once, even if two requests race here.
+  const pendingOrder = { paymentAuthority: authority, status: "pending" };
+
+  // ZarinPal sends Status=OK only when the user completed payment; anything
+  // else (NOK, or a missing value) means it was cancelled.
+  if (status !== "OK") {
+    await OrderModel.updateOne(pendingOrder, { status: "failed" });
+    return <PaymentResult success={false} message="پرداخت لغو شد." />;
+  }
+
+  const result = await verifyZarinPalPayment({ amountToman: order.totalPrice, authority });
 
   if (!result.ok) {
-    await OrderModel.updateOne({ paymentAuthority: authority }, { status: "failed" });
+    await OrderModel.updateOne(pendingOrder, { status: "failed" });
     return <PaymentResult success={false} message={result.message} />;
   }
 
-  await OrderModel.updateOne(
-    { paymentAuthority: authority },
-    { status: "paid", paymentRefId: result.refId }
-  );
+  await OrderModel.updateOne(pendingOrder, { status: "paid", paymentRefId: result.refId });
 
   return <PaymentResult success={true} refId={result.refId} />;
 }
