@@ -13,7 +13,10 @@ const registerSchema = z
     fullName: z.string().min(1, "نام و نام خانوادگی الزامی است."),
     email: z.string().min(1, "ایمیل الزامی است.").email("ایمیل نامعتبر است."),
     phone: z.string().min(10, "شماره موبایل نامعتبر است."),
-    password: z.string().min(8, "رمز عبور باید حداقل ۸ کاراکتر باشد."),
+    password: z
+      .string()
+      .min(8, "رمز عبور باید حداقل ۸ کاراکتر باشد.")
+      .max(72, "رمز عبور باید حداکثر ۷۲ کاراکتر باشد."),
     confirmPassword: z.string().min(1, "تکرار رمز عبور الزامی است."),
   })
   .refine((data) => data.password === data.confirmPassword, {
