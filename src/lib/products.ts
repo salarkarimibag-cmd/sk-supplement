@@ -1,6 +1,7 @@
 import { connectToDatabase } from "@/lib/db";
 import { ProductModel, type Product } from "@/models/Product";
 import type { CatalogProduct } from "@/data/catalog";
+import { escapeRegex } from "@/lib/escapeRegex";
 
 function withInStock(product: Product): CatalogProduct {
   return { ...product, inStock: product.stock > 0 };
@@ -43,9 +44,15 @@ export async function getProductById(id: string): Promise<CatalogProduct | null>
   return product ? withInStock(product) : null;
 }
 
+// Long enough for any real product name; anything longer is cut, so a huge
+// query string can't make every search scan do extra work.
+const MAX_SEARCH_LENGTH = 100;
+
 export async function searchProducts(query: string): Promise<CatalogProduct[]> {
   await connectToDatabase();
-  const products = await ProductModel.find({ name: { $regex: query, $options: "i" } }).lean<
+  // The query is escaped so it's matched as literal text, not run as a regex.
+  const pattern = escapeRegex(query.trim().slice(0, MAX_SEARCH_LENGTH));
+  const products = await ProductModel.find({ name: { $regex: pattern, $options: "i" } }).lean<
     Product[]
   >();
   return products.map(withInStock);
