@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import type { Types } from "mongoose";
 import { connectToDatabase } from "@/lib/db";
-import { OrderModel, type Order, type OrderStatus } from "@/models/Order";
+import { OrderModel, type Order, type OrderStatus, type PaymentMethod } from "@/models/Order";
 import { ProductModel, type Product } from "@/models/Product";
-import { ORDER_STATUSES, ORDER_STATUS_LABELS, isOrderStatus } from "@/lib/orderStatus";
+import { ORDER_STATUS_LABELS, isOrderStatus } from "@/lib/orderStatus";
 import OrderManager from "@/components/admin/OrderManager";
 import Pagination from "@/components/ui/Pagination";
 
@@ -14,8 +14,18 @@ export const metadata: Metadata = {
 };
 
 const PAGE_SIZE = 10;
-// Paid orders are the ones waiting on the admin (to ship), so they're shown first.
+// Paid orders are the ones waiting on the admin (to ship), so they're shown by default.
 const DEFAULT_STATUS: OrderStatus = "paid";
+// Tabs in order of how much they need the admin: transfers to verify, then
+// orders to ship, then history.
+const STATUS_TABS: OrderStatus[] = [
+  "awaiting_verification",
+  "paid",
+  "shipped",
+  "pending",
+  "failed",
+  "cancelled",
+];
 
 function first(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
@@ -29,7 +39,10 @@ export default async function AdminOrdersPage(props: PageProps<"/admin/orders">)
 
   await connectToDatabase();
 
-  const totalCount = await OrderModel.countDocuments({ status });
+  const [totalCount, awaitingCount] = await Promise.all([
+    OrderModel.countDocuments({ status }),
+    OrderModel.countDocuments({ status: "awaiting_verification" }),
+  ]);
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
   const currentPage = Math.min(Math.max(requestedPage, 1), totalPages);
 
@@ -64,6 +77,10 @@ export default async function AdminOrdersPage(props: PageProps<"/admin/orders">)
     discountAmount: order.discountAmount ?? 0,
     totalPrice: order.totalPrice,
     paymentRefId: order.paymentRefId ?? null,
+    paymentMethod: (order.paymentMethod ?? "zarinpal") as PaymentMethod,
+    cardTransfer: order.cardTransfer
+      ? { trackingCode: order.cardTransfer.trackingCode, cardLast4: order.cardTransfer.cardLast4 }
+      : null,
   }));
 
   function hrefFor(targetStatus: OrderStatus, page = 1) {
@@ -79,7 +96,7 @@ export default async function AdminOrdersPage(props: PageProps<"/admin/orders">)
       <h2 className="text-lg font-bold">سفارش‌ها</h2>
 
       <nav className="mt-4 flex flex-wrap gap-2 text-sm">
-        {ORDER_STATUSES.map((option) => (
+        {STATUS_TABS.map((option) => (
           <Link
             key={option}
             href={hrefFor(option)}
@@ -91,6 +108,11 @@ export default async function AdminOrdersPage(props: PageProps<"/admin/orders">)
             }`}
           >
             {ORDER_STATUS_LABELS[option]}
+            {option === "awaiting_verification" && awaitingCount > 0 && (
+              <span className="ms-1.5 rounded-full bg-amber-500 px-1.5 text-xs font-bold text-white">
+                {awaitingCount.toLocaleString("fa-IR")}
+              </span>
+            )}
           </Link>
         ))}
       </nav>

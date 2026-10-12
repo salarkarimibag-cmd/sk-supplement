@@ -6,22 +6,16 @@ import { getSessionUser } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/db";
 import { OrderModel, type Order, type OrderStatus } from "@/models/Order";
 import { getProductById } from "@/lib/products";
+import { ORDER_STATUS_LABELS } from "@/lib/orderStatus";
 
 export const metadata: Metadata = {
   title: "سفارش‌های من",
   robots: { index: false, follow: false },
 };
 
-const statusLabel: Record<OrderStatus, string> = {
-  pending: "در انتظار پرداخت",
-  paid: "پرداخت‌شده",
-  failed: "ناموفق",
-  shipped: "ارسال‌شده",
-  cancelled: "لغو‌شده",
-};
-
 const statusClass: Record<OrderStatus, string> = {
   pending: "text-amber-600",
+  awaiting_verification: "text-amber-600",
   paid: "text-emerald-600",
   failed: "text-red-600",
   shipped: "text-sky-600",
@@ -76,7 +70,7 @@ export default async function OrdersPage() {
                 {new Date(order.createdAt).toLocaleDateString("fa-IR")}
               </span>
               <span className={`text-sm font-bold ${statusClass[order.status as OrderStatus]}`}>
-                {statusLabel[order.status as OrderStatus]}
+                {ORDER_STATUS_LABELS[order.status as OrderStatus]}
               </span>
             </div>
 
