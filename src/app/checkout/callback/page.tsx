@@ -3,6 +3,7 @@ import PaymentResult from "@/components/checkout/PaymentResult";
 import { connectToDatabase } from "@/lib/db";
 import { OrderModel, type Order } from "@/models/Order";
 import { verifyZarinPalPayment } from "@/lib/zarinpal";
+import { decrementStock } from "@/lib/products";
 
 export const metadata: Metadata = {
   title: "نتیجه پرداخت",
@@ -62,7 +63,16 @@ export default async function CheckoutCallbackPage(
     return <PaymentResult success={false} message={result.message} />;
   }
 
-  await OrderModel.updateOne(pendingOrder, { status: "paid", paymentRefId: result.refId });
+  const update = await OrderModel.updateOne(pendingOrder, {
+    status: "paid",
+    paymentRefId: result.refId,
+  });
+
+  // Only the request that actually moved the order to "paid" touches stock,
+  // so a refresh or a second concurrent callback can't subtract it twice.
+  if (update.modifiedCount === 1) {
+    await decrementStock(order.items);
+  }
 
   return <PaymentResult success={true} refId={result.refId} />;
 }
