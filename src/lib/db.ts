@@ -29,6 +29,14 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
     cached.promise = mongoose.connect(MONGODB_URI, { dbName });
   }
 
-  cached.conn = await cached.promise;
+  try {
+    cached.conn = await cached.promise;
+  } catch (error) {
+    // Forget the failed attempt so the next request tries again. Otherwise
+    // the rejected promise stays cached and every later request fails with
+    // the same error until the server restarts, even after MongoDB is back.
+    cached.promise = null;
+    throw error;
+  }
   return cached.conn;
 }
