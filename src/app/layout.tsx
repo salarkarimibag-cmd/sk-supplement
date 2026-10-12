@@ -49,9 +49,15 @@ export const metadata: Metadata = {
 };
 
 // Runs before hydration so the correct theme applies on first paint (no flash of the wrong theme).
+// localStorage can throw (blocked site data, some private modes), and an
+// uncaught error here would stop the script before the class is set, so a
+// failed read just falls back to the system preference.
 const themeInitScript = `
   (function () {
-    var stored = localStorage.getItem("theme");
+    var stored = null;
+    try {
+      stored = localStorage.getItem("theme");
+    } catch (error) {}
     var isDark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
     document.documentElement.classList.toggle("dark", isDark);
   })();

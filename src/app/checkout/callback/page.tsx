@@ -59,6 +59,18 @@ export default async function CheckoutCallbackPage(
   const result = await verifyZarinPalPayment({ amountToman: order.totalPrice, authority });
 
   if (!result.ok) {
+    // If ZarinPal couldn't be reached, the buyer may have paid: the order
+    // stays pending so reloading this page can still verify it. Only a real
+    // "not paid" answer from ZarinPal marks it failed.
+    if (result.retryable) {
+      return (
+        <PaymentResult
+          success={false}
+          failureTitle="وضعیت پرداخت هنوز مشخص نیست"
+          message={result.message}
+        />
+      );
+    }
     await OrderModel.updateOne(pendingOrder, { status: "failed" });
     return <PaymentResult success={false} message={result.message} />;
   }
