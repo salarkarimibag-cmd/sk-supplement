@@ -28,6 +28,12 @@ export function priceCart(
   const productsById = new Map(products.map((product) => [product.id, product]));
   const items: PricedLine[] = [];
 
+  // Each product may appear once: otherwise 2 lines of 3 could slip past a
+  // stock of 5, since stock is checked line by line.
+  if (new Set(lines.map((line) => line.productId)).size !== lines.length) {
+    return { ok: false, message: "سبد خرید نامعتبر است." };
+  }
+
   for (const line of lines) {
     const product = productsById.get(line.productId);
     if (!product) {

@@ -31,6 +31,17 @@ describe("priceCart", () => {
     expect(result.ok).toBe(false);
   });
 
+  it("rejects the same product split across lines to dodge the stock check", () => {
+    const result = priceCart(
+      [
+        { productId: "whey", quantity: 3 },
+        { productId: "whey", quantity: 3 },
+      ],
+      products
+    );
+    expect(result.ok).toBe(false);
+  });
+
   it("rejects a quantity larger than the stock", () => {
     const result = priceCart([{ productId: "creatine", quantity: 2 }], products);
     expect(result).toEqual({ ok: false, message: "موجودی «Creatine» کافی نیست." });
