@@ -3,7 +3,7 @@ import { connectToDatabase } from "@/lib/db";
 import { OrderModel, type PaymentMethod } from "@/models/Order";
 import { getSessionAdmin } from "@/lib/auth";
 import { adminSourcesFor, isOrderStatus } from "@/lib/orderStatus";
-import { onOrderPaid } from "@/lib/orderPaid";
+import { onOrderCancelled, onOrderPaid } from "@/lib/orderLifecycle";
 
 interface UpdateOrderBody {
   status?: unknown;
@@ -41,27 +41,32 @@ export async function PATCH(
 
   // The update only applies if the order is currently in a status that may
   // move to `status`. Checking and writing in one query keeps two admins
-  // clicking at once from both succeeding.
-  const order = await OrderModel.findOneAndUpdate(
+  // clicking at once from both succeeding. The document *before* the update
+  // is returned, so the side effects below can see which status it left.
+  const before = await OrderModel.findOneAndUpdate(
     { _id: id, status: { $in: adminSourcesFor(status, paymentMethod) } },
     { status },
-    { returnDocument: "after" }
+    { returnDocument: "before" }
   );
 
-  if (!order) {
+  if (!before) {
     return Response.json(
       { message: "این تغییر وضعیت برای این سفارش مجاز نیست." },
       { status: 409 }
     );
   }
 
-  // A confirmed card-to-card transfer is this order's moment of payment, the
-  // same as a verified ZarinPal callback, so stock and discount usage are
-  // recorded here. The conditional update above succeeds only once, so this
-  // runs only once.
+  // The conditional update above succeeds only once per transition, so each
+  // of these runs only once.
   if (status === "paid") {
-    await onOrderPaid(order);
+    // A confirmed card-to-card transfer is this order's moment of payment,
+    // the same as a verified ZarinPal callback.
+    await onOrderPaid(before);
+  } else if (status === "cancelled" && before.status === "paid") {
+    // Checked against the previous status, not just the target: only an
+    // order that was paid ever had its stock taken, so only that is undone.
+    await onOrderCancelled(before);
   }
 
-  return Response.json({ id: String(order._id), status: order.status });
+  return Response.json({ id: String(before._id), status });
 }

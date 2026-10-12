@@ -58,22 +58,38 @@ export async function searchProducts(query: string): Promise<CatalogProduct[]> {
   return products.map(withInStock);
 }
 
+type StockLine = { productId: string; quantity: number };
+
 /**
- * Takes a paid order's quantities out of stock, in one round trip. `$inc`
- * is applied by MongoDB itself, so two orders paid at the same moment can't
- * overwrite each other's change the way a read-then-write in JS could.
+ * Adds `direction * quantity` to each product's stock, in one round trip.
+ * `$inc` is applied by MongoDB itself, so two orders changing the same
+ * product at the same moment can't overwrite each other's change the way a
+ * read-then-write in JS could.
+ */
+async function adjustStock(items: StockLine[], direction: 1 | -1): Promise<void> {
+  await connectToDatabase();
+  await ProductModel.bulkWrite(
+    items.map((item) => ({
+      updateOne: {
+        filter: { id: item.productId },
+        update: { $inc: { stock: direction * item.quantity } },
+      },
+    }))
+  );
+}
+
+/**
+ * Takes a paid order's quantities out of stock.
  *
  * It's deliberately unconditional: by the time this runs the buyer has
  * already paid, so the sale stands even if stock ran out meanwhile. Stock
  * then goes negative, which shows the admin which products were oversold.
  */
-export async function decrementStock(
-  items: { productId: string; quantity: number }[]
-): Promise<void> {
-  await connectToDatabase();
-  await ProductModel.bulkWrite(
-    items.map((item) => ({
-      updateOne: { filter: { id: item.productId }, update: { $inc: { stock: -item.quantity } } },
-    }))
-  );
+export function decrementStock(items: StockLine[]): Promise<void> {
+  return adjustStock(items, -1);
+}
+
+/** Puts a cancelled order's quantities back in stock. */
+export function restoreStock(items: StockLine[]): Promise<void> {
+  return adjustStock(items, 1);
 }
