@@ -1,29 +1,61 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingBag } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Check, Copy, ShoppingBag } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { cardTransferSchema, formatCardNumber, type ShopCard } from "@/lib/cardPayment";
 
-const checkoutSchema = z.object({
-  email: z.string().min(1, "ایمیل الزامی است.").email("ایمیل نامعتبر است."),
-  firstName: z.string().min(1, "نام الزامی است."),
-  lastName: z.string().min(1, "نام خانوادگی الزامی است."),
-  province: z.string().min(1, "استان الزامی است."),
-  city: z.string().min(1, "شهر الزامی است."),
-  address: z.string().min(1, "آدرس الزامی است."),
-  postalCode: z.string().min(1, "کد پستی الزامی است."),
-  mobile: z.string().min(10, "شماره موبایل نامعتبر است."),
-});
+const checkoutSchema = z
+  .object({
+    email: z.string().min(1, "ایمیل الزامی است.").email("ایمیل نامعتبر است."),
+    firstName: z.string().min(1, "نام الزامی است."),
+    lastName: z.string().min(1, "نام خانوادگی الزامی است."),
+    province: z.string().min(1, "استان الزامی است."),
+    city: z.string().min(1, "شهر الزامی است."),
+    address: z.string().min(1, "آدرس الزامی است."),
+    postalCode: z.string().min(1, "کد پستی الزامی است."),
+    mobile: z.string().min(10, "شماره موبایل نامعتبر است."),
+    paymentMethod: z.enum(["zarinpal", "card"]),
+    trackingCode: z.string(),
+    cardLast4: z.string(),
+  })
+  // The transfer fields only matter for card-to-card. They're checked with
+  // the same schema the server uses, so the two can't drift apart; only the
+  // Persian error messages are added here.
+  .superRefine((values, ctx) => {
+    if (values.paymentMethod !== "card") return;
+    const result = cardTransferSchema.safeParse({
+      trackingCode: values.trackingCode,
+      cardLast4: values.cardLast4,
+    });
+    for (const issue of result.error?.issues ?? []) {
+      const field = issue.path[0];
+      ctx.addIssue({
+        code: "custom",
+        path: [field],
+        message: field === "cardLast4" ? "۴ رقم آخر کارت را وارد کنید." : "کد پیگیری نامعتبر است.",
+      });
+    }
+  });
 
 type CheckoutValues = z.infer<typeof checkoutSchema>;
 
 const inputClass =
   "w-full rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900";
+
+function paymentOptionClass(selected: boolean) {
+  return `flex cursor-pointer items-center gap-2 rounded border px-4 py-3 text-sm font-semibold ${
+    selected
+      ? "border-sky-600 bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-400"
+      : "border-zinc-300 dark:border-zinc-700"
+  }`;
+}
 
 function CheckoutLogo() {
   return (
@@ -40,8 +72,10 @@ interface AppliedDiscount {
   amount: number;
 }
 
-export default function CheckoutView() {
-  const { items, totalPrice, totalCount } = useCart();
+export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }) {
+  const router = useRouter();
+  const { items, totalPrice, totalCount, clearCart } = useCart();
+  const [cardNumberCopied, setCardNumberCopied] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [discountCodeInput, setDiscountCodeInput] = useState("");
   const [appliedDiscount, setAppliedDiscount] = useState<AppliedDiscount | null>(null);
@@ -50,8 +84,14 @@ export default function CheckoutView() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
-  } = useForm<CheckoutValues>({ resolver: zodResolver(checkoutSchema) });
+  } = useForm<CheckoutValues>({
+    resolver: zodResolver(checkoutSchema),
+    defaultValues: { paymentMethod: "zarinpal", trackingCode: "", cardLast4: "" },
+  });
+  // useWatch (not watch()) so React's compiler can track the value safely.
+  const paymentMethod = useWatch({ control, name: "paymentMethod" });
 
   const finalTotal = totalPrice - (appliedDiscount?.amount ?? 0);
 
@@ -82,31 +122,52 @@ export default function CheckoutView() {
     }
   }
 
+  async function handleCopyCardNumber() {
+    if (!shopCard) return;
+    try {
+      await navigator.clipboard.writeText(shopCard.number);
+      setCardNumberCopied(true);
+      setTimeout(() => setCardNumberCopied(false), 2000);
+    } catch {
+      // Clipboard access can be denied; the number is still on screen to copy by hand.
+    }
+  }
+
   async function onSubmit(values: CheckoutValues) {
     setServerError(null);
+
+    // Prices and totals are left out on purpose: the server looks them up
+    // itself, so only product ids, quantities and the code are sent.
+    const order = {
+      discountCode: appliedDiscount?.code,
+      contact: { email: values.email, mobile: values.mobile },
+      shippingAddress: {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        province: values.province,
+        city: values.city,
+        address: values.address,
+        postalCode: values.postalCode,
+      },
+      items: items.map((item) => ({
+        productId: item.id,
+        quantity: item.quantity,
+      })),
+    };
+
+    if (values.paymentMethod === "card") {
+      await submitCardOrder({
+        ...order,
+        cardTransfer: { trackingCode: values.trackingCode, cardLast4: values.cardLast4 },
+      });
+      return;
+    }
 
     try {
       const response = await fetch("/api/payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // Prices and totals are left out on purpose: the server looks them
-        // up itself, so only product ids, quantities and the code are sent.
-        body: JSON.stringify({
-          discountCode: appliedDiscount?.code,
-          contact: { email: values.email, mobile: values.mobile },
-          shippingAddress: {
-            firstName: values.firstName,
-            lastName: values.lastName,
-            province: values.province,
-            city: values.city,
-            address: values.address,
-            postalCode: values.postalCode,
-          },
-          items: items.map((item) => ({
-            productId: item.id,
-            quantity: item.quantity,
-          })),
-        }),
+        body: JSON.stringify(order),
       });
       const data = await response.json();
 
@@ -119,6 +180,27 @@ export default function CheckoutView() {
       window.location.href = data.url;
     } catch {
       setServerError("خطایی در اتصال به درگاه پرداخت رخ داد.");
+    }
+  }
+
+  async function submitCardOrder(body: object) {
+    try {
+      const response = await fetch("/api/payment/card", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        setServerError(data.message ?? "ثبت سفارش ناموفق بود.");
+        return;
+      }
+
+      clearCart();
+      router.push("/checkout/card-submitted");
+    } catch {
+      setServerError("خطایی در ثبت سفارش رخ داد.");
     }
   }
 
@@ -229,10 +311,75 @@ export default function CheckoutView() {
 
         <div>
           <h2 className="text-lg font-bold">روش پرداخت</h2>
-          <div className="mt-3 flex items-center gap-2 rounded border border-sky-600 bg-sky-50 px-4 py-3 text-sm font-semibold text-sky-700 dark:bg-sky-950 dark:text-sky-400">
-            <span className="h-3 w-3 rounded-full bg-sky-600" />
-            پرداخت آنلاین با درگاه زرین‌پال
+          <div className="mt-3 flex flex-col gap-2">
+            <label className={paymentOptionClass(paymentMethod === "zarinpal")}>
+              <input type="radio" value="zarinpal" {...register("paymentMethod")} className="accent-sky-600" />
+              پرداخت آنلاین با درگاه زرین‌پال
+            </label>
+            {shopCard && (
+              <label className={paymentOptionClass(paymentMethod === "card")}>
+                <input type="radio" value="card" {...register("paymentMethod")} className="accent-sky-600" />
+                کارت به کارت
+              </label>
+            )}
           </div>
+
+          {shopCard && paymentMethod === "card" && (
+            <div className="mt-4 rounded border border-zinc-200 p-4 text-sm dark:border-zinc-800">
+              <p>
+                مبلغ <strong>{finalTotal.toLocaleString("fa-IR")} تومان</strong> را به کارت زیر واریز
+                کنید، سپس کد پیگیری واریز را وارد کنید.
+              </p>
+              <div className="mt-3 flex items-center justify-between gap-3 rounded bg-zinc-100 px-4 py-3 dark:bg-zinc-900">
+                <span dir="ltr" className="font-mono text-lg font-bold tracking-wider">
+                  {formatCardNumber(shopCard.number)}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleCopyCardNumber}
+                  className="flex shrink-0 cursor-pointer items-center gap-1 text-sky-600 hover:underline"
+                >
+                  {cardNumberCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {cardNumberCopied ? "کپی شد" : "کپی"}
+                </button>
+              </div>
+              <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+                به نام {shopCard.holder}
+                {shopCard.bank && ` — ${shopCard.bank}`}
+              </p>
+
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <div>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="کد پیگیری واریز"
+                    {...register("trackingCode")}
+                    className={inputClass}
+                  />
+                  {errors.trackingCode && (
+                    <p className="mt-1 text-xs text-red-600">{errors.trackingCode.message}</p>
+                  )}
+                </div>
+                <div>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={4}
+                    placeholder="۴ رقم آخر کارت شما"
+                    {...register("cardLast4")}
+                    className={inputClass}
+                  />
+                  {errors.cardLast4 && (
+                    <p className="mt-1 text-xs text-red-600">{errors.cardLast4.message}</p>
+                  )}
+                </div>
+              </div>
+              <p className="mt-3 text-xs text-zinc-500">
+                سفارش پس از تأیید واریز توسط فروشگاه پردازش و ارسال می‌شود.
+              </p>
+            </div>
+          )}
         </div>
 
         {serverError && <p className="text-sm text-red-600">{serverError}</p>}
@@ -242,7 +389,13 @@ export default function CheckoutView() {
           disabled={isSubmitting}
           className="cursor-pointer rounded bg-sky-600 py-3.5 text-sm font-bold text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {isSubmitting ? "در حال انتقال..." : "پرداخت و تکمیل خرید"}
+          {paymentMethod === "card"
+            ? isSubmitting
+              ? "در حال ثبت..."
+              : "ثبت سفارش"
+            : isSubmitting
+              ? "در حال انتقال..."
+              : "پرداخت و تکمیل خرید"}
         </button>
       </form>
       </div>

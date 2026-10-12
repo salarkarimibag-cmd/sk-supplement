@@ -1,6 +1,14 @@
 import mongoose, { Schema, type InferSchemaType } from "mongoose";
 
-export type OrderStatus = "pending" | "paid" | "failed" | "shipped" | "cancelled";
+export type OrderStatus =
+  | "pending"
+  | "awaiting_verification"
+  | "paid"
+  | "failed"
+  | "shipped"
+  | "cancelled";
+
+export type PaymentMethod = "zarinpal" | "card";
 
 const OrderItemSchema = new Schema(
   {
@@ -31,6 +39,16 @@ const ShippingAddressSchema = new Schema(
   { _id: false }
 );
 
+// What the buyer reports after a card-to-card transfer; the admin matches it
+// against the bank statement before confirming the order.
+const CardTransferSchema = new Schema(
+  {
+    trackingCode: { type: String, required: true },
+    cardLast4: { type: String, required: true },
+  },
+  { _id: false }
+);
+
 const OrderSchema = new Schema(
   {
     // Set once a user is logged in (Phase 3); absent for guest checkout.
@@ -40,17 +58,32 @@ const OrderSchema = new Schema(
     shippingAddress: { type: ShippingAddressSchema, required: true },
     status: {
       type: String,
-      enum: ["pending", "paid", "failed", "shipped", "cancelled"],
+      enum: ["pending", "awaiting_verification", "paid", "failed", "shipped", "cancelled"],
       default: "pending",
     },
     totalPrice: { type: Number, required: true },
     discountCode: { type: String, required: false },
     discountAmount: { type: Number, required: false },
+    // Orders created before card-to-card existed have no value stored and
+    // read back as "zarinpal" through this default.
+    paymentMethod: { type: String, enum: ["zarinpal", "card"], default: "zarinpal" },
     // ZarinPal's payment authority, set before redirecting to the gateway;
     // used to look the order back up when ZarinPal calls the callback URL.
-    paymentAuthority: { type: String, required: true, index: true },
+    // Card-to-card orders never go through the gateway, so they have none.
+    paymentAuthority: {
+      type: String,
+      required: function (this: { paymentMethod?: PaymentMethod }) {
+        return this.paymentMethod !== "card";
+      },
+      index: true,
+    },
     // ZarinPal's ref_id, set only after a successful verification.
     paymentRefId: { type: Number, required: false },
+    cardTransfer: { type: CardTransferSchema, required: false },
+    // Card orders cost nothing to submit, so they're rate-limited per
+    // visitor like the other public forms (see src/lib/rateLimit.ts).
+    ip: { type: String, required: false },
+    deviceId: { type: String, required: false },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );
