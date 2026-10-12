@@ -3,7 +3,7 @@ import PaymentResult from "@/components/checkout/PaymentResult";
 import { connectToDatabase } from "@/lib/db";
 import { OrderModel, type Order } from "@/models/Order";
 import { verifyZarinPalPayment } from "@/lib/zarinpal";
-import { onOrderPaid } from "@/lib/orderPaid";
+import { onOrderPaid } from "@/lib/orderLifecycle";
 
 export const metadata: Metadata = {
   title: "نتیجه پرداخت",

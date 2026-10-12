@@ -45,10 +45,14 @@ export default function OrderManager({ initialOrders }: { initialOrders: OrderIt
   async function handleStatusChange(order: OrderItem, status: OrderStatus) {
     // Confirming a transfer is the step that can cost money, so the prompt
     // repeats exactly what to look for on the bank statement.
+    // Cancelling a paid order puts its items back in stock, but the money has
+    // to be refunded by hand, so the prompt says so.
     const question =
       status === "paid" && order.cardTransfer
         ? `واریز ${formatToman(order.totalPrice)} با کد پیگیری ${order.cardTransfer.trackingCode} از کارت ****${order.cardTransfer.cardLast4} را در صورت‌حساب بانک دیدید؟`
-        : `وضعیت سفارش «${order.customerName}» به «${ORDER_STATUS_LABELS[status]}» تغییر کند؟`;
+        : status === "cancelled"
+          ? `سفارش «${order.customerName}» لغو شود؟ کالاها به موجودی برمی‌گردند، ولی مبلغ ${formatToman(order.totalPrice)} را باید خودتان به مشتری برگردانید.`
+          : `وضعیت سفارش «${order.customerName}» به «${ORDER_STATUS_LABELS[status]}» تغییر کند؟`;
     if (!confirm(question)) return;
 
     const response = await fetch(`/api/admin/orders/${order.id}`, {
