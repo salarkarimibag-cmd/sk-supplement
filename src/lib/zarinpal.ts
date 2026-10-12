@@ -23,6 +23,38 @@ interface RequestPaymentParams {
   mobile?: string;
 }
 
+// Long enough for a slow gateway, short enough that the buyer isn't left
+// staring at a spinner (fetch has no timeout of its own).
+const GATEWAY_TIMEOUT_MS = 15_000;
+
+const UNREACHABLE_MESSAGE =
+  "ارتباط با درگاه زرین‌پال برقرار نشد. لطفاً چند لحظه‌ی دیگر دوباره تلاش کنید.";
+
+/**
+ * POSTs to ZarinPal and returns the parsed JSON, or null when the gateway
+ * couldn't be reached or didn't answer with JSON (timeout, DNS/network
+ * failure, an HTML error page). That's different from ZarinPal answering
+ * "no", which comes back as JSON with an error code.
+ */
+interface GatewayResponse {
+  data?: { authority?: string; code?: number; ref_id?: number };
+  errors?: { message?: string };
+}
+
+async function postToGateway(url: string, body: object): Promise<GatewayResponse | null> {
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(GATEWAY_TIMEOUT_MS),
+    });
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
+
 type RequestPaymentResult =
   | { ok: true; authority: string; paymentUrl: string }
   | { ok: false; message: string };
@@ -37,19 +69,17 @@ export async function requestZarinPalPayment(
     };
   }
 
-  const response = await fetch(REQUEST_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      merchant_id: MERCHANT_ID,
-      amount: tomanToRial(params.amountToman),
-      description: params.description,
-      callback_url: params.callbackUrl,
-      metadata: { email: params.email, mobile: params.mobile },
-    }),
+  const json = await postToGateway(REQUEST_URL, {
+    merchant_id: MERCHANT_ID,
+    amount: tomanToRial(params.amountToman),
+    description: params.description,
+    callback_url: params.callbackUrl,
+    metadata: { email: params.email, mobile: params.mobile },
   });
+  if (!json) {
+    return { ok: false, message: UNREACHABLE_MESSAGE };
+  }
 
-  const json = await response.json();
   const authority: string | undefined = json?.data?.authority;
   const code: number | undefined = json?.data?.code;
 
@@ -65,26 +95,34 @@ interface VerifyPaymentParams {
   authority: string;
 }
 
-type VerifyPaymentResult = { ok: true; refId: number } | { ok: false; message: string };
+// `retryable` marks "we couldn't ask ZarinPal" as opposed to "ZarinPal said
+// the payment failed": in the first case the buyer may well have paid, so
+// the order must not be marked failed — asking again later can still verify it.
+type VerifyPaymentResult =
+  | { ok: true; refId: number }
+  | { ok: false; retryable: boolean; message: string };
 
 export async function verifyZarinPalPayment(
   params: VerifyPaymentParams
 ): Promise<VerifyPaymentResult> {
   if (!MERCHANT_ID) {
-    return { ok: false, message: "ZARINPAL_MERCHANT_ID تنظیم نشده است." };
+    return { ok: false, retryable: true, message: "ZARINPAL_MERCHANT_ID تنظیم نشده است." };
   }
 
-  const response = await fetch(VERIFY_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      merchant_id: MERCHANT_ID,
-      amount: tomanToRial(params.amountToman),
-      authority: params.authority,
-    }),
+  const json = await postToGateway(VERIFY_URL, {
+    merchant_id: MERCHANT_ID,
+    amount: tomanToRial(params.amountToman),
+    authority: params.authority,
   });
+  if (!json) {
+    return {
+      ok: false,
+      retryable: true,
+      message:
+        "ارتباط با درگاه زرین‌پال برای تأیید پرداخت برقرار نشد. اگر مبلغ از حساب شما کسر شده، چند لحظه‌ی دیگر این صفحه را دوباره بارگذاری کنید.",
+    };
+  }
 
-  const json = await response.json();
   const code: number | undefined = json?.data?.code;
   const refId: number | undefined = json?.data?.ref_id;
 
@@ -93,5 +131,5 @@ export async function verifyZarinPalPayment(
     return { ok: true, refId };
   }
 
-  return { ok: false, message: json?.errors?.message ?? "تایید پرداخت ناموفق بود." };
+  return { ok: false, retryable: false, message: json?.errors?.message ?? "تایید پرداخت ناموفق بود." };
 }

@@ -8,9 +8,11 @@ interface PaymentResultProps {
   success: boolean;
   message?: string;
   refId?: number;
+  /** Replaces the default failure heading, e.g. when the outcome isn't known yet. */
+  failureTitle?: string;
 }
 
-export default function PaymentResult({ success, message, refId }: PaymentResultProps) {
+export default function PaymentResult({ success, message, refId, failureTitle }: PaymentResultProps) {
   const { clearCart } = useCart();
 
   useEffect(() => {
@@ -30,7 +32,7 @@ export default function PaymentResult({ success, message, refId }: PaymentResult
         </>
       ) : (
         <>
-          <h1 className="text-2xl font-bold text-red-600">پرداخت ناموفق بود</h1>
+          <h1 className="text-2xl font-bold text-red-600">{failureTitle ?? "پرداخت ناموفق بود"}</h1>
           {message && <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">{message}</p>}
         </>
       )}

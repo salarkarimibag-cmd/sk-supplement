@@ -16,7 +16,11 @@ export default function ThemeToggle() {
     const next = !isDark;
     setIsDark(next);
     document.documentElement.classList.toggle("dark", next);
-    localStorage.setItem("theme", next ? "dark" : "light");
+    try {
+      localStorage.setItem("theme", next ? "dark" : "light");
+    } catch {
+      // Storage unavailable: the theme still switches, it just isn't remembered.
+    }
   }
 
   return (
