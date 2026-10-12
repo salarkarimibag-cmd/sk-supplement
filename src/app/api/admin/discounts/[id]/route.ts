@@ -1,14 +1,8 @@
+import { isValidObjectId } from "mongoose";
 import { connectToDatabase } from "@/lib/db";
-import { DiscountCodeModel } from "@/models/DiscountCode";
+import { DiscountCodeModel, type DiscountCode } from "@/models/DiscountCode";
 import { getSessionAdmin } from "@/lib/auth";
-
-interface UpdateDiscountBody {
-  code?: string;
-  type?: "percent" | "fixed";
-  value?: number;
-  active?: boolean;
-  expiresAt?: string | null;
-}
+import { discountInputSchema } from "@/lib/discounts";
 
 export async function PATCH(
   request: Request,
@@ -20,24 +14,60 @@ export async function PATCH(
   }
 
   const { id } = await params;
-  const body: UpdateDiscountBody = await request.json();
+  const body: unknown = await request.json().catch(() => null);
+  if (!isValidObjectId(id) || typeof body !== "object" || body === null) {
+    return Response.json({ message: "درخواست نامعتبر است." }, { status: 400 });
+  }
 
   await connectToDatabase();
 
-  const update: Record<string, unknown> = {};
-  if (body.code) update.code = body.code.toUpperCase().trim();
-  if (body.type) update.type = body.type;
-  if (body.value !== undefined) update.value = body.value;
-  if (body.active !== undefined) update.active = body.active;
-  if (body.expiresAt !== undefined) update.expiresAt = body.expiresAt || null;
-
-  const discount = await DiscountCodeModel.findByIdAndUpdate(id, update, {
-    returnDocument: "after",
-  });
-
-  if (!discount) {
+  const existing = await DiscountCodeModel.findById(id).lean<DiscountCode>();
+  if (!existing) {
     return Response.json({ message: "کد تخفیف پیدا نشد." }, { status: 404 });
   }
+
+  // The edit is laid over the saved code and the *result* is validated, so a
+  // change to one field is checked against the others too: switching a fixed
+  // 50,000 discount to "percent" without changing the value is rejected.
+  const parsed = discountInputSchema.safeParse({
+    code: existing.code,
+    type: existing.type,
+    value: existing.value,
+    active: existing.active,
+    expiresAt: existing.expiresAt ? existing.expiresAt.toISOString().slice(0, 10) : null,
+    maxUses: existing.maxUses ?? null,
+    ...body,
+  });
+  if (!parsed.success) {
+    const message = parsed.error.issues[0]?.message ?? "اطلاعات کد تخفیف نامعتبر است.";
+    return Response.json({ message }, { status: 400 });
+  }
+  const { expiresAt, maxUses, ...fields } = parsed.data;
+
+  if (fields.code !== existing.code) {
+    const taken = await DiscountCodeModel.exists({ code: fields.code, _id: { $ne: id } });
+    if (taken) {
+      return Response.json({ message: "این کد قبلاً ثبت شده است." }, { status: 409 });
+    }
+  }
+
+  // Cleared optional fields are removed ($unset) rather than stored as null.
+  const unset: Record<string, ""> = {};
+  if (expiresAt === null) unset.expiresAt = "";
+  if (maxUses === null) unset.maxUses = "";
+
+  const discount = await DiscountCodeModel.findByIdAndUpdate(
+    id,
+    {
+      $set: {
+        ...fields,
+        ...(expiresAt !== null && { expiresAt }),
+        ...(maxUses !== null && { maxUses }),
+      },
+      ...(Object.keys(unset).length > 0 && { $unset: unset }),
+    },
+    { returnDocument: "after" }
+  );
 
   return Response.json(discount);
 }

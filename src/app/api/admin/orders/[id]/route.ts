@@ -3,7 +3,7 @@ import { connectToDatabase } from "@/lib/db";
 import { OrderModel, type PaymentMethod } from "@/models/Order";
 import { getSessionAdmin } from "@/lib/auth";
 import { adminSourcesFor, isOrderStatus } from "@/lib/orderStatus";
-import { decrementStock } from "@/lib/products";
+import { onOrderPaid } from "@/lib/orderPaid";
 
 interface UpdateOrderBody {
   status?: unknown;
@@ -56,10 +56,11 @@ export async function PATCH(
   }
 
   // A confirmed card-to-card transfer is this order's moment of payment, the
-  // same as a verified ZarinPal callback, so stock is taken out here. The
-  // conditional update above succeeds only once, so this runs only once.
+  // same as a verified ZarinPal callback, so stock and discount usage are
+  // recorded here. The conditional update above succeeds only once, so this
+  // runs only once.
   if (status === "paid") {
-    await decrementStock(order.items);
+    await onOrderPaid(order);
   }
 
   return Response.json({ id: String(order._id), status: order.status });
