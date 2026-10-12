@@ -1,14 +1,7 @@
 import { connectToDatabase } from "@/lib/db";
 import { DiscountCodeModel } from "@/models/DiscountCode";
 import { getSessionAdmin } from "@/lib/auth";
-
-interface CreateDiscountBody {
-  code?: string;
-  type?: "percent" | "fixed";
-  value?: number;
-  active?: boolean;
-  expiresAt?: string | null;
-}
+import { discountInputSchema } from "@/lib/discounts";
 
 export async function GET() {
   const admin = await getSessionAdmin();
@@ -27,25 +20,24 @@ export async function POST(request: Request) {
     return Response.json({ message: "دسترسی غیرمجاز." }, { status: 401 });
   }
 
-  const body: CreateDiscountBody = await request.json();
-
-  if (!body.code || !body.type || !body.value || body.value <= 0) {
-    return Response.json({ message: "کد، نوع و مقدار الزامی هستند." }, { status: 400 });
+  const parsed = discountInputSchema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) {
+    const message = parsed.error.issues[0]?.message ?? "اطلاعات کد تخفیف نامعتبر است.";
+    return Response.json({ message }, { status: 400 });
   }
+  const input = parsed.data;
 
   await connectToDatabase();
 
-  const existing = await DiscountCodeModel.findOne({ code: body.code.toUpperCase().trim() });
+  const existing = await DiscountCodeModel.findOne({ code: input.code });
   if (existing) {
     return Response.json({ message: "این کد قبلاً ثبت شده است." }, { status: 409 });
   }
 
   const discount = await DiscountCodeModel.create({
-    code: body.code.toUpperCase().trim(),
-    type: body.type,
-    value: body.value,
-    active: body.active ?? true,
-    expiresAt: body.expiresAt || undefined,
+    ...input,
+    expiresAt: input.expiresAt ?? undefined,
+    maxUses: input.maxUses ?? undefined,
   });
 
   return Response.json(discount, { status: 201 });

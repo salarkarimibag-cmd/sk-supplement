@@ -9,6 +9,8 @@ interface DiscountCodeItem {
   value: number;
   active: boolean;
   expiresAt: string | null;
+  maxUses: number | null;
+  usedCount: number;
 }
 
 interface FormState {
@@ -17,9 +19,17 @@ interface FormState {
   value: string;
   active: boolean;
   expiresAt: string;
+  maxUses: string;
 }
 
-const emptyForm: FormState = { code: "", type: "percent", value: "", active: true, expiresAt: "" };
+const emptyForm: FormState = {
+  code: "",
+  type: "percent",
+  value: "",
+  active: true,
+  expiresAt: "",
+  maxUses: "",
+};
 
 const inputClass =
   "w-full rounded border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900";
@@ -39,6 +49,7 @@ export default function DiscountManager({ initialCodes }: { initialCodes: Discou
       value: String(item.value),
       active: item.active,
       expiresAt: item.expiresAt ? item.expiresAt.slice(0, 10) : "",
+      maxUses: item.maxUses ? String(item.maxUses) : "",
     });
     setError(null);
   }
@@ -53,7 +64,9 @@ export default function DiscountManager({ initialCodes }: { initialCodes: Discou
     event.preventDefault();
     setError(null);
 
-    if (!form.code.trim() || !form.value || Number(form.value) <= 0) {
+    // Only the required fields are checked here for a quick message; the
+    // full rules (e.g. a percent must be 1–99) live on the server.
+    if (!form.code.trim() || !form.value) {
       setError("کد و مقدار الزامی هستند.");
       return;
     }
@@ -66,6 +79,7 @@ export default function DiscountManager({ initialCodes }: { initialCodes: Discou
       value: Number(form.value),
       active: form.active,
       expiresAt: form.expiresAt || null,
+      maxUses: form.maxUses ? Number(form.maxUses) : null,
     };
 
     try {
@@ -91,6 +105,8 @@ export default function DiscountManager({ initialCodes }: { initialCodes: Discou
         value: data.value,
         active: data.active,
         expiresAt: data.expiresAt ?? null,
+        maxUses: data.maxUses ?? null,
+        usedCount: data.usedCount ?? 0,
       };
 
       setCodes((current) =>
@@ -146,7 +162,8 @@ export default function DiscountManager({ initialCodes }: { initialCodes: Discou
         <input
           type="number"
           min={1}
-          placeholder={form.type === "percent" ? "درصد" : "مبلغ (تومان)"}
+          max={form.type === "percent" ? 99 : undefined}
+          placeholder={form.type === "percent" ? "درصد (۱ تا ۹۹)" : "مبلغ (تومان)"}
           value={form.value}
           onChange={(event) => setForm({ ...form, value: event.target.value })}
           className={inputClass}
@@ -158,6 +175,15 @@ export default function DiscountManager({ initialCodes }: { initialCodes: Discou
           className={inputClass}
         />
 
+        <input
+          type="number"
+          min={1}
+          placeholder="حداکثر استفاده (خالی = نامحدود)"
+          value={form.maxUses}
+          onChange={(event) => setForm({ ...form, maxUses: event.target.value })}
+          className={`col-span-2 ${inputClass}`}
+        />
+
         <label className="col-span-2 flex items-center gap-2 text-sm sm:col-span-1">
           <input
             type="checkbox"
@@ -167,7 +193,7 @@ export default function DiscountManager({ initialCodes }: { initialCodes: Discou
           فعال
         </label>
 
-        <div className="col-span-2 flex gap-2 sm:col-span-4 sm:justify-end">
+        <div className="col-span-2 flex gap-2 sm:justify-end">
           {editingId && (
             <button
               type="button"
@@ -198,13 +224,14 @@ export default function DiscountManager({ initialCodes }: { initialCodes: Discou
               <th className="py-2 font-medium">مقدار</th>
               <th className="py-2 font-medium">وضعیت</th>
               <th className="py-2 font-medium">انقضا</th>
+              <th className="py-2 font-medium">استفاده</th>
               <th className="py-2 font-medium">عملیات</th>
             </tr>
           </thead>
           <tbody>
             {codes.length === 0 && (
               <tr>
-                <td colSpan={6} className="py-6 text-center text-zinc-500">
+                <td colSpan={7} className="py-6 text-center text-zinc-500">
                   هیچ کد تخفیفی ثبت نشده است.
                 </td>
               </tr>
@@ -225,6 +252,10 @@ export default function DiscountManager({ initialCodes }: { initialCodes: Discou
                 </td>
                 <td className="py-2">
                   {item.expiresAt ? new Date(item.expiresAt).toLocaleDateString("fa-IR") : "—"}
+                </td>
+                <td className="py-2 whitespace-nowrap">
+                  {item.usedCount.toLocaleString("fa-IR")}
+                  {item.maxUses ? ` از ${item.maxUses.toLocaleString("fa-IR")}` : " (نامحدود)"}
                 </td>
                 <td className="py-2">
                   <div className="flex gap-3">
