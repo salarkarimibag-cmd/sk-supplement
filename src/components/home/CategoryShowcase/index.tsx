@@ -11,9 +11,9 @@ interface Tile {
 
 const tiles: Tile[] = [
   {
-    slug: "pre-workout",
-    name: "پیش‌تمرین‌ها",
-    image: "/images/category-pre-workout.webp",
+    slug: "shop",
+    name: "مشاهده همه",
+    image: "/images/category-shop-all.webp",
     className: "col-span-2 md:col-span-1 md:row-span-2",
   },
   {
@@ -32,9 +32,9 @@ const tiles: Tile[] = [
     image: "/images/category-protein.webp",
   },
   {
-    slug: "shop",
-    name: "مشاهده همه",
-    image: "/images/category-shop-all.webp",
+    slug: "pre-workout",
+    name: "پیش‌تمرین‌ها",
+    image: "/images/category-pre-workout.webp",
   },
 ];
 
