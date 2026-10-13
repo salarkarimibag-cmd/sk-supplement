@@ -70,7 +70,22 @@ function CheckoutLogo() {
   return (
     <div className="pb-6">
       <Link href="/" className="inline-flex items-center">
-        <Image src="/images/logo-checkout.webp" alt="SK Supplement" width={746} height={424} className="h-24 w-auto" />
+        {/* The light logo has an opaque white background, so dark mode swaps in the dark-card logo used in the header. */}
+        <Image
+          src="/images/logo-checkout.webp"
+          alt="SK Supplement"
+          width={746}
+          height={424}
+          className="h-24 w-auto dark:hidden"
+        />
+        <Image
+          src="/images/logo.webp"
+          alt=""
+          aria-hidden="true"
+          width={680}
+          height={380}
+          className="hidden h-24 w-auto dark:block"
+        />
       </Link>
     </div>
   );
