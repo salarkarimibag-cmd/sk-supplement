@@ -7,9 +7,10 @@ import { z } from "zod";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check, Copy, ShoppingBag } from "lucide-react";
+import { CreditCard, Landmark, ShoppingBag } from "lucide-react";
+import BankCard from "@/components/checkout/BankCard";
 import { useCart } from "@/context/CartContext";
-import { cardTransferSchema, formatCardNumber, type ShopCard } from "@/lib/cardPayment";
+import { cardTransferSchema, type ShopCard } from "@/lib/cardPayment";
 
 const checkoutSchema = z
   .object({
@@ -57,6 +58,13 @@ function paymentOptionClass(selected: boolean) {
   }`;
 }
 
+// ms-auto pushes the icon to the far end of the row (the end side in RTL).
+// A selected row already has sky-coloured text, so the icon only needs a
+// colour of its own when the option is not selected.
+function paymentIconClass(selected: boolean) {
+  return `ms-auto h-5 w-5 ${selected ? "" : "text-zinc-400"}`;
+}
+
 function CheckoutLogo() {
   return (
     <div className="pb-6">
@@ -75,7 +83,6 @@ interface AppliedDiscount {
 export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }) {
   const router = useRouter();
   const { items, totalPrice, totalCount, clearCart } = useCart();
-  const [cardNumberCopied, setCardNumberCopied] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [discountCodeInput, setDiscountCodeInput] = useState("");
   const [appliedDiscount, setAppliedDiscount] = useState<AppliedDiscount | null>(null);
@@ -119,17 +126,6 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
       setDiscountError("خطایی در اعمال کد تخفیف رخ داد.");
     } finally {
       setIsApplyingDiscount(false);
-    }
-  }
-
-  async function handleCopyCardNumber() {
-    if (!shopCard) return;
-    try {
-      await navigator.clipboard.writeText(shopCard.number);
-      setCardNumberCopied(true);
-      setTimeout(() => setCardNumberCopied(false), 2000);
-    } catch {
-      // Clipboard access can be denied; the number is still on screen to copy by hand.
     }
   }
 
@@ -315,11 +311,13 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
             <label className={paymentOptionClass(paymentMethod === "zarinpal")}>
               <input type="radio" value="zarinpal" {...register("paymentMethod")} className="accent-sky-600" />
               پرداخت آنلاین با درگاه زرین‌پال
+              <Landmark aria-hidden="true" className={paymentIconClass(paymentMethod === "zarinpal")} />
             </label>
             {shopCard && (
               <label className={paymentOptionClass(paymentMethod === "card")}>
                 <input type="radio" value="card" {...register("paymentMethod")} className="accent-sky-600" />
                 کارت به کارت
+                <CreditCard aria-hidden="true" className={paymentIconClass(paymentMethod === "card")} />
               </label>
             )}
           </div>
@@ -330,23 +328,9 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
                 مبلغ <strong>{finalTotal.toLocaleString("fa-IR")} تومان</strong> را به کارت زیر واریز
                 کنید، سپس کد پیگیری واریز را وارد کنید.
               </p>
-              <div className="mt-3 flex items-center justify-between gap-3 rounded bg-zinc-100 px-4 py-3 dark:bg-zinc-900">
-                <span dir="ltr" className="font-mono text-lg font-bold tracking-wider">
-                  {formatCardNumber(shopCard.number)}
-                </span>
-                <button
-                  type="button"
-                  onClick={handleCopyCardNumber}
-                  className="flex shrink-0 cursor-pointer items-center gap-1 text-sky-600 hover:underline"
-                >
-                  {cardNumberCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                  {cardNumberCopied ? "کپی شد" : "کپی"}
-                </button>
+              <div className="mt-4">
+                <BankCard card={shopCard} />
               </div>
-              <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-                به نام {shopCard.holder}
-                {shopCard.bank && ` — ${shopCard.bank}`}
-              </p>
 
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <div>
