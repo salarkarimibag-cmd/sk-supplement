@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CreditCard, Landmark, ShoppingBag } from "lucide-react";
 import BankCard from "@/components/checkout/BankCard";
+import Collapsible from "@/components/ui/Collapsible";
 import { useCart } from "@/context/CartContext";
 import { cardTransferSchema, type ShopCard } from "@/lib/cardPayment";
 
@@ -315,54 +316,75 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
             </label>
             {shopCard && (
               <label className={paymentOptionClass(paymentMethod === "card")}>
-                <input type="radio" value="card" {...register("paymentMethod")} className="accent-sky-600" />
+                <input
+                  type="radio"
+                  value="card"
+                  {...register("paymentMethod")}
+                  aria-controls="card-transfer-panel"
+                  className="accent-sky-600"
+                />
                 کارت به کارت
                 <CreditCard aria-hidden="true" className={paymentIconClass(paymentMethod === "card")} />
               </label>
             )}
           </div>
 
-          {shopCard && paymentMethod === "card" && (
-            <div className="mt-4 rounded border border-zinc-200 p-4 text-sm dark:border-zinc-800">
-              <p>
-                مبلغ <strong>{finalTotal.toLocaleString("fa-IR")} تومان</strong> را به کارت زیر واریز
-                کنید، سپس کد پیگیری واریز را وارد کنید.
-              </p>
-              <div className="mt-4">
-                <BankCard card={shopCard} />
-              </div>
+          {shopCard && (
+            // Always mounted and animated open/closed (instead of being added
+            // and removed) so the panel eases in and the page below doesn't jump.
+            // The gap above it is padding, because margin wouldn't animate.
+            <Collapsible open={paymentMethod === "card"} id="card-transfer-panel">
+              <div className="pt-4">
+                <div className="rounded border border-zinc-200 p-4 text-sm dark:border-zinc-800">
+                  <p>
+                    مبلغ <strong>{finalTotal.toLocaleString("fa-IR")} تومان</strong> را به کارت زیر واریز
+                    کنید، سپس کد پیگیری واریز را وارد کنید.
+                  </p>
+                  {/* The card follows the panel with a short delay, rising and
+                      scaling into place, so it looks like it slides out of it. */}
+                  <div
+                    className={`mt-4 transition duration-500 ease-out ${
+                      paymentMethod === "card"
+                        ? "translate-y-0 scale-100 opacity-100 delay-150"
+                        : "-translate-y-3 scale-95 opacity-0"
+                    }`}
+                  >
+                    <BankCard card={shopCard} />
+                  </div>
 
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                <div>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="کد پیگیری واریز"
-                    {...register("trackingCode")}
-                    className={inputClass}
-                  />
-                  {errors.trackingCode && (
-                    <p className="mt-1 text-xs text-red-600">{errors.trackingCode.message}</p>
-                  )}
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={4}
-                    placeholder="۴ رقم آخر کارت شما"
-                    {...register("cardLast4")}
-                    className={inputClass}
-                  />
-                  {errors.cardLast4 && (
-                    <p className="mt-1 text-xs text-red-600">{errors.cardLast4.message}</p>
-                  )}
+                  <div className="mt-4 grid grid-cols-2 gap-3">
+                    <div>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="کد پیگیری واریز"
+                        {...register("trackingCode")}
+                        className={inputClass}
+                      />
+                      {errors.trackingCode && (
+                        <p className="mt-1 text-xs text-red-600">{errors.trackingCode.message}</p>
+                      )}
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={4}
+                        placeholder="۴ رقم آخر کارت شما"
+                        {...register("cardLast4")}
+                        className={inputClass}
+                      />
+                      {errors.cardLast4 && (
+                        <p className="mt-1 text-xs text-red-600">{errors.cardLast4.message}</p>
+                      )}
+                    </div>
+                  </div>
+                  <p className="mt-3 text-xs text-zinc-500">
+                    سفارش پس از تأیید واریز توسط فروشگاه پردازش و ارسال می‌شود.
+                  </p>
                 </div>
               </div>
-              <p className="mt-3 text-xs text-zinc-500">
-                سفارش پس از تأیید واریز توسط فروشگاه پردازش و ارسال می‌شود.
-              </p>
-            </div>
+            </Collapsible>
           )}
         </div>
 
