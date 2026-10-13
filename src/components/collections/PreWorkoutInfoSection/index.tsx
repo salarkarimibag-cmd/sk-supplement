@@ -36,21 +36,6 @@ const howItWorks = [
   },
 ];
 
-const topProducts = [
-  {
-    title: "۱) پیش‌تمرین OG - فرمول کلاسیک",
-    body: "یه پیش‌تمرین شناخته‌شده که انرژی پایدار بدون افت ناگهانی می‌ده؛ برای عبور از تمرین‌های شدید و به حداکثر رسوندن هر ست تمرینی.",
-  },
-  {
-    title: "۲) ورتکس - پشتیبان انرژی",
-    body: "برای افزایش قدرت، تمرکز و استقامت طراحی شده؛ فرمول قدرتمندش عملکرد کلی تمرین رو بهتر می‌کنه.",
-  },
-  {
-    title: "۳) هپی پیلز - فرمول احساس خوب",
-    body: "ترکیبی برای بهبود انرژی و حس خوب قبل از تمرین؛ برای وقتی که هم به انگیزه‌ی ذهنی نیاز دارید هم انرژی بدنی.",
-  },
-];
-
 const faqs = [
   {
     question: "پیش‌تمرین چه تاثیری روی برنامه‌ی تمرینی خانم‌ها داره؟",
@@ -96,16 +81,6 @@ export default function PreWorkoutInfoSection() {
           <div key={item.title}>
             <h3 className="font-bold">{item.title}</h3>
             <p className="mt-1.5 leading-7 text-zinc-600 dark:text-zinc-400">{item.body}</p>
-          </div>
-        ))}
-      </div>
-
-      <h2 className="mt-12 text-2xl font-extrabold">برترین پیش‌تمرین‌های SK Supplement</h2>
-      <div className="mt-6 flex flex-col gap-6">
-        {topProducts.map((product) => (
-          <div key={product.title}>
-            <h3 className="font-bold">{product.title}</h3>
-            <p className="mt-1.5 leading-7 text-zinc-600 dark:text-zinc-400">{product.body}</p>
           </div>
         ))}
       </div>
