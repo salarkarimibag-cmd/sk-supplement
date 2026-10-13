@@ -7,7 +7,7 @@ import { z } from "zod";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check, Copy, ShoppingBag } from "lucide-react";
+import { Check, Copy, CreditCard, Landmark, ShoppingBag } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { cardTransferSchema, formatCardNumber, type ShopCard } from "@/lib/cardPayment";
 
@@ -55,6 +55,13 @@ function paymentOptionClass(selected: boolean) {
       ? "border-sky-600 bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-400"
       : "border-zinc-300 dark:border-zinc-700"
   }`;
+}
+
+// ms-auto pushes the icon to the far end of the row (the end side in RTL).
+// A selected row already has sky-coloured text, so the icon only needs a
+// colour of its own when the option is not selected.
+function paymentIconClass(selected: boolean) {
+  return `ms-auto h-5 w-5 ${selected ? "" : "text-zinc-400"}`;
 }
 
 function CheckoutLogo() {
@@ -315,11 +322,13 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
             <label className={paymentOptionClass(paymentMethod === "zarinpal")}>
               <input type="radio" value="zarinpal" {...register("paymentMethod")} className="accent-sky-600" />
               پرداخت آنلاین با درگاه زرین‌پال
+              <Landmark aria-hidden="true" className={paymentIconClass(paymentMethod === "zarinpal")} />
             </label>
             {shopCard && (
               <label className={paymentOptionClass(paymentMethod === "card")}>
                 <input type="radio" value="card" {...register("paymentMethod")} className="accent-sky-600" />
                 کارت به کارت
+                <CreditCard aria-hidden="true" className={paymentIconClass(paymentMethod === "card")} />
               </label>
             )}
           </div>
