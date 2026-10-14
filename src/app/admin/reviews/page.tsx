@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { connectToDatabase } from "@/lib/db";
+import { ProductModel } from "@/models/Product";
 import { ReviewModel } from "@/models/Review";
 import ReviewManager from "@/components/admin/ReviewManager";
 import Pagination from "@/components/ui/Pagination";
@@ -27,8 +28,18 @@ export default async function AdminReviewsPage(props: PageProps<"/admin/reviews"
     .limit(PAGE_SIZE)
     .lean();
 
+  // One query for the names of every product reviewed on this page.
+  const productIds = [...new Set(reviews.flatMap((review) => review.productId ?? []))];
+  const products = await ProductModel.find({ id: { $in: productIds } }, { id: 1, name: 1 }).lean<
+    { id: string; name: string }[]
+  >();
+  const productNames = new Map(products.map((product) => [product.id, product.name]));
+
   const initialReviews = reviews.map((review) => ({
     id: String(review._id),
+    product: review.productId
+      ? { id: review.productId, name: productNames.get(review.productId) ?? review.productId }
+      : null,
     name: review.name,
     rating: review.rating,
     comment: review.comment,

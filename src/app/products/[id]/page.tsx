@@ -3,11 +3,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import StarRating from "@/components/ui/StarRating";
+import Testimonials from "@/components/home/Testimonials";
 import ProductCard from "@/components/product/ProductCard";
 import ProductDetailPanel from "@/components/product/ProductDetailPanel";
 import TrustBadges from "@/components/product/TrustBadges";
+import ReviewForm from "@/components/reviews/ReviewForm";
 import { getCategoryContent } from "@/lib/categoryContent";
 import { getProductById, getRelatedProducts } from "@/lib/products";
+import { getProductReviews } from "@/lib/reviews";
+
+const SHOWN_REVIEW_COUNT = 6;
 
 export async function generateMetadata(
   props: PageProps<"/products/[id]">
@@ -23,9 +28,10 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
 
   if (!product) notFound();
 
-  const [category, relatedProducts] = await Promise.all([
+  const [category, relatedProducts, reviews] = await Promise.all([
     getCategoryContent(product.categorySlug),
     getRelatedProducts(product.categorySlug, product.id, 4),
+    getProductReviews(product.id, SHOWN_REVIEW_COUNT),
   ]);
 
   return (
@@ -107,6 +113,34 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
           </div>
         </div>
       </div>
+
+      <section aria-labelledby="reviews-heading" className="mt-20">
+        <h2
+          id="reviews-heading"
+          className="text-center text-2xl font-extrabold tracking-tight sm:text-3xl"
+        >
+          نظرات خریداران
+        </h2>
+
+        {product.reviewCount > 0 ? (
+          <>
+            <StarRating
+              rating={product.rating}
+              reviewCount={product.reviewCount}
+              className="mt-3 justify-center"
+            />
+            <div className="mt-10">
+              <Testimonials reviews={reviews} />
+            </div>
+          </>
+        ) : (
+          <p className="mt-3 text-center text-sm text-zinc-500 dark:text-zinc-400">
+            هنوز نظری برای این محصول ثبت نشده است. اولین نفر باشید!
+          </p>
+        )}
+
+        <ReviewForm productId={product.id} />
+      </section>
 
       {relatedProducts.length > 0 && (
         <section className="mt-20">

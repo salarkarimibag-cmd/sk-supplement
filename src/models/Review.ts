@@ -1,6 +1,8 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface Review {
+  /** The product's `id` for a product review; absent for a review of the store. */
+  productId?: string;
   name: string;
   rating: number;
   comment: string;
@@ -12,6 +14,7 @@ export interface Review {
 
 const ReviewSchema = new Schema<Review>(
   {
+    productId: { type: String, required: false },
     name: { type: String, required: true, trim: true },
     rating: { type: Number, required: true, min: 1, max: 5 },
     comment: { type: String, required: true, trim: true },
@@ -25,6 +28,10 @@ const ReviewSchema = new Schema<Review>(
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );
+
+// Serves a product page's approved reviews, newest first, and the rating
+// recount for one product.
+ReviewSchema.index({ productId: 1, approved: 1, createdAt: -1 });
 
 // Auto-deletes unapproved (pending) reviews 30 days after submission, so an
 // unmoderated spam queue doesn't pile up forever. Approved reviews are
