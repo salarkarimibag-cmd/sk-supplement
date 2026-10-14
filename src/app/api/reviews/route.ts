@@ -1,8 +1,11 @@
 import { connectToDatabase } from "@/lib/db";
+import { ProductModel } from "@/models/Product";
 import { ReviewModel } from "@/models/Review";
 import { getClientIp, getOrSetDeviceId, isRateLimited } from "@/lib/rateLimit";
 
 interface ReviewBody {
+  /** Set when the review is about a product; omitted for a review of the store. */
+  productId?: string;
   name?: string;
   rating?: number;
   comment?: string;
@@ -16,6 +19,11 @@ export async function POST(request: Request) {
   const name = body.name?.trim();
   const rating = body.rating;
   const comment = body.comment?.trim();
+  const productId = body.productId;
+
+  if (productId !== undefined && typeof productId !== "string") {
+    return Response.json({ message: "محصول نامعتبر است." }, { status: 400 });
+  }
 
   if (
     !name ||
@@ -38,6 +46,10 @@ export async function POST(request: Request) {
 
   await connectToDatabase();
 
+  if (productId !== undefined && !(await ProductModel.exists({ id: productId }))) {
+    return Response.json({ message: "محصول پیدا نشد." }, { status: 404 });
+  }
+
   const limited = await isRateLimited(ReviewModel, {
     ip,
     deviceId,
@@ -52,7 +64,7 @@ export async function POST(request: Request) {
     );
   }
 
-  await ReviewModel.create({ name, rating, comment, approved: false, ip, deviceId });
+  await ReviewModel.create({ productId, name, rating, comment, approved: false, ip, deviceId });
 
   return Response.json({
     message: "نظر شما با موفقیت ثبت شد و پس از تایید مدیر نمایش داده می‌شود.",

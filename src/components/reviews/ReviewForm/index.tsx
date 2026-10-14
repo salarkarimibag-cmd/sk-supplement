@@ -6,7 +6,9 @@ import { Star, ThumbsUp } from "lucide-react";
 const inputClass =
   "w-full rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900";
 
-export default function ReviewForm() {
+/** Reviews the store, or the product with `productId` when one is given. */
+export default function ReviewForm({ productId }: { productId?: string }) {
+  const commentLabel = productId ? "نظر شما درباره این محصول" : "نظر شما درباره ما";
   const [name, setName] = useState("");
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
@@ -22,7 +24,7 @@ export default function ReviewForm() {
       const response = await fetch("/api/reviews", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, rating, comment }),
+        body: JSON.stringify({ productId, name, rating, comment }),
       });
       const data = await response.json();
 
@@ -98,12 +100,12 @@ export default function ReviewForm() {
       </div>
 
       <label htmlFor="review-comment" className="sr-only">
-        نظر شما درباره ما
+        {commentLabel}
       </label>
       <textarea
         id="review-comment"
         required
-        placeholder="نظر شما درباره ما"
+        placeholder={commentLabel}
         rows={4}
         value={comment}
         onChange={(event) => setComment(event.target.value)}
