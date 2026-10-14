@@ -11,8 +11,6 @@ interface ProductItem {
   categorySlug: string;
   imageUrl: string;
   stock: number;
-  rating: number;
-  reviewCount: number;
   flavor: string;
   size: string;
 }
@@ -31,8 +29,6 @@ interface FormState {
   categorySlug: string;
   imageUrl: string;
   stock: string;
-  rating: string;
-  reviewCount: string;
   flavor: string;
   size: string;
 }
@@ -47,8 +43,6 @@ function emptyForm(defaultCategorySlug: string): FormState {
     categorySlug: defaultCategorySlug,
     imageUrl: "",
     stock: "",
-    rating: "",
-    reviewCount: "",
     flavor: "",
     size: "",
   };
@@ -82,8 +76,6 @@ export default function ProductManager({
       categorySlug: item.categorySlug,
       imageUrl: item.imageUrl,
       stock: String(item.stock),
-      rating: String(item.rating),
-      reviewCount: String(item.reviewCount),
       flavor: item.flavor,
       size: item.size,
     });
@@ -125,8 +117,6 @@ export default function ProductManager({
       categorySlug: form.categorySlug,
       imageUrl: form.imageUrl.trim(),
       stock: Number(form.stock),
-      rating: form.rating ? Number(form.rating) : 0,
-      reviewCount: form.reviewCount ? Number(form.reviewCount) : 0,
       flavor: form.flavor.trim(),
       size: form.size.trim(),
     };
@@ -156,8 +146,6 @@ export default function ProductManager({
         categorySlug: data.categorySlug,
         imageUrl: data.imageUrl,
         stock: data.stock,
-        rating: data.rating,
-        reviewCount: data.reviewCount,
         flavor: data.flavor ?? "",
         size: data.size ?? "",
       };
@@ -266,24 +254,6 @@ export default function ProductManager({
           value={form.imageUrl}
           onChange={(event) => setForm({ ...form, imageUrl: event.target.value })}
           className={`col-span-2 ${inputClass}`}
-        />
-        <input
-          type="number"
-          min={0}
-          max={5}
-          step={0.1}
-          placeholder="امتیاز (اختیاری)"
-          value={form.rating}
-          onChange={(event) => setForm({ ...form, rating: event.target.value })}
-          className={inputClass}
-        />
-        <input
-          type="number"
-          min={0}
-          placeholder="تعداد نظرات (اختیاری)"
-          value={form.reviewCount}
-          onChange={(event) => setForm({ ...form, reviewCount: event.target.value })}
-          className={inputClass}
         />
 
         <textarea

@@ -4,7 +4,9 @@ import type { CatalogProduct } from "@/data/catalog";
 import { escapeRegex } from "@/lib/escapeRegex";
 
 function withInStock(product: Product): CatalogProduct {
-  return { ...product, inStock: product.stock > 0 };
+  // .lean() skips schema defaults, so products saved before salesCount
+  // existed come back without it until they're backfilled.
+  return { ...product, salesCount: product.salesCount ?? 0, inStock: product.stock > 0 };
 }
 
 export async function getAllProducts(): Promise<CatalogProduct[]> {
@@ -21,10 +23,14 @@ export async function getLatestProducts(limit: number): Promise<CatalogProduct[]
   return products.map(withInStock);
 }
 
+// Ties (including products that haven't sold yet) fall back to newest first.
+const bySalesThenNewest = { salesCount: -1, _id: -1 } as const;
+
+/** Only products that have actually sold; empty until the first paid order. */
 export async function getBestSellers(limit: number): Promise<CatalogProduct[]> {
   await connectToDatabase();
-  const products = await ProductModel.find()
-    .sort({ reviewCount: -1 })
+  const products = await ProductModel.find({ salesCount: { $gt: 0 } })
+    .sort(bySalesThenNewest)
     .limit(limit)
     .lean<Product[]>();
   return products.map(withInStock);
@@ -37,7 +43,7 @@ export async function getRelatedProducts(
 ): Promise<CatalogProduct[]> {
   await connectToDatabase();
   const products = await ProductModel.find({ categorySlug, id: { $ne: excludeId } })
-    .sort({ reviewCount: -1 })
+    .sort(bySalesThenNewest)
     .limit(limit)
     .lean<Product[]>();
   return products.map(withInStock);
@@ -91,10 +97,10 @@ export async function searchProducts(query: string): Promise<CatalogProduct[]> {
 type StockLine = { productId: string; quantity: number };
 
 /**
- * Adds `direction * quantity` to each product's stock, in one round trip.
- * `$inc` is applied by MongoDB itself, so two orders changing the same
- * product at the same moment can't overwrite each other's change the way a
- * read-then-write in JS could.
+ * Adds `direction * quantity` to each product's stock, and the opposite to
+ * its sales count, in one round trip. `$inc` is applied by MongoDB itself,
+ * so two orders changing the same product at the same moment can't
+ * overwrite each other's change the way a read-then-write in JS could.
  */
 async function adjustStock(items: StockLine[], direction: 1 | -1): Promise<void> {
   await connectToDatabase();
@@ -102,14 +108,16 @@ async function adjustStock(items: StockLine[], direction: 1 | -1): Promise<void>
     items.map((item) => ({
       updateOne: {
         filter: { id: item.productId },
-        update: { $inc: { stock: direction * item.quantity } },
+        update: {
+          $inc: { stock: direction * item.quantity, salesCount: -direction * item.quantity },
+        },
       },
     }))
   );
 }
 
 /**
- * Takes a paid order's quantities out of stock.
+ * Takes a paid order's quantities out of stock and counts them as sold.
  *
  * It's deliberately unconditional: by the time this runs the buyer has
  * already paid, so the sale stands even if stock ran out meanwhile. Stock
@@ -119,7 +127,7 @@ export function decrementStock(items: StockLine[]): Promise<void> {
   return adjustStock(items, -1);
 }
 
-/** Puts a cancelled order's quantities back in stock. */
+/** Puts a cancelled order's quantities back in stock and takes them off the sales count. */
 export function restoreStock(items: StockLine[]): Promise<void> {
   return adjustStock(items, 1);
 }

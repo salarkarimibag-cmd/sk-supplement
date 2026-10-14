@@ -66,9 +66,7 @@ export default function ProductCard({
           {name}
         </h3>
         {rating !== undefined && reviewCount !== undefined && (
-          <div className="mt-1.5">
-            <StarRating rating={rating} reviewCount={reviewCount} />
-          </div>
+          <StarRating rating={rating} reviewCount={reviewCount} className="mt-1.5" />
         )}
         <p className="mt-1.5 text-sm text-zinc-900 dark:text-zinc-100">
           {price.toLocaleString("fa-IR")} تومان

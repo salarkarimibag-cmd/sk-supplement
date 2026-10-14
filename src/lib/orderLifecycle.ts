@@ -14,7 +14,8 @@ interface OrderEffects {
 
 /**
  * An order was paid, through the ZarinPal callback or an admin confirming a
- * card-to-card transfer: take its items out of stock and count the code.
+ * card-to-card transfer: take its items out of stock, count them as sold
+ * and count the code.
  */
 export async function onOrderPaid(order: OrderEffects): Promise<void> {
   await Promise.all([

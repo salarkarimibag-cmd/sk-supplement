@@ -1,6 +1,7 @@
 interface StarRatingProps {
   rating: number;
   reviewCount: number;
+  className?: string;
 }
 
 function Star({ filled }: { filled: boolean }) {
@@ -18,17 +19,28 @@ function Star({ filled }: { filled: boolean }) {
   );
 }
 
-export default function StarRating({ rating, reviewCount }: StarRatingProps) {
+/** Renders nothing until the product has at least one approved review. */
+export default function StarRating({ rating, reviewCount, className = "" }: StarRatingProps) {
+  if (reviewCount === 0) return null;
+
   const rounded = Math.round(rating);
+  const ratingText = rating.toLocaleString("fa-IR", { maximumFractionDigits: 1 });
+  const countText = reviewCount.toLocaleString("fa-IR");
 
   return (
-    <div className="flex items-center gap-1.5 text-amber-500">
+    <div className={`flex items-center gap-1.5 text-amber-500 ${className}`}>
       <div className="flex gap-0.5">
         {Array.from({ length: 5 }, (_, index) => (
           <Star key={index} filled={index < rounded} />
         ))}
       </div>
-      <span className="text-xs text-zinc-500 dark:text-zinc-400">({reviewCount})</span>
+      {/* The stars are decorative; this sentence is what screen readers announce. */}
+      <span className="sr-only">
+        امتیاز {ratingText} از ۵ از {countText} نظر
+      </span>
+      <span aria-hidden="true" className="text-xs text-zinc-500 dark:text-zinc-400">
+        ({countText})
+      </span>
     </div>
   );
 }

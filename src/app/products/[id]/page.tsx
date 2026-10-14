@@ -66,9 +66,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
         <div>
           <h1 className="text-2xl font-extrabold sm:text-3xl">{product.name}</h1>
 
-          <div className="mt-3">
-            <StarRating rating={product.rating} reviewCount={product.reviewCount} />
-          </div>
+          <StarRating rating={product.rating} reviewCount={product.reviewCount} className="mt-3" />
 
           <p className="mt-4 text-2xl font-bold">{product.price.toLocaleString("fa-IR")} تومان</p>
 
