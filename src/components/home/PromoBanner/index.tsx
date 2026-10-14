@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function PromoBanner() {
   return (
-    <section className="relative h-[420px] overflow-hidden bg-black sm:h-[460px]">
+    <section className="relative h-105 overflow-hidden bg-black sm:h-115">
       <div className="absolute inset-y-0 left-0 w-full sm:w-1/2">
         <Image
           src="/images/promo-banner.webp"
@@ -12,10 +12,10 @@ export default function PromoBanner() {
           sizes="(min-width: 640px) 50vw, 100vw"
           className="object-cover"
         />
-        <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-r from-transparent to-black" />
+        <div className="absolute inset-y-0 right-0 w-24 bg-linear-to-r from-transparent to-black" />
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent sm:hidden" />
+      <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent sm:hidden" />
 
       <div className="relative mx-auto flex h-full max-w-6xl items-center px-6">
         <div className="max-w-lg text-right">

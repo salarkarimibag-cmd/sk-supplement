@@ -43,7 +43,7 @@ const tiles: Tile[] = [
 
 export default function CategoryShowcase() {
   return (
-    <div dir="ltr" className="grid grid-cols-2 md:grid-cols-3 md:grid-rows-2 md:h-[560px]">
+    <div dir="ltr" className="grid grid-cols-2 md:grid-cols-3 md:grid-rows-2 md:h-140">
       {tiles.map((tile) => (
         <Link
           key={tile.slug}

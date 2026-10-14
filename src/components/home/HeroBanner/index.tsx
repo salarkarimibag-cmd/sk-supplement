@@ -4,7 +4,7 @@ import GradientOverlay from "@/components/ui/GradientOverlay";
 
 export default function HeroBanner() {
   return (
-    <section className="relative flex h-[420px] overflow-hidden bg-black sm:h-[480px] md:h-[560px]">
+    <section className="relative flex h-105 overflow-hidden bg-black sm:h-120 md:h-140">
       <div className="relative h-full w-1/2">
         <Image
           src="/images/hero-banner-1.webp"
@@ -32,7 +32,7 @@ export default function HeroBanner() {
       </div>
 
       {/* soft blend over the seam between the two images */}
-      <div className="absolute inset-y-0 left-1/2 w-24 -translate-x-1/2 bg-gradient-to-r from-black/0 via-black/50 to-black/0" />
+      <div className="absolute inset-y-0 left-1/2 w-24 -translate-x-1/2 bg-linear-to-r from-black/0 via-black/50 to-black/0" />
 
       <GradientOverlay from="from-black/70" via="via-black/30" />
 

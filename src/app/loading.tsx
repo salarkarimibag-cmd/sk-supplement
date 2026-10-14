@@ -4,7 +4,7 @@ import ProductCardSkeleton from "@/components/product/ProductCardSkeleton";
 export default function Loading() {
   return (
     <div className="flex w-full flex-col gap-12 pb-12">
-      <Skeleton className="h-[420px] w-full rounded-none" />
+      <Skeleton className="h-105 w-full rounded-none" />
 
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6">
         <section>
