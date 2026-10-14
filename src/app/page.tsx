@@ -7,18 +7,15 @@ import CategoryShowcase from "@/components/home/CategoryShowcase";
 import Testimonials from "@/components/home/Testimonials";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import LatestArticles from "@/components/home/LatestArticles";
-import { getAllProducts } from "@/lib/products";
+import { getBestSellers, getLatestProducts } from "@/lib/products";
 import { getHomepageReviews } from "@/lib/reviews";
 
 export default async function Home() {
-  const [allProducts, { reviews, totalCount: reviewsCount }] = await Promise.all([
-    getAllProducts(),
+  const [latestProducts, bestSellers, { reviews, totalCount: reviewsCount }] = await Promise.all([
+    getLatestProducts(4),
+    getBestSellers(4),
     getHomepageReviews(),
   ]);
-  const featuredProducts = allProducts.slice(0, 4);
-  const bestSellers = [...allProducts]
-    .sort((a, b) => b.reviewCount - a.reviewCount)
-    .slice(0, 4);
 
   return (
     <div className="flex w-full flex-col gap-12 pb-12">
@@ -30,13 +27,16 @@ export default async function Home() {
             آخرین محصولات
           </h2>
           <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-4">
-            {featuredProducts.map((product) => (
+            {latestProducts.map((product) => (
               <ProductCard
                 key={product.id}
                 id={product.id}
                 name={product.name}
                 price={product.price}
                 imageUrl={product.imageUrl}
+                rating={product.rating}
+                reviewCount={product.reviewCount}
+                inStock={product.inStock}
               />
             ))}
           </div>

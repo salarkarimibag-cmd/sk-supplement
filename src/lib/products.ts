@@ -13,6 +13,23 @@ export async function getAllProducts(): Promise<CatalogProduct[]> {
   return products.map(withInStock);
 }
 
+// A MongoDB ObjectId starts with its creation time, so sorting by `_id`
+// descending lists the newest products first without a `createdAt` field.
+export async function getLatestProducts(limit: number): Promise<CatalogProduct[]> {
+  await connectToDatabase();
+  const products = await ProductModel.find().sort({ _id: -1 }).limit(limit).lean<Product[]>();
+  return products.map(withInStock);
+}
+
+export async function getBestSellers(limit: number): Promise<CatalogProduct[]> {
+  await connectToDatabase();
+  const products = await ProductModel.find()
+    .sort({ reviewCount: -1 })
+    .limit(limit)
+    .lean<Product[]>();
+  return products.map(withInStock);
+}
+
 export async function getProductsPage(
   page: number,
   pageSize: number
