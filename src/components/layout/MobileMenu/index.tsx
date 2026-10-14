@@ -75,7 +75,7 @@ export default function MobileMenu({ categories }: { categories: NavCategory[] }
           </ul>
         </nav>
 
-        <div className="border-t border-black/[.08] bg-zinc-50 px-6 py-5 dark:border-white/8 dark:bg-zinc-800">
+        <div className="border-t border-black/8 bg-zinc-50 px-6 py-5 dark:border-white/8 dark:bg-zinc-800">
           <Link
             href="/account/login"
             onClick={close}
