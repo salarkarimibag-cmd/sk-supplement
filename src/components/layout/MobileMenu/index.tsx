@@ -45,7 +45,7 @@ export default function MobileMenu({ categories }: { categories: NavCategory[] }
 
       <div
         style={{ top: topOffset }}
-        aria-hidden={!isOpen}
+        inert={!isOpen}
         className={`fixed inset-x-0 bottom-0 z-40 flex flex-col bg-white transition-transform duration-300 ease-in-out md:hidden dark:bg-zinc-900 ${
           isOpen ? "translate-x-0" : "pointer-events-none translate-x-full"
         }`}

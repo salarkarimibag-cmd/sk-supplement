@@ -10,7 +10,7 @@ export default function CartDrawer() {
   return (
     <>
       <div
-        aria-hidden={!isOpen}
+        aria-hidden="true"
         onClick={closeCart}
         className={`fixed inset-0 z-50 bg-black/40 transition-opacity ${
           isOpen ? "opacity-100" : "pointer-events-none opacity-0"
@@ -20,9 +20,11 @@ export default function CartDrawer() {
       <div
         role="dialog"
         aria-label="سبد خرید"
-        aria-hidden={!isOpen}
-        className={`fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col overflow-hidden shadow-2xl transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "translate-x-full"
+        // Closed, the drawer stays mounted off-screen; `inert` keeps its
+        // buttons and links out of the Tab order and hides it from screen readers.
+        inert={!isOpen}
+        className={`fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col overflow-hidden transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0 shadow-2xl" : "translate-x-full"
         }`}
       >
         <Image
