@@ -13,7 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm test` — run the Vitest unit test suite once
 - `npm run test:watch` — run Vitest in watch mode
 
-- `npm run seed*` / `npm run set-admin <email>` / `npm run normalize-emails` — one-off scripts in `scripts/`; they load `.env.local`, so they hit the dev database unless `MONGODB_DB` is set in the shell
+- `npm run seed*` / `npm run set-admin <email>` / `npm run normalize-emails` / `npm run reset-ratings-and-sales` — one-off scripts in `scripts/`; they load `.env.local`, so they hit the dev database unless `MONGODB_DB` is set in the shell
 
 Tests are unit tests for pure logic in `src/lib/*.ts` (colocated as `*.test.ts`) — no database or browser involved (`db.test.ts` mocks mongoose). CI (`.github/workflows/ci.yml`) runs lint and tests. After adding a route, run `npx next typegen` (or `dev`/`build`) before `tsc`, since `PageProps<"/route">` types are generated.
 

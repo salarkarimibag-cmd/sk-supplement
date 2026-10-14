@@ -47,7 +47,11 @@ export const filterOptionsBySlug: Record<string, FilterOptions> = {
   },
 };
 
-export type CatalogProduct = Product & { rating: number; reviewCount: number; inStock: boolean };
+export type CatalogProduct = Product & { inStock: boolean };
+
+// Seed fixtures leave out the counters: ratings come only from approved
+// reviews and sales only from paid orders, so they start at the schema's 0.
+export type SeedProduct = Omit<CatalogProduct, "rating" | "reviewCount" | "salesCount">;
 
 /** Strips a trailing count like " (۲)" off a filter option label. */
 function stripCount(label: string): string {
@@ -56,10 +60,10 @@ function stripCount(label: string): string {
 
 /** Cycles through the given flavors/sizes to give every product in a list a variant. */
 function withVariants(
-  products: Omit<CatalogProduct, "flavor" | "size">[],
+  products: Omit<SeedProduct, "flavor" | "size">[],
   flavors: string[],
   sizes?: string[]
-): CatalogProduct[] {
+): SeedProduct[] {
   return products.map((product, index) => ({
     ...product,
     flavor: flavors[index % flavors.length],
@@ -69,7 +73,7 @@ function withVariants(
 
 // Fixture data for scripts/seed-products.ts only — every live page fetches
 // products from MongoDB via src/lib/products.ts, not from this file.
-const rawProteinProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
+const rawProteinProducts: Omit<SeedProduct, "flavor" | "size">[] = [
     {
       id: "p1",
       name: "وی پروتئین ایزوله",
@@ -79,8 +83,6 @@ const rawProteinProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "protein",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 5,
-      reviewCount: 64,
       inStock: true,
     },
     {
@@ -92,8 +94,6 @@ const rawProteinProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "protein",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 4,
-      reviewCount: 22,
       inStock: true,
     },
     {
@@ -105,8 +105,6 @@ const rawProteinProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "protein",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 5,
-      reviewCount: 41,
       inStock: true,
     },
     {
@@ -118,8 +116,6 @@ const rawProteinProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "protein",
       imageUrl: "/images/placeholder.svg",
       stock: 0,
-      rating: 4,
-      reviewCount: 17,
       inStock: false,
     },
     {
@@ -131,8 +127,6 @@ const rawProteinProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "protein",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 5,
-      reviewCount: 38,
       inStock: true,
     },
     {
@@ -144,8 +138,6 @@ const rawProteinProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "protein",
       imageUrl: "/images/placeholder.svg",
       stock: 0,
-      rating: 4,
-      reviewCount: 12,
       inStock: false,
     },
     {
@@ -157,8 +149,6 @@ const rawProteinProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "protein",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 5,
-      reviewCount: 29,
       inStock: true,
     },
     {
@@ -170,8 +160,6 @@ const rawProteinProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "protein",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 4,
-      reviewCount: 47,
       inStock: true,
     },
     {
@@ -183,13 +171,11 @@ const rawProteinProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "protein",
       imageUrl: "/images/placeholder.svg",
       stock: 0,
-      rating: 4,
-      reviewCount: 8,
       inStock: false,
     },
 ];
 
-const rawAminosProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
+const rawAminosProducts: Omit<SeedProduct, "flavor" | "size">[] = [
     {
       id: "a1",
       name: "بست EAA - آمینو اسید ضروری",
@@ -199,8 +185,6 @@ const rawAminosProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "aminos",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 5,
-      reviewCount: 33,
       inStock: true,
     },
     {
@@ -212,8 +196,6 @@ const rawAminosProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "aminos",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 4,
-      reviewCount: 19,
       inStock: true,
     },
     {
@@ -225,8 +207,6 @@ const rawAminosProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "aminos",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 5,
-      reviewCount: 27,
       inStock: true,
     },
     {
@@ -238,8 +218,6 @@ const rawAminosProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "aminos",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 4,
-      reviewCount: 15,
       inStock: true,
     },
     {
@@ -251,8 +229,6 @@ const rawAminosProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "aminos",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 5,
-      reviewCount: 21,
       inStock: true,
     },
     {
@@ -264,8 +240,6 @@ const rawAminosProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "aminos",
       imageUrl: "/images/placeholder.svg",
       stock: 0,
-      rating: 4,
-      reviewCount: 9,
       inStock: false,
     },
     {
@@ -277,8 +251,6 @@ const rawAminosProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "aminos",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 5,
-      reviewCount: 23,
       inStock: true,
     },
     {
@@ -290,8 +262,6 @@ const rawAminosProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "aminos",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 4,
-      reviewCount: 16,
       inStock: true,
     },
     {
@@ -303,13 +273,11 @@ const rawAminosProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "aminos",
       imageUrl: "/images/placeholder.svg",
       stock: 0,
-      rating: 4,
-      reviewCount: 6,
       inStock: false,
     },
 ];
 
-const rawFatBurnerProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
+const rawFatBurnerProducts: Omit<SeedProduct, "flavor" | "size">[] = [
     {
       id: "f1",
       name: "راکسی‌لین - چربی‌سوز و تمرکز",
@@ -319,8 +287,6 @@ const rawFatBurnerProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "fat-burner",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 5,
-      reviewCount: 46,
       inStock: true,
     },
     {
@@ -332,8 +298,6 @@ const rawFatBurnerProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "fat-burner",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 4,
-      reviewCount: 30,
       inStock: true,
     },
     {
@@ -345,8 +309,6 @@ const rawFatBurnerProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "fat-burner",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 5,
-      reviewCount: 89,
       inStock: true,
     },
     {
@@ -358,8 +320,6 @@ const rawFatBurnerProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "fat-burner",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 4,
-      reviewCount: 24,
       inStock: true,
     },
     {
@@ -371,8 +331,6 @@ const rawFatBurnerProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "fat-burner",
       imageUrl: "/images/placeholder.svg",
       stock: 0,
-      rating: 4,
-      reviewCount: 11,
       inStock: false,
     },
     {
@@ -384,8 +342,6 @@ const rawFatBurnerProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "fat-burner",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 5,
-      reviewCount: 18,
       inStock: true,
     },
     {
@@ -397,8 +353,6 @@ const rawFatBurnerProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "fat-burner",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 4,
-      reviewCount: 33,
       inStock: true,
     },
     {
@@ -410,8 +364,6 @@ const rawFatBurnerProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "fat-burner",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 4,
-      reviewCount: 20,
       inStock: true,
     },
     {
@@ -423,13 +375,11 @@ const rawFatBurnerProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "fat-burner",
       imageUrl: "/images/placeholder.svg",
       stock: 0,
-      rating: 3,
-      reviewCount: 7,
       inStock: false,
     },
 ];
 
-const rawPreWorkoutProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
+const rawPreWorkoutProducts: Omit<SeedProduct, "flavor" | "size">[] = [
     {
       id: "pw1",
       name: "پیش‌تمرین OG - فرمول کلاسیک",
@@ -439,8 +389,6 @@ const rawPreWorkoutProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "pre-workout",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 5,
-      reviewCount: 52,
       inStock: true,
     },
     {
@@ -452,8 +400,6 @@ const rawPreWorkoutProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "pre-workout",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 4,
-      reviewCount: 28,
       inStock: true,
     },
     {
@@ -465,8 +411,6 @@ const rawPreWorkoutProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "pre-workout",
       imageUrl: "/images/placeholder.svg",
       stock: 0,
-      rating: 4,
-      reviewCount: 14,
       inStock: false,
     },
     {
@@ -478,8 +422,6 @@ const rawPreWorkoutProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "pre-workout",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 5,
-      reviewCount: 31,
       inStock: true,
     },
     {
@@ -491,8 +433,6 @@ const rawPreWorkoutProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "pre-workout",
       imageUrl: "/images/placeholder.svg",
       stock: 10,
-      rating: 4,
-      reviewCount: 19,
       inStock: true,
     },
     {
@@ -504,13 +444,11 @@ const rawPreWorkoutProducts: Omit<CatalogProduct, "flavor" | "size">[] = [
       categorySlug: "pre-workout",
       imageUrl: "/images/placeholder.svg",
       stock: 0,
-      rating: 4,
-      reviewCount: 10,
       inStock: false,
     },
   ];
 
-export const productsBySlug: Record<string, CatalogProduct[]> = {
+export const productsBySlug: Record<string, SeedProduct[]> = {
   protein: withVariants(rawProteinProducts, defaultFilterOptions.flavors, defaultFilterOptions.sizes),
   aminos: withVariants(rawAminosProducts, filterOptionsBySlug.aminos.flavors.map(stripCount)),
   "fat-burner": withVariants(

@@ -29,7 +29,7 @@ export function sortProducts(products: CatalogProduct[], sort: string): CatalogP
       return sorted.sort((a, b) => b.name.localeCompare(a.name, "fa"));
     case "featured":
     default:
-      return sorted.sort((a, b) => b.reviewCount - a.reviewCount);
+      return sorted.sort((a, b) => b.salesCount - a.salesCount);
   }
 }
 

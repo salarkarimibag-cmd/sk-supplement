@@ -5,9 +5,9 @@ process.loadEnvFile(".env.local");
 
 import { connectToDatabase } from "../src/lib/db";
 import { ProductModel } from "../src/models/Product";
-import type { Product } from "../src/models/Product";
+import type { SeedProduct } from "../src/data/catalog";
 
-const products: Product[] = [
+const products: Omit<SeedProduct, "inStock">[] = [
   {
     id: "c1",
     name: "کراتین مونوهیدرات",
@@ -17,8 +17,6 @@ const products: Product[] = [
     categorySlug: "creatine",
     imageUrl: "/images/placeholder.svg",
     stock: 10,
-    rating: 5,
-    reviewCount: 38,
     flavor: "بدون طعم",
     size: "۳۰۰ گرم",
   },
@@ -31,8 +29,6 @@ const products: Product[] = [
     categorySlug: "creatine",
     imageUrl: "/images/placeholder.svg",
     stock: 10,
-    rating: 4,
-    reviewCount: 19,
     flavor: "بدون طعم",
     size: "۳۰۰ گرم",
   },
@@ -45,8 +41,6 @@ const products: Product[] = [
     categorySlug: "creatine",
     imageUrl: "/images/placeholder.svg",
     stock: 10,
-    rating: 4,
-    reviewCount: 12,
     size: "۹۰ کپسول",
   },
   {
@@ -58,8 +52,6 @@ const products: Product[] = [
     categorySlug: "health-wellness",
     imageUrl: "/images/placeholder.svg",
     stock: 10,
-    rating: 5,
-    reviewCount: 27,
     size: "۶۰ کپسول",
   },
   {
@@ -71,8 +63,6 @@ const products: Product[] = [
     categorySlug: "health-wellness",
     imageUrl: "/images/placeholder.svg",
     stock: 10,
-    rating: 4,
-    reviewCount: 33,
     size: "۹۰ کپسول",
   },
   {
@@ -84,8 +74,6 @@ const products: Product[] = [
     categorySlug: "health-wellness",
     imageUrl: "/images/placeholder.svg",
     stock: 10,
-    rating: 5,
-    reviewCount: 21,
     size: "۶۰ کپسول",
   },
   {
@@ -97,8 +85,6 @@ const products: Product[] = [
     categorySlug: "vitamins",
     imageUrl: "/images/placeholder.svg",
     stock: 10,
-    rating: 5,
-    reviewCount: 44,
     size: "۶۰ قرص",
   },
   {
@@ -110,8 +96,6 @@ const products: Product[] = [
     categorySlug: "vitamins",
     imageUrl: "/images/placeholder.svg",
     stock: 10,
-    rating: 5,
-    reviewCount: 29,
     size: "۶۰ قطره",
   },
   {
@@ -123,8 +107,6 @@ const products: Product[] = [
     categorySlug: "vitamins",
     imageUrl: "/images/placeholder.svg",
     stock: 10,
-    rating: 4,
-    reviewCount: 16,
     size: "۹۰ قرص جوشان",
   },
 ];

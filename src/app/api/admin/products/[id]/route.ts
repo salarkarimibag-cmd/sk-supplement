@@ -10,8 +10,6 @@ interface UpdateProductBody {
   categorySlug?: string;
   imageUrl?: string;
   stock?: number;
-  rating?: number;
-  reviewCount?: number;
   flavor?: string;
   size?: string;
 }
@@ -38,8 +36,6 @@ export async function PATCH(
   if (body.categorySlug) update.categorySlug = body.categorySlug;
   if (body.imageUrl) update.imageUrl = body.imageUrl;
   if (body.stock !== undefined) update.stock = body.stock;
-  if (body.rating !== undefined) update.rating = body.rating;
-  if (body.reviewCount !== undefined) update.reviewCount = body.reviewCount;
   if (body.flavor !== undefined) update.flavor = body.flavor || undefined;
   if (body.size !== undefined) update.size = body.size || undefined;
 

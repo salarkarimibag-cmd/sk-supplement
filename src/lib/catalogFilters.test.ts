@@ -15,15 +15,16 @@ function makeProduct(overrides: Partial<CatalogProduct> = {}): CatalogProduct {
     inStock: true,
     rating: 0,
     reviewCount: 0,
+    salesCount: 0,
     ...overrides,
   } as CatalogProduct;
 }
 
 describe("sortProducts", () => {
   const products = [
-    makeProduct({ id: "a", name: "ب", price: 300, reviewCount: 1 }),
-    makeProduct({ id: "b", name: "آ", price: 100, reviewCount: 5 }),
-    makeProduct({ id: "c", name: "پ", price: 200, reviewCount: 3 }),
+    makeProduct({ id: "a", name: "ب", price: 300, salesCount: 1 }),
+    makeProduct({ id: "b", name: "آ", price: 100, salesCount: 5 }),
+    makeProduct({ id: "c", name: "پ", price: 200, salesCount: 3 }),
   ];
 
   it("sorts by price ascending", () => {
@@ -34,7 +35,7 @@ describe("sortProducts", () => {
     expect(sortProducts(products, "price-desc").map((p) => p.id)).toEqual(["a", "c", "b"]);
   });
 
-  it("sorts featured (default) by review count descending", () => {
+  it("sorts featured (default) by units sold, descending", () => {
     expect(sortProducts(products, "featured").map((p) => p.id)).toEqual(["b", "c", "a"]);
   });
 

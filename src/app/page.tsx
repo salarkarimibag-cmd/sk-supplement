@@ -55,25 +55,27 @@ export default async function Home() {
       </div>
 
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6">
-        <section>
-          <h2 className="mb-10 text-center text-3xl font-extrabold tracking-tight uppercase sm:text-4xl">
-            پرفروش‌ترین‌ها
-          </h2>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-4">
-            {bestSellers.map((product) => (
-              <ProductCard
-                key={product.id}
-                id={product.id}
-                name={product.name}
-                price={product.price}
-                imageUrl={product.imageUrl}
-                rating={product.rating}
-                reviewCount={product.reviewCount}
-                inStock={product.inStock}
-              />
-            ))}
-          </div>
-        </section>
+        {bestSellers.length > 0 && (
+          <section>
+            <h2 className="mb-10 text-center text-3xl font-extrabold tracking-tight uppercase sm:text-4xl">
+              پرفروش‌ترین‌ها
+            </h2>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-4">
+              {bestSellers.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  id={product.id}
+                  name={product.name}
+                  price={product.price}
+                  imageUrl={product.imageUrl}
+                  rating={product.rating}
+                  reviewCount={product.reviewCount}
+                  inStock={product.inStock}
+                />
+              ))}
+            </div>
+          </section>
+        )}
 
         <section>
           <h2 className="mb-10 text-center text-3xl font-extrabold tracking-tight uppercase sm:text-4xl">

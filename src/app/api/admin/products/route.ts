@@ -11,8 +11,6 @@ interface CreateProductBody {
   categorySlug?: string;
   imageUrl?: string;
   stock?: number;
-  rating?: number;
-  reviewCount?: number;
   flavor?: string;
   size?: string;
 }
@@ -69,8 +67,6 @@ export async function POST(request: Request) {
     categorySlug: body.categorySlug,
     imageUrl: body.imageUrl,
     stock: body.stock,
-    rating: body.rating ?? 0,
-    reviewCount: body.reviewCount ?? 0,
     flavor: body.flavor || undefined,
     size: body.size || undefined,
   });
