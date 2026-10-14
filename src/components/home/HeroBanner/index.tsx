@@ -10,7 +10,10 @@ export default function HeroBanner() {
           src="/images/hero-banner-1.webp"
           alt=""
           fill
-          priority
+          // Either half can be the LCP image, so both load eagerly at high
+          // priority instead of using `preload` (meant for a single LCP image).
+          loading="eager"
+          fetchPriority="high"
           sizes="50vw"
           className="object-cover"
         />
@@ -21,7 +24,8 @@ export default function HeroBanner() {
           src="/images/hero-banner-2.webp"
           alt=""
           fill
-          priority
+          loading="eager"
+          fetchPriority="high"
           sizes="50vw"
           className="object-cover"
         />

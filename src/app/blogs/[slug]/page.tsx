@@ -27,7 +27,14 @@ export default async function BlogPostPage(props: PageProps<"/blogs/[slug]">) {
   return (
     <div className="mx-auto w-full max-w-3xl px-6 py-12">
       <div className="relative aspect-video overflow-hidden bg-zinc-100 dark:bg-zinc-900">
-        <Image src={post.coverImage} alt={post.title} fill className="object-cover" />
+        <Image
+          src={post.coverImage}
+          alt={post.title}
+          fill
+          preload
+          sizes="(min-width: 768px) 720px, 100vw"
+          className="object-cover"
+        />
       </div>
 
       <h1 className="mt-8 text-2xl font-bold sm:text-3xl">{post.title}</h1>

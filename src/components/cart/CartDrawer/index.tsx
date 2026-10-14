@@ -31,6 +31,7 @@ export default function CartDrawer() {
           src="/images/cart-drawer-bg.webp"
           alt=""
           fill
+          sizes="(min-width: 448px) 448px, 100vw"
           className="object-cover opacity-70"
         />
 
@@ -58,7 +59,7 @@ export default function CartDrawer() {
             {items.map((item) => (
               <li key={item.id} className="flex gap-4 border-b border-zinc-100 py-5 dark:border-zinc-800">
                 <div className="relative h-20 w-20 shrink-0 bg-zinc-100 dark:bg-zinc-800">
-                  <Image src={item.imageUrl} alt={item.name} fill className="object-contain" />
+                  <Image src={item.imageUrl} alt={item.name} fill sizes="80px" className="object-contain" />
                 </div>
 
                 <div className="flex flex-1 flex-col">

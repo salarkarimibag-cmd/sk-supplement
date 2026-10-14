@@ -48,6 +48,8 @@ export default function ProductCard({
             src={imageUrl}
             alt={name}
             fill
+            // Matches the product grids: 2 columns, then 3 from sm, then 4 from md.
+            sizes="(min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw"
             className="object-contain"
           />
           {!inStock && (

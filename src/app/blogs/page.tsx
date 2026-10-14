@@ -19,13 +19,16 @@ export default async function BlogsPage() {
         <p className="mt-2 text-zinc-600 dark:text-zinc-400">فهرست مقالات به‌زودی اضافه می‌شود.</p>
       ) : (
         <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2">
-          {posts.map((post) => (
+          {posts.map((post, index) => (
             <Link key={post.slug} href={`/blogs/${post.slug}`} className="group block">
               <div className="relative aspect-video overflow-hidden bg-zinc-100 dark:bg-zinc-900">
                 <Image
                   src={post.coverImage}
                   alt={post.title}
                   fill
+                  sizes="(min-width: 640px) 50vw, 100vw"
+                  // The first row (two cards from sm) is above the fold.
+                  loading={index < 2 ? "eager" : "lazy"}
                   className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 />
               </div>
