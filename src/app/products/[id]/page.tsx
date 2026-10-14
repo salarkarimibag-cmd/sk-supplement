@@ -3,9 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import StarRating from "@/components/ui/StarRating";
+import ProductCard from "@/components/product/ProductCard";
 import ProductDetailPanel from "@/components/product/ProductDetailPanel";
+import TrustBadges from "@/components/product/TrustBadges";
 import { getCategoryContent } from "@/lib/categoryContent";
-import { getProductById } from "@/lib/products";
+import { getProductById, getRelatedProducts } from "@/lib/products";
 
 export async function generateMetadata(
   props: PageProps<"/products/[id]">
@@ -21,7 +23,10 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
 
   if (!product) notFound();
 
-  const category = await getCategoryContent(product.categorySlug);
+  const [category, relatedProducts] = await Promise.all([
+    getCategoryContent(product.categorySlug),
+    getRelatedProducts(product.categorySlug, product.id, 4),
+  ]);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-12">
@@ -98,8 +103,34 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
               }}
             />
           </div>
+
+          <div className="mt-8">
+            <TrustBadges />
+          </div>
         </div>
       </div>
+
+      {relatedProducts.length > 0 && (
+        <section className="mt-20">
+          <h2 className="mb-10 text-center text-2xl font-extrabold tracking-tight sm:text-3xl">
+            محصولات مرتبط
+          </h2>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-4">
+            {relatedProducts.map((related) => (
+              <ProductCard
+                key={related.id}
+                id={related.id}
+                name={related.name}
+                price={related.price}
+                imageUrl={related.imageUrl}
+                rating={related.rating}
+                reviewCount={related.reviewCount}
+                inStock={related.inStock}
+              />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

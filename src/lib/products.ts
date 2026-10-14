@@ -30,6 +30,19 @@ export async function getBestSellers(limit: number): Promise<CatalogProduct[]> {
   return products.map(withInStock);
 }
 
+export async function getRelatedProducts(
+  categorySlug: string,
+  excludeId: string,
+  limit: number
+): Promise<CatalogProduct[]> {
+  await connectToDatabase();
+  const products = await ProductModel.find({ categorySlug, id: { $ne: excludeId } })
+    .sort({ reviewCount: -1 })
+    .limit(limit)
+    .lean<Product[]>();
+  return products.map(withInStock);
+}
+
 export async function getProductsPage(
   page: number,
   pageSize: number
