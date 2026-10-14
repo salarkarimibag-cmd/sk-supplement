@@ -56,7 +56,7 @@ export default function Header({
                     alt="SK Supplement"
                     width={680}
                     height={380}
-                    priority
+                    loading="eager"
                     className="h-20 w-auto"
                   />
                 </Link>

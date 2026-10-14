@@ -47,7 +47,8 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
             src={product.imageUrl}
             alt={product.name}
             fill
-            priority
+            preload
+            sizes="(min-width: 1024px) 50vw, 100vw"
             className="object-contain"
           />
           {!product.inStock && (

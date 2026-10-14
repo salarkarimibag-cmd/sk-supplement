@@ -428,7 +428,7 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
           {items.map((item) => (
             <li key={item.id} className="flex gap-4">
               <div className="relative h-16 w-16 shrink-0 rounded bg-white">
-                <Image src={item.imageUrl} alt={item.name} fill className="object-contain" />
+                <Image src={item.imageUrl} alt={item.name} fill sizes="64px" className="object-contain" />
                 <span className="absolute -top-2 -right-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-zinc-900 px-1 text-[10px] font-bold text-white dark:bg-white dark:text-zinc-900">
                   {item.quantity}
                 </span>

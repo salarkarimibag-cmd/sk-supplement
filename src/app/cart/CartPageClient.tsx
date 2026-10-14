@@ -34,7 +34,7 @@ export default function CartPageClient() {
               className="flex gap-4 border-b border-zinc-200 py-6 dark:border-zinc-800"
             >
               <div className="relative h-24 w-24 shrink-0 bg-zinc-100 dark:bg-zinc-800">
-                <Image src={item.imageUrl} alt={item.name} fill className="object-contain" />
+                <Image src={item.imageUrl} alt={item.name} fill sizes="96px" className="object-contain" />
               </div>
 
               <div className="flex flex-1 flex-col">

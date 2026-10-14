@@ -257,6 +257,7 @@ export default function SearchBar({ onClose, categories }: SearchBarProps) {
                                   src={product.imageUrl}
                                   alt=""
                                   fill
+                                  sizes="48px"
                                   className="object-contain"
                                 />
                               </span>

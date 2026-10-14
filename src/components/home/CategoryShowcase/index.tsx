@@ -7,6 +7,8 @@ interface Tile {
   name: string;
   image: string;
   className?: string;
+  /** Rendered width for next/image; tiles are half the width on phones, a third from md. */
+  sizes?: string;
 }
 
 const tiles: Tile[] = [
@@ -15,6 +17,7 @@ const tiles: Tile[] = [
     name: "مشاهده همه",
     image: "/images/category-shop-all.webp",
     className: "col-span-2 md:col-span-1 md:row-span-2",
+    sizes: "(min-width: 768px) 33vw, 100vw",
   },
   {
     slug: "fat-burner",
@@ -51,6 +54,7 @@ export default function CategoryShowcase() {
             src={tile.image}
             alt={tile.name}
             fill
+            sizes={tile.sizes ?? "(min-width: 768px) 33vw, 50vw"}
             className="object-cover transition-transform duration-700 ease-out group-hover:scale-125"
           />
           <GradientOverlay />

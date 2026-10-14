@@ -69,7 +69,14 @@ export default async function CollectionPage(props: PageProps<"/collections/[slu
         className="relative w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900"
         style={{ aspectRatio: info.bannerAspect }}
       >
-        <Image src={info.bannerImage} alt={info.title} fill className="object-cover" />
+        <Image
+          src={info.bannerImage}
+          alt={info.title}
+          fill
+          preload
+          sizes="100vw"
+          className="object-cover"
+        />
       </div>
 
       <div className="mx-auto w-full max-w-6xl px-6 py-12">
