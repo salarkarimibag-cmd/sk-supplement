@@ -77,10 +77,10 @@ export default function Footer() {
         <div>
           <h3 className="flex items-center gap-1.5 text-base font-bold uppercase">
             <CircleDollarSign className="h-5 w-5 text-sky-500" aria-hidden="true" />
-            ضمانت بازگشت وجه ۱۰۰٪
+            ضمانت بازگشت کالا
           </h3>
           <p className="mt-4 text-sm text-zinc-400">
-            از خریدتان راضی نیستید؟ تا 10 روز کالا را برای بازگشت وجه ارسال کنید.{" "}
+            کالا معیوب یا اشتباه به دستتان رسید؟ تا ۷ روز پس از تحویل درخواست بازگشت ثبت کنید.{" "}
             <Link href="/pages/refund-policy" className="text-sky-500 hover:underline">
               قوانین بازگشت وجه.
             </Link>
