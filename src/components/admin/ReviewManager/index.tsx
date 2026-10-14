@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 interface ReviewItem {
   id: string;
+  /** null for a review of the store itself. */
+  product: { id: string; name: string } | null;
   name: string;
   rating: number;
   comment: string;
@@ -54,6 +57,7 @@ export default function ReviewManager({ initialReviews }: { initialReviews: Revi
         <thead>
           <tr className="border-b border-zinc-200 text-zinc-500 dark:border-zinc-800">
             <th className="py-2 font-medium">نام</th>
+            <th className="py-2 font-medium">درباره</th>
             <th className="py-2 font-medium">امتیاز</th>
             <th className="py-2 font-medium">متن نظر</th>
             <th className="py-2 font-medium">IP</th>
@@ -64,7 +68,7 @@ export default function ReviewManager({ initialReviews }: { initialReviews: Revi
         <tbody>
           {reviews.length === 0 && (
             <tr>
-              <td colSpan={6} className="py-6 text-center text-zinc-500">
+              <td colSpan={7} className="py-6 text-center text-zinc-500">
                 هیچ نظری ثبت نشده است.
               </td>
             </tr>
@@ -72,6 +76,19 @@ export default function ReviewManager({ initialReviews }: { initialReviews: Revi
           {reviews.map((item) => (
             <tr key={item.id} className="border-b border-zinc-100 align-top dark:border-zinc-900">
               <td className="py-2 font-semibold whitespace-nowrap">{item.name}</td>
+              <td className="py-2">
+                {item.product ? (
+                  <Link
+                    href={`/products/${item.product.id}`}
+                    target="_blank"
+                    className="text-sky-600 hover:underline"
+                  >
+                    {item.product.name}
+                  </Link>
+                ) : (
+                  <span className="text-zinc-500">فروشگاه</span>
+                )}
+              </td>
               <td className="py-2 whitespace-nowrap">{"★".repeat(item.rating)}</td>
               <td className="max-w-xs py-2">{item.comment}</td>
               <td className="py-2 whitespace-nowrap text-zinc-500" dir="ltr">
