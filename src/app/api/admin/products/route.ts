@@ -2,6 +2,7 @@ import { connectToDatabase } from "@/lib/db";
 import { ProductModel } from "@/models/Product";
 import { getSessionAdmin } from "@/lib/auth";
 import { productDetailsSchema, withoutEmptyDetails } from "@/lib/productDetails";
+import { productGroupSchema } from "@/lib/variants";
 
 interface CreateProductBody {
   id?: string;
@@ -57,6 +58,14 @@ export async function POST(request: Request) {
     return Response.json({ message: "اطلاعات ارزش غذایی یا روش مصرف نامعتبر است." }, { status: 400 });
   }
 
+  const group = productGroupSchema.safeParse(body);
+  if (!group.success) {
+    return Response.json(
+      { message: "گروه باید با حروف انگلیسی کوچک، عدد و خط تیره باشد (مثلاً whey-isolate)." },
+      { status: 400 }
+    );
+  }
+
   await connectToDatabase();
 
   const existing = await ProductModel.findOne({ $or: [{ id: body.id }, { slug: body.slug }] });
@@ -75,6 +84,7 @@ export async function POST(request: Request) {
     stock: body.stock,
     flavor: body.flavor || undefined,
     size: body.size || undefined,
+    groupSlug: group.data.groupSlug || undefined,
     ...withoutEmptyDetails(details.data),
   });
 

@@ -17,6 +17,11 @@ export interface Product {
   salesCount: number;
   flavor?: string;
   size?: string;
+  /**
+   * Products sharing a groupSlug are the flavors and sizes of one product;
+   * the product page lets shoppers switch between them.
+   */
+  groupSlug?: string;
   /** Label details, shown on the product page only when filled in. */
   servingSize?: string;
   nutritionFacts?: NutritionFact[];
@@ -46,6 +51,7 @@ const ProductSchema = new Schema<Product>({
   salesCount: { type: Number, required: true, default: 0, index: true },
   flavor: { type: String, required: false },
   size: { type: String, required: false },
+  groupSlug: { type: String, required: false, index: true },
   servingSize: { type: String, required: false },
   // Mongoose gives array paths a [] default; undefined keeps the field off
   // products that have no nutrition table.
