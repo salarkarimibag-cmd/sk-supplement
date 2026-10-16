@@ -1,3 +1,4 @@
+import { isValidObjectId } from "mongoose";
 import { connectToDatabase } from "@/lib/db";
 import { ReviewModel } from "@/models/Review";
 import { getSessionAdmin } from "@/lib/auth";
@@ -17,8 +18,11 @@ export async function PATCH(
   }
 
   const { id } = await params;
-  const body: UpdateReviewBody = await request.json();
+  const body: UpdateReviewBody = (await request.json().catch(() => null)) ?? {};
 
+  if (!isValidObjectId(id)) {
+    return Response.json({ message: "نظر پیدا نشد." }, { status: 404 });
+  }
   if (typeof body.approved !== "boolean") {
     return Response.json({ message: "وضعیت تایید نامعتبر است." }, { status: 400 });
   }
@@ -51,6 +55,9 @@ export async function DELETE(
   }
 
   const { id } = await params;
+  if (!isValidObjectId(id)) {
+    return Response.json({ message: "نظر پیدا نشد." }, { status: 404 });
+  }
 
   await connectToDatabase();
   const review = await ReviewModel.findByIdAndDelete(id);

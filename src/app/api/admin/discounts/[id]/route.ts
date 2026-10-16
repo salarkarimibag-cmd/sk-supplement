@@ -82,6 +82,9 @@ export async function DELETE(
   }
 
   const { id } = await params;
+  if (!isValidObjectId(id)) {
+    return Response.json({ message: "کد تخفیف پیدا نشد." }, { status: 404 });
+  }
 
   await connectToDatabase();
   const discount = await DiscountCodeModel.findByIdAndDelete(id);

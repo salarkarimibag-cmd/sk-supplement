@@ -15,12 +15,5 @@ export async function GET() {
   return Response.json(orders);
 }
 
-// Checkout creates orders via /api/payment (it needs the order to exist
-// before redirecting to ZarinPal). This route is kept for direct/manual
-// order creation, e.g. testing.
-export async function POST(request: Request) {
-  await connectToDatabase();
-  const body = await request.json();
-  const order = await OrderModel.create(body);
-  return Response.json(order, { status: 201 });
-}
+// No POST here on purpose: orders are created only by /api/payment and
+// /api/payment/card, which price the cart on the server.

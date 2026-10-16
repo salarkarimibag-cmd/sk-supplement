@@ -1,3 +1,4 @@
+import { isValidObjectId } from "mongoose";
 import { connectToDatabase } from "@/lib/db";
 import { ContactMessageModel } from "@/models/ContactMessage";
 import { getSessionAdmin } from "@/lib/auth";
@@ -12,6 +13,9 @@ export async function DELETE(
   }
 
   const { id } = await params;
+  if (!isValidObjectId(id)) {
+    return Response.json({ message: "پیام پیدا نشد." }, { status: 404 });
+  }
 
   await connectToDatabase();
   const message = await ContactMessageModel.findByIdAndDelete(id);
