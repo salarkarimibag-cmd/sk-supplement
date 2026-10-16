@@ -2,7 +2,14 @@ import { connectToDatabase } from "@/lib/db";
 import { ProductModel, type Product } from "@/models/Product";
 import type { CatalogProduct } from "@/data/catalog";
 import { escapeRegex } from "@/lib/escapeRegex";
-import type { VariantProduct } from "@/lib/variants";
+import { collapseGroups, type VariantProduct, type VariantSummary } from "@/lib/variants";
+
+/** A product in a short list (home page, related products), one per flavor/size group. */
+export type ListedProduct = CatalogProduct & { variantSummary?: VariantSummary };
+
+// Short lists fetch this many times their size before collapsing groups, so
+// a few products from one group don't leave the list with gaps.
+const OVERFETCH_FOR_GROUPS = 4;
 
 function withInStock(product: Product): CatalogProduct {
   // .lean() skips schema defaults, so products saved before salesCount
@@ -18,36 +25,47 @@ export async function getAllProducts(): Promise<CatalogProduct[]> {
 
 // A MongoDB ObjectId starts with its creation time, so sorting by `_id`
 // descending lists the newest products first without a `createdAt` field.
-export async function getLatestProducts(limit: number): Promise<CatalogProduct[]> {
+export async function getLatestProducts(limit: number): Promise<ListedProduct[]> {
   await connectToDatabase();
-  const products = await ProductModel.find().sort({ _id: -1 }).limit(limit).lean<Product[]>();
-  return products.map(withInStock);
+  const products = await ProductModel.find()
+    .sort({ _id: -1 })
+    .limit(limit * OVERFETCH_FOR_GROUPS)
+    .lean<Product[]>();
+  return collapseGroups(products.map(withInStock)).slice(0, limit);
 }
 
 // Ties (including products that haven't sold yet) fall back to newest first.
 const bySalesThenNewest = { salesCount: -1, _id: -1 } as const;
 
 /** Only products that have actually sold; empty until the first paid order. */
-export async function getBestSellers(limit: number): Promise<CatalogProduct[]> {
+export async function getBestSellers(limit: number): Promise<ListedProduct[]> {
   await connectToDatabase();
   const products = await ProductModel.find({ salesCount: { $gt: 0 } })
     .sort(bySalesThenNewest)
-    .limit(limit)
+    .limit(limit * OVERFETCH_FOR_GROUPS)
     .lean<Product[]>();
-  return products.map(withInStock);
+  return collapseGroups(products.map(withInStock)).slice(0, limit);
 }
 
+/**
+ * Other products from the same category, leaving out the product's own
+ * flavor/size group — those are already offered by its variant picker.
+ */
 export async function getRelatedProducts(
-  categorySlug: string,
-  excludeId: string,
+  product: Pick<Product, "id" | "categorySlug" | "groupSlug">,
   limit: number
-): Promise<CatalogProduct[]> {
+): Promise<ListedProduct[]> {
   await connectToDatabase();
-  const products = await ProductModel.find({ categorySlug, id: { $ne: excludeId } })
+  const products = await ProductModel.find({
+    categorySlug: product.categorySlug,
+    id: { $ne: product.id },
+    // $ne also matches products that have no groupSlug at all.
+    ...(product.groupSlug ? { groupSlug: { $ne: product.groupSlug } } : {}),
+  })
     .sort(bySalesThenNewest)
-    .limit(limit)
+    .limit(limit * OVERFETCH_FOR_GROUPS)
     .lean<Product[]>();
-  return products.map(withInStock);
+  return collapseGroups(products.map(withInStock)).slice(0, limit);
 }
 
 export async function getProductsPage(

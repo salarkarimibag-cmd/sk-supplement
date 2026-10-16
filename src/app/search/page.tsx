@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import ProductCard from "@/components/product/ProductCard";
 import Pagination from "@/components/ui/Pagination";
 import { searchProducts } from "@/lib/products";
+import { collapseGroups, formatVariantSummary } from "@/lib/variants";
 
 export const metadata: Metadata = { title: "نتایج جستجو" };
 
@@ -11,7 +12,8 @@ export default async function SearchPage(props: PageProps<"/search">) {
   const { q, page: pageParam } = await props.searchParams;
   const query = (Array.isArray(q) ? q[0] : (q ?? "")).trim();
 
-  const results = query ? await searchProducts(query) : [];
+  // One result per flavor/size group (see collapseGroups).
+  const results = query ? collapseGroups(await searchProducts(query)) : [];
 
   const requestedPage = Number(Array.isArray(pageParam) ? pageParam[0] : pageParam) || 1;
   const totalPages = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
@@ -30,7 +32,7 @@ export default async function SearchPage(props: PageProps<"/search">) {
       <h1 className="text-2xl font-bold">نتایج جستجو</h1>
       {query ? (
         <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-          {results.length} نتیجه برای «{query}»
+          {results.length.toLocaleString("fa-IR")} نتیجه برای «{query}»
         </p>
       ) : (
         <p className="mt-2 text-zinc-600 dark:text-zinc-400">
@@ -50,6 +52,7 @@ export default async function SearchPage(props: PageProps<"/search">) {
               price={product.price}
               imageUrl={product.imageUrl}
               inStock={product.inStock}
+              variantLabel={product.variantSummary && formatVariantSummary(product.variantSummary)}
             />
           ))}
         </div>

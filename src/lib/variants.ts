@@ -60,6 +60,69 @@ export function buildVariantOptions(current: VariantProduct, group: VariantProdu
   };
 }
 
+export interface VariantSummary {
+  flavorCount: number;
+  sizeCount: number;
+}
+
+type Groupable = { groupSlug?: string; flavor?: string; size?: string };
+
+function countDistinct(values: (string | undefined)[]): number {
+  return new Set(values.filter(Boolean)).size;
+}
+
+/**
+ * Keeps one card per group in a product list: the first member in the
+ * list's order, so it's the best match for the current sort and the one
+ * that passed the current filters. The kept card gets a variantSummary
+ * when the list held more than one member of its group. Ungrouped
+ * products pass through unchanged.
+ */
+export function collapseGroups<T extends Groupable>(products: T[]): (T & { variantSummary?: VariantSummary })[] {
+  const members = new Map<string, T[]>();
+  for (const product of products) {
+    if (!product.groupSlug) continue;
+    const list = members.get(product.groupSlug) ?? [];
+    list.push(product);
+    members.set(product.groupSlug, list);
+  }
+
+  const seen = new Set<string>();
+  const result: (T & { variantSummary?: VariantSummary })[] = [];
+  for (const product of products) {
+    if (!product.groupSlug) {
+      result.push(product);
+      continue;
+    }
+    if (seen.has(product.groupSlug)) continue;
+    seen.add(product.groupSlug);
+
+    const group = members.get(product.groupSlug) ?? [product];
+    result.push(
+      group.length > 1
+        ? {
+            ...product,
+            variantSummary: {
+              flavorCount: countDistinct(group.map((member) => member.flavor)),
+              sizeCount: countDistinct(group.map((member) => member.size)),
+            },
+          }
+        : product
+    );
+  }
+  return result;
+}
+
+/** "۳ طعم · ۲ سایز" — only the attributes with more than one choice; "" if none. */
+export function formatVariantSummary({ flavorCount, sizeCount }: VariantSummary): string {
+  return [
+    flavorCount > 1 ? `${flavorCount.toLocaleString("fa-IR")} طعم` : "",
+    sizeCount > 1 ? `${sizeCount.toLocaleString("fa-IR")} سایز` : "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
+}
+
 /** A group slug: lowercase words joined by hyphens, like "whey-isolate"; "" clears it. */
 export const productGroupSchema = z.object({
   groupSlug: z

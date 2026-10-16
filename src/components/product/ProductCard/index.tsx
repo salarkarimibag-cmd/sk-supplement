@@ -15,6 +15,8 @@ export interface ProductCardProps {
   rating?: number;
   reviewCount?: number;
   inStock?: boolean;
+  /** e.g. "۳ طعم · ۲ سایز" when this card stands for a whole flavor/size group. */
+  variantLabel?: string;
 }
 
 export default function ProductCard({
@@ -25,6 +27,7 @@ export default function ProductCard({
   rating,
   reviewCount,
   inStock = true,
+  variantLabel,
 }: ProductCardProps) {
   const { addItem } = useCart();
   const [justAdded, setJustAdded] = useState(false);
@@ -68,12 +71,24 @@ export default function ProductCard({
         {rating !== undefined && reviewCount !== undefined && (
           <StarRating rating={rating} reviewCount={reviewCount} className="mt-1.5" />
         )}
+        {variantLabel && (
+          <p className="mt-1.5 text-xs text-zinc-500 dark:text-zinc-400">{variantLabel}</p>
+        )}
         <p className="mt-1.5 text-sm text-zinc-900 dark:text-zinc-100">
           {price.toLocaleString("fa-IR")} تومان
         </p>
       </Link>
 
-      {inStock ? (
+      {variantLabel ? (
+        // A card that stands for several flavors/sizes can't know which one
+        // the shopper wants, so it sends them to the product page to choose.
+        <Link
+          href={`/products/${id}`}
+          className="mt-3 flex h-11 w-full items-center justify-center border border-sky-600 text-sm font-semibold text-sky-600 transition-shadow hover:shadow-[0_0_0_1px_var(--color-sky-600)]"
+        >
+          انتخاب گزینه‌ها
+        </Link>
+      ) : inStock ? (
         <button
           type="button"
           onClick={handleAddToCart}

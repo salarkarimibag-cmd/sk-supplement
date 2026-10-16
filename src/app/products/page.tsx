@@ -5,6 +5,7 @@ import SortSelect from "@/components/collections/SortSelect";
 import Pagination from "@/components/ui/Pagination";
 import { getAllProducts } from "@/lib/products";
 import { countByAttribute, filterProducts, sortProducts, toParamArray } from "@/lib/catalogFilters";
+import { collapseGroups, formatVariantSummary } from "@/lib/variants";
 
 export const metadata: Metadata = { title: "همه محصولات" };
 
@@ -22,7 +23,9 @@ export default async function ProductsPage(props: PageProps<"/products">) {
     flavors: selectedFlavors,
     sizes: selectedSizes,
   });
-  const sortedProducts = sortProducts(filteredProducts, sortValue);
+  // One card per flavor/size group, collapsed after filtering and sorting so
+  // the card shown is the group member that matches them best.
+  const sortedProducts = collapseGroups(sortProducts(filteredProducts, sortValue));
 
   const flavorOptions = countByAttribute(allProducts, "flavor");
   const sizeOptions = countByAttribute(allProducts, "size");
@@ -64,7 +67,7 @@ export default async function ProductsPage(props: PageProps<"/products">) {
         <div className="flex items-center gap-4">
           <span className="text-sm text-zinc-500">مرتب‌سازی:</span>
           <SortSelect />
-          <span className="text-sm text-zinc-500">{sortedProducts.length} محصول</span>
+          <span className="text-sm text-zinc-500">{sortedProducts.length.toLocaleString("fa-IR")} محصول</span>
         </div>
       </div>
 
@@ -80,6 +83,7 @@ export default async function ProductsPage(props: PageProps<"/products">) {
               price={product.price}
               imageUrl={product.imageUrl}
               inStock={product.inStock}
+              variantLabel={product.variantSummary && formatVariantSummary(product.variantSummary)}
             />
           ))}
         </div>

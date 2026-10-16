@@ -14,7 +14,7 @@ import { getSessionUser } from "@/lib/auth";
 import { getCategoryContent } from "@/lib/categoryContent";
 import { getProductById, getProductGroup, getRelatedProducts } from "@/lib/products";
 import { getProductReviews } from "@/lib/reviews";
-import { buildVariantOptions } from "@/lib/variants";
+import { buildVariantOptions, formatVariantSummary } from "@/lib/variants";
 
 const SHOWN_REVIEW_COUNT = 6;
 
@@ -34,7 +34,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
 
   const [category, relatedProducts, reviews, user, group] = await Promise.all([
     getCategoryContent(product.categorySlug),
-    getRelatedProducts(product.categorySlug, product.id, 4),
+    getRelatedProducts(product, 4),
     getProductReviews(product.id, SHOWN_REVIEW_COUNT),
     getSessionUser(),
     product.groupSlug ? getProductGroup(product.groupSlug) : [],
@@ -194,6 +194,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
                 rating={related.rating}
                 reviewCount={related.reviewCount}
                 inStock={related.inStock}
+                variantLabel={related.variantSummary && formatVariantSummary(related.variantSummary)}
               />
             ))}
           </div>
