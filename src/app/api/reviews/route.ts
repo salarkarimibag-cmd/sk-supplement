@@ -17,7 +17,7 @@ const RATE_LIMIT_WINDOW_MS = 24 * 60 * 60 * 1000;
 const RATE_LIMIT_MAX = 3;
 
 export async function POST(request: Request) {
-  const body: ReviewBody = await request.json();
+  const body: ReviewBody = (await request.json().catch(() => null)) ?? {};
   const name = body.name?.trim();
   const rating = body.rating;
   const comment = body.comment?.trim();
