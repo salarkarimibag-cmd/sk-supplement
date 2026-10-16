@@ -17,6 +17,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Tests are unit tests for pure logic in `src/lib/*.ts` (colocated as `*.test.ts`) — no database or browser involved (`db.test.ts` mocks mongoose). CI (`.github/workflows/ci.yml`) runs lint and tests. After adding a route, run `npx next typegen` (or `dev`/`build`) before `tsc`, since `PageProps<"/route">` types are generated.
 
+Before calling a change done, run `npm run lint` and `npm test` locally (and `npm run build` when routes, types or config changed) — don't leave failures for CI to find.
+
+## Git workflow
+
+Vercel deploys `master` straight to the live site, so never commit or push to `master` directly.
+
+- `git fetch origin`, then branch from `origin/master` (not the local `master`, which may be stale).
+- Push the branch → check its Vercel Preview → open a PR; the user merges it on GitHub.
+- Local dev and Preview use the `sk-supplement-dev` database; Production uses `sk-supplement`.
+
+## Environment variables
+
+Set in `.env.local` (locally) and in Vercel. Never commit their values.
+
+- `MONGODB_URI`, `MONGODB_DB` — database connection and name (see Architecture)
+- `SESSION_SECRET` — signs the JWT session cookie (`src/lib/auth.ts`)
+- `ZARINPAL_MERCHANT_ID`, `ZARINPAL_SANDBOX` — gateway credentials; sandbox is on unless set to `"false"`
+- `CARD_NUMBER`, `CARD_HOLDER`, `CARD_BANK` — the card shown for card-to-card payment (`src/lib/cardPayment.ts`)
+- `NEXT_PUBLIC_SITE_URL` — public site URL (`src/lib/site.ts`)
+
 ## Architecture
 
 SK Supplement — a Persian (RTL, `lang="fa"`) online supplement store. Next.js 16 App Router, React 19, TypeScript, Tailwind CSS v4, MongoDB via Mongoose, zod for validation. Path alias `@/*` maps to `./src/*`.
@@ -31,6 +51,13 @@ Checkout and money rules (keep these intact):
 - Payment methods: ZarinPal (`/api/payment` → `/checkout/callback`, `src/lib/zarinpal.ts`) and card-to-card (`/api/payment/card`, admin verifies). Allowed admin status changes per method live in `src/lib/orderStatus.ts`.
 - Status changes use a conditional update (filter on the current status) so each transition happens once; side effects (stock, discount usage) run only when that update succeeded, via `onOrderPaid` / `onOrderCancelled` in `src/lib/orderLifecycle.ts`.
 - Public forms are rate-limited with `src/lib/rateLimit.ts` (ip + visitor cookie).
+- Prices are stored and shown in Toman; ZarinPal takes Rial, converted only inside `src/lib/zarinpal.ts`.
+
+RTL and Persian text:
+
+- In new or edited UI, prefer logical Tailwind utilities (`ms-*`/`me-*`, `ps-*`/`pe-*`, `start-*`/`end-*`, `text-start`) over `ml-*`/`mr-*`, `left-*`/`right-*`, so spacing follows the reading direction.
+- Format numbers and prices for display with `toLocaleString("fa-IR")` (Persian digits), e.g. `{price.toLocaleString("fa-IR")} تومان`.
+- User-facing text is in Persian.
 
 ## Working with this user
 
