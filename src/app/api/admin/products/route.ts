@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     return Response.json({ message: "دسترسی غیرمجاز." }, { status: 401 });
   }
 
-  const body: CreateProductBody = await request.json();
+  const body: CreateProductBody = (await request.json().catch(() => null)) ?? {};
 
   if (
     !body.id ||
