@@ -53,9 +53,21 @@ Checkout and money rules (keep these intact):
 - Public forms are rate-limited with `src/lib/rateLimit.ts` (ip + visitor cookie).
 - Prices are stored and shown in Toman; ZarinPal takes Rial, converted only inside `src/lib/zarinpal.ts`.
 
-RTL and Persian text:
+API route handlers (`src/app/api/**/route.ts`):
 
-- In new or edited UI, prefer logical Tailwind utilities (`ms-*`/`me-*`, `ps-*`/`pe-*`, `start-*`/`end-*`, `text-start`) over `ml-*`/`mr-*`, `left-*`/`right-*`, so spacing follows the reading direction.
+- Check access first: `getSessionAdmin()` in `api/admin/`, `getSessionUser()` where the data belongs to a customer.
+- Treat input as untrusted. Read the body with `await request.json().catch(() => null)`, validate it (prefer a zod schema in `src/lib/`), and check `_id` params with `isValidObjectId` before querying — bad input must get a 4xx, never a 500.
+- Errors are `Response.json({ message: "…" }, { status })` with a Persian message and a fitting status (400 invalid, 401 not logged in, 404 not found, 409 conflict, 429 rate-limited).
+- Use the existing helpers: `escapeRegex` for user text inside `$regex`, `getSafeRedirectPath` for `?next=`-style redirects, `toSetAndUnset` (`src/lib/mongoUpdate.ts`) for partial updates that may clear fields.
+
+Models: documents already in the database won't have a newly added field, so make it optional (or write a migration script in `scripts/`). Then update everything that writes it — the admin form, the API validation and the seed scripts.
+
+## UI conventions
+
+- Components live in `src/components/<area>/<Name>/index.tsx`.
+- Components are Server Components by default; add `"use client"` only when they need state, effects, event handlers or browser APIs.
+- Dark mode is class-based (`.dark` on `<html>`, `@custom-variant dark` in `src/app/globals.css`). Give new UI `dark:` colors and check it in both themes.
+- RTL: in new or edited UI, prefer logical Tailwind utilities (`ms-*`/`me-*`, `ps-*`/`pe-*`, `start-*`/`end-*`, `text-start`) over `ml-*`/`mr-*`, `left-*`/`right-*`, so spacing follows the reading direction.
 - Format numbers and prices for display with `toLocaleString("fa-IR")` (Persian digits), e.g. `{price.toLocaleString("fa-IR")} تومان`.
 - User-facing text is in Persian.
 
