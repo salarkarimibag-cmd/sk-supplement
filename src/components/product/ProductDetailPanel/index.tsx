@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Check } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { LOW_STOCK_THRESHOLD, remainingToAdd } from "@/lib/stock";
 
 interface ProductDetailPanelProps {
   product: {
@@ -11,11 +12,12 @@ interface ProductDetailPanelProps {
     price: number;
     imageUrl: string;
     inStock: boolean;
+    stock: number;
   };
 }
 
 export default function ProductDetailPanel({ product }: ProductDetailPanelProps) {
-  const { addItem } = useCart();
+  const { addItem, items } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [justAdded, setJustAdded] = useState(false);
   const [showStickyBar, setShowStickyBar] = useState(false);
@@ -65,8 +67,17 @@ export default function ProductDetailPanel({ product }: ProductDetailPanelProps)
     );
   }
 
+  // What's already in the cart counts against the stock. The chosen quantity
+  // is capped while rendering rather than kept in sync with an effect, so it
+  // follows the cart without an extra render.
+  const inCart = items.find((item) => item.id === product.id)?.quantity ?? 0;
+  const remaining = remainingToAdd(product.stock, inCart);
+  const canAdd = remaining > 0;
+  const shownQuantity = Math.max(1, Math.min(quantity, remaining));
+
   function handleAddToCart() {
-    for (let i = 0; i < quantity; i++) {
+    if (!canAdd) return;
+    for (let i = 0; i < shownQuantity; i++) {
       addItem({
         id: product.id,
         name: product.name,
@@ -74,10 +85,14 @@ export default function ProductDetailPanel({ product }: ProductDetailPanelProps)
         imageUrl: product.imageUrl,
       });
     }
+    setQuantity(1);
     setJustAdded(true);
   }
 
-  const addButtonClassName = `flex h-12 cursor-pointer items-center justify-center gap-1.5 bg-sky-600 text-sm font-bold text-white transition-colors hover:bg-sky-500 ${
+  const quantityButtonClassName =
+    "cursor-pointer px-4 py-3 hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent dark:hover:bg-zinc-800";
+
+  const addButtonClassName =`flex h-12 cursor-pointer items-center justify-center gap-1.5 bg-sky-600 text-sm font-bold text-white transition-colors hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-600 dark:disabled:bg-zinc-700 dark:disabled:text-zinc-300 ${
     justAdded ? "animate-[add-to-cart-pop_300ms_ease-out]" : ""
   }`;
 
@@ -85,8 +100,10 @@ export default function ProductDetailPanel({ product }: ProductDetailPanelProps)
     <>
       <Check aria-hidden="true" className="h-4 w-4" /> افزوده شد
     </>
-  ) : (
+  ) : canAdd ? (
     "افزودن به سبد"
+  ) : (
+    "همه‌ی موجودی در سبد شماست"
   );
 
   return (
@@ -96,17 +113,21 @@ export default function ProductDetailPanel({ product }: ProductDetailPanelProps)
           <button
             type="button"
             aria-label="کم کردن تعداد"
-            onClick={() => setQuantity((current) => Math.max(1, current - 1))}
-            className="cursor-pointer px-4 py-3 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            disabled={shownQuantity <= 1}
+            onClick={() => setQuantity(shownQuantity - 1)}
+            className={quantityButtonClassName}
           >
             −
           </button>
-          <span className="min-w-10 px-1 text-center text-sm">{quantity}</span>
+          <span aria-live="polite" className="min-w-10 px-1 text-center text-sm">
+            {shownQuantity.toLocaleString("fa-IR")}
+          </span>
           <button
             type="button"
             aria-label="زیاد کردن تعداد"
-            onClick={() => setQuantity((current) => current + 1)}
-            className="cursor-pointer px-4 py-3 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            disabled={shownQuantity >= remaining}
+            onClick={() => setQuantity(shownQuantity + 1)}
+            className={quantityButtonClassName}
           >
             +
           </button>
@@ -115,12 +136,19 @@ export default function ProductDetailPanel({ product }: ProductDetailPanelProps)
         <button
           ref={addButtonRef}
           type="button"
+          disabled={!canAdd}
           onClick={handleAddToCart}
           className={`flex-1 ${addButtonClassName}`}
         >
           {addButtonLabel}
         </button>
       </div>
+
+      {product.stock <= LOW_STOCK_THRESHOLD && (
+        <p className="mt-3 text-sm font-semibold text-amber-600 dark:text-amber-500">
+          تنها {product.stock.toLocaleString("fa-IR")} عدد در انبار باقی مانده است.
+        </p>
+      )}
 
       <div
         inert={!showStickyBar}
@@ -135,7 +163,12 @@ export default function ProductDetailPanel({ product }: ProductDetailPanelProps)
               {product.price.toLocaleString("fa-IR")} تومان
             </p>
           </div>
-          <button type="button" onClick={handleAddToCart} className={`px-6 ${addButtonClassName}`}>
+          <button
+            type="button"
+            disabled={!canAdd}
+            onClick={handleAddToCart}
+            className={`px-6 ${addButtonClassName}`}
+          >
             {addButtonLabel}
           </button>
         </div>

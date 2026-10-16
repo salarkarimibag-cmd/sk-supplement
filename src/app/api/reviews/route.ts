@@ -3,6 +3,7 @@ import { ProductModel } from "@/models/Product";
 import { ReviewModel } from "@/models/Review";
 import { getClientIp, getOrSetDeviceId, isRateLimited } from "@/lib/rateLimit";
 import { getSessionUser } from "@/lib/auth";
+import { containsBannedWord } from "@/lib/bannedWords";
 import { hasPurchased } from "@/lib/reviews";
 
 interface ReviewBody {
@@ -18,9 +19,10 @@ const RATE_LIMIT_MAX = 3;
 
 export async function POST(request: Request) {
   const body: ReviewBody = (await request.json().catch(() => null)) ?? {};
-  const name = body.name?.trim();
+  // A non-string name or comment (e.g. a number) would make .trim() throw.
+  const name = typeof body.name === "string" ? body.name.trim() : undefined;
   const rating = body.rating;
-  const comment = body.comment?.trim();
+  const comment = typeof body.comment === "string" ? body.comment.trim() : undefined;
   const productId = body.productId;
 
   if (productId !== undefined && typeof productId !== "string") {
@@ -39,6 +41,13 @@ export async function POST(request: Request) {
   ) {
     return Response.json(
       { message: "نام، امتیاز (بین ۱ تا ۵) و متن نظر الزامی هستند." },
+      { status: 400 }
+    );
+  }
+
+  if (containsBannedWord(name) || containsBannedWord(comment)) {
+    return Response.json(
+      { message: "متن نظر شامل کلمات نامناسب است. لطفاً آن را ویرایش کنید." },
       { status: 400 }
     );
   }

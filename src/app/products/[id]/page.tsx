@@ -107,6 +107,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
                 price: product.price,
                 imageUrl: product.imageUrl,
                 inStock: product.inStock,
+                stock: product.stock,
               }}
             />
           </div>

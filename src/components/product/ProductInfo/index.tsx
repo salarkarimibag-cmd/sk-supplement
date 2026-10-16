@@ -43,9 +43,9 @@ export default function ProductInfo({
     <section aria-label="مشخصات محصول" className="border-t border-zinc-200 dark:border-zinc-800">
       {hasNutrition && (
         <Section title="ارزش غذایی" defaultOpen>
-          <table className="w-full text-right">
+          <table className="w-full text-start">
             {servingSize && (
-              <caption className="pb-3 text-right text-zinc-500">هر وعده: {servingSize}</caption>
+              <caption className="pb-3 text-start text-zinc-500">هر وعده: {servingSize}</caption>
             )}
             <thead className="sr-only">
               <tr>
@@ -62,7 +62,7 @@ export default function ProductInfo({
                   <th scope="row" className="py-2 font-medium text-zinc-900 dark:text-zinc-100">
                     {fact.label}
                   </th>
-                  <td className="py-2 text-left">{fact.amount}</td>
+                  <td className="py-2 text-end">{fact.amount}</td>
                 </tr>
               ))}
             </tbody>
