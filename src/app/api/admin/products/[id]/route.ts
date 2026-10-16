@@ -26,7 +26,7 @@ export async function PATCH(
   }
 
   const { id } = await params;
-  const body: UpdateProductBody = await request.json();
+  const body: UpdateProductBody = (await request.json().catch(() => null)) ?? {};
 
   const details = productDetailsSchema.safeParse(body);
   if (!details.success) {
