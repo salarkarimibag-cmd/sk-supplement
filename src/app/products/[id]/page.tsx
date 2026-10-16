@@ -8,11 +8,13 @@ import ProductCard from "@/components/product/ProductCard";
 import ProductDetailPanel from "@/components/product/ProductDetailPanel";
 import ProductInfo from "@/components/product/ProductInfo";
 import TrustBadges from "@/components/product/TrustBadges";
+import VariantPicker from "@/components/product/VariantPicker";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import { getSessionUser } from "@/lib/auth";
 import { getCategoryContent } from "@/lib/categoryContent";
-import { getProductById, getRelatedProducts } from "@/lib/products";
+import { getProductById, getProductGroup, getRelatedProducts } from "@/lib/products";
 import { getProductReviews } from "@/lib/reviews";
+import { buildVariantOptions } from "@/lib/variants";
 
 const SHOWN_REVIEW_COUNT = 6;
 
@@ -30,12 +32,16 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
 
   if (!product) notFound();
 
-  const [category, relatedProducts, reviews, user] = await Promise.all([
+  const [category, relatedProducts, reviews, user, group] = await Promise.all([
     getCategoryContent(product.categorySlug),
     getRelatedProducts(product.categorySlug, product.id, 4),
     getProductReviews(product.id, SHOWN_REVIEW_COUNT),
     getSessionUser(),
+    product.groupSlug ? getProductGroup(product.groupSlug) : [],
   ]);
+
+  const variants = buildVariantOptions(product, group);
+  const hasVariantChoice = variants.flavors.length > 1 || variants.sizes.length > 1;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-12">
@@ -79,7 +85,11 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
 
           <p className="mt-4 text-2xl font-bold">{product.price.toLocaleString("fa-IR")} تومان</p>
 
-          {(product.flavor || product.size) && (
+          {hasVariantChoice ? (
+            <div className="mt-5">
+              <VariantPicker flavors={variants.flavors} sizes={variants.sizes} />
+            </div>
+          ) : (product.flavor || product.size) && (
             <div className="mt-4 flex flex-wrap gap-2 text-sm text-zinc-600 dark:text-zinc-400">
               {product.flavor && (
                 <span className="rounded-full border border-zinc-300 px-3 py-1 dark:border-zinc-700">
