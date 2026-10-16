@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { buildVariantOptions, productGroupSchema, type VariantProduct } from "./variants";
+import {
+  buildVariantOptions,
+  collapseGroups,
+  formatVariantSummary,
+  productGroupSchema,
+  type VariantProduct,
+} from "./variants";
 
 const chocSmall: VariantProduct = { id: "p1", flavor: "شکلاتی", size: "۲ کیلو", inStock: true };
 const vanSmall: VariantProduct = { id: "p2", flavor: "وانیلی", size: "۲ کیلو", inStock: true };
@@ -61,6 +67,40 @@ describe("buildVariantOptions", () => {
   it("ignores products without the attribute", () => {
     const noSize: VariantProduct = { id: "p6", flavor: "موزی", inStock: true };
     expect(buildVariantOptions(chocSmall, [chocSmall, noSize]).sizes.map((o) => o.value)).toEqual(["۲ کیلو"]);
+  });
+});
+
+describe("collapseGroups", () => {
+  const whey1 = { id: "w1", groupSlug: "whey", flavor: "شکلاتی", size: "۲ کیلو" };
+  const whey2 = { id: "w2", groupSlug: "whey", flavor: "وانیلی", size: "۲ کیلو" };
+  const whey3 = { id: "w3", groupSlug: "whey", flavor: "شکلاتی", size: "۵ کیلو" };
+  const solo = { id: "s1", flavor: "موزی" };
+  const lonely = { id: "l1", groupSlug: "bcaa", flavor: "لیمو" };
+
+  it("keeps the first member of each group, in the list's order", () => {
+    expect(collapseGroups([solo, whey2, whey1, whey3]).map((p) => p.id)).toEqual(["s1", "w2"]);
+  });
+
+  it("summarizes the group's flavors and sizes on the kept card", () => {
+    expect(collapseGroups([whey1, whey2, whey3])[0].variantSummary).toEqual({ flavorCount: 2, sizeCount: 2 });
+  });
+
+  it("leaves ungrouped products and one-member groups without a summary", () => {
+    const result = collapseGroups([solo, lonely]);
+    expect(result.map((p) => p.id)).toEqual(["s1", "l1"]);
+    expect(result.every((p) => p.variantSummary === undefined)).toBe(true);
+  });
+
+  it("only summarizes the members present in the list it gets (after filtering)", () => {
+    expect(collapseGroups([whey2])[0].variantSummary).toBeUndefined();
+  });
+});
+
+describe("formatVariantSummary", () => {
+  it("lists only the attributes with more than one choice, in Persian digits", () => {
+    expect(formatVariantSummary({ flavorCount: 3, sizeCount: 2 })).toBe("۳ طعم · ۲ سایز");
+    expect(formatVariantSummary({ flavorCount: 4, sizeCount: 1 })).toBe("۴ طعم");
+    expect(formatVariantSummary({ flavorCount: 1, sizeCount: 1 })).toBe("");
   });
 });
 

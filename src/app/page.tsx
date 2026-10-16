@@ -9,6 +9,7 @@ import ReviewForm from "@/components/reviews/ReviewForm";
 import LatestArticles from "@/components/home/LatestArticles";
 import { getBestSellers, getLatestProducts } from "@/lib/products";
 import { getHomepageReviews } from "@/lib/reviews";
+import { formatVariantSummary } from "@/lib/variants";
 
 export default async function Home() {
   const [latestProducts, bestSellers, { reviews, totalCount: reviewsCount }] = await Promise.all([
@@ -37,6 +38,7 @@ export default async function Home() {
                 rating={product.rating}
                 reviewCount={product.reviewCount}
                 inStock={product.inStock}
+                variantLabel={product.variantSummary && formatVariantSummary(product.variantSummary)}
               />
             ))}
           </div>
@@ -71,6 +73,7 @@ export default async function Home() {
                   rating={product.rating}
                   reviewCount={product.reviewCount}
                   inStock={product.inStock}
+                  variantLabel={product.variantSummary && formatVariantSummary(product.variantSummary)}
                 />
               ))}
             </div>

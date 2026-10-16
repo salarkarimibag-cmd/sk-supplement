@@ -14,6 +14,7 @@ import VitaminsInfoSection from "@/components/collections/VitaminsInfoSection";
 import { getCategoryContent } from "@/lib/categoryContent";
 import { getProductsByCategory } from "@/lib/products";
 import { countByAttribute, filterProducts, sortProducts, toParamArray } from "@/lib/catalogFilters";
+import { collapseGroups, formatVariantSummary } from "@/lib/variants";
 
 // Long-form explanatory content shown below the product grid, keyed by category slug.
 const infoSectionBySlug: Record<string, ComponentType> = {
@@ -44,9 +45,12 @@ export default async function CollectionPage(props: PageProps<"/collections/[slu
   const selectedSizes = toParamArray(size);
   const sortValue = Array.isArray(sort) ? sort[0] : (sort ?? "featured");
 
-  const products = sortProducts(
-    filterProducts(categoryProducts, { flavors: selectedFlavors, sizes: selectedSizes }),
-    sortValue
+  // One card per flavor/size group (see collapseGroups).
+  const products = collapseGroups(
+    sortProducts(
+      filterProducts(categoryProducts, { flavors: selectedFlavors, sizes: selectedSizes }),
+      sortValue
+    )
   );
   const flavorOptions = countByAttribute(categoryProducts, "flavor");
   const sizeOptions = countByAttribute(categoryProducts, "size");
@@ -95,7 +99,7 @@ export default async function CollectionPage(props: PageProps<"/collections/[slu
           <div className="flex items-center gap-4">
             <span className="text-sm text-zinc-500">مرتب‌سازی:</span>
             <SortSelect />
-            <span className="text-sm text-zinc-500">{products.length} محصول</span>
+            <span className="text-sm text-zinc-500">{products.length.toLocaleString("fa-IR")} محصول</span>
           </div>
         </div>
 
@@ -113,6 +117,7 @@ export default async function CollectionPage(props: PageProps<"/collections/[slu
                 price={product.price}
                 imageUrl={product.imageUrl}
                 inStock={product.inStock}
+                variantLabel={product.variantSummary && formatVariantSummary(product.variantSummary)}
               />
             ))}
           </div>
