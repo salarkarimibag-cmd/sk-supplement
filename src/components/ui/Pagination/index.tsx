@@ -19,14 +19,14 @@ export default function Pagination({ currentPage, totalPages, hrefForPage }: Pag
                 aria-current="page"
                 className="flex h-11 w-11 cursor-not-allowed items-center justify-center text-lg font-semibold text-zinc-900 underline underline-offset-4 hover:font-normal hover:text-sky-600 dark:text-zinc-100"
               >
-                {page}
+                {page.toLocaleString("fa-IR")}
               </span>
             ) : (
               <Link
                 href={hrefForPage(page)}
                 className="flex h-11 w-11 items-center justify-center text-lg text-zinc-500 hover:text-sky-600 hover:underline hover:underline-offset-4"
               >
-                {page}
+                {page.toLocaleString("fa-IR")}
               </Link>
             )}
           </li>

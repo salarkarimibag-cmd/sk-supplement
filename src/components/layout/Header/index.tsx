@@ -116,7 +116,12 @@ export default function Header({
 
                 <button
                   type="button"
-                  aria-label="سبد خرید"
+                  // The badge is only visual; the label carries the count for screen readers.
+                  aria-label={
+                    totalCount > 0
+                      ? `سبد خرید، ${totalCount.toLocaleString("fa-IR")} کالا`
+                      : "سبد خرید"
+                  }
                   onClick={openCart}
                   className={`group relative cursor-pointer hover:text-sky-500 ${
                     totalCount > 0 ? "text-sky-500" : ""
@@ -135,7 +140,7 @@ export default function Header({
                   </svg>
                   {totalCount > 0 && (
                     <span className="absolute -right-1 -bottom-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-white px-1 text-[10px] font-bold text-zinc-900">
-                      {totalCount}
+                      {totalCount.toLocaleString("fa-IR")}
                     </span>
                   )}
                 </button>
