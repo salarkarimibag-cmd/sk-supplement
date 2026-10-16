@@ -1,6 +1,8 @@
 import { connectToDatabase } from "@/lib/db";
 import { ProductModel } from "@/models/Product";
 import { getSessionAdmin } from "@/lib/auth";
+import { toSetAndUnset } from "@/lib/mongoUpdate";
+import { productDetailsSchema, withoutEmptyDetails } from "@/lib/productDetails";
 
 interface UpdateProductBody {
   name?: string;
@@ -26,6 +28,11 @@ export async function PATCH(
   const { id } = await params;
   const body: UpdateProductBody = await request.json();
 
+  const details = productDetailsSchema.safeParse(body);
+  if (!details.success) {
+    return Response.json({ message: "اطلاعات ارزش غذایی یا روش مصرف نامعتبر است." }, { status: 400 });
+  }
+
   await connectToDatabase();
 
   const update: Record<string, unknown> = {};
@@ -38,8 +45,11 @@ export async function PATCH(
   if (body.stock !== undefined) update.stock = body.stock;
   if (body.flavor !== undefined) update.flavor = body.flavor || undefined;
   if (body.size !== undefined) update.size = body.size || undefined;
+  Object.assign(update, withoutEmptyDetails(details.data));
 
-  const product = await ProductModel.findOneAndUpdate({ id }, update, {
+  // Cleared optional fields (flavor, size, label details) are undefined here
+  // and must be removed explicitly, or Mongoose would keep the old values.
+  const product = await ProductModel.findOneAndUpdate({ id }, toSetAndUnset(update), {
     returnDocument: "after",
   });
 

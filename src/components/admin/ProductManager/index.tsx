@@ -1,6 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import {
+  formatNutritionFacts,
+  parseNutritionFacts,
+  type NutritionFact,
+} from "@/lib/productDetails";
 
 interface ProductItem {
   id: string;
@@ -13,6 +18,10 @@ interface ProductItem {
   stock: number;
   flavor: string;
   size: string;
+  servingSize: string;
+  nutritionFacts: NutritionFact[];
+  usage: string;
+  warnings: string;
 }
 
 interface CategoryOption {
@@ -31,6 +40,11 @@ interface FormState {
   stock: string;
   flavor: string;
   size: string;
+  servingSize: string;
+  /** One "label: amount" per line; see parseNutritionFacts. */
+  nutritionFacts: string;
+  usage: string;
+  warnings: string;
 }
 
 function emptyForm(defaultCategorySlug: string): FormState {
@@ -45,6 +59,10 @@ function emptyForm(defaultCategorySlug: string): FormState {
     stock: "",
     flavor: "",
     size: "",
+    servingSize: "",
+    nutritionFacts: "",
+    usage: "",
+    warnings: "",
   };
 }
 
@@ -78,6 +96,10 @@ export default function ProductManager({
       stock: String(item.stock),
       flavor: item.flavor,
       size: item.size,
+      servingSize: item.servingSize,
+      nutritionFacts: formatNutritionFacts(item.nutritionFacts),
+      usage: item.usage,
+      warnings: item.warnings,
     });
     setError(null);
   }
@@ -106,6 +128,14 @@ export default function ProductManager({
       return;
     }
 
+    const nutrition = parseNutritionFacts(form.nutritionFacts);
+    if (nutrition.invalidLines.length > 0) {
+      setError(
+        `این خطوط ارزش غذایی باید به شکل «عنوان: مقدار» باشند: ${nutrition.invalidLines.join("، ")}`
+      );
+      return;
+    }
+
     setIsSubmitting(true);
 
     const payload = {
@@ -119,6 +149,10 @@ export default function ProductManager({
       stock: Number(form.stock),
       flavor: form.flavor.trim(),
       size: form.size.trim(),
+      servingSize: form.servingSize.trim(),
+      nutritionFacts: nutrition.facts,
+      usage: form.usage.trim(),
+      warnings: form.warnings.trim(),
     };
 
     try {
@@ -148,6 +182,10 @@ export default function ProductManager({
         stock: data.stock,
         flavor: data.flavor ?? "",
         size: data.size ?? "",
+        servingSize: data.servingSize ?? "",
+        nutritionFacts: data.nutritionFacts ?? [],
+        usage: data.usage ?? "",
+        warnings: data.warnings ?? "",
       };
 
       setProducts((current) =>
@@ -263,6 +301,43 @@ export default function ProductManager({
           rows={4}
           className={`col-span-2 sm:col-span-4 ${inputClass}`}
         />
+
+        <fieldset className="col-span-2 grid grid-cols-1 gap-3 sm:col-span-4 sm:grid-cols-2">
+          <legend className="mb-1 text-sm font-semibold text-zinc-500">
+            ارزش غذایی و روش مصرف (اختیاری)
+          </legend>
+          <input
+            type="text"
+            placeholder="هر وعده (مثلاً ۱ اسکوپ، ۳۳ گرم)"
+            value={form.servingSize}
+            onChange={(event) => setForm({ ...form, servingSize: event.target.value })}
+            className={`sm:col-span-2 ${inputClass}`}
+          />
+          <textarea
+            placeholder={"ارزش غذایی، هر خط یک مورد:\nپروتئین: ۲۵ گرم\nکالری: ۱۲۰"}
+            value={form.nutritionFacts}
+            onChange={(event) => setForm({ ...form, nutritionFacts: event.target.value })}
+            rows={6}
+            dir="rtl"
+            className={inputClass}
+          />
+          <div className="grid gap-3">
+            <textarea
+              placeholder="روش مصرف"
+              value={form.usage}
+              onChange={(event) => setForm({ ...form, usage: event.target.value })}
+              rows={3}
+              className={inputClass}
+            />
+            <textarea
+              placeholder="هشدارها"
+              value={form.warnings}
+              onChange={(event) => setForm({ ...form, warnings: event.target.value })}
+              rows={3}
+              className={inputClass}
+            />
+          </div>
+        </fieldset>
 
         <div className="col-span-2 flex gap-2 sm:col-span-4 sm:justify-end">
           {editingId && (

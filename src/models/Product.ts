@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import type { NutritionFact } from "@/lib/productDetails";
 
 export interface Product {
   id: string;
@@ -16,7 +17,20 @@ export interface Product {
   salesCount: number;
   flavor?: string;
   size?: string;
+  /** Label details, shown on the product page only when filled in. */
+  servingSize?: string;
+  nutritionFacts?: NutritionFact[];
+  usage?: string;
+  warnings?: string;
 }
+
+const NutritionFactSchema = new Schema<NutritionFact>(
+  {
+    label: { type: String, required: true },
+    amount: { type: String, required: true },
+  },
+  { _id: false }
+);
 
 const ProductSchema = new Schema<Product>({
   id: { type: String, required: true, unique: true },
@@ -32,6 +46,12 @@ const ProductSchema = new Schema<Product>({
   salesCount: { type: Number, required: true, default: 0, index: true },
   flavor: { type: String, required: false },
   size: { type: String, required: false },
+  servingSize: { type: String, required: false },
+  // Mongoose gives array paths a [] default; undefined keeps the field off
+  // products that have no nutrition table.
+  nutritionFacts: { type: [NutritionFactSchema], default: undefined },
+  usage: { type: String, required: false },
+  warnings: { type: String, required: false },
 });
 
 // Avoids Mongoose's "Cannot overwrite model" error when this module is
