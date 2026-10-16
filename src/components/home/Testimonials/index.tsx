@@ -1,7 +1,10 @@
+import { BadgeCheck } from "lucide-react";
+
 interface Review {
   name: string;
   rating: number;
   comment: string;
+  verifiedPurchase?: boolean;
 }
 
 function Star() {
@@ -33,6 +36,12 @@ export default function Testimonials({ reviews }: { reviews: Review[] }) {
           <p className="mt-2 text-sm font-semibold text-zinc-500 italic dark:text-zinc-400">
             — {review.name}
           </p>
+          {review.verifiedPurchase && (
+            <p className="mt-1.5 inline-flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-500">
+              <BadgeCheck aria-hidden="true" className="h-4 w-4" />
+              خریدار این محصول
+            </p>
+          )}
         </div>
       ))}
     </div>

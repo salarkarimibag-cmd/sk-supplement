@@ -8,6 +8,7 @@ interface ReviewItem {
   /** null for a review of the store itself. */
   product: { id: string; name: string } | null;
   name: string;
+  verifiedPurchase: boolean;
   rating: number;
   comment: string;
   approved: boolean;
@@ -75,7 +76,12 @@ export default function ReviewManager({ initialReviews }: { initialReviews: Revi
           )}
           {reviews.map((item) => (
             <tr key={item.id} className="border-b border-zinc-100 align-top dark:border-zinc-900">
-              <td className="py-2 font-semibold whitespace-nowrap">{item.name}</td>
+              <td className="py-2 font-semibold whitespace-nowrap">
+                {item.name}
+                {item.verifiedPurchase && (
+                  <span className="block text-xs font-normal text-emerald-600">خریدار</span>
+                )}
+              </td>
               <td className="py-2">
                 {item.product ? (
                   <Link

@@ -9,12 +9,9 @@
 process.loadEnvFile(".env.local");
 
 import { connectToDatabase } from "../src/lib/db";
+import { SOLD_ORDER_STATUSES } from "../src/lib/orderStatus";
 import { OrderModel } from "../src/models/Order";
 import { ProductModel } from "../src/models/Product";
-
-// The statuses an order can be in after onOrderPaid ran and before any
-// onOrderCancelled undid it — the same orders that count as sold.
-const SOLD_STATUSES = ["paid", "shipped"];
 
 async function main() {
   const apply = process.argv.includes("--apply");
@@ -22,7 +19,7 @@ async function main() {
   console.log(`Database: ${connection.connection.name}${apply ? "" : " (dry run)"}`);
 
   const sold = await OrderModel.aggregate<{ _id: string; units: number }>([
-    { $match: { status: { $in: SOLD_STATUSES } } },
+    { $match: { status: { $in: SOLD_ORDER_STATUSES } } },
     { $unwind: "$items" },
     { $group: { _id: "$items.productId", units: { $sum: "$items.quantity" } } },
   ]);

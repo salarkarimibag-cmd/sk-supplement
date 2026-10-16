@@ -3,6 +3,13 @@ import mongoose, { Schema } from "mongoose";
 export interface Review {
   /** The product's `id` for a product review; absent for a review of the store. */
   productId?: string;
+  /** The author's account, when they were logged in. */
+  userId?: string;
+  /**
+   * Set by the server when the logged-in author has a paid order for the
+   * product. Never read from the request.
+   */
+  verifiedPurchase: boolean;
   name: string;
   rating: number;
   comment: string;
@@ -15,6 +22,8 @@ export interface Review {
 const ReviewSchema = new Schema<Review>(
   {
     productId: { type: String, required: false },
+    userId: { type: String, required: false },
+    verifiedPurchase: { type: Boolean, required: true, default: false },
     name: { type: String, required: true, trim: true },
     rating: { type: Number, required: true, min: 1, max: 5 },
     comment: { type: String, required: true, trim: true },

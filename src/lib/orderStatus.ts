@@ -30,6 +30,12 @@ const ADMIN_TRANSITIONS: Record<PaymentMethod, Partial<Record<OrderStatus, Order
 
 export const ORDER_STATUSES = Object.keys(ORDER_STATUS_LABELS) as OrderStatus[];
 
+/**
+ * The statuses an order can be in after onOrderPaid ran and before any
+ * onOrderCancelled undid it: the orders whose items count as sold.
+ */
+export const SOLD_ORDER_STATUSES: OrderStatus[] = ["paid", "shipped"];
+
 export function allowedAdminTransitions(
   from: OrderStatus,
   paymentMethod: PaymentMethod

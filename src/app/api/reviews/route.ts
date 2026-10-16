@@ -2,6 +2,8 @@ import { connectToDatabase } from "@/lib/db";
 import { ProductModel } from "@/models/Product";
 import { ReviewModel } from "@/models/Review";
 import { getClientIp, getOrSetDeviceId, isRateLimited } from "@/lib/rateLimit";
+import { getSessionUser } from "@/lib/auth";
+import { hasPurchased } from "@/lib/reviews";
 
 interface ReviewBody {
   /** Set when the review is about a product; omitted for a review of the store. */
@@ -64,7 +66,21 @@ export async function POST(request: Request) {
     );
   }
 
-  await ReviewModel.create({ productId, name, rating, comment, approved: false, ip, deviceId });
+  const user = await getSessionUser();
+  const verifiedPurchase =
+    user !== null && productId !== undefined && (await hasPurchased(user.id, productId));
+
+  await ReviewModel.create({
+    productId,
+    userId: user?.id,
+    verifiedPurchase,
+    name,
+    rating,
+    comment,
+    approved: false,
+    ip,
+    deviceId,
+  });
 
   return Response.json({
     message: "نظر شما با موفقیت ثبت شد و پس از تایید مدیر نمایش داده می‌شود.",
