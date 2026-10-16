@@ -1,6 +1,7 @@
 import { connectToDatabase } from "@/lib/db";
 import { ProductModel } from "@/models/Product";
 import { getSessionAdmin } from "@/lib/auth";
+import { toSetAndUnset } from "@/lib/mongoUpdate";
 
 interface UpdateProductBody {
   name?: string;
@@ -39,7 +40,9 @@ export async function PATCH(
   if (body.flavor !== undefined) update.flavor = body.flavor || undefined;
   if (body.size !== undefined) update.size = body.size || undefined;
 
-  const product = await ProductModel.findOneAndUpdate({ id }, update, {
+  // Cleared optional fields (flavor, size) are undefined here
+  // and must be removed explicitly, or Mongoose would keep the old values.
+  const product = await ProductModel.findOneAndUpdate({ id }, toSetAndUnset(update), {
     returnDocument: "after",
   });
 
