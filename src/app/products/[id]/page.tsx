@@ -6,6 +6,7 @@ import StarRating from "@/components/ui/StarRating";
 import Testimonials from "@/components/home/Testimonials";
 import ProductCard from "@/components/product/ProductCard";
 import ProductDetailPanel from "@/components/product/ProductDetailPanel";
+import ProductInfo from "@/components/product/ProductInfo";
 import TrustBadges from "@/components/product/TrustBadges";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import { getSessionUser } from "@/lib/auth";
@@ -112,6 +113,15 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
 
           <div className="mt-8">
             <TrustBadges />
+          </div>
+
+          <div className="mt-8">
+            <ProductInfo
+              servingSize={product.servingSize}
+              nutritionFacts={product.nutritionFacts}
+              usage={product.usage}
+              warnings={product.warnings}
+            />
           </div>
         </div>
       </div>

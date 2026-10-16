@@ -1,6 +1,7 @@
 import { connectToDatabase } from "@/lib/db";
 import { ProductModel } from "@/models/Product";
 import { getSessionAdmin } from "@/lib/auth";
+import { productDetailsSchema, withoutEmptyDetails } from "@/lib/productDetails";
 
 interface CreateProductBody {
   id?: string;
@@ -51,6 +52,11 @@ export async function POST(request: Request) {
     );
   }
 
+  const details = productDetailsSchema.safeParse(body);
+  if (!details.success) {
+    return Response.json({ message: "اطلاعات ارزش غذایی یا روش مصرف نامعتبر است." }, { status: 400 });
+  }
+
   await connectToDatabase();
 
   const existing = await ProductModel.findOne({ $or: [{ id: body.id }, { slug: body.slug }] });
@@ -69,6 +75,7 @@ export async function POST(request: Request) {
     stock: body.stock,
     flavor: body.flavor || undefined,
     size: body.size || undefined,
+    ...withoutEmptyDetails(details.data),
   });
 
   return Response.json(product, { status: 201 });
