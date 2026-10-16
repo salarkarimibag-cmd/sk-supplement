@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import Pagination from "@/components/ui/Pagination";
 import StarRating from "@/components/ui/StarRating";
 import Testimonials from "@/components/home/Testimonials";
 import ProductCard from "@/components/product/ProductCard";
@@ -13,10 +14,10 @@ import ReviewForm from "@/components/reviews/ReviewForm";
 import { getSessionUser } from "@/lib/auth";
 import { getCategoryContent } from "@/lib/categoryContent";
 import { getProductById, getProductGroup, getRelatedProducts } from "@/lib/products";
-import { getProductReviews } from "@/lib/reviews";
+import { getProductReviewsPage } from "@/lib/reviews";
 import { buildVariantOptions, formatVariantSummary } from "@/lib/variants";
 
-const SHOWN_REVIEW_COUNT = 6;
+const REVIEWS_PAGE_SIZE = 6;
 
 export async function generateMetadata(
   props: PageProps<"/products/[id]">
@@ -28,17 +29,27 @@ export async function generateMetadata(
 
 export default async function ProductPage(props: PageProps<"/products/[id]">) {
   const { id } = await props.params;
+  const { reviews: reviewsPageParam } = await props.searchParams;
   const product = await getProductById(id);
 
   if (!product) notFound();
 
-  const [category, relatedProducts, reviews, user, group] = await Promise.all([
+  const requestedReviewsPage =
+    Number(Array.isArray(reviewsPageParam) ? reviewsPageParam[0] : reviewsPageParam) || 1;
+
+  const [category, relatedProducts, reviewsPage, user, group] = await Promise.all([
     getCategoryContent(product.categorySlug),
     getRelatedProducts(product, 4),
-    getProductReviews(product.id, SHOWN_REVIEW_COUNT),
+    getProductReviewsPage(product.id, requestedReviewsPage, REVIEWS_PAGE_SIZE),
     getSessionUser(),
     product.groupSlug ? getProductGroup(product.groupSlug) : [],
   ]);
+
+  // The #reviews anchor brings the shopper back to the reviews after the page loads.
+  const productPath = `/products/${product.id}`;
+  function reviewsHref(page: number) {
+    return page === 1 ? `${productPath}#reviews` : `${productPath}?reviews=${page}#reviews`;
+  }
 
   const variants = buildVariantOptions(product, group);
   const hasVariantChoice = variants.flavors.length > 1 || variants.sizes.length > 1;
@@ -137,7 +148,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
         </div>
       </div>
 
-      <section aria-labelledby="reviews-heading" className="mt-20">
+      <section id="reviews" aria-labelledby="reviews-heading" className="mt-20 scroll-mt-28">
         <h2
           id="reviews-heading"
           className="text-center text-2xl font-extrabold tracking-tight sm:text-3xl"
@@ -153,8 +164,13 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
               className="mt-3 justify-center"
             />
             <div className="mt-10">
-              <Testimonials reviews={reviews} />
+              <Testimonials reviews={reviewsPage.reviews} />
             </div>
+            <Pagination
+              currentPage={reviewsPage.currentPage}
+              totalPages={reviewsPage.totalPages}
+              hrefForPage={reviewsHref}
+            />
           </>
         ) : (
           <p className="mt-3 text-center text-sm text-zinc-500 dark:text-zinc-400">

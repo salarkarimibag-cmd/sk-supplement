@@ -94,16 +94,32 @@ export async function getApprovedReviewsPage(
   };
 }
 
-/** A product's newest approved reviews, for its page. */
-export async function getProductReviews(productId: string, limit: number): Promise<PublicReview[]> {
+/** One page of a product's approved reviews, newest first. */
+export async function getProductReviewsPage(
+  productId: string,
+  page: number,
+  pageSize: number
+): Promise<{ reviews: PublicReview[]; currentPage: number; totalPages: number }> {
   await connectToDatabase();
-  return ReviewModel.find(
-    { productId, approved: true },
-    { _id: 0, name: 1, rating: 1, comment: 1, verifiedPurchase: 1 }
-  )
+
+  const filter = { productId, approved: true };
+  const totalCount = await ReviewModel.countDocuments(filter);
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+  const currentPage = Math.min(Math.max(page, 1), totalPages);
+
+  const reviews = await ReviewModel.find(filter, {
+    _id: 0,
+    name: 1,
+    rating: 1,
+    comment: 1,
+    verifiedPurchase: 1,
+  })
     .sort({ createdAt: -1 })
-    .limit(limit)
+    .skip((currentPage - 1) * pageSize)
+    .limit(pageSize)
     .lean<PublicReview[]>();
+
+  return { reviews, currentPage, totalPages };
 }
 
 /**
