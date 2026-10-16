@@ -1,5 +1,7 @@
 import { connectToDatabase } from "@/lib/db";
+import { SOLD_ORDER_STATUSES } from "@/lib/orderStatus";
 import { toRatingSummary } from "@/lib/ratingSummary";
+import { OrderModel } from "@/models/Order";
 import { ProductModel } from "@/models/Product";
 import { ReviewModel } from "@/models/Review";
 
@@ -7,6 +9,23 @@ export interface PublicReview {
   name: string;
   rating: number;
   comment: string;
+  /** Only product reviews can carry it; store reviews leave it out. */
+  verifiedPurchase?: boolean;
+}
+
+/**
+ * Whether the user has a paid (or shipped) order containing the product.
+ * Matches on the order's userId only: emails aren't verified, so matching
+ * a guest order by email would let anyone claim someone else's purchase.
+ */
+export async function hasPurchased(userId: string, productId: string): Promise<boolean> {
+  await connectToDatabase();
+  const order = await OrderModel.exists({
+    userId,
+    status: { $in: SOLD_ORDER_STATUSES },
+    "items.productId": productId,
+  });
+  return order !== null;
 }
 
 // Reviews of the store itself; product reviews are shown on their product's page.
@@ -78,7 +97,10 @@ export async function getApprovedReviewsPage(
 /** A product's newest approved reviews, for its page. */
 export async function getProductReviews(productId: string, limit: number): Promise<PublicReview[]> {
   await connectToDatabase();
-  return ReviewModel.find({ productId, approved: true }, { _id: 0, name: 1, rating: 1, comment: 1 })
+  return ReviewModel.find(
+    { productId, approved: true },
+    { _id: 0, name: 1, rating: 1, comment: 1, verifiedPurchase: 1 }
+  )
     .sort({ createdAt: -1 })
     .limit(limit)
     .lean<PublicReview[]>();

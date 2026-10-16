@@ -41,6 +41,7 @@ export default async function AdminReviewsPage(props: PageProps<"/admin/reviews"
       ? { id: review.productId, name: productNames.get(review.productId) ?? review.productId }
       : null,
     name: review.name,
+    verifiedPurchase: review.verifiedPurchase ?? false,
     rating: review.rating,
     comment: review.comment,
     approved: review.approved,

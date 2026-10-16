@@ -8,6 +8,7 @@ import ProductCard from "@/components/product/ProductCard";
 import ProductDetailPanel from "@/components/product/ProductDetailPanel";
 import TrustBadges from "@/components/product/TrustBadges";
 import ReviewForm from "@/components/reviews/ReviewForm";
+import { getSessionUser } from "@/lib/auth";
 import { getCategoryContent } from "@/lib/categoryContent";
 import { getProductById, getRelatedProducts } from "@/lib/products";
 import { getProductReviews } from "@/lib/reviews";
@@ -28,10 +29,11 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
 
   if (!product) notFound();
 
-  const [category, relatedProducts, reviews] = await Promise.all([
+  const [category, relatedProducts, reviews, user] = await Promise.all([
     getCategoryContent(product.categorySlug),
     getRelatedProducts(product.categorySlug, product.id, 4),
     getProductReviews(product.id, SHOWN_REVIEW_COUNT),
+    getSessionUser(),
   ]);
 
   return (
@@ -136,6 +138,19 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
         ) : (
           <p className="mt-3 text-center text-sm text-zinc-500 dark:text-zinc-400">
             هنوز نظری برای این محصول ثبت نشده است. اولین نفر باشید!
+          </p>
+        )}
+
+        {!user && (
+          <p className="mx-auto mt-10 max-w-xl text-center text-sm text-zinc-500 dark:text-zinc-400">
+            این محصول را خریده‌اید؟{" "}
+            <Link
+              href={`/account/login?next=${encodeURIComponent(`/products/${product.id}`)}`}
+              className="font-semibold text-sky-600 hover:underline"
+            >
+              وارد حسابتان شوید
+            </Link>{" "}
+            تا نظرتان با برچسب «خریدار این محصول» نمایش داده شود.
           </p>
         )}
 
