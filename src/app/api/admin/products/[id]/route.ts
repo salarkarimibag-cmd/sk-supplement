@@ -3,6 +3,7 @@ import { ProductModel } from "@/models/Product";
 import { getSessionAdmin } from "@/lib/auth";
 import { toSetAndUnset } from "@/lib/mongoUpdate";
 import { productDetailsSchema, withoutEmptyDetails } from "@/lib/productDetails";
+import { productGroupSchema } from "@/lib/variants";
 
 interface UpdateProductBody {
   name?: string;
@@ -33,6 +34,14 @@ export async function PATCH(
     return Response.json({ message: "اطلاعات ارزش غذایی یا روش مصرف نامعتبر است." }, { status: 400 });
   }
 
+  const group = productGroupSchema.safeParse(body);
+  if (!group.success) {
+    return Response.json(
+      { message: "گروه باید با حروف انگلیسی کوچک، عدد و خط تیره باشد (مثلاً whey-isolate)." },
+      { status: 400 }
+    );
+  }
+
   await connectToDatabase();
 
   const update: Record<string, unknown> = {};
@@ -45,9 +54,10 @@ export async function PATCH(
   if (body.stock !== undefined) update.stock = body.stock;
   if (body.flavor !== undefined) update.flavor = body.flavor || undefined;
   if (body.size !== undefined) update.size = body.size || undefined;
+  if (group.data.groupSlug !== undefined) update.groupSlug = group.data.groupSlug || undefined;
   Object.assign(update, withoutEmptyDetails(details.data));
 
-  // Cleared optional fields (flavor, size, label details) are undefined here
+  // Cleared optional fields (flavor, size, group, label details) are undefined here
   // and must be removed explicitly, or Mongoose would keep the old values.
   const product = await ProductModel.findOneAndUpdate({ id }, toSetAndUnset(update), {
     returnDocument: "after",

@@ -2,6 +2,7 @@ import { connectToDatabase } from "@/lib/db";
 import { ProductModel, type Product } from "@/models/Product";
 import type { CatalogProduct } from "@/data/catalog";
 import { escapeRegex } from "@/lib/escapeRegex";
+import type { VariantProduct } from "@/lib/variants";
 
 function withInStock(product: Product): CatalogProduct {
   // .lean() skips schema defaults, so products saved before salesCount
@@ -72,6 +73,16 @@ export async function getProductsByCategory(categorySlug: string): Promise<Catal
   await connectToDatabase();
   const products = await ProductModel.find({ categorySlug }).lean<Product[]>();
   return products.map(withInStock);
+}
+
+/** Every product in a flavor/size group, the given one included. */
+export async function getProductGroup(groupSlug: string): Promise<VariantProduct[]> {
+  await connectToDatabase();
+  const products = await ProductModel.find(
+    { groupSlug },
+    { _id: 0, id: 1, flavor: 1, size: 1, stock: 1 }
+  ).lean<Pick<Product, "id" | "flavor" | "size" | "stock">[]>();
+  return products.map(({ stock, ...product }) => ({ ...product, inStock: stock > 0 }));
 }
 
 export async function getProductById(id: string): Promise<CatalogProduct | null> {

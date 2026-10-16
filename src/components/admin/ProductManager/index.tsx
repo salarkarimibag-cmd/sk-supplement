@@ -18,6 +18,7 @@ interface ProductItem {
   stock: number;
   flavor: string;
   size: string;
+  groupSlug: string;
   servingSize: string;
   nutritionFacts: NutritionFact[];
   usage: string;
@@ -40,6 +41,7 @@ interface FormState {
   stock: string;
   flavor: string;
   size: string;
+  groupSlug: string;
   servingSize: string;
   /** One "label: amount" per line; see parseNutritionFacts. */
   nutritionFacts: string;
@@ -59,6 +61,7 @@ function emptyForm(defaultCategorySlug: string): FormState {
     stock: "",
     flavor: "",
     size: "",
+    groupSlug: "",
     servingSize: "",
     nutritionFacts: "",
     usage: "",
@@ -96,6 +99,7 @@ export default function ProductManager({
       stock: String(item.stock),
       flavor: item.flavor,
       size: item.size,
+      groupSlug: item.groupSlug,
       servingSize: item.servingSize,
       nutritionFacts: formatNutritionFacts(item.nutritionFacts),
       usage: item.usage,
@@ -149,6 +153,7 @@ export default function ProductManager({
       stock: Number(form.stock),
       flavor: form.flavor.trim(),
       size: form.size.trim(),
+      groupSlug: form.groupSlug.trim(),
       servingSize: form.servingSize.trim(),
       nutritionFacts: nutrition.facts,
       usage: form.usage.trim(),
@@ -182,6 +187,7 @@ export default function ProductManager({
         stock: data.stock,
         flavor: data.flavor ?? "",
         size: data.size ?? "",
+        groupSlug: data.groupSlug ?? "",
         servingSize: data.servingSize ?? "",
         nutritionFacts: data.nutritionFacts ?? [],
         usage: data.usage ?? "",
@@ -292,6 +298,15 @@ export default function ProductManager({
           value={form.imageUrl}
           onChange={(event) => setForm({ ...form, imageUrl: event.target.value })}
           className={`col-span-2 ${inputClass}`}
+        />
+        <input
+          type="text"
+          dir="ltr"
+          placeholder="گروه طعم/سایز (اختیاری، مثلاً whey-isolate)"
+          title="محصولاتی که گروه یکسان دارند، طعم‌ها و سایزهای یک محصول حساب می‌شوند."
+          value={form.groupSlug}
+          onChange={(event) => setForm({ ...form, groupSlug: event.target.value })}
+          className={`col-span-2 text-end placeholder:text-end ${inputClass}`}
         />
 
         <textarea
