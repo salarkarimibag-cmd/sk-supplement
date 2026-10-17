@@ -1,14 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import RubikCube from "@/components/home/RubikCube";
+import HeroScene from "@/components/home/HeroScene";
 
 /**
  * The home page hero: a dark, full-width section with a photo behind, the
- * page's headline on the start (right) side and an animated 3D cube in the
- * dark empty part of the photo on the end (left) side, clear of the man in
- * it. It stays dark in both themes.
+ * page's headline on the start (right) side and an animated 3D scene (a
+ * supplement tub, capsules and a dumbbell) in the dark empty part of the
+ * photo on the end (left) side, clear of the man in it. It stays dark in
+ * both themes.
  */
-export default function CubeShowcase() {
+export default function HeroShowcase() {
   return (
     <section className="relative isolate overflow-hidden bg-black">
       <Image
@@ -21,21 +22,21 @@ export default function CubeShowcase() {
         // His head is close to the photo's top edge, so on wide screens (where
         // `object-cover` must cut some height) all the cut comes from the
         // bottom. On phones the crop also shifts so he stands right of center,
-        // leaving the top-left corner free for the cube.
+        // leaving the top-left corner free for the 3D scene.
         className="-z-10 object-cover object-[20%_top] md:object-top"
       />
-      {/* Darkest behind the text (the start side), fading toward the cube. */}
+      {/* Darkest behind the text (the start side), fading toward the scene. */}
       <div className="absolute inset-0 -z-10 bg-linear-to-l from-black/90 via-black/50 to-black/20" />
       {/* Soften the bottom edge into the page. */}
       <div className="absolute inset-x-0 bottom-0 -z-10 h-1/3 bg-linear-to-t from-black/80 to-transparent" />
 
-      {/* The cube hugs the end (left, in RTL) edge of the screen: the top
-          corner on phones, the vertical middle on wider screens. */}
+      {/* The 3D scene hugs the end (left, in RTL) edge of the screen: the
+          top corner on phones, the vertical middle on wider screens. */}
       <div className="absolute inset-e-0 top-2 w-44 sm:w-56 md:top-1/2 md:w-[32%] md:max-w-md md:-translate-y-1/2">
-        <RubikCube />
+        <HeroScene />
       </div>
 
-      {/* On phones the text starts below the cube so the two don't overlap. */}
+      {/* On phones the text starts below the scene so the two don't overlap. */}
       <div className="mx-auto flex max-w-6xl items-center px-6 pt-48 pb-14 sm:pt-60 md:min-h-150 md:py-24">
         <div className="text-start">
           {/* The hero holds the page's only h1, as the old banner did. */}

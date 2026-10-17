@@ -5,13 +5,14 @@ import { useEffect, useRef, useState } from "react";
 
 // Three.js is large and needs the browser (WebGL), so the scene is split into
 // its own chunk and only rendered on the client.
-const CubeScene = dynamic(() => import("./CubeScene"), { ssr: false });
+const Scene = dynamic(() => import("./Scene"), { ssr: false });
 
 /**
- * Reserves a square for the 3D cube and loads the scene only once the visitor
- * scrolls near it. While it's off-screen, the scene stops animating.
+ * Reserves a square for the hero's 3D scene (a supplement tub, capsules and a
+ * dumbbell) and loads it only once the visitor is near it. While it's
+ * off-screen, the scene stops animating.
  */
-export default function RubikCube() {
+export default function HeroScene() {
   const container = useRef<HTMLDivElement>(null);
   const [hasBeenNear, setHasBeenNear] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -34,9 +35,9 @@ export default function RubikCube() {
 
   return (
     <div ref={container} className="relative aspect-square w-full" aria-hidden="true">
-      {/* A soft glow behind the cube, so its dark edges stand out. */}
-      <div className="absolute inset-[18%] rounded-full bg-white/10 blur-3xl" />
-      {hasBeenNear && <CubeScene isActive={isVisible} />}
+      {/* A soft brand-blue glow behind the scene, so its dark shapes stand out. */}
+      <div className="absolute inset-[20%] rounded-full bg-sky-500/15 blur-3xl" />
+      {hasBeenNear && <Scene isActive={isVisible} />}
     </div>
   );
 }
