@@ -1,9 +1,12 @@
 import { isValidObjectId } from "mongoose";
+import { after } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { OrderModel, type PaymentMethod } from "@/models/Order";
 import { getSessionAdmin } from "@/lib/auth";
 import { adminSourcesFor, isOrderStatus } from "@/lib/orderStatus";
 import { onOrderCancelled, onOrderPaid } from "@/lib/orderLifecycle";
+import { emailKindForAdminStatus } from "@/lib/orderEmail";
+import { sendOrderEmail } from "@/lib/orderNotifications";
 
 interface UpdateOrderBody {
   status?: unknown;
@@ -66,6 +69,13 @@ export async function PATCH(
     // Checked against the previous status, not just the target: only an
     // order that was paid ever had its stock taken, so only that is undone.
     await onOrderCancelled(before);
+  }
+
+  // Sent after the response, so the admin isn't kept waiting on the email
+  // service and a failed email can't turn a successful change into an error.
+  const emailKind = emailKindForAdminStatus(status);
+  if (emailKind) {
+    after(() => sendOrderEmail(before, emailKind));
   }
 
   return Response.json({ id: String(before._id), status });
