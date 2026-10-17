@@ -3,16 +3,19 @@ import Link from "next/link";
 import RubikCube from "@/components/home/RubikCube";
 
 /**
- * A dark, full-width section: a photo behind, a headline on one side and an
- * animated 3D cube on the other. It's dark in both themes, like the hero.
+ * The home page hero: a dark, full-width section with a photo behind, the
+ * page's headline on one side and an animated 3D cube on the other. It stays
+ * dark in both themes.
  */
 export default function CubeShowcase() {
   return (
     <section className="relative isolate overflow-hidden bg-black">
       <Image
-        src="/images/cube-section-bg.jpg"
+        src="/images/hero-banner-2.webp"
         alt=""
         fill
+        // It's the first thing on the page, so it's likely the LCP image.
+        preload
         sizes="100vw"
         // Keep the subject's head in frame on wide screens.
         className="-z-10 object-cover object-[center_25%]"
@@ -24,11 +27,12 @@ export default function CubeShowcase() {
 
       <div className="mx-auto grid max-w-6xl items-center gap-4 px-6 py-14 md:grid-cols-2 md:gap-10 md:py-24">
         <div className="text-start">
-          <h2 className="bg-linear-to-b from-white to-zinc-400 bg-clip-text text-5xl leading-tight font-extrabold tracking-tight text-transparent sm:text-6xl lg:text-7xl">
+          {/* The hero holds the page's only h1, as the old banner did. */}
+          <h1 className="bg-linear-to-b from-white to-zinc-400 bg-clip-text text-5xl leading-tight font-extrabold tracking-tight text-transparent sm:text-6xl lg:text-7xl">
             قدرت واقعی
             <br />
             رو بساز
-          </h2>
+          </h1>
           <p className="mt-5 max-w-md text-base leading-relaxed text-zinc-300 sm:text-lg">
             مکمل‌های اصل و باکیفیت برای هر مرحله از مسیر تمرینیت؛ از اولین روز باشگاه تا روی سکو.
           </p>
@@ -49,7 +53,7 @@ export default function CubeShowcase() {
         </div>
 
         {/* On phones the cube sits above the text, like the reference design. */}
-        <div className="order-first mx-auto w-full max-w-xs sm:max-w-sm md:order-none md:max-w-none">
+        <div className="order-first mx-auto w-full max-w-xs sm:max-w-sm md:order-0 md:max-w-none">
           <RubikCube />
         </div>
       </div>
