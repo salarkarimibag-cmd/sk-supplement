@@ -18,9 +18,11 @@ export default function CubeShowcase() {
         // It's the first thing on the page, so it's likely the LCP image.
         preload
         sizes="100vw"
-        // Keep his head in frame. On phones the crop also shifts so he stands
-        // right of center, leaving the top-left corner free for the cube.
-        className="-z-10 object-cover object-[20%_25%] md:object-[center_25%]"
+        // His head is close to the photo's top edge, so on wide screens (where
+        // `object-cover` must cut some height) all the cut comes from the
+        // bottom. On phones the crop also shifts so he stands right of center,
+        // leaving the top-left corner free for the cube.
+        className="-z-10 object-cover object-[20%_top] md:object-top"
       />
       {/* Darkest behind the text (the start side), fading toward the cube. */}
       <div className="absolute inset-0 -z-10 bg-linear-to-l from-black/90 via-black/50 to-black/20" />
