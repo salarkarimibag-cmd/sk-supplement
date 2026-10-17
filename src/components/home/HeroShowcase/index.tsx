@@ -4,6 +4,7 @@ import { ChevronLeft, Star } from "lucide-react";
 import HeroScene from "@/components/home/HeroScene";
 import { trustBadges } from "@/components/product/TrustBadges";
 import type { ListedProduct } from "@/lib/products";
+import type { HeroPromotion } from "@/lib/promotion";
 
 // The text blocks fade up into place one after another when the page loads,
 // using the fade-in-up keyframes in globals.css (as Testimonials does).
@@ -24,6 +25,8 @@ interface HeroShowcaseProps {
   reviewCount: number;
   /** The best-selling product to feature under the 3D tub, if any. */
   bestSeller?: Pick<ListedProduct, "id" | "name" | "price" | "imageUrl">;
+  /** The advertised discount code, or null to show the generic offer text. */
+  promotion: HeroPromotion | null;
 }
 
 /**
@@ -38,7 +41,12 @@ interface HeroShowcaseProps {
  * and the same trust claims as the product page. A small card under the 3D
  * tub links it to a real product: the current best seller.
  */
-export default function HeroShowcase({ averageRating, reviewCount, bestSeller }: HeroShowcaseProps) {
+export default function HeroShowcase({
+  averageRating,
+  reviewCount,
+  bestSeller,
+  promotion,
+}: HeroShowcaseProps) {
   return (
     <section className="relative isolate overflow-hidden bg-black">
       {/* The photo. From md up it fills the whole section, behind the text.
@@ -114,7 +122,17 @@ export default function HeroShowcase({ averageRating, reviewCount, bestSeller }:
             <span className="rounded-full bg-sky-600 px-2.5 py-0.5 text-xs font-bold text-white">
               حراج فصل
             </span>
-            تخفیف ویژه روی مکمل‌ها
+            {promotion ? (
+              <span>
+                {promotion.amount} تخفیف با کد{" "}
+                {/* Latin text inside Persian: keep it left-to-right. */}
+                <bdi dir="ltr" className="font-mono font-bold text-white">
+                  {promotion.code}
+                </bdi>
+              </span>
+            ) : (
+              "تخفیف ویژه روی مکمل‌ها"
+            )}
             <ChevronLeft
               aria-hidden="true"
               className="h-4 w-4 transition-transform group-hover:-translate-x-0.5"

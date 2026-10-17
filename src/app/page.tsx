@@ -8,12 +8,22 @@ import Testimonials from "@/components/home/Testimonials";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import LatestArticles from "@/components/home/LatestArticles";
 import { getBestSellers, getLatestProducts } from "@/lib/products";
+import { getHeroPromotion } from "@/lib/promotion";
 import { getHomepageReviews } from "@/lib/reviews";
 import { formatVariantSummary } from "@/lib/variants";
 
 export default async function Home() {
-  const [latestProducts, bestSellers, { reviews, totalCount: reviewsCount, averageRating }] =
-    await Promise.all([getLatestProducts(4), getBestSellers(4), getHomepageReviews()]);
+  const [
+    latestProducts,
+    bestSellers,
+    { reviews, totalCount: reviewsCount, averageRating },
+    promotion,
+  ] = await Promise.all([
+    getLatestProducts(4),
+    getBestSellers(4),
+    getHomepageReviews(),
+    getHeroPromotion(),
+  ]);
 
   return (
     <div className="flex w-full flex-col gap-12 pb-12">
@@ -22,6 +32,7 @@ export default async function Home() {
         reviewCount={reviewsCount}
         // Feature a product the visitor can actually buy right now.
         bestSeller={bestSellers.find((product) => product.inStock)}
+        promotion={promotion}
       />
 
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6">

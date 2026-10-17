@@ -43,6 +43,13 @@ export function calculateDiscountAmount(
     : Math.min(discount.value, subtotal);
 }
 
+/** How much a code takes off, for display: "۱۰٪" or "۵۰٬۰۰۰ تومان". */
+export function formatDiscountValue(discount: Pick<DiscountCode, "type" | "value">): string {
+  return discount.type === "percent"
+    ? `${discount.value.toLocaleString("fa-IR")}٪`
+    : `${discount.value.toLocaleString("fa-IR")} تومان`;
+}
+
 // What an admin may save as a discount code. A 100% (or larger) discount is
 // rejected because it makes the total zero, which ZarinPal can't charge.
 export const discountInputSchema = z
