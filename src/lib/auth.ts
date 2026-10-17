@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import { connectToDatabase } from "@/lib/db";
+import { isSessionStale } from "@/lib/passwordReset";
 import { UserModel } from "@/models/User";
 
 const SESSION_COOKIE = "session";
@@ -48,14 +49,16 @@ export async function clearSessionCookie(): Promise<void> {
   store.delete(SESSION_COOKIE);
 }
 
-async function getSessionUserId(): Promise<string | null> {
+async function getSession(): Promise<{ userId: string; issuedAt?: number } | null> {
   const store = await cookies();
   const token = store.get(SESSION_COOKIE)?.value;
   if (!token) return null;
 
   try {
     const { payload } = await jwtVerify(token, getSecretKey());
-    return typeof payload.userId === "string" ? payload.userId : null;
+    return typeof payload.userId === "string"
+      ? { userId: payload.userId, issuedAt: payload.iat }
+      : null;
   } catch {
     return null;
   }
@@ -63,12 +66,13 @@ async function getSessionUserId(): Promise<string | null> {
 
 /** Reads the session cookie (if any) and loads the matching user, without the password hash. */
 export async function getSessionUser() {
-  const userId = await getSessionUserId();
-  if (!userId) return null;
+  const session = await getSession();
+  if (!session) return null;
 
   await connectToDatabase();
-  const user = await UserModel.findById(userId).select("-passwordHash").lean();
+  const user = await UserModel.findById(session.userId).select("-passwordHash").lean();
   if (!user) return null;
+  if (isSessionStale(session.issuedAt, user.passwordChangedAt)) return null;
 
   // `.lean()` skips Mongoose's `id` virtual (it only exists on hydrated
   // documents, or with the mongoose-lean-virtuals plugin, which isn't
