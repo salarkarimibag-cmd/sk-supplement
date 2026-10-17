@@ -2,6 +2,7 @@ import Link from "next/link";
 import ProductCard from "@/components/product/ProductCard";
 import Newsletter from "@/components/home/Newsletter";
 import HeroBanner from "@/components/home/HeroBanner";
+import CubeShowcase from "@/components/home/CubeShowcase";
 import PromoBanner from "@/components/home/PromoBanner";
 import CategoryShowcase from "@/components/home/CategoryShowcase";
 import Testimonials from "@/components/home/Testimonials";
@@ -20,7 +21,10 @@ export default async function Home() {
 
   return (
     <div className="flex w-full flex-col gap-12 pb-12">
-      <HeroBanner />
+      <div>
+        <HeroBanner />
+        <CubeShowcase />
+      </div>
 
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6">
         <section>
