@@ -19,31 +19,44 @@ const BASE_TILT_X = 0.22;
 const POINTER_TILT = 0.35;
 
 // The tub and lid are "lathed": a 2D outline (radius, height) spun around the
-// vertical axis, which gives the rounded edges of a real supplement tub.
+// vertical axis. The body is shaped like a protein jug: taller than it is
+// wide, rounded at the base, with round shoulders narrowing to the neck.
+const NECK_RADIUS = 0.72;
+const SHOULDER_START_Y = 0.75;
+const SHOULDER_HEIGHT = 0.55;
+
+/** Points along a quarter ellipse, from the body's side in to the neck. */
+const SHOULDER = Array.from({ length: 12 }, (_, i) => {
+  const angle = (i / 11) * (Math.PI / 2);
+  return [
+    NECK_RADIUS + (1 - NECK_RADIUS) * Math.cos(angle),
+    SHOULDER_START_Y + SHOULDER_HEIGHT * Math.sin(angle),
+  ];
+});
+
 const BODY_OUTLINE = [
-  [0, -1],
-  [0.86, -1],
-  [0.95, -0.98],
-  [1, -0.92],
-  [1, 0.62],
-  [0.97, 0.69],
-  [0.9, 0.72],
-  [0.9, 0.86],
-  [0, 0.86],
+  [0, -1.5],
+  [0.85, -1.5],
+  [0.95, -1.47],
+  [1, -1.38],
+  ...SHOULDER,
+  [NECK_RADIUS - 0.02, 1.45],
+  [0, 1.45],
 ].map(([x, y]) => new Vector2(x, y));
 
 const LID_OUTLINE = [
-  [0.93, 0],
-  [1.02, 0],
-  [1.05, 0.05],
-  [1.05, 0.3],
-  [1.01, 0.37],
-  [0.92, 0.39],
-  [0, 0.39],
+  [0.7, 0],
+  [0.78, 0],
+  [0.8, 0.04],
+  [0.8, 0.4],
+  [0.77, 0.45],
+  [0.7, 0.46],
+  [0, 0.46],
 ].map(([x, y]) => new Vector2(x, y));
+const LID_RADIUS = 0.8;
 
 /** Where the lid's bottom edge sits when it's screwed shut. */
-const LID_REST_Y = 0.7;
+const LID_REST_Y = 1.3;
 const LID_LIFT = 0.55;
 const LID_TURNS = 1.5;
 
@@ -54,7 +67,7 @@ const CAPSULES = Array.from({ length: 9 }, (_, i) => ({
   radius: 1.7 + (i % 3) * 0.32,
   angle: i * 2.4,
   speed: 0.22 + (i % 4) * 0.05,
-  height: -0.85 + ((i * 0.37) % 1) * 1.9,
+  height: -1.3 + ((i * 0.37) % 1) * 2.6,
   spin: 0.5 + (i % 3) * 0.35,
   tilt: i * 1.3,
   scale: 0.8 + (i % 3) * 0.15,
@@ -67,23 +80,25 @@ const POINTER_DAMPING = 3;
 /** The tub's wrap-around label, drawn on a canvas: the SK logo, twice. */
 function createLabelTexture() {
   const canvas = document.createElement("canvas");
+  // Same proportions as the label's cylinder (its circumference ÷ height), so
+  // the text isn't stretched.
   canvas.width = 2048;
-  canvas.height = 320;
+  canvas.height = 420;
   const context = canvas.getContext("2d");
   if (context) {
     context.fillStyle = SKY;
-    context.fillRect(0, 14, canvas.width, 10);
-    context.fillRect(0, 296, canvas.width, 10);
+    context.fillRect(0, 18, canvas.width, 12);
+    context.fillRect(0, 390, canvas.width, 12);
     context.textAlign = "center";
     context.textBaseline = "middle";
     // Twice around the tub, so the logo shows from the front and the back.
     for (const center of [512, 1536]) {
       context.fillStyle = WHITE;
-      context.font = "italic 900 150px Arial, sans-serif";
-      context.fillText("SK", center, 135);
+      context.font = "italic 900 170px Arial, sans-serif";
+      context.fillText("SK", center, 180);
       context.fillStyle = SKY_LIGHT;
-      context.font = "700 40px Arial, sans-serif";
-      context.fillText("S U P P L E M E N T", center, 240);
+      context.font = "700 44px Arial, sans-serif";
+      context.fillText("S U P P L E M E N T", center, 300);
     }
   }
   const texture = new CanvasTexture(canvas);
@@ -148,8 +163,8 @@ function Tub({ time }: { time: RefObject<number> }) {
       {/* The label sits a hair outside the body; alphaTest keeps only the
           drawn parts, so the black body shows between them. Rotated so a
           logo faces the camera at rest. */}
-      <mesh position={[0, -0.15, 0]} rotation-y={-Math.PI / 2}>
-        <cylinderGeometry args={[1.004, 1.004, 1, 96, 1, true]} />
+      <mesh position={[0, -0.3, 0]} rotation-y={-Math.PI / 2}>
+        <cylinderGeometry args={[1.004, 1.004, 1.3, 96, 1, true]} />
         <meshStandardMaterial map={label} alphaTest={0.5} roughness={0.4} />
       </mesh>
 
@@ -159,13 +174,17 @@ function Tub({ time }: { time: RefObject<number> }) {
           <meshPhysicalMaterial color={SKY} roughness={0.25} metalness={0.2} clearcoat={1} />
         </mesh>
         {/* Ridges around the lid's edge, for grip. */}
-        {Array.from({ length: 36 }, (_, i) => (
+        {Array.from({ length: 40 }, (_, i) => (
           <mesh
             key={i}
-            position={[Math.sin((i / 36) * Math.PI * 2) * 1.05, 0.175, Math.cos((i / 36) * Math.PI * 2) * 1.05]}
-            rotation-y={(i / 36) * Math.PI * 2}
+            position={[
+              Math.sin((i / 40) * Math.PI * 2) * LID_RADIUS,
+              0.22,
+              Math.cos((i / 40) * Math.PI * 2) * LID_RADIUS,
+            ]}
+            rotation-y={(i / 40) * Math.PI * 2}
           >
-            <boxGeometry args={[0.03, 0.2, 0.025]} />
+            <boxGeometry args={[0.025, 0.3, 0.025]} />
             <meshStandardMaterial color={SKY_LIGHT} roughness={0.3} />
           </mesh>
         ))}
@@ -221,44 +240,6 @@ function Capsules({ time }: { time: RefObject<number> }) {
   );
 }
 
-function Dumbbell({ time }: { time: RefObject<number> }) {
-  const dumbbell = useRef<Group>(null);
-
-  useFrame(() => {
-    if (!dumbbell.current) return;
-    const t = time.current;
-    dumbbell.current.rotation.x = t * 0.6; // rolls around its handle
-    dumbbell.current.position.y = Math.sin(t * 0.9) * 0.08;
-  });
-
-  return (
-    // The outer group places and tilts the dumbbell; the inner one rolls and
-    // bobs. It floats just below the tub's base (y = -1), so however the
-    // scene turns, the two never pass through each other.
-    <group position={[-1.4, -1.5, 1.1]} rotation={[0, 0.5, 0.25]} scale={1.2}>
-      <group ref={dumbbell}>
-        <mesh rotation-z={Math.PI / 2}>
-          <cylinderGeometry args={[0.055, 0.055, 1.05, 24]} />
-          <meshStandardMaterial color="#a1a1aa" metalness={1} roughness={0.3} />
-        </mesh>
-        {[-1, 1].map((side) => (
-          <group key={side} position={[side * 0.62, 0, 0]} rotation-z={Math.PI / 2}>
-            {/* Six radial segments make a hexagonal head. */}
-            <mesh>
-              <cylinderGeometry args={[0.27, 0.27, 0.32, 6]} />
-              <meshPhysicalMaterial color={BLACK} roughness={0.6} clearcoat={0.2} />
-            </mesh>
-            <mesh position={[0, -side * 0.165, 0]}>
-              <cylinderGeometry args={[0.275, 0.275, 0.03, 6]} />
-              <meshStandardMaterial color={SKY} roughness={0.3} />
-            </mesh>
-          </group>
-        ))}
-      </group>
-    </group>
-  );
-}
-
 function Composition({ animate }: { animate: boolean }) {
   const root = useRef<Group>(null);
   // Our own clock: it only advances while animating, so the scene resumes
@@ -281,9 +262,11 @@ function Composition({ animate }: { animate: boolean }) {
 
   return (
     <group ref={root} rotation-x={BASE_TILT_X}>
-      <Tub time={time} />
-      <Capsules time={time} />
-      <Dumbbell time={time} />
+      {/* Lowered a little so the tall tub, with its lid lifted, stays centred. */}
+      <group position-y={-0.25}>
+        <Tub time={time} />
+        <Capsules time={time} />
+      </group>
     </group>
   );
 }
@@ -304,7 +287,7 @@ export default function Scene({ isActive }: SceneProps) {
   return (
     <Canvas
       dpr={[1, 1.75]}
-      camera={{ position: [0, -0.2, 9.5], fov: 35 }}
+      camera={{ position: [0, 0, 9.5], fov: 35 }}
       gl={{ antialias: true, alpha: true }}
       // "demand" renders only when something changes; with a still scene
       // (reduced motion) or an off-screen one, that means almost never.

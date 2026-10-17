@@ -8,8 +8,8 @@ import { useEffect, useRef, useState } from "react";
 const Scene = dynamic(() => import("./Scene"), { ssr: false });
 
 /**
- * Reserves a square for the hero's 3D scene (a supplement tub, capsules and a
- * dumbbell) and loads it only once the visitor is near it. While it's
+ * Reserves a square for the hero's 3D scene (a supplement tub with capsules
+ * around it) and loads it only once the visitor is near it. While it's
  * off-screen, the scene stops animating.
  */
 export default function HeroScene() {

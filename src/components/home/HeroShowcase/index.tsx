@@ -5,7 +5,7 @@ import HeroScene from "@/components/home/HeroScene";
 /**
  * The home page hero: a dark, full-width section with a photo behind, the
  * page's headline on the start (right) side and an animated 3D scene (a
- * supplement tub, capsules and a dumbbell) in the dark empty part of the
+ * supplement tub with capsules around it) in the dark empty part of the
  * photo on the end (left) side, clear of the man in it. It stays dark in
  * both themes.
  */
@@ -32,12 +32,12 @@ export default function HeroShowcase() {
 
       {/* The 3D scene hugs the end (left, in RTL) edge of the screen: the
           top corner on phones, the vertical middle on wider screens. */}
-      <div className="absolute inset-e-0 top-2 w-44 sm:w-56 md:top-1/2 md:w-[32%] md:max-w-md md:-translate-y-1/2">
+      <div className="absolute inset-e-0 top-2 w-56 sm:w-72 md:top-1/2 md:w-[32%] md:max-w-md md:-translate-y-1/2">
         <HeroScene />
       </div>
 
       {/* On phones the text starts below the scene so the two don't overlap. */}
-      <div className="mx-auto flex max-w-6xl items-center px-6 pt-48 pb-14 sm:pt-60 md:min-h-150 md:py-24">
+      <div className="mx-auto flex max-w-6xl items-center px-6 pt-56 pb-14 sm:pt-72 md:min-h-150 md:py-24">
         <div className="text-start">
           {/* The hero holds the page's only h1, as the old banner did. */}
           <h1 className="bg-linear-to-b from-white to-zinc-400 bg-clip-text text-5xl leading-tight font-extrabold tracking-tight text-transparent sm:text-6xl lg:text-7xl">
