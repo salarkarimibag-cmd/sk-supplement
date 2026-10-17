@@ -35,8 +35,8 @@ export default function HeroScene() {
 
   return (
     <div ref={container} className="relative aspect-square w-full" aria-hidden="true">
-      {/* A soft brand-blue glow behind the scene, so its dark shapes stand out. */}
-      <div className="absolute inset-[20%] rounded-full bg-sky-500/15 blur-3xl" />
+      {/* A faint glow behind the scene, so its dark shapes stand out. */}
+      <div className="absolute inset-[20%] rounded-full bg-white/5 blur-3xl" />
       {hasBeenNear && <Scene isActive={isVisible} />}
     </div>
   );

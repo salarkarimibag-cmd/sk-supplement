@@ -2,21 +2,24 @@
 
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Environment, Lightformer } from "@react-three/drei";
-import { CanvasTexture, MathUtils, SRGBColorSpace, Vector2, type Group } from "three";
+import { ContactShadows, Environment, Lightformer } from "@react-three/drei";
+import { MathUtils, Vector2, type Group } from "three";
 import { lidOpenness, pulse } from "@/lib/heroMotion";
+import { createGrainTexture, createLabelTexture } from "./textures";
 
-// The site's palette: black, white and Tailwind's sky-600 / sky-400.
-const BLACK = "#0d0d0d";
-const SKY = "#0284c7";
-const SKY_LIGHT = "#38bdf8";
-const WHITE = "#f4f4f5";
+// Real moulded plastic is never pure black: a very dark grey reads as black
+// but still shows its shape under light.
+const PLASTIC = "#1b1b1b";
+const LID_PLASTIC = "#141414";
+const CAPSULE_WHITE = "#ecebe8";
+const CAPSULE_BLUE = "#1f4f8a";
 
-const IDLE_SPIN_SPEED = 0.2; // radians per second
-/** The resting angle: seen slightly from above. */
-const BASE_TILT_X = 0.22;
+const IDLE_SPIN_SPEED = 0.15; // radians per second
+/** The resting angle: seen slightly from above, like a product shot. */
+const BASE_TILT_X = 0.18;
 /** How far the scene leans toward the pointer. */
-const POINTER_TILT = 0.35;
+const POINTER_TILT = 0.3;
+const POINTER_DAMPING = 3;
 
 // The tub and lid are "lathed": a 2D outline (radius, height) spun around the
 // vertical axis. The body is shaped like a protein jug: taller than it is
@@ -26,8 +29,8 @@ const SHOULDER_START_Y = 0.75;
 const SHOULDER_HEIGHT = 0.55;
 
 /** Points along a quarter ellipse, from the body's side in to the neck. */
-const SHOULDER = Array.from({ length: 12 }, (_, i) => {
-  const angle = (i / 11) * (Math.PI / 2);
+const SHOULDER = Array.from({ length: 16 }, (_, i) => {
+  const angle = (i / 15) * (Math.PI / 2);
   return [
     NECK_RADIUS + (1 - NECK_RADIUS) * Math.cos(angle),
     SHOULDER_START_Y + SHOULDER_HEIGHT * Math.sin(angle),
@@ -35,8 +38,10 @@ const SHOULDER = Array.from({ length: 12 }, (_, i) => {
 });
 
 const BODY_OUTLINE = [
-  [0, -1.5],
-  [0.85, -1.5],
+  [0, -1.46],
+  [0.8, -1.46],
+  // A slightly recessed base, as on a real blow-moulded tub.
+  [0.86, -1.5],
   [0.95, -1.47],
   [1, -1.38],
   ...SHOULDER,
@@ -46,66 +51,34 @@ const BODY_OUTLINE = [
 
 const LID_OUTLINE = [
   [0.7, 0],
-  [0.78, 0],
-  [0.8, 0.04],
-  [0.8, 0.4],
-  [0.77, 0.45],
-  [0.7, 0.46],
+  [0.79, 0],
+  [0.8, 0.03],
+  [0.8, 0.41],
+  [0.78, 0.45],
+  [0.74, 0.46],
   [0, 0.46],
 ].map(([x, y]) => new Vector2(x, y));
 const LID_RADIUS = 0.8;
+const LID_RIDGES = 64;
 
 /** Where the lid's bottom edge sits when it's screwed shut. */
 const LID_REST_Y = 1.3;
-const LID_LIFT = 0.55;
-const LID_TURNS = 1.5;
+const LID_LIFT = 0.4;
+const LID_TURNS = 1;
 
-// Nine capsules on different orbits. The golden angle (≈2.4 rad) spreads their
-// starting points evenly; the other values vary with the index so no two move
-// alike. Every capsule pops open briefly, each at its own moment.
-const CAPSULES = Array.from({ length: 9 }, (_, i) => ({
-  radius: 1.7 + (i % 3) * 0.32,
+// Seven capsules on different orbits. The golden angle (≈2.4 rad) spreads
+// their starting points evenly; the other values vary with the index so no
+// two move alike. Every capsule pops open briefly, each at its own moment.
+const CAPSULES = Array.from({ length: 7 }, (_, i) => ({
+  radius: 1.75 + (i % 3) * 0.3,
   angle: i * 2.4,
-  speed: 0.22 + (i % 4) * 0.05,
-  height: -1.3 + ((i * 0.37) % 1) * 2.6,
-  spin: 0.5 + (i % 3) * 0.35,
+  speed: 0.18 + (i % 4) * 0.04,
+  height: -1.2 + ((i * 0.37) % 1) * 2.4,
+  spin: 0.4 + (i % 3) * 0.25,
   tilt: i * 1.3,
-  scale: 0.8 + (i % 3) * 0.15,
-  secondHalf: i % 3 === 0 ? BLACK : WHITE,
-  popOffset: i * 1.7,
+  scale: 0.85 + (i % 3) * 0.12,
+  popOffset: i * 2.1,
 }));
-
-const POINTER_DAMPING = 3;
-
-/** The tub's wrap-around label, drawn on a canvas: the SK logo, twice. */
-function createLabelTexture() {
-  const canvas = document.createElement("canvas");
-  // Same proportions as the label's cylinder (its circumference ÷ height), so
-  // the text isn't stretched.
-  canvas.width = 2048;
-  canvas.height = 420;
-  const context = canvas.getContext("2d");
-  if (context) {
-    context.fillStyle = SKY;
-    context.fillRect(0, 18, canvas.width, 12);
-    context.fillRect(0, 390, canvas.width, 12);
-    context.textAlign = "center";
-    context.textBaseline = "middle";
-    // Twice around the tub, so the logo shows from the front and the back.
-    for (const center of [512, 1536]) {
-      context.fillStyle = WHITE;
-      context.font = "italic 900 170px Arial, sans-serif";
-      context.fillText("SK", center, 180);
-      context.fillStyle = SKY_LIGHT;
-      context.font = "700 44px Arial, sans-serif";
-      context.fillText("S U P P L E M E N T", center, 300);
-    }
-  }
-  const texture = new CanvasTexture(canvas);
-  texture.colorSpace = SRGBColorSpace;
-  texture.anisotropy = 4;
-  return texture;
-}
 
 /** Pointer position across the whole window, from -1 to 1 on each axis. */
 function useWindowPointer() {
@@ -123,17 +96,17 @@ function useWindowPointer() {
   return pointer;
 }
 
-/** One half of a capsule: a short cylinder with a rounded end, pointing up. */
+/** One half of a gelatin capsule: a short cylinder with a rounded end. */
 function CapsuleHalf({ color }: { color: string }) {
   return (
     <group>
       <mesh position={[0, 0.09, 0]}>
-        <cylinderGeometry args={[0.13, 0.13, 0.18, 24]} />
-        <meshPhysicalMaterial color={color} roughness={0.2} clearcoat={1} />
+        <cylinderGeometry args={[0.12, 0.12, 0.18, 32]} />
+        <meshPhysicalMaterial color={color} roughness={0.3} clearcoat={1} clearcoatRoughness={0.15} />
       </mesh>
       <mesh position={[0, 0.18, 0]}>
-        <sphereGeometry args={[0.13, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2]} />
-        <meshPhysicalMaterial color={color} roughness={0.2} clearcoat={1} />
+        <sphereGeometry args={[0.12, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
+        <meshPhysicalMaterial color={color} roughness={0.3} clearcoat={1} clearcoatRoughness={0.15} />
       </mesh>
     </group>
   );
@@ -142,8 +115,15 @@ function CapsuleHalf({ color }: { color: string }) {
 function Tub({ time }: { time: RefObject<number> }) {
   const lid = useRef<Group>(null);
   const label = useMemo(() => createLabelTexture(), []);
+  const grain = useMemo(() => createGrainTexture(), []);
 
-  useEffect(() => () => label.dispose(), [label]);
+  useEffect(
+    () => () => {
+      label.dispose();
+      grain.dispose();
+    },
+    [label, grain]
+  );
 
   useFrame(() => {
     if (!lid.current) return;
@@ -153,41 +133,51 @@ function Tub({ time }: { time: RefObject<number> }) {
     lid.current.rotation.y = openness * LID_TURNS * Math.PI * 2;
   });
 
+  // Matte moulded plastic: the grain map varies the roughness and adds a
+  // faint bump, and a thin, rough clear coat gives the soft sheen of HDPE.
+  const plastic = {
+    roughness: 0.62,
+    roughnessMap: grain,
+    bumpMap: grain,
+    bumpScale: 0.6,
+    clearcoat: 0.25,
+    clearcoatRoughness: 0.45,
+  };
+
   return (
     <group>
       <mesh>
-        <latheGeometry args={[BODY_OUTLINE, 64]} />
-        <meshPhysicalMaterial color={BLACK} roughness={0.55} metalness={0.15} clearcoat={0.3} />
+        <latheGeometry args={[BODY_OUTLINE, 128]} />
+        <meshPhysicalMaterial color={PLASTIC} {...plastic} />
       </mesh>
 
-      {/* The label sits a hair outside the body; alphaTest keeps only the
-          drawn parts, so the black body shows between them. Rotated so a
-          logo faces the camera at rest. */}
+      {/* The printed label sits a hair outside the body. It's glossier than
+          the plastic, like a laminated sticker. Rotated so the front faces
+          the camera at rest. */}
       <mesh position={[0, -0.3, 0]} rotation-y={-Math.PI / 2}>
-        <cylinderGeometry args={[1.004, 1.004, 1.3, 96, 1, true]} />
-        <meshStandardMaterial map={label} alphaTest={0.5} roughness={0.4} />
+        <cylinderGeometry args={[1.004, 1.004, 1.3, 128, 1, true]} />
+        <meshPhysicalMaterial map={label} roughness={0.38} clearcoat={0.7} clearcoatRoughness={0.2} />
       </mesh>
 
       <group ref={lid} position={[0, LID_REST_Y, 0]}>
         <mesh>
-          <latheGeometry args={[LID_OUTLINE, 64]} />
-          <meshPhysicalMaterial color={SKY} roughness={0.25} metalness={0.2} clearcoat={1} />
+          <latheGeometry args={[LID_OUTLINE, 128]} />
+          <meshPhysicalMaterial color={LID_PLASTIC} {...plastic} roughness={0.5} />
         </mesh>
-        {/* Ridges around the lid's edge, for grip. */}
-        {Array.from({ length: 40 }, (_, i) => (
-          <mesh
-            key={i}
-            position={[
-              Math.sin((i / 40) * Math.PI * 2) * LID_RADIUS,
-              0.22,
-              Math.cos((i / 40) * Math.PI * 2) * LID_RADIUS,
-            ]}
-            rotation-y={(i / 40) * Math.PI * 2}
-          >
-            <boxGeometry args={[0.025, 0.3, 0.025]} />
-            <meshStandardMaterial color={SKY_LIGHT} roughness={0.3} />
-          </mesh>
-        ))}
+        {/* Fine grip ridges around the lid's edge. */}
+        {Array.from({ length: LID_RIDGES }, (_, i) => {
+          const angle = (i / LID_RIDGES) * Math.PI * 2;
+          return (
+            <mesh
+              key={i}
+              position={[Math.sin(angle) * LID_RADIUS, 0.22, Math.cos(angle) * LID_RADIUS]}
+              rotation-y={angle}
+            >
+              <boxGeometry args={[0.018, 0.32, 0.018]} />
+              <meshStandardMaterial color={LID_PLASTIC} roughness={0.55} />
+            </mesh>
+          );
+        })}
       </group>
     </group>
   );
@@ -205,13 +195,13 @@ function Capsules({ time }: { time: RefObject<number> }) {
       const angle = capsule.angle + t * capsule.speed;
       group.position.set(
         Math.cos(angle) * capsule.radius,
-        capsule.height + Math.sin(t * 0.8 + i) * 0.12,
+        capsule.height + Math.sin(t * 0.7 + i) * 0.1,
         Math.sin(angle) * capsule.radius
       );
       group.rotation.set(capsule.tilt + t * capsule.spin * 0.5, t * capsule.spin, capsule.tilt);
 
-      // Pop open once every 9 seconds for about a second, then close again.
-      const gap = pulse(t, 9, 1.2, capsule.popOffset) * 0.12;
+      // Pop open once every 10 seconds for about a second, then close again.
+      const gap = pulse(t, 10, 1.2, capsule.popOffset) * 0.08;
       const [top, bottom] = group.children;
       top.position.y = gap;
       bottom.position.y = -gap;
@@ -229,10 +219,10 @@ function Capsules({ time }: { time: RefObject<number> }) {
           }}
         >
           <group>
-            <CapsuleHalf color={SKY} />
+            <CapsuleHalf color={CAPSULE_BLUE} />
           </group>
           <group rotation-x={Math.PI}>
-            <CapsuleHalf color={capsule.secondHalf} />
+            <CapsuleHalf color={CAPSULE_WHITE} />
           </group>
         </group>
       ))}
@@ -263,7 +253,7 @@ function Composition({ animate }: { animate: boolean }) {
   return (
     <group ref={root} rotation-x={BASE_TILT_X}>
       {/* Lowered a little so the tall tub, with its lid lifted, stays centred. */}
-      <group position-y={-0.25}>
+      <group position-y={-0.2}>
         <Tub time={time} />
         <Capsules time={time} />
       </group>
@@ -286,7 +276,7 @@ export default function Scene({ isActive }: SceneProps) {
 
   return (
     <Canvas
-      dpr={[1, 1.75]}
+      dpr={[1, 2]}
       camera={{ position: [0, 0, 9.5], fov: 35 }}
       gl={{ antialias: true, alpha: true }}
       // "demand" renders only when something changes; with a still scene
@@ -295,21 +285,25 @@ export default function Scene({ isActive }: SceneProps) {
       onCreated={() => setIsReady(true)}
       className={`transition-opacity duration-1000 ${isReady ? "opacity-100" : "opacity-0"}`}
     >
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[5, 6, 4]} intensity={2.5} />
-      <directionalLight position={[-6, 2, 5]} intensity={1.2} />
-      {/* A sky-blue rim light from behind ties the scene to the brand color. */}
-      <directionalLight position={[0, 3, -6]} intensity={2} color={SKY_LIGHT} />
+      <ambientLight intensity={0.15} />
+      <directionalLight position={[-4, 5, 5]} intensity={1.4} />
       <Composition animate={!prefersReducedMotion} />
 
-      {/* Reflections come from these soft light panels instead of a
-          downloaded HDR image, so nothing extra is fetched. Each panel faces
-          the scene (Lightformer looks at the origin). */}
-      <Environment resolution={256} frames={1}>
-        <Lightformer intensity={3} position={[0, 6, -4]} scale={[10, 2, 1]} />
-        <Lightformer intensity={2} position={[-6, 1, 5]} scale={[4, 8, 1]} />
-        <Lightformer intensity={1.5} position={[6, -1, 5]} scale={[4, 8, 1]} />
-        <Lightformer intensity={1.5} color={SKY_LIGHT} position={[0, -6, 3]} scale={[10, 2, 1]} />
+      {/* A soft shadow on an invisible floor grounds the tub, as in a
+          studio product photo. It sits outside the tilting group, so it
+          stays level. */}
+      <ContactShadows position={[0, -2.15, 0]} scale={7} blur={2.6} far={3} opacity={0.7} resolution={256} />
+
+      {/* Studio lighting without an HDR download: big soft boxes in front and
+          on top, and tall narrow strip lights behind the sides. The strips
+          draw the long vertical highlights along the tub's edges that make a
+          product shot look real. Each panel faces the scene. */}
+      <Environment resolution={512} frames={1}>
+        <Lightformer intensity={2.5} position={[-5, 3, 5]} scale={[5, 5, 1]} />
+        <Lightformer intensity={0.8} position={[5, 0, 5]} scale={[4, 6, 1]} />
+        <Lightformer intensity={6} position={[4.5, 1, -4]} scale={[1.2, 10, 1]} />
+        <Lightformer intensity={4} position={[-4.5, 1, -4]} scale={[1.2, 10, 1]} />
+        <Lightformer intensity={1.5} position={[0, 6, 0]} scale={[6, 6, 1]} />
       </Environment>
     </Canvas>
   );
