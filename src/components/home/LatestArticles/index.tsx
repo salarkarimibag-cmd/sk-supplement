@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import ShowMoreArticles from "@/components/home/ShowMoreArticles";
+import ArticleCarousel from "@/components/home/ArticleCarousel";
 import { getAllBlogPosts } from "@/lib/blogContent";
+import { groupIntoSlides } from "@/lib/slides";
 import type { BlogPost } from "@/models/BlogPost";
 
-/** How many articles are shown before the "show more" button. */
-const INITIAL_COUNT = 2;
+/** How many articles are shown side by side on each slide. */
+const ARTICLES_PER_SLIDE = 2;
 
 function ArticleCard({ article }: { article: BlogPost }) {
   return (
@@ -36,8 +37,9 @@ export default async function LatestArticles() {
 
   if (articles.length === 0) return null;
 
-  const visible = articles.slice(0, INITIAL_COUNT);
-  const hidden = articles.slice(INITIAL_COUNT);
+  const slides = groupIntoSlides(articles, ARTICLES_PER_SLIDE).map((group) =>
+    group.map((article) => <ArticleCard key={article.slug} article={article} />)
+  );
 
   return (
     <div>
@@ -45,21 +47,20 @@ export default async function LatestArticles() {
         آخرین مقالات
       </h2>
 
-      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-        {visible.map((article) => (
-          <ArticleCard key={article.slug} article={article} />
-        ))}
-      </div>
-
-      {hidden.length > 0 && (
-        <ShowMoreArticles>
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-            {hidden.map((article) => (
-              <ArticleCard key={article.slug} article={article} />
-            ))}
-          </div>
-        </ShowMoreArticles>
+      {slides.length > 1 ? (
+        <ArticleCarousel slides={slides} />
+      ) : (
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">{slides[0]}</div>
       )}
+
+      <div className="mt-8 text-center">
+        <Link
+          href="/blogs"
+          className="inline-block rounded border border-sky-600 px-6 py-2.5 text-sm font-semibold text-sky-600 transition hover:bg-sky-600 hover:text-white"
+        >
+          مشاهده همه مقالات
+        </Link>
+      </div>
     </div>
   );
 }
