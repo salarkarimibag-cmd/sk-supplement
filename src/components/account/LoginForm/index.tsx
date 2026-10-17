@@ -65,6 +65,12 @@ export default function LoginForm({ redirectTo }: { redirectTo: string }) {
           {errors.password && (
             <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>
           )}
+          <Link
+            href="/account/forgot-password"
+            className="mt-2 inline-block text-xs text-sky-600 hover:underline"
+          >
+            رمز عبور را فراموش کرده‌اید؟
+          </Link>
         </div>
 
         {serverError && <p className="text-sm text-red-600">{serverError}</p>}

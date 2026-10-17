@@ -35,6 +35,19 @@ body {
     outline: 2px solid var(--color-sky-500);
     outline-offset: 2px;
   }
+
+  /* Emails and phone numbers are written left to right even on this RTL
+     site, so they type and read naturally. While a field is empty it keeps
+     the page direction, so its Persian placeholder still lines up on the
+     right with the other fields. */
+  input[type="email"],
+  input[type="tel"] {
+    direction: ltr;
+  }
+  input[type="email"]:placeholder-shown,
+  input[type="tel"]:placeholder-shown {
+    direction: rtl;
+  }
 }
 
 p.shine {

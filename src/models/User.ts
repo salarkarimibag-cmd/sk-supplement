@@ -7,6 +7,9 @@ export interface User {
   phone: string;
   passwordHash: string;
   isAdmin: boolean;
+  // Set when the password is reset; sessions issued before it are rejected
+  // (see isSessionStale). Missing on users who never reset their password.
+  passwordChangedAt?: Date;
   createdAt: string;
 }
 
@@ -17,6 +20,7 @@ const UserSchema = new Schema<User>(
     phone: { type: String, required: true },
     passwordHash: { type: String, required: true },
     isAdmin: { type: Boolean, required: true, default: false },
+    passwordChangedAt: { type: Date },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );
