@@ -3,11 +3,14 @@ import Link from "next/link";
 import { ChevronLeft, Star } from "lucide-react";
 import HeroScene from "@/components/home/HeroScene";
 import { trustBadges } from "@/components/product/TrustBadges";
+import type { ListedProduct } from "@/lib/products";
 
 interface HeroShowcaseProps {
   /** Average of the approved store reviews (0 when there are none). */
   averageRating: number;
   reviewCount: number;
+  /** The best-selling product to feature under the 3D tub, if any. */
+  bestSeller?: Pick<ListedProduct, "id" | "name" | "price" | "imageUrl">;
 }
 
 /**
@@ -19,9 +22,10 @@ interface HeroShowcaseProps {
  *
  * Besides the headline it carries what helps a visitor decide to buy: the
  * current offer, one clear call to action, the store's real review score
- * and the same trust claims as the product page.
+ * and the same trust claims as the product page. A small card under the 3D
+ * tub links it to a real product: the current best seller.
  */
-export default function HeroShowcase({ averageRating, reviewCount }: HeroShowcaseProps) {
+export default function HeroShowcase({ averageRating, reviewCount, bestSeller }: HeroShowcaseProps) {
   return (
     <section className="relative isolate overflow-hidden bg-black">
       {/* The photo. From md up it fills the whole section, behind the text.
@@ -53,6 +57,35 @@ export default function HeroShowcase({ averageRating, reviewCount }: HeroShowcas
           top corner on phones, the vertical middle on wider screens. */}
       <div className="absolute inset-e-0 top-2 w-56 sm:w-72 md:top-1/2 md:w-[32%] md:max-w-md md:-translate-y-1/2">
         <HeroScene />
+
+        {bestSeller && (
+          <Link
+            href={`/products/${bestSeller.id}`}
+            className="group mx-auto -mt-2 flex w-[90%] max-w-xs items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-2 pe-3 backdrop-blur-md transition hover:border-white/25 hover:bg-white/10"
+          >
+            <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-white">
+              {/* The name is right beside it, so the image is decorative. */}
+              <Image
+                src={bestSeller.imageUrl}
+                alt=""
+                fill
+                sizes="48px"
+                className="object-contain p-1"
+              />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-xs font-bold text-sky-400">پرفروش‌ترین</span>
+              <span className="block truncate text-sm font-bold text-white">{bestSeller.name}</span>
+              <span className="block text-xs text-zinc-300">
+                {bestSeller.price.toLocaleString("fa-IR")} تومان
+              </span>
+            </span>
+            <ChevronLeft
+              aria-hidden="true"
+              className="h-4 w-4 shrink-0 text-zinc-400 transition-transform group-hover:-translate-x-0.5"
+            />
+          </Link>
+        )}
       </div>
 
       {/* On phones the text starts low on the photo, where it has faded to

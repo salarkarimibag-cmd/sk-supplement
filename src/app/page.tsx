@@ -17,7 +17,12 @@ export default async function Home() {
 
   return (
     <div className="flex w-full flex-col gap-12 pb-12">
-      <HeroShowcase averageRating={averageRating} reviewCount={reviewsCount} />
+      <HeroShowcase
+        averageRating={averageRating}
+        reviewCount={reviewsCount}
+        // Feature a product the visitor can actually buy right now.
+        bestSeller={bestSellers.find((product) => product.inStock)}
+      />
 
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6">
         <section>
