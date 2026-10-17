@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, type FocusEvent, type ReactNode } from "react";
-import { Pause, Play } from "lucide-react";
 
 /** How long each slide stays on screen. */
 const INTERVAL_MS = 6000;
@@ -20,17 +19,16 @@ interface ArticleCarouselProps {
  * tallest slide and the page below never jumps. Only the active slide is
  * visible; the others are `inert` so their links can't be clicked or tabbed to.
  *
- * Rotation pauses while the pointer or keyboard focus is inside, when the
- * pause button is pressed, and never starts for users who prefer reduced
- * motion (they can still switch slides with the dots).
+ * Rotation pauses while the pointer or keyboard focus is inside, and never
+ * starts for users who prefer reduced motion (they can still switch slides
+ * with the dots).
  */
 export default function ArticleCarousel({ slides }: ArticleCarouselProps) {
   const [active, setActive] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
   const [isInteracting, setIsInteracting] = useState(false);
 
   useEffect(() => {
-    if (isPaused || isInteracting) return;
+    if (isInteracting) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     // A timeout (not an interval) restarts whenever `active` changes, so
@@ -40,7 +38,7 @@ export default function ArticleCarousel({ slides }: ArticleCarouselProps) {
       INTERVAL_MS
     );
     return () => clearTimeout(timeout);
-  }, [active, isPaused, isInteracting, slides.length]);
+  }, [active, isInteracting, slides.length]);
 
   function handleBlur(event: FocusEvent<HTMLDivElement>) {
     // Blur also fires when focus moves between elements inside; only resume
@@ -58,8 +56,7 @@ export default function ArticleCarousel({ slides }: ArticleCarouselProps) {
       onFocus={() => setIsInteracting(true)}
       onBlur={handleBlur}
     >
-      {/* Announce slide changes only when they come from the user, not the timer. */}
-      <div className="grid" aria-live={isPaused ? "polite" : "off"}>
+      <div className="grid">
         {slides.map((cards, slideIndex) => {
           const isActive = slideIndex === active;
           return (
@@ -108,15 +105,6 @@ export default function ArticleCarousel({ slides }: ArticleCarouselProps) {
             />
           </button>
         ))}
-
-        <button
-          type="button"
-          aria-label={isPaused ? "ادامه‌ی چرخش" : "توقف چرخش"}
-          onClick={() => setIsPaused((paused) => !paused)}
-          className="ms-2 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-sky-600 dark:text-zinc-400 dark:hover:bg-zinc-800"
-        >
-          {isPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
-        </button>
       </div>
     </div>
   );
