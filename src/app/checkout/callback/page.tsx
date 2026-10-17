@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import { after } from "next/server";
+import type { Types } from "mongoose";
 import PaymentResult from "@/components/checkout/PaymentResult";
 import { connectToDatabase } from "@/lib/db";
 import { OrderModel, type Order } from "@/models/Order";
 import { verifyZarinPalPayment } from "@/lib/zarinpal";
 import { onOrderPaid } from "@/lib/orderLifecycle";
+import { sendOrderEmail } from "@/lib/orderNotifications";
 
 export const metadata: Metadata = {
   title: "نتیجه پرداخت",
@@ -30,7 +33,9 @@ export default async function CheckoutCallbackPage(
   // Everything about the payment (its amount above all) comes from the order
   // saved by /api/payment, never from this URL: the buyer can edit any query
   // parameter before ZarinPal's redirect lands here.
-  const order = await OrderModel.findOne({ paymentAuthority: authority }).lean<Order>();
+  const order = await OrderModel.findOne({ paymentAuthority: authority }).lean<
+    Order & { _id: Types.ObjectId }
+  >();
   if (!order) {
     return <PaymentResult success={false} message="سفارشی برای این پرداخت پیدا نشد." />;
   }
@@ -85,6 +90,8 @@ export default async function CheckoutCallbackPage(
   // count it twice.
   if (update.modifiedCount === 1) {
     await onOrderPaid(order);
+    // `order` was read before the update, so the new ref id is added here.
+    after(() => sendOrderEmail({ ...order, paymentRefId: result.refId }, "paid"));
   }
 
   return <PaymentResult success={true} refId={result.refId} />;
