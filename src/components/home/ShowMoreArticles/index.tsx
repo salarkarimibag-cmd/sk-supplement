@@ -10,8 +10,9 @@ interface ShowMoreArticlesProps {
 
 /**
  * Keeps the extra articles collapsed until the button is pressed, then eases
- * them in. Only the open/closed state lives here; the cards themselves come in
- * as `children` from the Server Component, so they stay server-rendered.
+ * them in and removes the button (there's no "show less"). Only the
+ * open/closed state lives here; the cards themselves come in as `children`
+ * from the Server Component, so they stay server-rendered.
  */
 export default function ShowMoreArticles({ children }: ShowMoreArticlesProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,17 +24,18 @@ export default function ShowMoreArticles({ children }: ShowMoreArticlesProps) {
         <div className="pt-8">{children}</div>
       </Collapsible>
 
-      <div className="mt-8 text-center">
-        <button
-          type="button"
-          aria-expanded={isOpen}
-          aria-controls="more-articles"
-          onClick={() => setIsOpen((open) => !open)}
-          className="inline-block cursor-pointer rounded border border-sky-600 px-6 py-2.5 text-sm font-semibold text-sky-600 transition hover:bg-sky-600 hover:text-white"
-        >
-          {isOpen ? "نمایش کمتر" : "نمایش مقالات بیشتر"}
-        </button>
-      </div>
+      {!isOpen && (
+        <div className="mt-8 text-center">
+          <button
+            type="button"
+            aria-controls="more-articles"
+            onClick={() => setIsOpen(true)}
+            className="inline-block cursor-pointer rounded border border-sky-600 px-6 py-2.5 text-sm font-semibold text-sky-600 transition hover:bg-sky-600 hover:text-white"
+          >
+            نمایش مقالات بیشتر
+          </button>
+        </div>
+      )}
     </>
   );
 }
