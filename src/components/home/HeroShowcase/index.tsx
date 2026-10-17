@@ -5,6 +5,19 @@ import HeroScene from "@/components/home/HeroScene";
 import { trustBadges } from "@/components/product/TrustBadges";
 import type { ListedProduct } from "@/lib/products";
 
+// The text blocks fade up into place one after another when the page loads,
+// using the fade-in-up keyframes in globals.css (as Testimonials does).
+// "backwards" keeps each block hidden during its delay. Users who ask for
+// reduced motion get no animation at all: the global rule in globals.css only
+// shortens durations, not delays, so the later blocks would otherwise still
+// stay hidden for a moment and then pop in.
+const ENTER = "animate-[fade-in-up_0.6s_ease-out_backwards] motion-reduce:animate-none";
+const ENTER_STEP_MS = 90;
+
+function enterDelay(step: number) {
+  return { animationDelay: `${step * ENTER_STEP_MS}ms` };
+}
+
 interface HeroShowcaseProps {
   /** Average of the approved store reviews (0 when there are none). */
   averageRating: number;
@@ -95,7 +108,8 @@ export default function HeroShowcase({ averageRating, reviewCount, bestSeller }:
           {/* The seasonal offer, as a small pill above the headline. */}
           <Link
             href="/products"
-            className="group mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 py-1.5 ps-1.5 pe-3 text-sm text-zinc-200 backdrop-blur-sm transition hover:border-white/30 hover:bg-white/10"
+            style={enterDelay(0)}
+            className={`group mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 py-1.5 ps-1.5 pe-3 text-sm text-zinc-200 backdrop-blur-sm transition hover:border-white/30 hover:bg-white/10 ${ENTER}`}
           >
             <span className="rounded-full bg-sky-600 px-2.5 py-0.5 text-xs font-bold text-white">
               حراج فصل
@@ -108,15 +122,21 @@ export default function HeroShowcase({ averageRating, reviewCount, bestSeller }:
           </Link>
 
           {/* The hero holds the page's only h1, as the old banner did. */}
-          <h1 className="bg-linear-to-b from-white to-zinc-400 bg-clip-text text-5xl leading-tight font-extrabold tracking-tight text-transparent sm:text-6xl lg:text-7xl">
+          <h1
+            style={enterDelay(1)}
+            className={`bg-linear-to-b from-white to-zinc-400 bg-clip-text text-5xl leading-tight font-extrabold tracking-tight text-transparent sm:text-6xl lg:text-7xl ${ENTER}`}
+          >
             قدرت واقعی
             <br />
             رو بساز
           </h1>
-          <p className="mt-5 max-w-md text-base leading-relaxed text-zinc-300 sm:text-lg">
+          <p
+            style={enterDelay(2)}
+            className={`mt-5 max-w-md text-base leading-relaxed text-zinc-300 sm:text-lg ${ENTER}`}
+          >
             مکمل‌های اصل و باکیفیت برای هر مرحله از مسیر تمرینیت؛ از اولین روز باشگاه تا روی سکو.
           </p>
-          <div className="mt-8 flex flex-wrap items-center gap-4">
+          <div style={enterDelay(3)} className={`mt-8 flex flex-wrap items-center gap-4 ${ENTER}`}>
             {/* The one primary action, in the brand's solid blue. */}
             <Link
               href="/products"
@@ -136,7 +156,8 @@ export default function HeroShowcase({ averageRating, reviewCount, bestSeller }:
           {reviewCount > 0 && (
             <Link
               href="/reviews"
-              className="mt-6 inline-flex items-center gap-2 text-sm text-zinc-300 transition hover:text-white"
+              style={enterDelay(4)}
+              className={`mt-6 inline-flex items-center gap-2 text-sm text-zinc-300 transition hover:text-white ${ENTER}`}
             >
               <span className="flex" aria-hidden="true">
                 {Array.from({ length: 5 }, (_, i) => (
@@ -159,7 +180,10 @@ export default function HeroShowcase({ averageRating, reviewCount, bestSeller }:
             </Link>
           )}
 
-          <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-3 border-t border-white/10 pt-6">
+          <ul
+            style={enterDelay(5)}
+            className={`mt-8 flex flex-wrap gap-x-6 gap-y-3 border-t border-white/10 pt-6 ${ENTER}`}
+          >
             {trustBadges.map(({ icon: Icon, title, href }) => (
               <li key={href}>
                 <Link
