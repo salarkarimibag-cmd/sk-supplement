@@ -2,7 +2,8 @@ import Link from "next/link";
 import { RotateCcw, ShieldCheck, Truck } from "lucide-react";
 
 // Each claim mirrors a policy page, so keep the wording in sync with it.
-const badges = [
+// Exported so the home hero shows the same claims in its own layout.
+export const trustBadges = [
   {
     icon: Truck,
     title: "ارسال رایگان سراسری",
@@ -26,7 +27,7 @@ const badges = [
 export default function TrustBadges() {
   return (
     <ul className="grid gap-3 border-t border-zinc-200 pt-6 sm:grid-cols-3 dark:border-zinc-800">
-      {badges.map(({ icon: Icon, title, detail, href }) => (
+      {trustBadges.map(({ icon: Icon, title, detail, href }) => (
         <li key={href}>
           <Link
             href={href}

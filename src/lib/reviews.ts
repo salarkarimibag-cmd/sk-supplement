@@ -35,14 +35,17 @@ const HOMEPAGE_REVIEW_COUNT = 3;
 
 interface HomepageReviewsFacetResult {
   reviews: PublicReview[];
-  totalCount: [{ count: number }] | [];
+  stats: [{ average: number; count: number }] | [];
 }
 
-// Fetches the homepage's review slice and the total approved count in a
-// single round trip (via $facet) instead of two separate queries.
+// Fetches the homepage's review slice, the total approved count and the
+// average rating in a single round trip (via $facet) instead of separate
+// queries.
 export async function getHomepageReviews(): Promise<{
   reviews: PublicReview[];
   totalCount: number;
+  /** Average of all approved store reviews, to one decimal; 0 if none. */
+  averageRating: number;
 }> {
   await connectToDatabase();
 
@@ -55,14 +58,16 @@ export async function getHomepageReviews(): Promise<{
           { $limit: HOMEPAGE_REVIEW_COUNT },
           { $project: { _id: 0, name: 1, rating: 1, comment: 1 } },
         ],
-        totalCount: [{ $count: "count" }],
+        stats: [{ $group: { _id: null, average: { $avg: "$rating" }, count: { $sum: 1 } } }],
       },
     },
   ]);
 
+  const { rating, reviewCount } = toRatingSummary(result?.stats[0]);
   return {
     reviews: result?.reviews ?? [],
-    totalCount: result?.totalCount[0]?.count ?? 0,
+    totalCount: reviewCount,
+    averageRating: rating,
   };
 }
 

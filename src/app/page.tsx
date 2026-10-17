@@ -12,15 +12,12 @@ import { getHomepageReviews } from "@/lib/reviews";
 import { formatVariantSummary } from "@/lib/variants";
 
 export default async function Home() {
-  const [latestProducts, bestSellers, { reviews, totalCount: reviewsCount }] = await Promise.all([
-    getLatestProducts(4),
-    getBestSellers(4),
-    getHomepageReviews(),
-  ]);
+  const [latestProducts, bestSellers, { reviews, totalCount: reviewsCount, averageRating }] =
+    await Promise.all([getLatestProducts(4), getBestSellers(4), getHomepageReviews()]);
 
   return (
     <div className="flex w-full flex-col gap-12 pb-12">
-      <HeroShowcase />
+      <HeroShowcase averageRating={averageRating} reviewCount={reviewsCount} />
 
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6">
         <section>
