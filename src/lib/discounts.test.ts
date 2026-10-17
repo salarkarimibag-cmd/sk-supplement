@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { calculateDiscountAmount, checkDiscount, discountInputSchema } from "./discounts";
+import {
+  calculateDiscountAmount,
+  checkDiscount,
+  discountInputSchema,
+  formatDiscountValue,
+} from "./discounts";
 import type { DiscountCode } from "@/models/DiscountCode";
 
 function makeDiscount(overrides: Partial<DiscountCode> = {}): DiscountCode {
@@ -122,5 +127,15 @@ describe("discountInputSchema", () => {
     expect(discountInputSchema.safeParse({ ...valid, expiresAt: "2026-12-31" }).success).toBe(true);
     expect(discountInputSchema.safeParse({ ...valid, expiresAt: "tomorrow" }).success).toBe(false);
     expect(discountInputSchema.safeParse({ ...valid, maxUses: 0 }).success).toBe(false);
+  });
+});
+
+describe("formatDiscountValue", () => {
+  it("shows a percent code with Persian digits and the Persian percent sign", () => {
+    expect(formatDiscountValue({ type: "percent", value: 10 })).toBe("۱۰٪");
+  });
+
+  it("shows a fixed code as Toman with grouped Persian digits", () => {
+    expect(formatDiscountValue({ type: "fixed", value: 50000 })).toBe("۵۰٬۰۰۰ تومان");
   });
 });

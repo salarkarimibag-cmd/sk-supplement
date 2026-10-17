@@ -62,6 +62,9 @@ export default function Footer() {
             <Link href="/pages/refund-policy" className="hover:text-white">
               قوانین بازگشت وجه
             </Link>
+            <Link href="/pages/authenticity-guarantee" className="hover:text-white">
+              ضمانت اصالت کالا
+            </Link>
             <Link href="/pages/shipping-policy" className="hover:text-white">
               قوانین ارسال
             </Link>
