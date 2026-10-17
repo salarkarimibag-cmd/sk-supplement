@@ -19,19 +19,6 @@ function enterDelay(step: number) {
   return { animationDelay: `${step * ENTER_STEP_MS}ms` };
 }
 
-// The text blocks fade up into place one after another when the page loads,
-// using the fade-in-up keyframes in globals.css (as Testimonials does).
-// "backwards" keeps each block hidden during its delay. Users who ask for
-// reduced motion get no animation at all: the global rule in globals.css only
-// shortens durations, not delays, so the later blocks would otherwise still
-// stay hidden for a moment and then pop in.
-const ENTER = "animate-[fade-in-up_0.6s_ease-out_backwards] motion-reduce:animate-none";
-const ENTER_STEP_MS = 90;
-
-function enterDelay(step: number) {
-  return { animationDelay: `${step * ENTER_STEP_MS}ms` };
-}
-
 interface HeroShowcaseProps {
   /** Average of the approved store reviews (0 when there are none). */
   averageRating: number;
