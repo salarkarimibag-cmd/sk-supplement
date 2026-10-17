@@ -1,7 +1,7 @@
 import Link from "next/link";
 import ProductCard from "@/components/product/ProductCard";
 import Newsletter from "@/components/home/Newsletter";
-import HeroBanner from "@/components/home/HeroBanner";
+import HeroShowcase from "@/components/home/HeroShowcase";
 import PromoBanner from "@/components/home/PromoBanner";
 import CategoryShowcase from "@/components/home/CategoryShowcase";
 import Testimonials from "@/components/home/Testimonials";
@@ -12,15 +12,12 @@ import { getHomepageReviews } from "@/lib/reviews";
 import { formatVariantSummary } from "@/lib/variants";
 
 export default async function Home() {
-  const [latestProducts, bestSellers, { reviews, totalCount: reviewsCount }] = await Promise.all([
-    getLatestProducts(4),
-    getBestSellers(4),
-    getHomepageReviews(),
-  ]);
+  const [latestProducts, bestSellers, { reviews, totalCount: reviewsCount, averageRating }] =
+    await Promise.all([getLatestProducts(4), getBestSellers(4), getHomepageReviews()]);
 
   return (
     <div className="flex w-full flex-col gap-12 pb-12">
-      <HeroBanner />
+      <HeroShowcase averageRating={averageRating} reviewCount={reviewsCount} />
 
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6">
         <section>
