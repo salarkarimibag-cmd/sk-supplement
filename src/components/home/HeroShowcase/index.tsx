@@ -24,23 +24,30 @@ interface HeroShowcaseProps {
 export default function HeroShowcase({ averageRating, reviewCount }: HeroShowcaseProps) {
   return (
     <section className="relative isolate overflow-hidden bg-black">
-      <Image
-        src="/images/hero-banner-2.webp"
-        alt=""
-        fill
-        // It's the first thing on the page, so it's likely the LCP image.
-        preload
-        sizes="100vw"
-        // His head is close to the photo's top edge, so on wide screens (where
-        // `object-cover` must cut some height) all the cut comes from the
-        // bottom. On phones the crop also shifts so he stands right of center,
-        // leaving the top-left corner free for the 3D scene.
-        className="-z-10 object-cover object-[20%_top] md:object-top"
-      />
-      {/* Darkest behind the text (the start side), fading toward the scene. */}
-      <div className="absolute inset-0 -z-10 bg-linear-to-l from-black/90 via-black/50 to-black/20" />
-      {/* Soften the bottom edge into the page. */}
-      <div className="absolute inset-x-0 bottom-0 -z-10 h-1/3 bg-linear-to-t from-black/80 to-transparent" />
+      {/* The photo. From md up it fills the whole section, behind the text.
+          On phones the section is tall and narrow, so a full-height cover
+          would zoom the (landscape) photo far in and hide the man; there it
+          fills only the top part and fades into black where the text starts. */}
+      <div className="absolute inset-x-0 top-0 -z-10 h-110 sm:h-130 md:inset-y-0 md:h-auto">
+        <Image
+          src="/images/hero-banner-2.webp"
+          alt=""
+          fill
+          // It's the first thing on the page, so it's likely the LCP image.
+          preload
+          sizes="100vw"
+          // His head is close to the photo's top edge, so the crop always
+          // keeps the top. On phones it also shifts so he stands right of
+          // center, leaving the top-left corner for the 3D scene.
+          className="object-cover object-[34%_top] sm:object-[42%_top] md:object-top"
+        />
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-black via-black/60 to-transparent md:hidden" />
+      </div>
+      {/* From md up: darkest behind the text (the start side), fading toward
+          the scene, and a soft bottom edge. On phones the text sits below the
+          photo instead, so the man isn't darkened. */}
+      <div className="absolute inset-0 -z-10 hidden bg-linear-to-l from-black/90 via-black/50 to-black/20 md:block" />
+      <div className="absolute inset-x-0 bottom-0 -z-10 hidden h-1/3 bg-linear-to-t from-black/80 to-transparent md:block" />
 
       {/* The 3D scene hugs the end (left, in RTL) edge of the screen: the
           top corner on phones, the vertical middle on wider screens. */}
@@ -48,8 +55,9 @@ export default function HeroShowcase({ averageRating, reviewCount }: HeroShowcas
         <HeroScene />
       </div>
 
-      {/* On phones the text starts below the scene so the two don't overlap. */}
-      <div className="mx-auto flex max-w-6xl items-center px-6 pt-56 pb-14 sm:pt-72 md:min-h-150 md:py-24">
+      {/* On phones the text starts low on the photo, where it has faded to
+          black, so it neither covers the man nor the 3D scene. */}
+      <div className="mx-auto flex max-w-6xl items-center px-6 pt-80 pb-14 sm:pt-96 md:min-h-150 md:py-24">
         <div className="text-start">
           {/* The seasonal offer, as a small pill above the headline. */}
           <Link
