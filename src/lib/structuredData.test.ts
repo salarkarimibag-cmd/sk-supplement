@@ -27,6 +27,15 @@ describe("buildProductJsonLd", () => {
     expect(jsonLd.image).toBe("https://cdn.example/a.png");
   });
 
+  it("names the brand when the product has one", () => {
+    const jsonLd = buildProductJsonLd({ ...product, brand: "برند الف" }, siteUrl);
+    expect(jsonLd.brand).toEqual({ "@type": "Brand", name: "برند الف" });
+  });
+
+  it("leaves the brand out when the product has none", () => {
+    expect(buildProductJsonLd(product, siteUrl)).not.toHaveProperty("brand");
+  });
+
   it("converts the Toman price to Rial (IRR)", () => {
     const { offers } = buildProductJsonLd(product, siteUrl);
     expect(offers.price).toBe(12_500_000);
