@@ -42,6 +42,17 @@ describe("buildProductJsonLd", () => {
     );
   });
 
+  it("advertises free same-day-dispatch shipping within Iran", () => {
+    const { shippingDetails } = buildProductJsonLd(product, siteUrl).offers;
+    expect(shippingDetails.shippingRate.value).toBe(0);
+    expect(shippingDetails.shippingDestination.addressCountry).toBe("IR");
+    expect(shippingDetails.deliveryTime.handlingTime).toMatchObject({ minValue: 0, maxValue: 0 });
+    expect(shippingDetails.deliveryTime.transitTime).toMatchObject({ minValue: 2, maxValue: 7 });
+    expect(shippingDetails.deliveryTime.businessDays.dayOfWeek).not.toContain(
+      "https://schema.org/Friday"
+    );
+  });
+
   it("includes the rating only when there are reviews", () => {
     expect(buildProductJsonLd(product, siteUrl).aggregateRating).toMatchObject({
       ratingValue: 4.5,
