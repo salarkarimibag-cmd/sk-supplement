@@ -1,0 +1,89 @@
+// JSON-LD (https://schema.org) describing pages to search engines, so
+// Google can show a product's price, stock and rating right in the results.
+// Test the output with https://search.google.com/test/rich-results.
+
+interface ProductForJsonLd {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+  inStock: boolean;
+  rating: number;
+  reviewCount: number;
+}
+
+export interface BreadcrumbItem {
+  name: string;
+  /** Site-relative path, e.g. "/collections/protein". */
+  path: string;
+}
+
+// Prices are stored in Toman, which has no ISO 4217 currency code; schema.org
+// needs one, so they're given in Rial (IRR). 1 Toman = 10 Rial — the same
+// conversion src/lib/zarinpal.ts makes for the gateway.
+const RIAL_PER_TOMAN = 10;
+
+function absoluteUrl(siteUrl: string, path: string): string {
+  return new URL(path, siteUrl).toString();
+}
+
+export function buildProductJsonLd(product: ProductForJsonLd, siteUrl: string) {
+  const url = absoluteUrl(siteUrl, `/products/${product.id}`);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    image: absoluteUrl(siteUrl, product.imageUrl),
+    // Left out when empty: an invented description could mislead Google.
+    ...(product.description ? { description: product.description } : {}),
+    sku: product.id,
+    url,
+    offers: {
+      "@type": "Offer",
+      url,
+      price: product.price * RIAL_PER_TOMAN,
+      priceCurrency: "IRR",
+      availability: product.inStock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      itemCondition: "https://schema.org/NewCondition",
+    },
+    // Google rejects a rating with no reviews behind it.
+    ...(product.reviewCount > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: product.rating,
+            reviewCount: product.reviewCount,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
+  };
+}
+
+export function buildBreadcrumbJsonLd(items: BreadcrumbItem[], siteUrl: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: absoluteUrl(siteUrl, item.path),
+    })),
+  };
+}
+
+/**
+ * JSON.stringify for a <script> tag. A product name or description
+ * containing "</script>" would otherwise end the tag early and let the rest
+ * run as HTML; "<" is written as its JSON escape < instead, which reads
+ * back as the same character (as the Next.js JSON-LD guide recommends).
+ */
+export function serializeJsonLd(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
