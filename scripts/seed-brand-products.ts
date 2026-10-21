@@ -11,7 +11,10 @@ import { connectToDatabase } from "../src/lib/db";
 import { ProductModel } from "../src/models/Product";
 import type { SeedProduct } from "../src/data/catalog";
 
-type BrandProduct = Omit<SeedProduct, "inStock" | "description" | "imageUrl" | "stock">;
+// imageUrl is optional: products without a photo yet get the placeholder.
+type BrandProduct = Omit<SeedProduct, "inStock" | "description" | "imageUrl" | "stock"> & {
+  imageUrl?: string;
+};
 
 const products: BrandProduct[] = [
   // Optimum Nutrition
@@ -19,6 +22,7 @@ const products: BrandProduct[] = [
     id: "on1",
     name: "وی گلد استاندارد (Gold Standard 100% Whey)",
     slug: "on-gold-standard-whey",
+    imageUrl: "/images/products/on-gold-standard-whey.webp",
     brand: "Optimum Nutrition",
     price: 2450000,
     categorySlug: "protein",
@@ -299,16 +303,18 @@ async function main() {
   let count = 0;
   for (const product of products) {
     // $setOnInsert keeps what an admin may have edited later (description,
-    // image, price, stock); only the identity fields are rewritten on re-run.
-    const { id, name, slug, brand, categorySlug, ...insertOnly } = product;
+    // price, stock); only the identity fields are rewritten on re-run. A
+    // real photo listed here is rewritten too, while the placeholder is
+    // only set on insert so it never replaces an image set from the admin.
+    const { id, name, slug, brand, categorySlug, imageUrl, ...insertOnly } = product;
     await ProductModel.findOneAndUpdate(
       { id },
       {
-        $set: { name, slug, brand, categorySlug },
+        $set: { name, slug, brand, categorySlug, ...(imageUrl ? { imageUrl } : {}) },
         $setOnInsert: {
           ...insertOnly,
           description: "",
-          imageUrl: "/images/placeholder.svg",
+          ...(imageUrl ? {} : { imageUrl: "/images/placeholder.svg" }),
           stock: 10,
         },
       },
