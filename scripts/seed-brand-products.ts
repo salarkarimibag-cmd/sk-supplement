@@ -82,10 +82,10 @@ const products: BrandProduct[] = [
   },
   {
     id: "mt2",
-    name: "پلاتینیوم کراتین مونوهیدرات - بدون طعم",
+    name: "پلاتینیوم کراتین مونوهیدرات",
     slug: "muscletech-platinum-creatine",
+    groupSlug: "muscletech-platinum-creatine",
     flavor: "بدون طعم",
-    size: "۴۰۰ گرم",
     imageUrl: "/images/products/muscletech-platinum-creatine.webp",
     description:
       "کراتین مونوهیدرات میکرونیزه و بسیار خالص از مدل پلاتینیوم مسل‌تک. هر وعده ۵ گرم کراتین مونوهیدرات دارد و در بسته‌ی ۴۰۰ گرمی ۸۰ وعده‌ای عرضه می‌شود.",
@@ -97,10 +97,10 @@ const products: BrandProduct[] = [
   },
   {
     id: "mt2g",
-    name: "پلاتینیوم کراتین مونوهیدرات - طعم انگور",
+    name: "پلاتینیوم کراتین مونوهیدرات",
     slug: "muscletech-platinum-creatine-grape-freeze",
-    flavor: "انگور (Grape Freeze)",
-    size: "۳۹۲ گرم",
+    groupSlug: "muscletech-platinum-creatine",
+    flavor: "انگور",
     imageUrl: "/images/products/muscletech-platinum-creatine-grape-freeze.jpg",
     description:
       "کراتین مونوهیدرات میکرونیزه و بسیار خالص از مدل پلاتینیوم مسل‌تک با طعم انگور. هر وعده ۵ گرم کراتین مونوهیدرات دارد و در بسته‌ی ۳۹۲ گرمی ۶۰ وعده‌ای عرضه می‌شود.",
@@ -112,10 +112,10 @@ const products: BrandProduct[] = [
   },
   {
     id: "mt2o",
-    name: "پلاتینیوم کراتین مونوهیدرات - طعم پرتقال",
+    name: "پلاتینیوم کراتین مونوهیدرات",
     slug: "muscletech-platinum-creatine-orange-splash",
-    flavor: "پرتقال (Orange Splash)",
-    size: "۳۹۷ گرم",
+    groupSlug: "muscletech-platinum-creatine",
+    flavor: "پرتقال",
     imageUrl: "/images/products/muscletech-platinum-creatine-orange-splash.jpg",
     description:
       "کراتین مونوهیدرات میکرونیزه و بسیار خالص از مدل پلاتینیوم مسل‌تک با طعم پرتقال. هر وعده ۵ گرم کراتین مونوهیدرات دارد و در بسته‌ی ۳۹۷ گرمی ۶۰ وعده‌ای عرضه می‌شود.",
@@ -127,10 +127,10 @@ const products: BrandProduct[] = [
   },
   {
     id: "mt2r",
-    name: "پلاتینیوم کراتین مونوهیدرات - طعم توت قرمز",
+    name: "پلاتینیوم کراتین مونوهیدرات",
     slug: "muscletech-platinum-creatine-red-berry",
-    flavor: "توت قرمز (Red Berry)",
-    size: "۳۹۸ گرم",
+    groupSlug: "muscletech-platinum-creatine",
+    flavor: "توت قرمز",
     imageUrl: "/images/products/muscletech-platinum-creatine-red-berry.jpg",
     description:
       "کراتین مونوهیدرات میکرونیزه و بسیار خالص از مدل پلاتینیوم مسل‌تک با طعم توت قرمز. هر وعده ۵ گرم کراتین مونوهیدرات دارد و در بسته‌ی ۳۹۸ گرمی ۶۰ وعده‌ای عرضه می‌شود.",
