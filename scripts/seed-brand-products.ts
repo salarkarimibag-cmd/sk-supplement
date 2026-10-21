@@ -222,6 +222,50 @@ const products: BrandProduct[] = [
     categorySlug: "pre-workout",
   },
 
+  // BPI Sports
+  {
+    id: "bpi1",
+    name: "ایزو اچ‌دی - وی ایزوله (ISO HD)",
+    slug: "bpi-iso-hd",
+    brand: "BPI Sports",
+    price: 2250000,
+    categorySlug: "protein",
+  },
+  {
+    id: "bpi2",
+    name: "بست بی‌سی‌ای‌ای (Best BCAA)",
+    slug: "bpi-best-bcaa",
+    brand: "BPI Sports",
+    price: 1150000,
+    categorySlug: "aminos",
+  },
+  {
+    id: "bpi3",
+    name: "بست کراتین (Best Creatine)",
+    slug: "bpi-best-creatine",
+    brand: "BPI Sports",
+    price: 780000,
+    categorySlug: "creatine",
+  },
+
+  // Evogen
+  {
+    id: "ev1",
+    name: "ای‌وی‌پی ایکس‌اس - پیش‌تمرین (EVP-XS)",
+    slug: "evogen-evp-xs",
+    brand: "Evogen",
+    price: 1490000,
+    categorySlug: "pre-workout",
+  },
+  {
+    id: "ev2",
+    name: "گلیکوفیوز - کربوهیدرات ریکاوری (Glycofuse)",
+    slug: "evogen-glycofuse",
+    brand: "Evogen",
+    price: 1350000,
+    categorySlug: "aminos",
+  },
+
   // NOW Foods
   {
     id: "nf1",
