@@ -11,10 +11,13 @@ import ProductInfo from "@/components/product/ProductInfo";
 import TrustBadges from "@/components/product/TrustBadges";
 import VariantPicker from "@/components/product/VariantPicker";
 import ReviewForm from "@/components/reviews/ReviewForm";
+import JsonLd from "@/components/seo/JsonLd";
 import { getSessionUser } from "@/lib/auth";
 import { getCategoryContent } from "@/lib/categoryContent";
 import { getProductById, getProductGroup, getRelatedProducts } from "@/lib/products";
 import { getProductReviewsPage } from "@/lib/reviews";
+import { SITE_URL } from "@/lib/site";
+import { buildBreadcrumbJsonLd, buildProductJsonLd } from "@/lib/structuredData";
 import { buildVariantOptions, formatVariantSummary } from "@/lib/variants";
 
 const REVIEWS_PAGE_SIZE = 6;
@@ -54,8 +57,18 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
   const variants = buildVariantOptions(product, group);
   const hasVariantChoice = variants.flavors.length > 1 || variants.sizes.length > 1;
 
+  // The same trail as the breadcrumb links below, for search results.
+  const breadcrumb = [
+    { name: "خانه", path: "/" },
+    ...(category ? [{ name: category.title, path: `/collections/${product.categorySlug}` }] : []),
+    { name: product.name, path: productPath },
+  ];
+
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-12">
+      <JsonLd data={buildProductJsonLd(product, SITE_URL)} />
+      <JsonLd data={buildBreadcrumbJsonLd(breadcrumb, SITE_URL)} />
+
       <nav className="flex flex-wrap items-center gap-2 text-sm text-zinc-500">
         <Link href="/" className="hover:underline">
           خانه
