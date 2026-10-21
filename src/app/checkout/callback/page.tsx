@@ -6,7 +6,7 @@ import { connectToDatabase } from "@/lib/db";
 import { OrderModel, type Order } from "@/models/Order";
 import { verifyZarinPalPayment } from "@/lib/zarinpal";
 import { onOrderPaid } from "@/lib/orderLifecycle";
-import { sendOrderEmail } from "@/lib/orderNotifications";
+import { sendAdminOrderEmail, sendOrderEmail } from "@/lib/orderNotifications";
 
 export const metadata: Metadata = {
   title: "نتیجه پرداخت",
@@ -91,7 +91,9 @@ export default async function CheckoutCallbackPage(
   if (update.modifiedCount === 1) {
     await onOrderPaid(order);
     // `order` was read before the update, so the new ref id is added here.
-    after(() => sendOrderEmail({ ...order, paymentRefId: result.refId }, "paid"));
+    const paidOrder = { ...order, paymentRefId: result.refId };
+    after(() => sendOrderEmail(paidOrder, "paid"));
+    after(() => sendAdminOrderEmail(paidOrder, "paid"));
   }
 
   return <PaymentResult success={true} refId={result.refId} />;
