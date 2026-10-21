@@ -1,10 +1,11 @@
-// Seeds flagship products from six well-known supplement brands so the
-// brand field, card label and collection brand filter have real data.
+// Seeds flagship products from well-known supplement brands so the brand
+// field, card label and collection brand filter have real data.
 // Safe to re-run: each product is upserted by its `id`.
 //
-// Prices are placeholders to be replaced from the admin panel; descriptions
-// and label details (nutrition facts, usage) are left empty on purpose and
-// should be filled in from the actual packaging, not guessed.
+// Prices are placeholders to be replaced from the admin panel. Descriptions
+// and label details (nutrition facts, usage, warnings, claims) are filled in
+// only from photos of the actual packaging, never guessed; products without
+// readable label photos keep them empty.
 process.loadEnvFile(".env.local");
 
 import { connectToDatabase } from "../src/lib/db";
@@ -407,6 +408,48 @@ const products: BrandProduct[] = [
     brand: "MuscleTech",
     price: 1390000,
     categorySlug: "pre-workout",
+  },
+  {
+    id: "mt14",
+    // \u200E (left-to-right mark) keeps the "+" at the end of the Latin name.
+    name: "پلاتینیوم ای‌ای‌ای پلاس - Platinum 100% EAA+\u200E",
+    slug: "muscletech-platinum-eaa-grape",
+    groupSlug: "muscletech-platinum-eaa",
+    flavor: "انگور",
+    imageUrl: "/images/products/muscletech-platinum-eaa-grape.webp",
+    description:
+      "پلاتینیوم ۱۰۰٪ EAA پلاس مسل‌تک، اسیدهای آمینه‌ی ضروری همراه با الکترولیت، با طعم انگور. طبق جلوی بسته، هر وعده ۷٫۴ گرم EAA (شامل ۴٫۵ گرم BCAA) دارد و بسته‌ی ۳۸۷ گرمی ۳۰ وعده است.",
+    // Only the per-serving values printed on the front of the pack.
+    nutritionFacts: [
+      { label: "اسیدهای آمینه‌ی ضروری - EAA", amount: "۷٫۴ گرم" },
+      { label: "اسیدهای آمینه‌ی شاخه‌دار - BCAA", amount: "۴٫۵ گرم" },
+    ],
+    manufacturerClaims:
+      "افزایش ۴۰٪ قدرت\nاسیدهای آمینه‌ی ضروری + الکترولیت‌ها\nترکیبات تست‌شده در دانشگاه\n(جزئیات و مبنای این ادعاها روی بخشی از بسته است که در عکس‌ها نبود)",
+    brand: "MuscleTech",
+    price: 1290000,
+    categorySlug: "aminos",
+  },
+  {
+    id: "mt14p",
+    // \u200E (left-to-right mark) keeps the "+" at the end of the Latin name.
+    name: "پلاتینیوم ای‌ای‌ای پلاس - Platinum 100% EAA+\u200E",
+    slug: "muscletech-platinum-eaa-fruit-punch",
+    groupSlug: "muscletech-platinum-eaa",
+    flavor: "فروت پانچ",
+    imageUrl: "/images/products/muscletech-platinum-eaa-fruit-punch.webp",
+    description:
+      "پلاتینیوم ۱۰۰٪ EAA پلاس مسل‌تک، اسیدهای آمینه‌ی ضروری همراه با الکترولیت، با طعم فروت پانچ. طبق جلوی بسته، هر وعده ۷٫۴ گرم EAA (شامل ۴٫۵ گرم BCAA) دارد و بسته‌ی ۳۹۳ گرمی ۳۰ وعده است.",
+    // Only the per-serving values printed on the front of the pack.
+    nutritionFacts: [
+      { label: "اسیدهای آمینه‌ی ضروری - EAA", amount: "۷٫۴ گرم" },
+      { label: "اسیدهای آمینه‌ی شاخه‌دار - BCAA", amount: "۴٫۵ گرم" },
+    ],
+    manufacturerClaims:
+      "افزایش ۴۰٪ قدرت\nاسیدهای آمینه‌ی ضروری + الکترولیت‌ها\nترکیبات تست‌شده در دانشگاه\n(جزئیات و مبنای این ادعاها روی بخشی از بسته است که در عکس‌ها نبود)",
+    brand: "MuscleTech",
+    price: 1290000,
+    categorySlug: "aminos",
   },
   {
     id: "mt2g",
