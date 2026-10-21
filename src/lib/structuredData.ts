@@ -24,6 +24,26 @@ export interface BreadcrumbItem {
 // conversion src/lib/zarinpal.ts makes for the gateway.
 const RIAL_PER_TOMAN = 10;
 
+// The shipping rules from /pages/shipping-policy; keep the two in sync.
+// Free nationwide, handed to the courier the same day, delivered within
+// 2–7 business days (Saturday to Thursday; Friday is the weekend).
+const SHIPPING_DETAILS = {
+  "@type": "OfferShippingDetails",
+  shippingRate: { "@type": "MonetaryAmount", value: 0, currency: "IRR" },
+  shippingDestination: { "@type": "DefinedRegion", addressCountry: "IR" },
+  deliveryTime: {
+    "@type": "ShippingDeliveryTime",
+    handlingTime: { "@type": "QuantitativeValue", minValue: 0, maxValue: 0, unitCode: "DAY" },
+    transitTime: { "@type": "QuantitativeValue", minValue: 2, maxValue: 7, unitCode: "DAY" },
+    businessDays: {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"].map(
+        (day) => `https://schema.org/${day}`
+      ),
+    },
+  },
+};
+
 function absoluteUrl(siteUrl: string, path: string): string {
   return new URL(path, siteUrl).toString();
 }
@@ -49,6 +69,7 @@ export function buildProductJsonLd(product: ProductForJsonLd, siteUrl: string) {
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
       itemCondition: "https://schema.org/NewCondition",
+      shippingDetails: SHIPPING_DETAILS,
     },
     // Google rejects a rating with no reviews behind it.
     ...(product.reviewCount > 0
