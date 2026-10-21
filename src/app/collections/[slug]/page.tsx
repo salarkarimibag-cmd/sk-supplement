@@ -37,23 +37,29 @@ export async function generateMetadata(
 
 export default async function CollectionPage(props: PageProps<"/collections/[slug]">) {
   const { slug } = await props.params;
-  const { sort, flavor, size } = await props.searchParams;
+  const { sort, flavor, size, brand } = await props.searchParams;
   const info = await getCategoryContent(slug);
   const categoryProducts = await getProductsByCategory(slug);
 
   const selectedFlavors = toParamArray(flavor);
   const selectedSizes = toParamArray(size);
+  const selectedBrands = toParamArray(brand);
   const sortValue = Array.isArray(sort) ? sort[0] : (sort ?? "featured");
 
   // One card per flavor/size group (see collapseGroups).
   const products = collapseGroups(
     sortProducts(
-      filterProducts(categoryProducts, { flavors: selectedFlavors, sizes: selectedSizes }),
+      filterProducts(categoryProducts, {
+        flavors: selectedFlavors,
+        sizes: selectedSizes,
+        brands: selectedBrands,
+      }),
       sortValue
     )
   );
   const flavorOptions = countByAttribute(categoryProducts, "flavor");
   const sizeOptions = countByAttribute(categoryProducts, "size");
+  const brandOptions = countByAttribute(categoryProducts, "brand");
   const InfoSection = infoSectionBySlug[slug];
 
   if (!info) {
@@ -90,6 +96,9 @@ export default async function CollectionPage(props: PageProps<"/collections/[slu
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4 py-4">
           <div className="flex items-center gap-4">
             <span className="text-sm text-zinc-500">فیلتر:</span>
+            {brandOptions.length > 0 && (
+              <FilterDropdown label="برند" paramName="brand" options={brandOptions} />
+            )}
             <FilterDropdown label="طعم" paramName="flavor" options={flavorOptions} />
             {sizeOptions.length > 0 && (
               <FilterDropdown label="سایز" paramName="size" options={sizeOptions} />
@@ -116,6 +125,7 @@ export default async function CollectionPage(props: PageProps<"/collections/[slu
                 name={product.name}
                 price={product.price}
                 imageUrl={product.imageUrl}
+                brand={product.brand}
                 inStock={product.inStock}
                 variantLabel={product.variantSummary && formatVariantSummary(product.variantSummary)}
               />

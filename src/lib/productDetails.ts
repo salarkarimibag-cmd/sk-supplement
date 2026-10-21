@@ -43,8 +43,9 @@ const nutritionFactSchema = z.object({
   amount: z.string().trim().min(1).max(40),
 });
 
-/** The optional label-and-usage fields an admin can send when creating or editing a product. */
+/** The optional brand, label and usage fields an admin can send when creating or editing a product. */
 export const productDetailsSchema = z.object({
+  brand: z.string().trim().max(60).optional(),
   servingSize: z.string().trim().max(100).optional(),
   nutritionFacts: z.array(nutritionFactSchema).max(40).optional(),
   usage: z.string().trim().max(2000).optional(),

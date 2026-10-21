@@ -31,7 +31,7 @@ export async function PATCH(
 
   const details = productDetailsSchema.safeParse(body);
   if (!details.success) {
-    return Response.json({ message: "اطلاعات ارزش غذایی یا روش مصرف نامعتبر است." }, { status: 400 });
+    return Response.json({ message: "برند، ارزش غذایی یا روش مصرف نامعتبر است." }, { status: 400 });
   }
 
   const group = productGroupSchema.safeParse(body);

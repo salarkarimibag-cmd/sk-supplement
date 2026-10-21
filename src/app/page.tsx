@@ -48,6 +48,7 @@ export default async function Home() {
                 name={product.name}
                 price={product.price}
                 imageUrl={product.imageUrl}
+                brand={product.brand}
                 rating={product.rating}
                 reviewCount={product.reviewCount}
                 inStock={product.inStock}
@@ -83,6 +84,7 @@ export default async function Home() {
                   name={product.name}
                   price={product.price}
                   imageUrl={product.imageUrl}
+                  brand={product.brand}
                   rating={product.rating}
                   reviewCount={product.reviewCount}
                   inStock={product.inStock}
