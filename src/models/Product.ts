@@ -31,6 +31,13 @@ export interface Product {
   warnings?: string;
   /** What the maker claims on the pack, one per line; shown in its own labelled box. */
   manufacturerClaims?: string;
+  /**
+   * When the product last changed (an edit, its stock or its rating), kept
+   * by Mongoose's timestamps option. Products saved before it existed don't
+   * have it; the sitemap then falls back to when the document was created
+   * (see lastModifiedOf in src/lib/sitemapEntries.ts).
+   */
+  updatedAt?: Date;
 }
 
 const NutritionFactSchema = new Schema<NutritionFact>(
@@ -41,30 +48,36 @@ const NutritionFactSchema = new Schema<NutritionFact>(
   { _id: false }
 );
 
-const ProductSchema = new Schema<Product>({
-  id: { type: String, required: true, unique: true },
-  name: { type: String, required: true },
-  slug: { type: String, required: true, unique: true, index: true },
-  description: { type: String, required: false, default: "" },
-  price: { type: Number, required: true },
-  categorySlug: { type: String, required: true, index: true },
-  imageUrl: { type: String, required: true },
-  brand: { type: String, required: false, index: true },
-  stock: { type: Number, required: true, default: 0 },
-  rating: { type: Number, required: true, default: 0 },
-  reviewCount: { type: Number, required: true, default: 0 },
-  salesCount: { type: Number, required: true, default: 0, index: true },
-  flavor: { type: String, required: false },
-  size: { type: String, required: false },
-  groupSlug: { type: String, required: false, index: true },
-  servingSize: { type: String, required: false },
-  // Mongoose gives array paths a [] default; undefined keeps the field off
-  // products that have no nutrition table.
-  nutritionFacts: { type: [NutritionFactSchema], default: undefined },
-  usage: { type: String, required: false },
-  warnings: { type: String, required: false },
-  manufacturerClaims: { type: String, required: false },
-});
+const ProductSchema = new Schema<Product>(
+  {
+    id: { type: String, required: true, unique: true },
+    name: { type: String, required: true },
+    slug: { type: String, required: true, unique: true, index: true },
+    description: { type: String, required: false, default: "" },
+    price: { type: Number, required: true },
+    categorySlug: { type: String, required: true, index: true },
+    imageUrl: { type: String, required: true },
+    brand: { type: String, required: false, index: true },
+    stock: { type: Number, required: true, default: 0 },
+    rating: { type: Number, required: true, default: 0 },
+    reviewCount: { type: Number, required: true, default: 0 },
+    salesCount: { type: Number, required: true, default: 0, index: true },
+    flavor: { type: String, required: false },
+    size: { type: String, required: false },
+    groupSlug: { type: String, required: false, index: true },
+    servingSize: { type: String, required: false },
+    // Mongoose gives array paths a [] default; undefined keeps the field off
+    // products that have no nutrition table.
+    nutritionFacts: { type: [NutritionFactSchema], default: undefined },
+    usage: { type: String, required: false },
+    warnings: { type: String, required: false },
+    manufacturerClaims: { type: String, required: false },
+  },
+  // updatedAt only: a createdAt would add nothing the document's _id doesn't
+  // already say. Mongoose applies it to updateOne, findOneAndUpdate and
+  // bulkWrite too, so every existing write path keeps it current.
+  { timestamps: { createdAt: false, updatedAt: true } }
+);
 
 // Avoids Mongoose's "Cannot overwrite model" error when this module is
 // re-evaluated on every hot reload in dev.
