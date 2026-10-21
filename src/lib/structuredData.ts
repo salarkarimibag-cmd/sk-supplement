@@ -8,6 +8,7 @@ interface ProductForJsonLd {
   description: string;
   price: number;
   imageUrl: string;
+  brand?: string;
   inStock: boolean;
   rating: number;
   reviewCount: number;
@@ -59,6 +60,8 @@ export function buildProductJsonLd(product: ProductForJsonLd, siteUrl: string) {
     // Left out when empty: an invented description could mislead Google.
     ...(product.description ? { description: product.description } : {}),
     sku: product.id,
+    // Left out when the product has no brand, rather than naming a wrong one.
+    ...(product.brand ? { brand: { "@type": "Brand", name: product.brand } } : {}),
     url,
     offers: {
       "@type": "Offer",
