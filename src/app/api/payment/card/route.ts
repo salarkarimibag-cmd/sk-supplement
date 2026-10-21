@@ -1,7 +1,7 @@
 import { after } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { OrderModel } from "@/models/Order";
-import { sendOrderEmail } from "@/lib/orderNotifications";
+import { sendAdminOrderEmail, sendOrderEmail } from "@/lib/orderNotifications";
 import { getSessionUser } from "@/lib/auth";
 import { buildOrderDraft, orderRequestSchema } from "@/lib/orderDraft";
 import { cardTransferSchema, getShopCard } from "@/lib/cardPayment";
@@ -63,6 +63,7 @@ export async function POST(request: Request) {
   });
 
   after(() => sendOrderEmail(order, "received"));
+  after(() => sendAdminOrderEmail(order, "card_received"));
 
   return Response.json({ orderId: String(order._id) }, { status: 201 });
 }

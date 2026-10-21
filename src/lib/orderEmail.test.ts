@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildAdminOrderEmail,
   buildOrderEmail,
   emailKindForAdminStatus,
   formatOrderNumber,
   formatProductName,
+  type AdminOrderEmailInput,
   type OrderEmailInput,
 } from "./orderEmail";
 
@@ -104,5 +106,57 @@ describe("buildOrderEmail", () => {
     const kinds = ["received", "paid", "rejected", "shipped", "cancelled"] as const;
     const subjects = new Set(kinds.map((kind) => buildOrderEmail({ ...baseInput, kind }).subject));
     expect(subjects.size).toBe(kinds.length);
+  });
+});
+
+describe("buildAdminOrderEmail", () => {
+  const cardOrder: AdminOrderEmailInput = {
+    ...baseInput,
+    kind: "card_received",
+    paymentMethod: "card",
+    refId: undefined,
+    contact: { email: "buyer@example.com", mobile: "09121234567" },
+    cardTransfer: { trackingCode: "TRK7788", cardLast4: "4321" },
+  };
+
+  it("gives the admin what's needed to check a card transfer", () => {
+    const email = buildAdminOrderEmail(cardOrder);
+    expect(email.subject).toContain("CD1B9185");
+    for (const body of [email.text, email.html]) {
+      expect(body).toContain("TRK7788");
+      expect(body).toContain("4321");
+      expect(body).toContain("09121234567");
+      expect(body).toContain("buyer@example.com");
+      expect(body).toContain((2_300_000).toLocaleString("fa-IR"));
+    }
+    expect(email.html).toContain('href="https://example.com/admin/orders"');
+  });
+
+  it("shows the ZarinPal reference for paid orders", () => {
+    const email = buildAdminOrderEmail({
+      ...cardOrder,
+      kind: "paid",
+      paymentMethod: "zarinpal",
+      refId: 987654,
+      cardTransfer: undefined,
+    });
+    expect(email.text).toContain("987654");
+    expect(email.text).not.toContain("کد پیگیری واریز");
+  });
+
+  it("escapes everything the buyer typed", () => {
+    const email = buildAdminOrderEmail({
+      ...cardOrder,
+      contact: { ...cardOrder.contact, mobile: "<img src=x onerror=alert(1)>" },
+      cardTransfer: { trackingCode: "<b>x</b>", cardLast4: "1234" },
+    });
+    expect(email.html).not.toContain("<img");
+    expect(email.html).not.toContain("<b>x</b>");
+  });
+
+  it("uses a different subject from the customer email", () => {
+    expect(buildAdminOrderEmail({ ...cardOrder, kind: "paid" }).subject).not.toBe(
+      buildOrderEmail(baseInput).subject
+    );
   });
 });

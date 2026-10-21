@@ -87,11 +87,53 @@ function toman(amount: number): string {
   return `${amount.toLocaleString("fa-IR")} تومان`;
 }
 
+type OrderSummary = Pick<OrderEmailInput, "lines" | "totalPrice" | "discountAmount">;
+
+function formatAddress(address: OrderEmailInput["address"]): string {
+  return `${address.province}، ${address.city}، ${address.address} — کد پستی ${address.postalCode}`;
+}
+
+function itemsText({ lines, totalPrice, discountAmount }: OrderSummary): string[] {
+  return [
+    ...lines.map(
+      (line) =>
+        `${line.name} × ${line.quantity.toLocaleString("fa-IR")}: ${toman(line.unitPrice * line.quantity)}`
+    ),
+    ...(discountAmount ? [`تخفیف: ${toman(discountAmount)}`] : []),
+    `مبلغ کل: ${toman(totalPrice)}`,
+  ];
+}
+
+// Inline styles and a table layout: most email apps ignore <style> blocks
+// and modern CSS such as flexbox. Product names are escaped like any text.
+function itemsTableHtml({ lines, totalPrice, discountAmount }: OrderSummary): string {
+  const cell = "padding:6px 0;border-bottom:1px solid #e4e4e7";
+  const rows = lines
+    .map(
+      (line) =>
+        `<tr><td style="${cell}">${escapeHtml(line.name)} × ${line.quantity.toLocaleString("fa-IR")}</td><td style="${cell};text-align:left">${toman(line.unitPrice * line.quantity)}</td></tr>`
+    )
+    .join("");
+  const discountRow = discountAmount
+    ? `<tr><td style="${cell}">تخفیف</td><td style="${cell};text-align:left">− ${toman(discountAmount)}</td></tr>`
+    : "";
+  return `<table style="width:100%;border-collapse:collapse;font-size:14px">${rows}${discountRow}
+<tr><td style="padding:8px 0;font-weight:bold">مبلغ کل</td><td style="padding:8px 0;font-weight:bold;text-align:left">${toman(totalPrice)}</td></tr>
+</table>`;
+}
+
+function buttonHtml(url: string, label: string): string {
+  return `<p><a href="${url}" style="display:inline-block;background:#0284c7;color:#fff;padding:10px 20px;border-radius:4px;text-decoration:none">${label}</a></p>`;
+}
+
+const EMAIL_WRAPPER_STYLE =
+  "font-family:Tahoma,Arial,sans-serif;line-height:1.8;color:#18181b;max-width:560px";
+
 export function buildOrderEmail(input: OrderEmailInput) {
   const content = CONTENT[input.kind];
   const orderNumber = formatOrderNumber(input.orderId);
   const name = `${input.firstName} ${input.lastName}`.trim();
-  const address = `${input.address.province}، ${input.address.city}، ${input.address.address} — کد پستی ${input.address.postalCode}`;
+  const address = formatAddress(input.address);
   const link = input.hasAccount
     ? { url: `${input.siteUrl}/account/orders`, label: "مشاهده سفارش‌های من" }
     : { url: input.siteUrl, label: "رفتن به فروشگاه" };
@@ -111,12 +153,7 @@ export function buildOrderEmail(input: OrderEmailInput) {
     "",
     ...details,
     "",
-    ...input.lines.map(
-      (line) =>
-        `${line.name} × ${line.quantity.toLocaleString("fa-IR")}: ${toman(line.unitPrice * line.quantity)}`
-    ),
-    ...(input.discountAmount ? [`تخفیف: ${toman(input.discountAmount)}`] : []),
-    `مبلغ کل: ${toman(input.totalPrice)}`,
+    ...itemsText(input),
     "",
     `آدرس ارسال: ${address}`,
     "",
@@ -124,30 +161,82 @@ export function buildOrderEmail(input: OrderEmailInput) {
     `تماس با ما: ${contactUrl}`,
   ].join("\n");
 
-  // Inline styles and a table layout: most email apps ignore <style> blocks
-  // and modern CSS such as flexbox. Everything the customer typed is escaped.
-  const cell = "padding:6px 0;border-bottom:1px solid #e4e4e7";
-  const rows = input.lines
-    .map(
-      (line) =>
-        `<tr><td style="${cell}">${escapeHtml(line.name)} × ${line.quantity.toLocaleString("fa-IR")}</td><td style="${cell};text-align:left">${toman(line.unitPrice * line.quantity)}</td></tr>`
-    )
-    .join("");
-  const discountRow = input.discountAmount
-    ? `<tr><td style="${cell}">تخفیف</td><td style="${cell};text-align:left">− ${toman(input.discountAmount)}</td></tr>`
-    : "";
-
-  const html = `<div dir="rtl" style="font-family:Tahoma,Arial,sans-serif;line-height:1.8;color:#18181b;max-width:560px">
+  const html = `<div dir="rtl" style="${EMAIL_WRAPPER_STYLE}">
 <h2 style="margin:0 0 12px">${content.title}</h2>
 <p>${escapeHtml(name)} عزیز، سلام</p>
 <p>${content.body}</p>
 <p style="color:#52525b">${details.map((line) => escapeHtml(line)).join("<br>")}</p>
-<table style="width:100%;border-collapse:collapse;font-size:14px">${rows}${discountRow}
-<tr><td style="padding:8px 0;font-weight:bold">مبلغ کل</td><td style="padding:8px 0;font-weight:bold;text-align:left">${toman(input.totalPrice)}</td></tr>
-</table>
+${itemsTableHtml(input)}
 <p style="color:#52525b">آدرس ارسال: ${escapeHtml(address)}</p>
-<p><a href="${link.url}" style="display:inline-block;background:#0284c7;color:#fff;padding:10px 20px;border-radius:4px;text-decoration:none">${link.label}</a></p>
+${buttonHtml(link.url, link.label)}
 <p style="color:#71717a;font-size:13px">سؤالی دارید؟ <a href="${contactUrl}" style="color:#0284c7">با ما تماس بگیرید</a>.</p>
+</div>`;
+
+  return { subject: `${content.subject} | شماره ${orderNumber}`, text, html };
+}
+
+/** The new orders the shop's admins are emailed about. */
+export type AdminOrderEmailKind = "card_received" | "paid";
+
+export interface AdminOrderEmailInput extends Omit<OrderEmailInput, "kind" | "hasAccount"> {
+  kind: AdminOrderEmailKind;
+  contact: { email: string; mobile: string };
+  /** What the buyer reported for a card-to-card order, to match against the bank. */
+  cardTransfer?: { trackingCode: string; cardLast4: string };
+}
+
+const ADMIN_CONTENT: Record<AdminOrderEmailKind, { subject: string; body: string }> = {
+  card_received: {
+    subject: "سفارش کارت به کارت جدید، در انتظار تأیید واریز",
+    body: "یک سفارش کارت به کارت ثبت شد. کد پیگیری و ۴ رقم آخر کارت را با صورت‌حساب بانک مقایسه کنید و در پنل مدیریت پرداخت را تأیید یا رد کنید.",
+  },
+  paid: {
+    subject: "سفارش جدید پرداخت‌شده، آماده ارسال",
+    body: "یک سفارش از درگاه زرین‌پال پرداخت شد و آماده ارسال است.",
+  },
+};
+
+export function buildAdminOrderEmail(input: AdminOrderEmailInput) {
+  const content = ADMIN_CONTENT[input.kind];
+  const orderNumber = formatOrderNumber(input.orderId);
+  const adminUrl = `${input.siteUrl}/admin/orders`;
+
+  const details = [
+    `شماره سفارش: ${orderNumber}`,
+    `روش پرداخت: ${PAYMENT_METHOD_LABELS[input.paymentMethod]}`,
+    ...(input.refId !== undefined ? [`کد پیگیری زرین‌پال: ${input.refId}`] : []),
+    ...(input.cardTransfer
+      ? [
+          `کد پیگیری واریز: ${input.cardTransfer.trackingCode}`,
+          `۴ رقم آخر کارت واریزکننده: ${input.cardTransfer.cardLast4}`,
+        ]
+      : []),
+    `مشتری: ${input.firstName} ${input.lastName}`.trim(),
+    `موبایل: ${input.contact.mobile}`,
+    `ایمیل: ${input.contact.email}`,
+  ];
+  const address = formatAddress(input.address);
+
+  const text = [
+    content.body,
+    "",
+    ...details,
+    "",
+    ...itemsText(input),
+    "",
+    `آدرس ارسال: ${address}`,
+    "",
+    `پنل مدیریت سفارش‌ها: ${adminUrl}`,
+  ].join("\n");
+
+  // Every detail here comes from the buyer's checkout form, so all of it is escaped.
+  const html = `<div dir="rtl" style="${EMAIL_WRAPPER_STYLE}">
+<h2 style="margin:0 0 12px">${content.subject}</h2>
+<p>${content.body}</p>
+<p style="color:#52525b">${details.map((line) => escapeHtml(line)).join("<br>")}</p>
+${itemsTableHtml(input)}
+<p style="color:#52525b">آدرس ارسال: ${escapeHtml(address)}</p>
+${buttonHtml(adminUrl, "مشاهده در پنل مدیریت")}
 </div>`;
 
   return { subject: `${content.subject} | شماره ${orderNumber}`, text, html };
