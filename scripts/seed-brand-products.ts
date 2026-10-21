@@ -262,6 +262,34 @@ const products: BrandProduct[] = [
     categorySlug: "creatine",
   },
   {
+    id: "mt10",
+    name: "کراتین پپتید ۴۴۷ - Creatine Peptide 447",
+    slug: "muscletech-creatine-peptide-447",
+    flavor: "بدون طعم",
+    size: "۲۲۴ گرم",
+    imageUrl: "/images/products/muscletech-creatine-peptide-447.jpg",
+    description:
+      "کراتین پپتید ۴۴۷ مسل‌تک ترکیبی از کراتین مونوهیدرات و پپتید کراتین PepForm (ایزوله‌ی پروتئین وی هیدرولیزه و کراتین مونوهیدرات)، همراه با ال-تیروزین و ال-تیانین. هر اسکوپ (۷ گرم) ۳ گرم کراتین مونوهیدرات و ۳ گرم پپتید کراتین دارد و بسته‌ی ۲۲۴ گرمی حدود ۳۰ وعده است.",
+    servingSize: "۱ اسکوپ (۷ گرم)",
+    nutritionFacts: [
+      { label: "کالری", amount: "۱۰" },
+      { label: "پروتئین", amount: "۱ گرم" },
+      { label: "سدیم", amount: "۲۰ میلی‌گرم" },
+      { label: "کراتین مونوهیدرات", amount: "۳ گرم" },
+      { label: "پپتید کراتین PepForm", amount: "۳ گرم" },
+      { label: "ال-تیروزین", amount: "۱ گرم" },
+      { label: "ال-تیانین", amount: "۲۰۰ میلی‌گرم" },
+    ],
+    // The front-left claims (muscle size, strength multiples) are partly
+    // hidden by the bottle's curve, and directions and warnings weren't in
+    // the photos, so they're left out until a clearer label is available.
+    manufacturerClaims:
+      "عضله‌سازی و افزایش قدرت\n۴٫۴۷ برابر عضله‌ی بدون چربی بیشتر\n۳۰۰۰ میلی‌گرم پپتید کراتین ثبت‌اختراع‌شده و ۳۰۰۰ میلی‌گرم کراتین مونوهیدرات در هر وعده\nحمایت از عملکرد شناختی\n(جزئیات و مبنای این ادعاها روی بخشی از بسته است که در عکس‌ها نبود)",
+    brand: "MuscleTech",
+    price: 1350000,
+    categorySlug: "creatine",
+  },
+  {
     id: "mt2g",
     name: "پلاتینیوم کراتین مونوهیدرات",
     slug: "muscletech-platinum-creatine-grape-freeze",
