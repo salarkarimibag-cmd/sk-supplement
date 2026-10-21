@@ -74,8 +74,22 @@ const products: BrandProduct[] = [
   // MuscleTech
   {
     id: "mt1",
-    name: "نایترو تک وی - Nitro-Tech Whey",
-    slug: "muscletech-nitro-tech",
+    name: "نایترو تک وی گلد - Nitro-Tech Whey Gold",
+    slug: "muscletech-nitro-tech-whey-gold",
+    flavor: "شکلات دوبل",
+    size: "۲٫۲۷ کیلوگرم",
+    imageUrl: "/images/products/muscletech-nitro-tech-whey-gold.webp",
+    description:
+      "پروتئین وی گورمه‌ی نایترو تک وی گلد مسل‌تک با طعم شکلات دوبل. طبق جلوی بسته، هر وعده ۲۴ گرم پروتئین، ۳ گرم کربوهیدرات و ۲٫۵ گرم چربی دارد. بسته‌ی ۲٫۲۷ کیلوگرمی (۵ پوند).",
+    // Only the per-serving values printed on the front of the pack; the
+    // serving size and full facts panel are on the back.
+    nutritionFacts: [
+      { label: "پروتئین", amount: "۲۴ گرم" },
+      { label: "کربوهیدرات", amount: "۳ گرم" },
+      { label: "چربی", amount: "۲٫۵ گرم" },
+    ],
+    manufacturerClaims:
+      "بهترین طعم در کلاس خود\nساخت آمریکا، از سال ۱۹۹۵\nمیکروفیلتراسیون سرد برتر\nکیفیت بالا و بسیار خالص",
     brand: "MuscleTech",
     price: 2250000,
     categorySlug: "protein",
