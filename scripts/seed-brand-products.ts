@@ -452,6 +452,27 @@ const products: BrandProduct[] = [
     categorySlug: "aminos",
   },
   {
+    id: "mt15",
+    name: "تست پپتید تی ۱۰ - Test Peptide T10",
+    slug: "muscletech-test-peptide-t10",
+    size: "۵۶ کپسول",
+    imageUrl: "/images/products/muscletech-test-peptide-t10.jpg",
+    description:
+      "تست پپتید T10 مسل‌تک، مکمل حمایت از تستوسترون و میل جنسی سالم در آقایان. طبق جلوی بسته، هر وعده ۵۰۸ میلی‌گرم VasoDrive-AP و ۳۲۵ میلی‌گرم TestFACTOR دارد. بسته‌ی ۵۶ کپسولی است.",
+    // Only the per-serving amounts printed on the front of the pack. The
+    // facts panel, directions and warnings weren't in the photos; for a
+    // hormone-support product they stay empty rather than guessed.
+    nutritionFacts: [
+      { label: "VasoDrive-AP", amount: "۵۰۸ میلی‌گرم" },
+      { label: "TestFACTOR", amount: "۳۲۵ میلی‌گرم" },
+    ],
+    manufacturerClaims:
+      "افزایش تستوسترون و حمایت از میل جنسی سالم\n۱۰ برابر تستوسترون کل بیشتر\nسیستم سه‌مرحله‌ای با فناوری پپتید\nحمایت بالینی از تستوسترون آزاد و کورتیزول، و داده‌های بالینی انسانی درباره‌ی توده‌ی بدون چربی\nمصرف روزانه بدون نیاز به دوره‌بندی\n(جزئیات و مبنای این ادعاها روی بخشی از بسته است که در عکس‌ها نبود)",
+    brand: "MuscleTech",
+    price: 1590000,
+    categorySlug: "creatine",
+  },
+  {
     id: "mt2g",
     name: "پلاتینیوم کراتین مونوهیدرات",
     slug: "muscletech-platinum-creatine-grape-freeze",
