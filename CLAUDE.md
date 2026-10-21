@@ -36,6 +36,7 @@ Set in `.env.local` (locally) and in Vercel. Never commit their values.
 - `ZARINPAL_MERCHANT_ID`, `ZARINPAL_SANDBOX` — gateway credentials; sandbox is on unless set to `"false"`
 - `CARD_NUMBER`, `CARD_HOLDER`, `CARD_BANK` — the card shown for card-to-card payment (`src/lib/cardPayment.ts`)
 - `NEXT_PUBLIC_SITE_URL` — public site URL (`src/lib/site.ts`)
+- `NEXT_PUBLIC_SALES_OPEN` — `"true"` opens the shop; unset, prices show «به زودی» and cart/checkout/payment APIs are closed (`src/lib/sales.ts`). Inlined at build time, so redeploy after changing it
 
 ## Architecture
 

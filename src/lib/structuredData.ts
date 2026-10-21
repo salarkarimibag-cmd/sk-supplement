@@ -48,7 +48,16 @@ function absoluteUrl(siteUrl: string, path: string): string {
   return new URL(path, siteUrl).toString();
 }
 
-export function buildProductJsonLd(product: ProductForJsonLd, siteUrl: string) {
+interface ProductJsonLdOptions {
+  /** Whether to include the price and stock offer; false while sales are closed. */
+  includeOffer?: boolean;
+}
+
+export function buildProductJsonLd(
+  product: ProductForJsonLd,
+  siteUrl: string,
+  { includeOffer = true }: ProductJsonLdOptions = {}
+) {
   const url = absoluteUrl(siteUrl, `/products/${product.id}`);
 
   return {
@@ -60,17 +69,21 @@ export function buildProductJsonLd(product: ProductForJsonLd, siteUrl: string) {
     ...(product.description ? { description: product.description } : {}),
     sku: product.id,
     url,
-    offers: {
-      "@type": "Offer",
-      url,
-      price: product.price * RIAL_PER_TOMAN,
-      priceCurrency: "IRR",
-      availability: product.inStock
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
-      itemCondition: "https://schema.org/NewCondition",
-      shippingDetails: SHIPPING_DETAILS,
-    },
+    ...(includeOffer
+      ? {
+          offers: {
+            "@type": "Offer",
+            url,
+            price: product.price * RIAL_PER_TOMAN,
+            priceCurrency: "IRR",
+            availability: product.inStock
+              ? "https://schema.org/InStock"
+              : "https://schema.org/OutOfStock",
+            itemCondition: "https://schema.org/NewCondition",
+            shippingDetails: SHIPPING_DETAILS,
+          },
+        }
+      : {}),
     // Google rejects a rating with no reviews behind it.
     ...(product.reviewCount > 0
       ? {

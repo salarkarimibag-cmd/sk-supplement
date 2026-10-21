@@ -12,6 +12,7 @@ import BankCard from "@/components/checkout/BankCard";
 import Collapsible from "@/components/ui/Collapsible";
 import { useCart } from "@/context/CartContext";
 import { cardTransferSchema, type ShopCard } from "@/lib/cardPayment";
+import { SALES_CLOSED_MESSAGE, SALES_OPEN } from "@/lib/sales";
 
 const checkoutSchema = z
   .object({
@@ -216,12 +217,19 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
     }
   }
 
-  if (items.length === 0) {
+  // While sales are closed (src/lib/sales.ts) the form isn't shown at all.
+  const notice = !SALES_OPEN
+    ? SALES_CLOSED_MESSAGE
+    : items.length === 0
+      ? "سبد خرید شما خالی است."
+      : null;
+
+  if (notice) {
     return (
       <div className="mx-auto w-full max-w-3xl px-6 py-16 text-center">
         <CheckoutLogo />
         <h1 className="mt-10 text-2xl font-bold">تسویه حساب</h1>
-        <p className="mt-3 text-zinc-600 dark:text-zinc-400">سبد خرید شما خالی است.</p>
+        <p className="mt-3 text-zinc-600 dark:text-zinc-400">{notice}</p>
         <Link
           href="/"
           className="mt-6 inline-block rounded bg-sky-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-sky-500"

@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Pagination from "@/components/ui/Pagination";
+import Price from "@/components/ui/Price";
 import StarRating from "@/components/ui/StarRating";
 import Testimonials from "@/components/home/Testimonials";
 import ProductCard from "@/components/product/ProductCard";
@@ -16,6 +17,7 @@ import { getSessionUser } from "@/lib/auth";
 import { getCategoryContent } from "@/lib/categoryContent";
 import { getProductById, getProductGroup, getRelatedProducts } from "@/lib/products";
 import { getProductReviewsPage } from "@/lib/reviews";
+import { SALES_OPEN } from "@/lib/sales";
 import { SITE_URL } from "@/lib/site";
 import { buildBreadcrumbJsonLd, buildProductJsonLd } from "@/lib/structuredData";
 import { buildVariantOptions, formatVariantSummary } from "@/lib/variants";
@@ -66,7 +68,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-12">
-      <JsonLd data={buildProductJsonLd(product, SITE_URL)} />
+      <JsonLd data={buildProductJsonLd(product, SITE_URL, { includeOffer: SALES_OPEN })} />
       <JsonLd data={buildBreadcrumbJsonLd(breadcrumb, SITE_URL)} />
 
       <nav className="flex flex-wrap items-center gap-2 text-sm text-zinc-500">
@@ -112,7 +114,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
 
           <StarRating rating={product.rating} reviewCount={product.reviewCount} className="mt-3" />
 
-          <p className="mt-4 text-2xl font-bold">{product.price.toLocaleString("fa-IR")} تومان</p>
+          <p className="mt-4 text-2xl font-bold"><Price amount={product.price} /></p>
 
           {hasVariantChoice ? (
             <div className="mt-5">

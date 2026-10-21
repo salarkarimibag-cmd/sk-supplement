@@ -13,6 +13,12 @@ const product = {
   reviewCount: 12,
 };
 
+function offersOf(p: typeof product) {
+  const { offers } = buildProductJsonLd(p, siteUrl);
+  if (!offers) throw new Error("expected an offer");
+  return offers;
+}
+
 describe("buildProductJsonLd", () => {
   it("describes the product with absolute urls", () => {
     const jsonLd = buildProductJsonLd(product, siteUrl);
@@ -28,22 +34,26 @@ describe("buildProductJsonLd", () => {
   });
 
   it("converts the Toman price to Rial (IRR)", () => {
-    const { offers } = buildProductJsonLd(product, siteUrl);
+    const offers = offersOf(product);
     expect(offers.price).toBe(12_500_000);
     expect(offers.priceCurrency).toBe("IRR");
   });
 
   it("reports stock", () => {
-    expect(buildProductJsonLd(product, siteUrl).offers.availability).toBe(
-      "https://schema.org/InStock"
-    );
-    expect(buildProductJsonLd({ ...product, inStock: false }, siteUrl).offers.availability).toBe(
+    expect(offersOf(product).availability).toBe("https://schema.org/InStock");
+    expect(offersOf({ ...product, inStock: false }).availability).toBe(
       "https://schema.org/OutOfStock"
     );
   });
 
+  it("leaves out the offer when asked to", () => {
+    expect(buildProductJsonLd(product, siteUrl, { includeOffer: false })).not.toHaveProperty(
+      "offers"
+    );
+  });
+
   it("advertises free same-day-dispatch shipping within Iran", () => {
-    const { shippingDetails } = buildProductJsonLd(product, siteUrl).offers;
+    const { shippingDetails } = offersOf(product);
     expect(shippingDetails.shippingRate.value).toBe(0);
     expect(shippingDetails.shippingDestination.addressCountry).toBe("IR");
     expect(shippingDetails.deliveryTime.handlingTime).toMatchObject({ minValue: 0, maxValue: 0 });

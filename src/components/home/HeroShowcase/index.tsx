@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ChevronLeft, Star } from "lucide-react";
 import HeroScene from "@/components/home/HeroScene";
 import { trustBadges } from "@/components/product/TrustBadges";
+import Price from "@/components/ui/Price";
 import type { ListedProduct } from "@/lib/products";
 import type { HeroPromotion } from "@/lib/promotion";
 
@@ -98,7 +99,7 @@ export default function HeroShowcase({
               <span className="block text-xs font-bold text-sky-400">پرفروش‌ترین</span>
               <span className="block truncate text-sm font-bold text-white">{bestSeller.name}</span>
               <span className="block text-xs text-zinc-300">
-                {bestSeller.price.toLocaleString("fa-IR")} تومان
+                <Price amount={bestSeller.price} />
               </span>
             </span>
             <ChevronLeft
