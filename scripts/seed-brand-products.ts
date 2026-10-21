@@ -13,6 +13,7 @@ import type { SeedProduct } from "../src/data/catalog";
 
 // imageUrl is optional: products without a photo yet get the placeholder.
 type BrandProduct = Omit<SeedProduct, "inStock" | "description" | "imageUrl" | "stock"> & {
+  description?: string;
   imageUrl?: string;
 };
 
@@ -81,8 +82,30 @@ const products: BrandProduct[] = [
   },
   {
     id: "mt2",
-    name: "پلاتینیوم کراتین (Platinum 100% Creatine)",
+    name: "پلاتینیوم کراتین مونوهیدرات (Platinum 100% Creatine Monohydrate)",
     slug: "muscletech-platinum-creatine",
+    groupSlug: "muscletech-platinum-creatine",
+    flavor: "بدون طعم",
+    imageUrl: "/images/products/muscletech-platinum-creatine.webp",
+    description:
+      "کراتین مونوهیدرات میکرونیزه و بسیار خالص از مدل پلاتینیوم مسل‌تک. هر وعده ۵ گرم کراتین مونوهیدرات دارد و در بسته‌ی ۴۰۰ گرمی ۸۰ وعده‌ای عرضه می‌شود.",
+    servingSize: "۵ گرم",
+    nutritionFacts: [{ label: "کراتین مونوهیدرات", amount: "۵ گرم" }],
+    brand: "MuscleTech",
+    price: 890000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "mt2g",
+    name: "پلاتینیوم کراتین مونوهیدرات (Platinum 100% Creatine Monohydrate)",
+    slug: "muscletech-platinum-creatine-grape-freeze",
+    groupSlug: "muscletech-platinum-creatine",
+    flavor: "انگور (Grape Freeze)",
+    imageUrl: "/images/products/muscletech-platinum-creatine-grape-freeze.jpg",
+    description:
+      "کراتین مونوهیدرات میکرونیزه و بسیار خالص از مدل پلاتینیوم مسل‌تک با طعم انگور. هر وعده ۵ گرم کراتین مونوهیدرات دارد و در بسته‌ی ۳۹۲ گرمی ۶۰ وعده‌ای عرضه می‌شود.",
+    servingSize: "۵ گرم",
+    nutritionFacts: [{ label: "کراتین مونوهیدرات", amount: "۵ گرم" }],
     brand: "MuscleTech",
     price: 890000,
     categorySlug: "creatine",
@@ -302,20 +325,21 @@ async function main() {
 
   let count = 0;
   for (const product of products) {
-    // $setOnInsert keeps what an admin may have edited later (description,
-    // price, stock); only the identity fields are rewritten on re-run. A
-    // real photo listed here is rewritten too, while the placeholder is
-    // only set on insert so it never replaces an image set from the admin.
-    const { id, name, slug, brand, categorySlug, imageUrl, ...insertOnly } = product;
+    // Whatever an entry spells out (name, brand, photo, description, label
+    // details, flavor...) is rewritten on every run. Price and stock are
+    // insert-only so re-seeding never undoes an admin's edit of them, and
+    // the empty description / placeholder photo are only filled in on
+    // insert, so they never replace what an admin has set since.
+    const { id, price, ...fields } = product;
     await ProductModel.findOneAndUpdate(
       { id },
       {
-        $set: { name, slug, brand, categorySlug, ...(imageUrl ? { imageUrl } : {}) },
+        $set: fields,
         $setOnInsert: {
-          ...insertOnly,
-          description: "",
-          ...(imageUrl ? {} : { imageUrl: "/images/placeholder.svg" }),
+          price,
           stock: 10,
+          ...(fields.description === undefined ? { description: "" } : {}),
+          ...(fields.imageUrl === undefined ? { imageUrl: "/images/placeholder.svg" } : {}),
         },
       },
       { upsert: true, setDefaultsOnInsert: true }
