@@ -82,10 +82,10 @@ const products: BrandProduct[] = [
   },
   {
     id: "mt2",
-    name: "پلاتینیوم کراتین مونوهیدرات (Platinum 100% Creatine Monohydrate)",
+    name: "پلاتینیوم کراتین مونوهیدرات - بدون طعم (Platinum 100% Creatine Monohydrate)",
     slug: "muscletech-platinum-creatine",
-    groupSlug: "muscletech-platinum-creatine",
     flavor: "بدون طعم",
+    size: "۴۰۰ گرم",
     imageUrl: "/images/products/muscletech-platinum-creatine.webp",
     description:
       "کراتین مونوهیدرات میکرونیزه و بسیار خالص از مدل پلاتینیوم مسل‌تک. هر وعده ۵ گرم کراتین مونوهیدرات دارد و در بسته‌ی ۴۰۰ گرمی ۸۰ وعده‌ای عرضه می‌شود.",
@@ -97,10 +97,10 @@ const products: BrandProduct[] = [
   },
   {
     id: "mt2g",
-    name: "پلاتینیوم کراتین مونوهیدرات (Platinum 100% Creatine Monohydrate)",
+    name: "پلاتینیوم کراتین مونوهیدرات - طعم انگور (Platinum Creatine Grape Freeze)",
     slug: "muscletech-platinum-creatine-grape-freeze",
-    groupSlug: "muscletech-platinum-creatine",
     flavor: "انگور (Grape Freeze)",
+    size: "۳۹۲ گرم",
     imageUrl: "/images/products/muscletech-platinum-creatine-grape-freeze.jpg",
     description:
       "کراتین مونوهیدرات میکرونیزه و بسیار خالص از مدل پلاتینیوم مسل‌تک با طعم انگور. هر وعده ۵ گرم کراتین مونوهیدرات دارد و در بسته‌ی ۳۹۲ گرمی ۶۰ وعده‌ای عرضه می‌شود.",
