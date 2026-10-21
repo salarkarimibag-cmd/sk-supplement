@@ -185,7 +185,9 @@ const products: BrandProduct[] = [
   },
   {
     id: "mt5",
-    name: "سل‌تک کراتین اچ‌سی‌ال پلاس - Cell-Tech Creatine HCl+",
+    // The trailing ‎ (left-to-right mark) keeps the "+" at the end of the
+    // Latin name instead of letting right-to-left text move it to the front.
+    name: "سل‌تک کراتین اچ‌سی‌ال پلاس - Cell-Tech Creatine HCl+‎",
     slug: "muscletech-cell-tech-creatine-hcl",
     flavor: "فروت پانچ اکستریم",
     size: "۲۵۷ گرم",
