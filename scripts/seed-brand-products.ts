@@ -185,9 +185,9 @@ const products: BrandProduct[] = [
   },
   {
     id: "mt5",
-    // The trailing ‎ (left-to-right mark) keeps the "+" at the end of the
+    // The trailing \u200E (left-to-right mark) keeps the "+" at the end of the
     // Latin name instead of letting right-to-left text move it to the front.
-    name: "سل‌تک کراتین اچ‌سی‌ال پلاس - Cell-Tech Creatine HCl+‎",
+    name: "سل‌تک کراتین اچ‌سی‌ال پلاس - Cell-Tech Creatine HCl+\u200E",
     slug: "muscletech-cell-tech-creatine-hcl",
     flavor: "فروت پانچ اکستریم",
     size: "۲۵۷ گرم",
@@ -303,7 +303,8 @@ const products: BrandProduct[] = [
   // Scitec Nutrition
   {
     id: "sc1",
-    name: "وی پروتئین پروفشنال - 100% Whey Protein Professional",
+    // \u200E (left-to-right mark) keeps "100%" with the Latin name that follows it.
+    name: "وی پروتئین پروفشنال - \u200E100% Whey Protein Professional",
     slug: "scitec-whey-protein-professional",
     brand: "Scitec Nutrition",
     price: 2150000,
