@@ -88,3 +88,15 @@ describe("withoutEmptyDetails", () => {
     expect(Object.keys(withoutEmptyDetails({ usage: "" }))).toEqual(["usage"]);
   });
 });
+
+describe("manufacturerClaims", () => {
+  it("is trimmed, optional and capped like the other text fields", () => {
+    expect(productDetailsSchema.parse({ manufacturerClaims: "  ادعا " }).manufacturerClaims).toBe("ادعا");
+    expect(productDetailsSchema.parse({}).manufacturerClaims).toBeUndefined();
+    expect(productDetailsSchema.safeParse({ manufacturerClaims: "x".repeat(2001) }).success).toBe(false);
+  });
+
+  it("is cleared by an empty string like the other details", () => {
+    expect(withoutEmptyDetails({ manufacturerClaims: "" })).toEqual({ manufacturerClaims: undefined });
+  });
+});

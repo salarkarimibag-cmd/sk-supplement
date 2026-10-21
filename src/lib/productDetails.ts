@@ -50,6 +50,7 @@ export const productDetailsSchema = z.object({
   nutritionFacts: z.array(nutritionFactSchema).max(40).optional(),
   usage: z.string().trim().max(2000).optional(),
   warnings: z.string().trim().max(2000).optional(),
+  manufacturerClaims: z.string().trim().max(2000).optional(),
 });
 
 export type ProductDetails = z.infer<typeof productDetailsSchema>;

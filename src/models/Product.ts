@@ -29,6 +29,8 @@ export interface Product {
   nutritionFacts?: NutritionFact[];
   usage?: string;
   warnings?: string;
+  /** What the maker claims on the pack, one per line; shown in its own labelled box. */
+  manufacturerClaims?: string;
 }
 
 const NutritionFactSchema = new Schema<NutritionFact>(
@@ -61,6 +63,7 @@ const ProductSchema = new Schema<Product>({
   nutritionFacts: { type: [NutritionFactSchema], default: undefined },
   usage: { type: String, required: false },
   warnings: { type: String, required: false },
+  manufacturerClaims: { type: String, required: false },
 });
 
 // Avoids Mongoose's "Cannot overwrite model" error when this module is

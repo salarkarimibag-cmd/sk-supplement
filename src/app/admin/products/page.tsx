@@ -37,6 +37,7 @@ export default async function AdminProductsPage(props: PageProps<"/admin/product
     nutritionFacts: product.nutritionFacts ?? [],
     usage: product.usage ?? "",
     warnings: product.warnings ?? "",
+    manufacturerClaims: product.manufacturerClaims ?? "",
   }));
 
   const categoryOptions = categories.map((category) => ({
