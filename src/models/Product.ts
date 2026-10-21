@@ -9,6 +9,8 @@ export interface Product {
   price: number;
   categorySlug: string;
   imageUrl: string;
+  /** Shown on cards and the product page; collections can be filtered by it. */
+  brand?: string;
   stock: number;
   /** Average of approved reviews; 0 while there are none. Not set by hand. */
   rating: number;
@@ -45,6 +47,7 @@ const ProductSchema = new Schema<Product>({
   price: { type: Number, required: true },
   categorySlug: { type: String, required: true, index: true },
   imageUrl: { type: String, required: true },
+  brand: { type: String, required: false, index: true },
   stock: { type: Number, required: true, default: 0 },
   rating: { type: Number, required: true, default: 0 },
   reviewCount: { type: Number, required: true, default: 0 },

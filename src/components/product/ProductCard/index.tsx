@@ -12,6 +12,7 @@ export interface ProductCardProps {
   name: string;
   price: number;
   imageUrl: string;
+  brand?: string;
   rating?: number;
   reviewCount?: number;
   inStock?: boolean;
@@ -24,6 +25,7 @@ export default function ProductCard({
   name,
   price,
   imageUrl,
+  brand,
   rating,
   reviewCount,
   inStock = true,
@@ -61,8 +63,11 @@ export default function ProductCard({
             </span>
           )}
         </div>
+        {brand && (
+          <p className="mt-4 text-xs font-semibold text-zinc-500 dark:text-zinc-400">{brand}</p>
+        )}
         <h3
-          className={`mt-4 line-clamp-2 text-sm font-bold underline-offset-4 transition-colors group-hover:text-sky-600 group-has-[button:hover]/card:underline ${
+          className={`${brand ? "mt-1" : "mt-4"} line-clamp-2 text-sm font-bold underline-offset-4 transition-colors group-hover:text-sky-600 group-has-[button:hover]/card:underline ${
             rating !== undefined ? "min-h-10" : ""
           }`}
         >

@@ -75,6 +75,16 @@ describe("filterProducts", () => {
     const noFlavor = [makeProduct({ id: "d", flavor: undefined })];
     expect(filterProducts(noFlavor, { flavors: ["شکلاتی"], sizes: [] })).toHaveLength(0);
   });
+
+  it("filters by brand, and drops products that have no brand", () => {
+    const branded = [
+      makeProduct({ id: "x", brand: "برند الف" }),
+      makeProduct({ id: "y", brand: "برند ب" }),
+      makeProduct({ id: "z" }),
+    ];
+    const result = filterProducts(branded, { flavors: [], sizes: [], brands: ["برند الف"] });
+    expect(result.map((p) => p.id)).toEqual(["x"]);
+  });
 });
 
 describe("toParamArray", () => {
@@ -107,5 +117,14 @@ describe("countByAttribute", () => {
   it("ignores products without the attribute", () => {
     const products = [makeProduct({ flavor: undefined }), makeProduct({ flavor: "وانیلی" })];
     expect(countByAttribute(products, "flavor")).toEqual([{ value: "وانیلی", count: 1 }]);
+  });
+
+  it("counts distinct brands", () => {
+    const products = [
+      makeProduct({ brand: "برند الف" }),
+      makeProduct({ brand: "برند الف" }),
+      makeProduct({ brand: undefined }),
+    ];
+    expect(countByAttribute(products, "brand")).toEqual([{ value: "برند الف", count: 2 }]);
   });
 });

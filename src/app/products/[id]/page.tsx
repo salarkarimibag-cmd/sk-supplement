@@ -103,6 +103,11 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
         </div>
 
         <div>
+          {product.brand && (
+            <p className="mb-1 text-sm font-semibold text-zinc-500 dark:text-zinc-400">
+              {product.brand}
+            </p>
+          )}
           <h1 className="text-2xl font-extrabold sm:text-3xl">{product.name}</h1>
 
           <StarRating rating={product.rating} reviewCount={product.reviewCount} className="mt-3" />
@@ -220,6 +225,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
                 name={related.name}
                 price={related.price}
                 imageUrl={related.imageUrl}
+                brand={related.brand}
                 rating={related.rating}
                 reviewCount={related.reviewCount}
                 inStock={related.inStock}

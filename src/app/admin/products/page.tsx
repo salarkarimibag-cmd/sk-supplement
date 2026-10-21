@@ -28,6 +28,7 @@ export default async function AdminProductsPage(props: PageProps<"/admin/product
     price: product.price,
     categorySlug: product.categorySlug,
     imageUrl: product.imageUrl,
+    brand: product.brand ?? "",
     stock: product.stock,
     flavor: product.flavor ?? "",
     size: product.size ?? "",

@@ -63,6 +63,11 @@ describe("productDetailsSchema", () => {
     ).toBe(false);
   });
 
+  it("trims the brand and rejects one that is too long", () => {
+    expect(productDetailsSchema.parse({ brand: "  برند الف " }).brand).toBe("برند الف");
+    expect(productDetailsSchema.safeParse({ brand: "a".repeat(61) }).success).toBe(false);
+  });
+
   it("rejects non-string text fields", () => {
     expect(productDetailsSchema.safeParse({ usage: { $ne: null } }).success).toBe(false);
   });

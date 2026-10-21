@@ -35,12 +35,13 @@ export function sortProducts(products: CatalogProduct[], sort: string): CatalogP
 
 export function filterProducts(
   products: CatalogProduct[],
-  { flavors, sizes }: { flavors: string[]; sizes: string[] }
+  { flavors, sizes, brands = [] }: { flavors: string[]; sizes: string[]; brands?: string[] }
 ): CatalogProduct[] {
   return products.filter((product) => {
+    const matchesBrand = brands.length === 0 || (!!product.brand && brands.includes(product.brand));
     const matchesFlavor = flavors.length === 0 || (!!product.flavor && flavors.includes(product.flavor));
     const matchesSize = sizes.length === 0 || (!!product.size && sizes.includes(product.size));
-    return matchesFlavor && matchesSize;
+    return matchesBrand && matchesFlavor && matchesSize;
   });
 }
 
@@ -55,10 +56,10 @@ export interface FilterOptionCount {
   count: number;
 }
 
-/** Distinct flavor/size values present in a product list, each with how many products have it. */
+/** Distinct flavor/size/brand values present in a product list, each with how many products have it. */
 export function countByAttribute(
   products: CatalogProduct[],
-  key: "flavor" | "size"
+  key: "flavor" | "size" | "brand"
 ): FilterOptionCount[] {
   const counts = new Map<string, number>();
   for (const product of products) {

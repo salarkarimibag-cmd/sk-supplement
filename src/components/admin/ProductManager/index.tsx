@@ -15,6 +15,7 @@ interface ProductItem {
   price: number;
   categorySlug: string;
   imageUrl: string;
+  brand: string;
   stock: number;
   flavor: string;
   size: string;
@@ -38,6 +39,7 @@ interface FormState {
   price: string;
   categorySlug: string;
   imageUrl: string;
+  brand: string;
   stock: string;
   flavor: string;
   size: string;
@@ -58,6 +60,7 @@ function emptyForm(defaultCategorySlug: string): FormState {
     price: "",
     categorySlug: defaultCategorySlug,
     imageUrl: "",
+    brand: "",
     stock: "",
     flavor: "",
     size: "",
@@ -96,6 +99,7 @@ export default function ProductManager({
       price: String(item.price),
       categorySlug: item.categorySlug,
       imageUrl: item.imageUrl,
+      brand: item.brand,
       stock: String(item.stock),
       flavor: item.flavor,
       size: item.size,
@@ -150,6 +154,7 @@ export default function ProductManager({
       price: Number(form.price),
       categorySlug: form.categorySlug,
       imageUrl: form.imageUrl.trim(),
+      brand: form.brand.trim(),
       stock: Number(form.stock),
       flavor: form.flavor.trim(),
       size: form.size.trim(),
@@ -184,6 +189,7 @@ export default function ProductManager({
         price: data.price,
         categorySlug: data.categorySlug,
         imageUrl: data.imageUrl,
+        brand: data.brand ?? "",
         stock: data.stock,
         flavor: data.flavor ?? "",
         size: data.size ?? "",
@@ -294,10 +300,17 @@ export default function ProductManager({
 
         <input
           type="text"
+          placeholder="برند (اختیاری)"
+          value={form.brand}
+          onChange={(event) => setForm({ ...form, brand: event.target.value })}
+          className={`col-span-2 sm:col-span-1 ${inputClass}`}
+        />
+        <input
+          type="text"
           placeholder="مسیر تصویر (/images/product.webp)"
           value={form.imageUrl}
           onChange={(event) => setForm({ ...form, imageUrl: event.target.value })}
-          className={`col-span-2 ${inputClass}`}
+          className={`col-span-2 sm:col-span-3 ${inputClass}`}
         />
         <input
           type="text"
@@ -306,7 +319,7 @@ export default function ProductManager({
           title="محصولاتی که گروه یکسان دارند، طعم‌ها و سایزهای یک محصول حساب می‌شوند."
           value={form.groupSlug}
           onChange={(event) => setForm({ ...form, groupSlug: event.target.value })}
-          className={`col-span-2 text-end placeholder:text-end ${inputClass}`}
+          className={`col-span-2 sm:col-span-4 text-end placeholder:text-end ${inputClass}`}
         />
 
         <textarea
