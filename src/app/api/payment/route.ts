@@ -3,9 +3,15 @@ import { OrderModel } from "@/models/Order";
 import { requestZarinPalPayment } from "@/lib/zarinpal";
 import { getSessionUser } from "@/lib/auth";
 import { buildOrderDraft, orderRequestSchema } from "@/lib/orderDraft";
+import { SALES_CLOSED_MESSAGE, SALES_OPEN } from "@/lib/sales";
 import { SITE_URL } from "@/lib/site";
 
 export async function POST(request: Request) {
+  // The UI hides checkout too, but a request can be sent without the UI.
+  if (!SALES_OPEN) {
+    return Response.json({ message: SALES_CLOSED_MESSAGE }, { status: 503 });
+  }
+
   const parsed = orderRequestSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
     return Response.json({ message: "اطلاعات سفارش ناقص یا نامعتبر است." }, { status: 400 });

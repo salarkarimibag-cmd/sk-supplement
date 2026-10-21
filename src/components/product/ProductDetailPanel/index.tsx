@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Check } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { COMING_SOON_LABEL, SALES_OPEN } from "@/lib/sales";
 import { LOW_STOCK_THRESHOLD, remainingToAdd } from "@/lib/stock";
 
 interface ProductDetailPanelProps {
@@ -55,14 +56,14 @@ export default function ProductDetailPanel({ product }: ProductDetailPanelProps)
     return () => observer.disconnect();
   }, []);
 
-  if (!product.inStock) {
+  if (!product.inStock || !SALES_OPEN) {
     return (
       <button
         type="button"
         disabled
         className="w-full cursor-not-allowed border border-zinc-300 py-3.5 text-sm font-semibold text-zinc-400 dark:border-zinc-700 dark:text-zinc-500"
       >
-        ناموجود
+        {SALES_OPEN ? "ناموجود" : COMING_SOON_LABEL}
       </button>
     );
   }

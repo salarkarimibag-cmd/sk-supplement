@@ -6,6 +6,7 @@ import { getSessionUser } from "@/lib/auth";
 import { buildOrderDraft, orderRequestSchema } from "@/lib/orderDraft";
 import { cardTransferSchema, getShopCard } from "@/lib/cardPayment";
 import { getClientIp, getOrSetDeviceId, isRateLimited } from "@/lib/rateLimit";
+import { SALES_CLOSED_MESSAGE, SALES_OPEN } from "@/lib/sales";
 
 const cardOrderSchema = orderRequestSchema.extend({ cardTransfer: cardTransferSchema });
 
@@ -13,6 +14,11 @@ const RATE_LIMIT_WINDOW_MS = 24 * 60 * 60 * 1000;
 const RATE_LIMIT_MAX = 5;
 
 export async function POST(request: Request) {
+  // The UI hides checkout too, but a request can be sent without the UI.
+  if (!SALES_OPEN) {
+    return Response.json({ message: SALES_CLOSED_MESSAGE }, { status: 503 });
+  }
+
   if (!getShopCard()) {
     return Response.json({ message: "پرداخت کارت به کارت فعال نیست." }, { status: 404 });
   }

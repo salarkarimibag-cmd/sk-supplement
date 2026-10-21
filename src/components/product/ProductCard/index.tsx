@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Check } from "lucide-react";
+import Price from "@/components/ui/Price";
 import StarRating from "@/components/ui/StarRating";
 import { useCart } from "@/context/CartContext";
+import { COMING_SOON_LABEL, SALES_OPEN } from "@/lib/sales";
 
 export interface ProductCardProps {
   id: string;
@@ -80,7 +82,7 @@ export default function ProductCard({
           <p className="mt-1.5 text-xs text-zinc-500 dark:text-zinc-400">{variantLabel}</p>
         )}
         <p className="mt-1.5 text-sm text-zinc-900 dark:text-zinc-100">
-          {price.toLocaleString("fa-IR")} تومان
+          <Price amount={price} />
         </p>
       </Link>
 
@@ -93,7 +95,7 @@ export default function ProductCard({
         >
           انتخاب گزینه‌ها
         </Link>
-      ) : inStock ? (
+      ) : inStock && SALES_OPEN ? (
         <button
           type="button"
           onClick={handleAddToCart}
@@ -117,7 +119,7 @@ export default function ProductCard({
           disabled
           className="mt-3 flex h-11 w-full cursor-not-allowed items-center justify-center border border-zinc-300 text-sm font-semibold text-zinc-400 dark:border-zinc-700 dark:text-zinc-500"
         >
-          ناموجود
+          {SALES_OPEN ? "ناموجود" : COMING_SOON_LABEL}
         </button>
       )}
     </div>

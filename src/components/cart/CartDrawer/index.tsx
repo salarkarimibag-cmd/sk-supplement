@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import Price from "@/components/ui/Price";
 import { useCart } from "@/context/CartContext";
+import { COMING_SOON_LABEL, SALES_OPEN } from "@/lib/sales";
 
 export default function CartDrawer() {
   const { items, isOpen, closeCart, removeItem, setQuantity, totalPrice } = useCart();
@@ -65,7 +67,7 @@ export default function CartDrawer() {
                 <div className="flex flex-1 flex-col">
                   <p className="text-sm font-bold">{item.name}</p>
                   <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                    {item.price.toLocaleString("fa-IR")} تومان
+                    <Price amount={item.price} />
                   </p>
 
                   <div className="mt-auto flex items-center justify-between">
@@ -110,17 +112,29 @@ export default function CartDrawer() {
           <div className="border-t border-zinc-200 px-6 py-5 dark:border-zinc-800">
             <div className="flex items-center justify-between text-sm font-bold">
               <span>مجموع تقریبی</span>
-              <span>{totalPrice.toLocaleString("fa-IR")} تومان</span>
+              <span>
+                <Price amount={totalPrice} />
+              </span>
             </div>
             <p className="mt-1 text-xs text-zinc-500">مالیات و هزینه‌ی ارسال در تسویه‌حساب محاسبه می‌شود.</p>
 
-            <Link
-              href="/checkout"
-              onClick={closeCart}
-              className="mt-4 block rounded bg-sky-600 py-3 text-center text-sm font-bold text-white transition hover:bg-sky-500"
-            >
-              تسویه حساب
-            </Link>
+            {SALES_OPEN ? (
+              <Link
+                href="/checkout"
+                onClick={closeCart}
+                className="mt-4 block rounded bg-sky-600 py-3 text-center text-sm font-bold text-white transition hover:bg-sky-500"
+              >
+                تسویه حساب
+              </Link>
+            ) : (
+              <button
+                type="button"
+                disabled
+                className="mt-4 block w-full cursor-not-allowed rounded bg-zinc-300 py-3 text-center text-sm font-bold text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300"
+              >
+                {COMING_SOON_LABEL}
+              </button>
+            )}
           </div>
         )}
         </div>
