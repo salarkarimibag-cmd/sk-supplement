@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono, Vazirmatn } from "next/font/google";
 import SiteChrome from "@/components/layout/SiteChrome";
 import CartDrawer from "@/components/cart/CartDrawer";
+import SiteAnalytics from "@/components/layout/SiteAnalytics";
 import { CartProvider } from "@/context/CartContext";
 import { getSessionUser } from "@/lib/auth";
 import { getAllCategories } from "@/lib/categoryContent";
@@ -91,6 +92,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           </SiteChrome>
           <CartDrawer />
         </CartProvider>
+        <SiteAnalytics />
       </body>
     </html>
   );
