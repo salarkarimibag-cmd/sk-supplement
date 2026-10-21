@@ -24,6 +24,7 @@ interface ProductItem {
   nutritionFacts: NutritionFact[];
   usage: string;
   warnings: string;
+  manufacturerClaims: string;
 }
 
 interface CategoryOption {
@@ -49,6 +50,7 @@ interface FormState {
   nutritionFacts: string;
   usage: string;
   warnings: string;
+  manufacturerClaims: string;
 }
 
 function emptyForm(defaultCategorySlug: string): FormState {
@@ -69,6 +71,7 @@ function emptyForm(defaultCategorySlug: string): FormState {
     nutritionFacts: "",
     usage: "",
     warnings: "",
+    manufacturerClaims: "",
   };
 }
 
@@ -108,6 +111,7 @@ export default function ProductManager({
       nutritionFacts: formatNutritionFacts(item.nutritionFacts),
       usage: item.usage,
       warnings: item.warnings,
+      manufacturerClaims: item.manufacturerClaims,
     });
     setError(null);
   }
@@ -163,6 +167,7 @@ export default function ProductManager({
       nutritionFacts: nutrition.facts,
       usage: form.usage.trim(),
       warnings: form.warnings.trim(),
+      manufacturerClaims: form.manufacturerClaims.trim(),
     };
 
     try {
@@ -198,6 +203,7 @@ export default function ProductManager({
         nutritionFacts: data.nutritionFacts ?? [],
         usage: data.usage ?? "",
         warnings: data.warnings ?? "",
+        manufacturerClaims: data.manufacturerClaims ?? "",
       };
 
       setProducts((current) =>
@@ -365,6 +371,13 @@ export default function ProductManager({
               className={inputClass}
             />
           </div>
+          <textarea
+            placeholder={"ادعاهای سازنده روی بسته، هر خط یک مورد:\nافزایش قدرت و حجم عضلات"}
+            value={form.manufacturerClaims}
+            onChange={(event) => setForm({ ...form, manufacturerClaims: event.target.value })}
+            rows={3}
+            className={`sm:col-span-2 ${inputClass}`}
+          />
         </fieldset>
 
         <div className="col-span-2 flex gap-2 sm:col-span-4 sm:justify-end">

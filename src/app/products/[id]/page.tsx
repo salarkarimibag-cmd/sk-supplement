@@ -6,6 +6,7 @@ import Pagination from "@/components/ui/Pagination";
 import Price from "@/components/ui/Price";
 import StarRating from "@/components/ui/StarRating";
 import Testimonials from "@/components/home/Testimonials";
+import ManufacturerClaims from "@/components/product/ManufacturerClaims";
 import ProductCard from "@/components/product/ProductCard";
 import ProductDetailPanel from "@/components/product/ProductDetailPanel";
 import ProductInfo from "@/components/product/ProductInfo";
@@ -139,6 +140,12 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
             {product.description ||
               `${product.name} یکی از محصولات ${category ? `دسته‌ی ${category.title}` : "SK Supplement"} است که کیفیت و اثربخشی آن مورد تایید مشتریان است.`}
           </p>
+
+          {product.manufacturerClaims && (
+            <div className="mt-6">
+              <ManufacturerClaims claims={product.manufacturerClaims} />
+            </div>
+          )}
 
           <div className="mt-8">
             <ProductDetailPanel

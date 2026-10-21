@@ -29,6 +29,8 @@ export interface Product {
   nutritionFacts?: NutritionFact[];
   usage?: string;
   warnings?: string;
+  /** What the maker claims on the pack, one per line; shown in its own labelled box. */
+  manufacturerClaims?: string;
   /**
    * When the product last changed (an edit, its stock or its rating), kept
    * by Mongoose's timestamps option. Products saved before it existed don't
@@ -69,6 +71,7 @@ const ProductSchema = new Schema<Product>(
     nutritionFacts: { type: [NutritionFactSchema], default: undefined },
     usage: { type: String, required: false },
     warnings: { type: String, required: false },
+    manufacturerClaims: { type: String, required: false },
   },
   // updatedAt only: a createdAt would add nothing the document's _id doesn't
   // already say. Mongoose applies it to updateOne, findOneAndUpdate and
