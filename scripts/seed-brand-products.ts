@@ -898,32 +898,6 @@ const products: BrandProduct[] = [
     price: 1350000,
     categorySlug: "aminos",
   },
-
-  // NOW Foods
-  {
-    id: "nf1",
-    name: "اولترا امگا ۳ - Ultra Omega-3",
-    slug: "now-ultra-omega-3",
-    brand: "NOW Foods",
-    price: 920000,
-    categorySlug: "health-wellness",
-  },
-  {
-    id: "nf2",
-    name: "منیزیم سیترات - Magnesium Citrate",
-    slug: "now-magnesium-citrate",
-    brand: "NOW Foods",
-    price: 640000,
-    categorySlug: "health-wellness",
-  },
-  {
-    id: "nf3",
-    name: "ویتامین D3 - Vitamin D-3",
-    slug: "now-vitamin-d3",
-    brand: "NOW Foods",
-    price: 540000,
-    categorySlug: "vitamins",
-  },
 ];
 
 async function main() {
