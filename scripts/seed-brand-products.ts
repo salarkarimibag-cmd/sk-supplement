@@ -38,6 +38,31 @@ const products: BrandProduct[] = [
     categorySlug: "creatine",
   },
   {
+    id: "on2t",
+    name: "قرص کراتین - Creatine Tablets",
+    slug: "on-creatine-tablets",
+    size: "۱۸۰ قرص",
+    imageUrl: "/images/products/on-creatine-tablets.webp",
+    // Dose and count from the pack photo (3.0 g creatine monohydrate per
+    // serving, 180 tablets, 60 servings). ON's German shop page (de-de,
+    // creatine-tablets-180) has no facts table and says "3 g pure creatine",
+    // which doesn't match the label's 3 g of monohydrate, so the label wins
+    // and that line is left out. Directions and warnings are from that page.
+    description:
+      "قرص کراتین اپتیموم نوتریشن؛ مکمل غذایی کراتین مونوهیدرات به شکل قرص. هر وعده (۳ قرص) ۳ گرم کراتین مونوهیدرات دارد و هر قوطی ۱۸۰ قرص، یعنی ۶۰ وعده است.",
+    servingSize: "۳ قرص",
+    nutritionFacts: [{ label: "کراتین مونوهیدرات", amount: "۳ گرم" }],
+    usage:
+      "روزانه ۳ قرص مصرف کنید. برای بهترین نتیجه، همراه نوشیدنی ورزشی یا شیک پروتئین دلخواهتان.",
+    warnings:
+      "مکمل غذایی جایگزین رژیم غذایی متنوع نیست.\nاز مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.\nدور از دسترس کودکان نگهداری شود.",
+    manufacturerClaims:
+      "کراتین مونوهیدرات خالص با کیفیت بالا\nبدون افزودنی و پرکننده‌ی غیرضروری\nبه گفته‌ی سازنده، کراتین عملکرد را در تمرین‌های کوتاه‌مدت، پرشدت و پشت‌سرهم بهبود می‌دهد؛ طبق ادعای سلامت مورد تأیید اتحادیه‌ی اروپا، این اثر با مصرف روزانه‌ی ۳ گرم کراتین به دست می‌آید",
+    brand: "Optimum Nutrition",
+    price: 790000,
+    categorySlug: "creatine",
+  },
+  {
     id: "on3",
     name: "مولتی ویتامین آقایان - Opti-Men",
     slug: "on-opti-men",
