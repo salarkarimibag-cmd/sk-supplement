@@ -69,6 +69,12 @@ const onPreWorkoutWarnings =
 const onPreWorkoutClaims =
   "برای انرژی، تمرکز، قدرت و عملکرد\n۱۷۵ میلی‌گرم کافئین از منابع طبیعی در هر وعده\n۳٫۴ گرم کراتین مونوهیدرات در هر وعده\n۲۵۰ میلی‌گرم پرفورملون (عصاره‌ی هندوانه) در هر وعده\n۱٫۵ گرم بتا-آلانین در هر وعده\nادعاهای سلامت مورد تأیید اتحادیه‌ی اروپا: ویتامین‌های B1، B3، B5، B6 و B12 به متابولیسم طبیعی تولید انرژی کمک می‌کنند؛ کراتین عملکرد بدنی را در تمرین‌های کوتاه‌مدت، پرشدت و پشت‌سرهم افزایش می‌دهد";
 
+// Shared by both Syntha-6 flavours on BSN's US site.
+const bsnSynthaUsage =
+  "۱ اسکوپ را با ۱۲۰ تا ۱۵۰ میلی‌لیتر (۴ تا ۵ اونس) آب سرد یا نوشیدنی دلخواه مخلوط کنید؛ هر زمانی از روز: بعد از تمرین، بین وعده‌ها یا به‌عنوان میان‌وعده. برای پروتئین بیشتر و طعم میلک‌شیکی، با شیر بدون چربی یا کم‌چرب مخلوط کنید.";
+const bsnSynthaClaims =
+  "۲۲ گرم پروتئین در هر وعده\n۱۰ گرم اسید آمینه‌ی ضروری طبیعی در هر وعده\nپروتئین برای هر زمانی از روز\nبه گفته‌ی سازنده، همراه با تمرین مقاومتی منظم از عضله‌سازی و ریکاوری پشتیبانی می‌کند (این ادعا توسط FDA ارزیابی نشده است)";
+
 const products: BrandProduct[] = [
   // Optimum Nutrition
   {
@@ -1440,6 +1446,63 @@ const products: BrandProduct[] = [
     id: "bsn1",
     name: "سینتا ۶ - Syntha-6",
     slug: "bsn-syntha-6",
+    groupSlug: "bsn-syntha-6",
+    flavor: "میلک‌شیک شکلات",
+    size: "۱٫۳۲ کیلوگرم",
+    imageUrl: "/images/products/bsn-syntha-6.webp",
+    // Pack photo from BSN's US site (gobsn.com/products/syntha-6-protein),
+    // Chocolate Milkshake 2.91 lb / 28 servings. The site's only facts panel
+    // is for Blueberry Pancake (bsn1b), so this flavour has just what its
+    // pack front shows: 22 g protein and 10 g essential amino acids.
+    description:
+      "سینتا ۶ بی‌اس‌ان با طعم میلک‌شیک شکلات؛ ماتریکس پروتئینی فوق‌ممتاز از چند منبع پروتئین (طبق سایت سازنده: کنسانتره و ایزوله‌ی پروتئین وی، کازئینات کلسیم، کازئین میسلار، ایزوله‌ی پروتئین شیر و آلبومین تخم‌مرغ) برای هر زمانی از روز. هر وعده ۲۲ گرم پروتئین و ۱۰ گرم اسید آمینه‌ی ضروری طبیعی دارد و بسته‌ی ۱٫۳۲ کیلوگرمی ۲۸ وعده است.",
+    servingSize: "۱ اسکوپ",
+    nutritionFacts: [
+      { label: "پروتئین", amount: "۲۲ گرم" },
+      { label: "اسیدهای آمینه‌ی ضروری (طبیعی)", amount: "۱۰ گرم" },
+    ],
+    usage: bsnSynthaUsage,
+    // The site lists milk and egg proteins; this flavour's full ingredient
+    // and allergen list isn't published there.
+    warnings: "حساسیت‌زاها: حاوی شیر و تخم‌مرغ (طبق منابع پروتئینی که سایت سازنده نام برده است).",
+    manufacturerClaims: bsnSynthaClaims,
+    brand: "BSN",
+    price: 2350000,
+    categorySlug: "protein",
+  },
+  {
+    id: "bsn1b",
+    name: "سینتا ۶ - Syntha-6",
+    slug: "bsn-syntha-6-blueberry-pancake",
+    groupSlug: "bsn-syntha-6",
+    flavor: "پنکیک بلوبری",
+    size: "۱٫۳۲ کیلوگرم",
+    imageUrl: "/images/products/bsn-syntha-6-blueberry-pancake.webp",
+    // Pack photo and the Nutrition Facts panel image from BSN's US site
+    // (Blueberry Pancake, 28 servings): 28 × 47 g ≈ 1.32 kg; every row
+    // matches its %DV.
+    description:
+      "سینتا ۶ بی‌اس‌ان با طعم پنکیک بلوبری؛ ماتریکس پروتئینی فوق‌ممتاز از چند منبع پروتئین برای هر زمانی از روز. هر وعده (۴۷ گرم) ۲۲ گرم پروتئین، ۱۰ گرم اسید آمینه‌ی ضروری طبیعی و ۲۰۰ کیلوکالری دارد و بسته‌ی ۱٫۳۲ کیلوگرمی ۲۸ وعده است.\nمواد تشکیل‌دهنده: ماتریکس پروتئین (کنسانتره‌ی پروتئین وی، کازئینات کلسیم، ایزوله‌ی پروتئین وی هیدرولیزه، ایزوله‌ی پروتئین وی، کازئین میسلار، ایزوله‌ی پروتئین شیر)، پلی‌دکستروز، کریمر (روغن آفتابگردان، شربت ذرت جامد، کازئینات سدیم، مونو و دی‌گلیسریدها، دی‌پتاسیم فسفات، تری‌کلسیم فسفات، لسیتین سویا، توکوفرول‌ها)، مالتودکسترین، طعم‌دهنده‌ی طبیعی و مصنوعی، پودر MCT (تری‌گلیسریدهای با زنجیره‌ی متوسط، دی‌اکسید سیلیکون، مالتودکسترین)، لسیتین آفتابگردان و/یا سویا، صمغ سلولز، نمک، سوکرالوز و رنگ‌های آبی ۲ و قرمز ۴۰.",
+    servingSize: "۴۷ گرم (حدود ۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۲۰۰ کیلوکالری" },
+      { label: "چربی", amount: "۵ گرم" },
+      { label: "چربی اشباع", amount: "۲ گرم" },
+      { label: "کلسترول", amount: "۹۰ میلی‌گرم" },
+      { label: "سدیم", amount: "۲۰۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۱۶ گرم" },
+      { label: "فیبر", amount: "۶ گرم" },
+      { label: "قندها", amount: "۳ گرم" },
+      { label: "قند افزوده", amount: "۱ گرم" },
+      { label: "پروتئین", amount: "۲۲ گرم" },
+      { label: "کلسیم", amount: "۱۲۰ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۱۹۰ میلی‌گرم" },
+      { label: "فسفر", amount: "۱۴۰ میلی‌گرم" },
+      { label: "منیزیم", amount: "۱۵ میلی‌گرم" },
+    ],
+    usage: bsnSynthaUsage,
+    warnings: "حساسیت‌زاها: حاوی شیر و سویا.",
+    manufacturerClaims: bsnSynthaClaims,
     brand: "BSN",
     price: 2350000,
     categorySlug: "protein",
@@ -1448,9 +1511,114 @@ const products: BrandProduct[] = [
     id: "bsn2",
     name: "ان‌او اکسپلود - N.O.-Xplode",
     slug: "bsn-no-xplode",
+    groupSlug: "bsn-no-xplode",
+    flavor: "بلو رز (تمشک آبی)",
+    size: "۲۹۶ گرم",
+    imageUrl: "/images/products/bsn-no-xplode.webp",
+    // Pack photo and Supplement Facts panel image from BSN's US site
+    // (gobsn.com/products/no-xplode-pre-workout, Blue Raz 16 servings):
+    // 16 × 18.5 g = 296 g; every %DV row checks out. Caffeine (275 mg, on
+    // the pack front) and beta-alanine (1.8 g, page text) sit inside the
+    // proprietary blends. The site gives no warnings, so only the caffeine
+    // content is stated.
+    description:
+      "ان‌او اکسپلود بی‌اس‌ان با طعم بلو رز؛ پیش‌تمرین افسانه‌ای (اولین پیش‌تمرین کامل، از ۲۰۰۴) برای انرژی انفجاری، تمرکز، پمپ و استقامت. هر وعده (۱۸٫۵ گرم) ۲۷۵ میلی‌گرم کافئین دارد و قوطی ۲۹۶ گرمی ۱۶ وعده است.\nترکیب اختصاصی N.O.-XPLODE: ماتریکس میوژنیک ۵٫۱ گرم (کراتین مونوهیدرات، تورین، دی‌کلسیم فسفات، دی‌سدیم فسفات، AstraGin®)؛ اندورا شات ۲٫۹ گرم (بتا-آلانین، بی‌کربنات پتاسیم، بی‌کربنات سدیم، اکسید منیزیم، کوله‌کلسیفرول)؛ ترمیک انرژی ۱٫۳ گرم (ان-استیل تیروزین، ال-تیروزین، کافئین بی‌آب، بیوفلاونوئید گریپ‌فروت)؛ ان‌او آلفا فیوژن ۱ گرم (ال-سیترولین مالات، عصاره‌ی ریشه‌ی دانشن، عصاره‌ی پوست انگور، عصاره‌ی آمله (CAPROS®)، عصاره‌ی زالزالک، فولیک اسید)؛ شاک کامپوزیت ۲۹۰ میلی‌گرم (DMAE بیتارترات، ال-فنیل‌آلانین، نیکوتینیک اسید، کلسیم دی-پانتوتنات، عصاره‌ی هوپرزیا، تیامین، پیریدوکسین، سیانوکوبالامین).\nسایر مواد: طعم‌دهنده‌ی طبیعی و مصنوعی، سیتریک اسید، مالیک اسید، سیلیکات کلسیم، دی‌اکسید سیلیکون، سوکرالوز، آسه‌سولفام پتاسیم و رنگ‌های آبی ۱ و آبی ۲.",
+    servingSize: "۱۸٫۵ گرم (حدود ۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۲۰ کیلوکالری" },
+      { label: "کربوهیدرات", amount: "۵ گرم" },
+      { label: "ویتامین D", amount: "۱۲٫۵ میکروگرم" },
+      { label: "تیامین (B1)", amount: "۲ میلی‌گرم" },
+      { label: "نیاسین", amount: "۲۰ میلی‌گرم" },
+      { label: "ویتامین B6", amount: "۲ میلی‌گرم" },
+      { label: "فولات", amount: "۳۳۰ میکروگرم DFE" },
+      { label: "ویتامین B12", amount: "۶ میکروگرم" },
+      { label: "پانتوتنیک اسید", amount: "۱۰ میلی‌گرم" },
+      { label: "کلسیم", amount: "۴۰ میلی‌گرم" },
+      { label: "منیزیم", amount: "۱۲۵ میلی‌گرم" },
+      { label: "سدیم", amount: "۱۰۰ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۲۰۰ میلی‌گرم" },
+      { label: "ماتریکس میوژنیک", amount: "۵٫۱ گرم" },
+      { label: "اندورا شات", amount: "۲٫۹ گرم" },
+      { label: "ترمیک انرژی", amount: "۱٫۳ گرم" },
+      { label: "ان‌او آلفا فیوژن", amount: "۱ گرم" },
+      { label: "شاک کامپوزیت", amount: "۲۹۰ میلی‌گرم" },
+      { label: "کافئین (روی بسته)", amount: "۲۷۵ میلی‌گرم" },
+      { label: "بتا-آلانین (طبق سایت سازنده)", amount: "۱٫۸ گرم" },
+    ],
+    usage:
+      "۱۸٫۵ گرم (حدود ۱ اسکوپ) را با ۱۲۰ تا ۱۸۰ میلی‌لیتر (۴ تا ۶ اونس) آب سرد مخلوط کنید و ۲۰ تا ۳۰ دقیقه پیش از تمرین مصرف کنید. تکان ندهید؛ پودر را هم بزنید.",
+    warnings: "حاوی ۲۷۵ میلی‌گرم کافئین در هر وعده.",
+    manufacturerClaims:
+      "انرژی انفجاری، تمرکز شدید، پمپ و استقامت بیشتر\nاولین پیش‌تمرین کامل، عرضه‌شده در ۲۰۰۴ (به گفته‌ی سازنده)\nساخت آمریکا\n(این ادعاها توسط FDA ارزیابی نشده است)",
     brand: "BSN",
     price: 1450000,
     categorySlug: "pre-workout",
+  },
+  {
+    id: "bsn4",
+    name: "کراتین - Creatine",
+    slug: "bsn-creatine",
+    groupSlug: "bsn-creatine",
+    flavor: "بدون طعم",
+    size: "۳۰۹ گرم",
+    imageUrl: "/images/products/bsn-creatine.webp",
+    // Pack photo and Supplement Facts panel image from BSN's US site
+    // (gobsn.com/products/creatine): 60 × 5 g; the pack's net weight is
+    // 309 g. The site gives no warnings.
+    description:
+      "کراتین بی‌اس‌ان، بدون طعم؛ کراتین مونوهیدرات میکرونیزه برای حل‌شدن سریع، بدون پرکننده و افزودنی، مناسب برای ترکیب با مکمل‌های دیگر. هر وعده (۵ گرم) ۵ گرم کراتین مونوهیدرات دارد و قوطی ۳۰۹ گرمی ۶۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات میکرونیزه (سایر مواد: ندارد).",
+    servingSize: "۵ گرم (حدود ۱ اسکوپ)",
+    nutritionFacts: [{ label: "کراتین مونوهیدرات میکرونیزه", amount: "۵ گرم" }],
+    usage:
+      "۵ گرم (حدود ۱ اسکوپ) را با ۲۴۰ تا ۳۵۰ میلی‌لیتر (۸ تا ۱۲ اونس) آب یا نوشیدنی دلخواه مخلوط کنید؛ بعد از تمرین یا هر زمانی از روز.",
+    manufacturerClaims:
+      "۵ گرم کراتین مونوهیدرات در هر وعده\nبدون پرکننده و افزودنی\nمیکرونیزه برای حل‌شدن سریع\nبه گفته‌ی سازنده، از قدرت و توان عضله و بازچرخش ATP در تمرین پرشدت پشتیبانی می‌کند (این ادعا توسط FDA ارزیابی نشده است)",
+    brand: "BSN",
+    price: 750000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "bsn5",
+    name: "ترو مس - گینر - True-Mass",
+    slug: "bsn-true-mass",
+    groupSlug: "bsn-true-mass",
+    flavor: "میلک‌شیک شکلات",
+    size: "۲٫۶۴ کیلوگرم",
+    imageUrl: "/images/products/bsn-true-mass.webp",
+    // Pack photo and Nutrition Facts panel image from BSN's US site
+    // (gobsn.com/products/true-mass, Chocolate Milkshake 16 servings):
+    // 16 × 165 g ≈ 2.64 kg. The protein %DV (86%) is lower than 47 g ÷ 50 g
+    // because US labels base it on digestibility-corrected protein, so the
+    // row is kept. The site gives no warnings.
+    description:
+      "ترو مس بی‌اس‌ان با طعم میلک‌شیک شکلات؛ گینر فوق‌ممتاز با ماتریکس پروتئین و کربوهیدرات (نسبت حدود ۲ به ۱) و MCT، برای ورزشکارانی که به کالری بیشتری نیاز دارند. هر وعده (۱۶۵ گرم) ۶۹۰ کیلوکالری، ۴۷ گرم پروتئین و ۸۷ گرم کربوهیدرات دارد و ظرف ۲٫۶۴ کیلوگرمی ۱۶ وعده است.\nمواد تشکیل‌دهنده: ماتریکس پروتئین (کنسانتره‌ی پروتئین وی، کازئینات کلسیم، ایزوله‌ی پروتئین وی هیدرولیزه، ایزوله‌ی پروتئین وی، کازئین میسلار، ایزوله‌ی پروتئین شیر)، پلی‌دکستروز، کریمر (روغن آفتابگردان، شربت ذرت جامد، کازئینات سدیم، مونو و دی‌گلیسریدها، دی‌پتاسیم فسفات، تری‌کلسیم فسفات، لسیتین سویا، توکوفرول‌ها)، مالتودکسترین، طعم‌دهنده‌ی طبیعی و مصنوعی، پودر MCT (تری‌گلیسریدهای با زنجیره‌ی متوسط، دی‌اکسید سیلیکون، مالتودکسترین)، لسیتین آفتابگردان و/یا سویا، صمغ سلولز، نمک، سوکرالوز و رنگ‌های آبی ۲ و قرمز ۴۰.",
+    servingSize: "۱۶۵ گرم (حدود ۳ اسکوپ سرپر)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۶۹۰ کیلوکالری" },
+      { label: "چربی", amount: "۱۷ گرم" },
+      { label: "چربی اشباع", amount: "۵ گرم" },
+      { label: "کلسترول", amount: "۱۴۵ میلی‌گرم" },
+      { label: "سدیم", amount: "۳۸۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۸۷ گرم" },
+      { label: "فیبر", amount: "۵ گرم" },
+      { label: "قندها", amount: "۱۵ گرم" },
+      { label: "قند افزوده", amount: "۳ گرم" },
+      { label: "پروتئین", amount: "۴۷ گرم" },
+      { label: "کلسیم", amount: "۴۱۰ میلی‌گرم" },
+      { label: "آهن", amount: "۴٫۲ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۱۰۶۰ میلی‌گرم" },
+      { label: "فسفر", amount: "۴۷۰ میلی‌گرم" },
+      { label: "منیزیم", amount: "۱۰۰ میلی‌گرم" },
+    ],
+    usage:
+      "۱۶۵ گرم (حدود ۳ اسکوپ سرپر) را با ۴۷۰ میلی‌لیتر (۱۶ اونس) آب سرد یا نوشیدنی دلخواه مخلوط کنید؛ بعد از تمرین، بین وعده‌ها و/یا پیش از خواب. روزانه ۱ وعده یا به اندازه‌ی نیاز پروتئین و کالری‌تان. برای پروتئین و کالری بیشتر و طعم میلک‌شیکی، با شیر مخلوط کنید.",
+    warnings: "حساسیت‌زاها: حاوی شیر و سویا.",
+    manufacturerClaims:
+      "۴۷ گرم پروتئین و ۶۹۰ کالری در هر وعده\n۲۰ گرم اسید آمینه‌ی ضروری و ۹٫۵ گرم BCAA طبیعی در هر وعده\nبا تری‌گلیسریدهای زنجیره‌متوسط (MCT)\nبه گفته‌ی سازنده، همراه با تمرین مقاومتی منظم از عضله‌سازی و ریکاوری پشتیبانی می‌کند (این ادعا توسط FDA ارزیابی نشده است)",
+    brand: "BSN",
+    price: 2650000,
+    categorySlug: "protein",
   },
   {
     id: "bsn3",
