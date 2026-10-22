@@ -1,7 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
 import { Droplets, Dumbbell, Flame, ShoppingBag, Zap, type LucideIcon } from "lucide-react";
 import GradientOverlay from "@/components/ui/GradientOverlay";
+import ShowcaseTile from "@/components/home/ShowcaseTile";
 import type { CatalogProduct } from "@/data/catalog";
 import { pickShowcaseProducts, type ShowcaseProduct } from "@/lib/showcase";
 
@@ -15,7 +15,7 @@ const inCategory =
 interface Tile {
   href: string;
   name: string;
-  /** Background behind the product photos. */
+  /** The colors the tile turns while active (hovered, or mid-screen on a phone). */
   gradient: string;
   /** Shown instead of photos while the tile has none yet. */
   icon: LucideIcon;
@@ -73,9 +73,36 @@ const tiles: Tile[] = [
 
 const PRODUCTS_PER_ROW = 3;
 
+// Everything that changes when a tile is "active" is written twice: once for
+// mouse hover (group-hover) and once for a phone's scroll position
+// (group-data-active, set by ShowcaseTile). Classes are spelled out in full
+// because Tailwind only generates classes it finds whole in the source.
+const MOTION = "transition duration-700 ease-out";
+
 // The cards are zinc-100, the same light gray as the backdrop of the few
 // photos that aren't transparent cutouts, so those blend in too.
 const CARD_CLASS = "relative aspect-square rounded-2xl bg-zinc-100 shadow-xl";
+
+// Fan positions, [left, middle, right] by number of cards: at rest the packs
+// overlap; when active they spread apart and the middle one lifts.
+const FAN_CLASSES: Record<number, string[]> = {
+  1: ["z-10 group-hover:scale-110 group-hover:rotate-3 group-data-active:scale-110 group-data-active:rotate-3"],
+  2: [
+    "-rotate-6 group-hover:-translate-x-[15%] group-hover:-rotate-12 group-data-active:-translate-x-[15%] group-data-active:-rotate-12",
+    "z-10 rotate-6 group-hover:translate-x-[15%] group-hover:rotate-12 group-data-active:translate-x-[15%] group-data-active:rotate-12",
+  ],
+  3: [
+    "-rotate-8 group-hover:-translate-x-[12%] group-hover:-rotate-14 group-data-active:-translate-x-[12%] group-data-active:-rotate-14",
+    "z-10 scale-115 group-hover:-translate-y-[8%] group-hover:scale-125 group-data-active:-translate-y-[8%] group-data-active:scale-125",
+    "rotate-8 group-hover:translate-x-[12%] group-hover:rotate-14 group-data-active:translate-x-[12%] group-data-active:rotate-14",
+  ],
+};
+
+// Shelf rows slide in alternating directions when active.
+const SHELF_ROW_CLASSES = [
+  "group-hover:translate-x-[6%] group-data-active:translate-x-[6%]",
+  "group-hover:-translate-x-[6%] group-data-active:-translate-x-[6%]",
+];
 
 function PackImage({ product, sizes }: { product: ShowcaseProduct; sizes: string }) {
   return (
@@ -94,17 +121,15 @@ function PackImage({ product, sizes }: { product: ShowcaseProduct; sizes: string
 function ProductFan({ products }: { products: ShowcaseProduct[] }) {
   // [2nd, 1st, 3rd]: the best seller lands in the middle.
   const ordered = [products[1], products[0], products[2]].filter(Boolean);
-  const fanClasses =
-    ordered.length === 1
-      ? ["z-10"]
-      : ordered.length === 2
-        ? ["-rotate-6", "z-10 rotate-6"]
-        : ["-rotate-8", "z-10 scale-115", "rotate-8"];
+  const positions = FAN_CLASSES[ordered.length];
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center pb-10 transition-transform duration-700 ease-out group-hover:scale-110">
+    <div className="absolute inset-0 flex items-center justify-center pb-10">
       {ordered.map((product, index) => (
-        <div key={product.id} className={`mx-[-3%] w-[34%] ${CARD_CLASS} ${fanClasses[index]}`}>
+        <div
+          key={product.id}
+          className={`mx-[-3%] w-[34%] ${CARD_CLASS} ${MOTION} ${positions[index]}`}
+        >
           <PackImage product={product} sizes="(min-width: 768px) 12vw, 18vw" />
         </div>
       ))}
@@ -122,11 +147,11 @@ function ProductFan({ products }: { products: ShowcaseProduct[] }) {
  */
 function ProductShelves({ rows }: { rows: ShowcaseProduct[][] }) {
   return (
-    <div className="absolute inset-0 flex flex-col justify-center gap-[4%] px-[8%] pt-[6%] pb-16 transition-transform duration-700 ease-out group-hover:scale-105">
+    <div className="absolute inset-0 flex flex-col justify-center gap-[4%] px-[8%] pt-[6%] pb-16">
       {rows.map((row, index) => (
         <div
           key={index}
-          className="@container-size flex min-h-0 flex-1 items-center justify-center gap-[4%]"
+          className={`@container-size flex min-h-0 flex-1 items-center justify-center gap-[4%] ${MOTION} ${SHELF_ROW_CLASSES[index % 2]}`}
         >
           {row.map((product) => (
             <div key={product.id} className={`size-[min(100cqh,28cqw)] ${CARD_CLASS}`}>
@@ -141,24 +166,33 @@ function ProductShelves({ rows }: { rows: ShowcaseProduct[][] }) {
 
 export default function CategoryShowcase({ products }: { products: CatalogProduct[] }) {
   return (
-    <div dir="ltr" className="grid grid-cols-2 md:grid-cols-3 md:grid-rows-2 md:h-140">
+    // gap-px over a gray background draws hairlines between the tiles, which
+    // would otherwise blend into the page while they're white (or black).
+    <div
+      dir="ltr"
+      className="grid grid-cols-2 gap-px bg-zinc-200 md:grid-cols-3 md:grid-rows-2 md:h-140 dark:bg-zinc-800"
+    >
       {tiles.map((tile) => {
         const rows = tile.rows
           .map((matches) => pickShowcaseProducts(products, matches, PRODUCTS_PER_ROW))
           .filter((row) => row.length > 0);
         const Icon = tile.icon;
         return (
-          <Link
+          <ShowcaseTile
             key={tile.href}
             href={tile.href}
-            className={`group relative flex aspect-square items-end overflow-hidden bg-linear-to-br p-5 md:aspect-auto md:h-auto ${tile.gradient} ${tile.className ?? ""}`}
+            className={`group relative flex aspect-square items-end overflow-hidden bg-white p-5 md:aspect-auto md:h-auto dark:bg-black ${tile.className ?? ""}`}
           >
+            {/* Gradients can't be transitioned, so the colors are a layer that fades in. */}
+            <div
+              className={`absolute inset-0 bg-linear-to-br opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-data-active:opacity-100 ${tile.gradient}`}
+            />
             {rows.length === 0 ? (
               <div className="absolute inset-0 flex items-center justify-center pb-10">
                 <Icon
                   aria-hidden="true"
                   strokeWidth={1.25}
-                  className="h-2/5 w-2/5 text-white/35 transition-transform duration-700 ease-out group-hover:scale-125"
+                  className={`h-2/5 w-2/5 text-zinc-300 group-hover:scale-125 group-hover:text-white/40 group-data-active:scale-125 group-data-active:text-white/40 dark:text-zinc-700 ${MOTION}`}
                 />
               </div>
             ) : tile.rows.length > 1 ? (
@@ -166,11 +200,14 @@ export default function CategoryShowcase({ products }: { products: CatalogProduc
             ) : (
               <ProductFan products={rows[0]} />
             )}
-            <GradientOverlay />
-            <span className="relative text-lg font-bold text-white italic drop-shadow transition-colors hover:text-sky-400 sm:text-xl">
+            {/* The dark fade behind the name is only needed on the colors. */}
+            <div className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-data-active:opacity-100">
+              <GradientOverlay />
+            </div>
+            <span className="relative text-lg font-bold text-zinc-900 italic transition-colors duration-500 group-hover:text-white group-hover:drop-shadow group-data-active:text-white group-data-active:drop-shadow sm:text-xl dark:text-white">
               {tile.name}
             </span>
-          </Link>
+          </ShowcaseTile>
         );
       })}
     </div>
