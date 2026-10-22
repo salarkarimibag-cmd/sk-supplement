@@ -10,34 +10,50 @@ export interface ShowcaseProduct {
 }
 
 /**
- * Picks the products shown on a home-page category tile: only ones with a
- * real photo, at most one per brand (so the tile mixes brands), best sellers
- * first. Pass `null` as the category for the "all products" tile.
+ * Picks the product photos shown on a home-page category tile, from the
+ * products that `matches` accepts and that have a real photo, best sellers
+ * first. Brands go first (one product each, so the tile mixes brands); any
+ * slots left are filled with the next best sellers. Flavors and sizes of one
+ * product (same groupSlug) never appear twice.
  *
  * As real photos are added, more products qualify and the tiles fill up
  * on their own.
  */
 export function pickShowcaseProducts(
   products: CatalogProduct[],
-  categorySlug: string | null,
+  matches: (product: CatalogProduct) => boolean,
   limit: number
 ): ShowcaseProduct[] {
-  const seenBrands = new Set<string>();
-  const picked: ShowcaseProduct[] = [];
-
   const candidates = products
-    .filter((product) => categorySlug === null || product.categorySlug === categorySlug)
-    .filter((product) => product.imageUrl && product.imageUrl !== PLACEHOLDER_IMAGE)
+    .filter((product) => matches(product) && product.imageUrl && product.imageUrl !== PLACEHOLDER_IMAGE)
     .sort((a, b) => b.salesCount - a.salesCount);
 
-  for (const product of candidates) {
+  const picked: CatalogProduct[] = [];
+  const seenBrands = new Set<string>();
+  const seenGroups = new Set<string>();
+
+  function take(product: CatalogProduct) {
+    picked.push(product);
     // A brandless product counts as its own brand, so it never blocks others.
-    const brandKey = product.brand ?? `id:${product.id}`;
-    if (seenBrands.has(brandKey)) continue;
-    seenBrands.add(brandKey);
-    picked.push({ id: product.id, name: product.name, imageUrl: product.imageUrl });
-    if (picked.length === limit) break;
+    seenBrands.add(product.brand ?? `id:${product.id}`);
+    seenGroups.add(product.groupSlug ?? `id:${product.id}`);
   }
 
-  return picked;
+  // First pass: one product per brand.
+  for (const product of candidates) {
+    if (picked.length === limit) break;
+    if (seenBrands.has(product.brand ?? `id:${product.id}`)) continue;
+    if (seenGroups.has(product.groupSlug ?? `id:${product.id}`)) continue;
+    take(product);
+  }
+
+  // Second pass: fill what's left with the next best sellers of any brand.
+  for (const product of candidates) {
+    if (picked.length === limit) break;
+    if (picked.includes(product)) continue;
+    if (seenGroups.has(product.groupSlug ?? `id:${product.id}`)) continue;
+    take(product);
+  }
+
+  return picked.map(({ id, name, imageUrl }) => ({ id, name, imageUrl }));
 }

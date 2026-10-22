@@ -20,31 +20,42 @@ function makeProduct(overrides: Partial<CatalogProduct> = {}): CatalogProduct {
   } as CatalogProduct;
 }
 
+const isProtein = (product: CatalogProduct) => product.categorySlug === "protein";
+
 describe("pickShowcaseProducts", () => {
-  it("keeps only products of the category that have a real photo", () => {
+  it("keeps only matching products that have a real photo", () => {
     const products = [
       makeProduct({ id: "a", brand: "A" }),
       makeProduct({ id: "b", brand: "B", imageUrl: PLACEHOLDER_IMAGE }),
       makeProduct({ id: "c", brand: "C", categorySlug: "aminos" }),
     ];
-    expect(pickShowcaseProducts(products, "protein", 3).map((p) => p.id)).toEqual(["a"]);
+    expect(pickShowcaseProducts(products, isProtein, 3).map((p) => p.id)).toEqual(["a"]);
   });
 
-  it("takes one product per brand, best sellers first", () => {
+  it("shows each brand's best seller before a second product of any brand", () => {
     const products = [
-      makeProduct({ id: "a1", brand: "A", salesCount: 5 }),
-      makeProduct({ id: "a2", brand: "A", salesCount: 9 }),
-      makeProduct({ id: "b1", brand: "B", salesCount: 7 }),
+      makeProduct({ id: "a1", brand: "A", salesCount: 9 }),
+      makeProduct({ id: "a2", brand: "A", salesCount: 8 }),
+      makeProduct({ id: "b1", brand: "B", salesCount: 1 }),
     ];
-    expect(pickShowcaseProducts(products, "protein", 3).map((p) => p.id)).toEqual(["a2", "b1"]);
+    expect(pickShowcaseProducts(products, isProtein, 3).map((p) => p.id)).toEqual([
+      "a1",
+      "b1",
+      "a2",
+    ]);
   });
 
-  it("stops at the limit and looks at every category when given null", () => {
+  it("never shows two flavors of the same product", () => {
     const products = [
-      makeProduct({ id: "a", brand: "A", salesCount: 3 }),
-      makeProduct({ id: "b", brand: "B", salesCount: 2, categorySlug: "aminos" }),
-      makeProduct({ id: "c", brand: "C", salesCount: 1, categorySlug: "vitamins" }),
+      makeProduct({ id: "a1", brand: "A", groupSlug: "whey", salesCount: 9 }),
+      makeProduct({ id: "a2", brand: "A", groupSlug: "whey", salesCount: 8 }),
+      makeProduct({ id: "a3", brand: "A", salesCount: 1 }),
     ];
-    expect(pickShowcaseProducts(products, null, 2).map((p) => p.id)).toEqual(["a", "b"]);
+    expect(pickShowcaseProducts(products, isProtein, 3).map((p) => p.id)).toEqual(["a1", "a3"]);
+  });
+
+  it("stops at the limit", () => {
+    const products = ["a", "b", "c"].map((id) => makeProduct({ id, brand: id }));
+    expect(pickShowcaseProducts(products, () => true, 2)).toHaveLength(2);
   });
 });
