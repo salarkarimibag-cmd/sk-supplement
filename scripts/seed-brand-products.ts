@@ -29,6 +29,20 @@ const onGoldStandardWarnings =
 const onGoldStandardClaims =
   "۲۴ گرم پروتئین وی در هر وعده\nکمتر از ۱۲۰ کالری در هر وعده\n۵٫۵ گرم BCAA طبیعی در هر وعده\n۱۰۰٪ پروتئین آن از وی است\nپروتئین در کنار تمرین قدرتی منظم به رشد و حفظ توده‌ی عضلانی کمک می‌کند (ادعای سلامت مورد تأیید اتحادیه‌ی اروپا)";
 
+// Shared by every Micronised Creatine Powder variant on ON's German shop.
+const onCreatineWarnings =
+  "برای افراد زیر ۱۸ سال مناسب نیست.\nمکمل غذایی جایگزین رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم نیست.\nاز مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.\nدر جای خنک و خشک و دور از دسترس کودکان نگهداری شود.\nممکن است حاوی شیر، سویا، گلوتن، تخم‌مرغ، آجیل و بادام‌زمینی باشد.";
+const onCreatineClaims =
+  "۳ گرم کراتین در هر وعده\nکراتین میکرونیزه: ذرات ریزتر برای حل‌شدن بهتر و ماندن بیشتر در مایع\nکراتین عملکرد بدنی را در تمرین‌های کوتاه‌مدت، پرشدت و پشت‌سرهم افزایش می‌دهد؛ این اثر با مصرف روزانه‌ی ۳ گرم کراتین به دست می‌آید (ادعای سلامت مورد تأیید اتحادیه‌ی اروپا)";
+
+// Shared by both Opti-Men counts (90 and 180 tablets have the same label).
+const onOptiMenIngredients =
+  "مواد تشکیل‌دهنده: پرکننده (سلولز میکروکریستالی)، مخلوط اسیدهای آمینه‌ی شاخه‌دار (ال-لوسین، ال-ایزولوسین، ال-والین)، کربنات کلسیم، اسید اسکوربیک (ویتامین C)، ال-گلوتامین، اکسید منیزیم، ضدکلوخه (دی‌اکسید سیلیکون، اسیدهای چرب خوراکی، نمک‌های منیزیم اسیدهای چرب)، دی-آلفا-توکوفریل استات (ویتامین E)، پوشش (هیدروکسی‌پروپیل متیل‌سلولز، گلیسرین)، نیکوتین‌آمید (ویتامین B3)، پایدارکننده (کراس‌کارملوز سدیم)، آلفا-لیپوئیک اسید، روتین، کلسیم دی-پانتوتنات (ویتامین B5)، عصاره‌ی ریشه‌ی زنجبیل، عصاره‌ی برگ زیتون، عصاره‌ی برگ چای سبز، بیوفلاونوئیدهای مرکبات، بورات سدیم، اکسید روی، اینوزیتول، کولین بیتارترات، پیریدوکسین هیدروکلراید (ویتامین B6)، ال-سلنومتیونین، تیامین هیدروکلراید (ویتامین B1)، سولفات مس، کوله‌کلسیفرول (ویتامین D3)، ریبوفلاوین (ویتامین B2)، رتینیل استات (ویتامین A)، کلرید کروم، لوتئین، فیلوکینون (ویتامین K1)، سیانوکوبالامین (ویتامین B12)، پیکولینات کروم، مولیبدات سدیم، دی-بیوتین، یدید پتاسیم و فولیک اسید.";
+const onOptiMenWarnings =
+  "هر دوز روزانه ۲ میلی‌گرم اپی‌گالوکاتچین گالات (EGCG، از عصاره‌ی چای سبز) دارد؛ حداکثر مصرف روزانه‌ی EGCG ۸۰۰ میلی‌گرم است. ناشتا یا همراه محصولات دیگر حاوی چای سبز مصرف نکنید.\nبرای افراد زیر ۱۸ سال و زنان باردار یا شیرده مناسب نیست.\nمکمل غذایی جایگزین رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم نیست.\nاز مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.\nدر جای خنک و خشک و دور از دسترس کودکان نگهداری شود.";
+const onOptiMenClaims =
+  "۳۶ ماده‌ی مؤثر\nحمایت از متابولیسم و عملکرد سیستم ایمنی\nکاهش خستگی\nادعاهای سلامت مورد تأیید اتحادیه‌ی اروپا: تیامین، نیاسین، پانتوتنیک اسید و ویتامین‌های B6 و B12 به متابولیسم طبیعی تولید انرژی کمک می‌کنند؛ بیوتین، روی و کروم به متابولیسم طبیعی درشت‌مغذی‌ها کمک می‌کنند؛ روی به عملکرد طبیعی سیستم ایمنی و عملکرد شناختی طبیعی کمک می‌کند؛ ویتامین‌های C، B2، B3، B5، B12 و فولیک اسید به کاهش خستگی کمک می‌کنند؛ منیزیم به عملکرد طبیعی عضلات کمک می‌کند؛ پانتوتنیک اسید به عملکرد ذهنی طبیعی کمک می‌کند";
+
 const products: BrandProduct[] = [
   // Optimum Nutrition
   {
@@ -281,8 +295,114 @@ const products: BrandProduct[] = [
     id: "on2",
     name: "کراتین میکرونیزه - Micronized Creatine Powder",
     slug: "on-micronized-creatine",
+    groupSlug: "on-micronized-creatine",
+    flavor: "بدون طعم",
+    size: "۳۱۷ گرم",
+    imageUrl: "/images/products/on-micronized-creatine.webp",
+    // Photos and label details from ON's German shop (de-de,
+    // micronised-creatine-powder); the shop has no facts table. Every pack
+    // says 3 g creatine per serving. The unflavoured serving is the 3.4 g of
+    // creatine monohydrate the description names (634 g ÷ 186 = 3.4 g); the
+    // label record's "4.5 g" belongs to the flavoured tubs, and its 88
+    // servings for 317 g is overridden by the pack photo's 93 (317 ÷ 3.4).
+    description:
+      "کراتین میکرونیزه‌ی اپتیموم نوتریشن، بدون طعم؛ مکمل غذایی پودر کراتین مونوهیدرات که ذراتش برای حل‌شدن بهتر ریزتر شده است. هر وعده (۳٫۴ گرم) ۳ گرم کراتین دارد و بسته‌ی ۳۱۷ گرمی ۹۳ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات.",
+    servingSize: "۳٫۴ گرم (حدود ۱ قاشق چای‌خوری سرپر)",
+    nutritionFacts: [
+      { label: "کراتین مونوهیدرات", amount: "۳٫۴ گرم" },
+      { label: "کراتین", amount: "۳ گرم" },
+    ],
+    usage:
+      "روزانه ۱ وعده (۳٫۴ گرم، حدود ۱ قاشق چای‌خوری سرپر) را در ۲۵۰ میلی‌لیتر آب سرد، آبمیوه یا نوشیدنی دلخواه حل کنید؛ پیش یا بعد از تمرین. برای حفظ سطح کراتین عضلات، مصرف روزانه توصیه می‌شود.",
+    warnings: onCreatineWarnings,
+    manufacturerClaims: onCreatineClaims,
     brand: "Optimum Nutrition",
     price: 990000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "on2b",
+    name: "کراتین میکرونیزه - Micronized Creatine Powder",
+    slug: "on-micronized-creatine-634g",
+    groupSlug: "on-micronized-creatine",
+    flavor: "بدون طعم",
+    size: "۶۳۴ گرم",
+    imageUrl: "/images/products/on-micronized-creatine-634g.webp",
+    description:
+      "کراتین میکرونیزه‌ی اپتیموم نوتریشن، بدون طعم؛ مکمل غذایی پودر کراتین مونوهیدرات که ذراتش برای حل‌شدن بهتر ریزتر شده است. هر وعده (۳٫۴ گرم) ۳ گرم کراتین دارد و بسته‌ی ۶۳۴ گرمی ۱۸۶ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات.",
+    servingSize: "۳٫۴ گرم (حدود ۱ قاشق چای‌خوری سرپر)",
+    nutritionFacts: [
+      { label: "کراتین مونوهیدرات", amount: "۳٫۴ گرم" },
+      { label: "کراتین", amount: "۳ گرم" },
+    ],
+    usage:
+      "روزانه ۱ وعده (۳٫۴ گرم، حدود ۱ قاشق چای‌خوری سرپر) را در ۲۵۰ میلی‌لیتر آب سرد، آبمیوه یا نوشیدنی دلخواه حل کنید؛ پیش یا بعد از تمرین. برای حفظ سطح کراتین عضلات، مصرف روزانه توصیه می‌شود.",
+    warnings: onCreatineWarnings,
+    manufacturerClaims: onCreatineClaims,
+    brand: "Optimum Nutrition",
+    price: 1650000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "on2c",
+    name: "کراتین میکرونیزه - Micronized Creatine Powder",
+    slug: "on-micronized-creatine-fruit-punch",
+    groupSlug: "on-micronized-creatine",
+    flavor: "فروت پانچ",
+    size: "۳۶۰ گرم",
+    imageUrl: "/images/products/on-micronized-creatine-fruit-punch.webp",
+    // Flavoured tubs: 4.5 g scoop (360 g ÷ 80 = 4.5 g), 3 g creatine per the
+    // pack; the shop gives no amount of creatine monohydrate for them.
+    description:
+      "کراتین میکرونیزه‌ی اپتیموم نوتریشن با طعم فروت پانچ؛ مکمل غذایی پودر کراتین مونوهیدرات با شیرین‌کننده. هر وعده (۴٫۵ گرم) ۳ گرم کراتین دارد و بسته‌ی ۳۶۰ گرمی ۸۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات، اسیدی‌کننده‌ها (سیتریک اسید، مالیک اسید)، طعم‌دهنده‌ها، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم)، نمک و رنگ (آبی درخشان FCF).",
+    servingSize: "۴٫۵ گرم (۱ اسکوپ صاف)",
+    nutritionFacts: [{ label: "کراتین", amount: "۳ گرم" }],
+    usage:
+      "روزانه ۱ وعده (۱ اسکوپ صاف، ۴٫۵ گرم) را در ۲۴۰ میلی‌لیتر آب سرد حل کنید و مصرف کنید.",
+    warnings: onCreatineWarnings,
+    manufacturerClaims: onCreatineClaims,
+    brand: "Optimum Nutrition",
+    price: 990000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "on2d",
+    name: "کراتین میکرونیزه - Micronized Creatine Powder",
+    slug: "on-micronized-creatine-blue-raspberry",
+    groupSlug: "on-micronized-creatine",
+    flavor: "تمشک آبی",
+    size: "۳۶۰ گرم",
+    imageUrl: "/images/products/on-micronized-creatine-blue-raspberry.webp",
+    description:
+      "کراتین میکرونیزه‌ی اپتیموم نوتریشن با طعم تمشک آبی؛ مکمل غذایی پودر کراتین مونوهیدرات با شیرین‌کننده. هر وعده (۴٫۵ گرم) ۳ گرم کراتین دارد و بسته‌ی ۳۶۰ گرمی ۸۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات، اسیدی‌کننده‌ها (سیتریک اسید، مالیک اسید)، طعم‌دهنده‌ها، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم)، نمک و رنگ (آبی درخشان FCF).",
+    servingSize: "۴٫۵ گرم (۱ اسکوپ صاف)",
+    nutritionFacts: [{ label: "کراتین", amount: "۳ گرم" }],
+    usage:
+      "روزانه ۱ وعده (۱ اسکوپ صاف، ۴٫۵ گرم) را در ۲۵۰ میلی‌لیتر آب سرد حل کنید و مصرف کنید.",
+    warnings: onCreatineWarnings,
+    manufacturerClaims: onCreatineClaims,
+    brand: "Optimum Nutrition",
+    price: 990000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "on2e",
+    name: "کراتین میکرونیزه - Micronized Creatine Powder",
+    slug: "on-micronized-creatine-orange",
+    groupSlug: "on-micronized-creatine",
+    flavor: "پرتقال",
+    size: "۲۴۷٫۵ گرم",
+    imageUrl: "/images/products/on-micronized-creatine-orange.webp",
+    description:
+      "کراتین میکرونیزه‌ی اپتیموم نوتریشن با طعم پرتقال؛ مکمل غذایی پودر کراتین مونوهیدرات با شیرین‌کننده. هر وعده (۴٫۵ گرم) ۳ گرم کراتین دارد و بسته‌ی ۲۴۷٫۵ گرمی ۵۵ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات، طعم‌دهنده‌ها، اسیدی‌کننده‌ها (سیتریک اسید، مالیک اسید)، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم)، کنسانتره‌ی چغندر، نمک و رنگ (ریبوفلاوین).",
+    servingSize: "۴٫۵ گرم (۱ اسکوپ صاف)",
+    nutritionFacts: [{ label: "کراتین", amount: "۳ گرم" }],
+    usage:
+      "روزانه ۱ وعده (۱ اسکوپ صاف، ۴٫۵ گرم) را در ۲۵۰ میلی‌لیتر آب سرد حل کنید و مصرف کنید.",
+    warnings: onCreatineWarnings,
+    manufacturerClaims: onCreatineClaims,
+    brand: "Optimum Nutrition",
+    price: 750000,
     categorySlug: "creatine",
   },
   {
@@ -314,8 +434,39 @@ const products: BrandProduct[] = [
     id: "on3",
     name: "مولتی ویتامین آقایان - Opti-Men",
     slug: "on-opti-men",
+    groupSlug: "on-opti-men",
+    size: "۹۰ قرص",
+    imageUrl: "/images/products/on-opti-men.webp",
+    // Photo and label details from ON's German shop (de-de,
+    // opti-men-multivitamin-tablets). No shop (de, gb, fr) gives the amount
+    // of each vitamin and mineral, so the facts table stays empty. The pack
+    // says 36 active ingredients (the shop text says 38); the pack wins.
+    description:
+      "اپتی‌من اپتیموم نوتریشن؛ مولتی ویتامین مخصوص آقایان فعال، مکمل غذایی با ویتامین‌ها، مواد معدنی، اسیدهای آمینه و عصاره‌های گیاهی (۳۶ ماده‌ی مؤثر). هر وعده ۳ قرص است و قوطی ۹۰ قرصی ۳۰ وعده است.\n" + onOptiMenIngredients,
+    servingSize: "۳ قرص",
+    usage: "روزانه ۳ قرص همراه غذا مصرف کنید.",
+    warnings: onOptiMenWarnings,
+    manufacturerClaims: onOptiMenClaims,
     brand: "Optimum Nutrition",
     price: 1150000,
+    categorySlug: "vitamins",
+  },
+  {
+    id: "on3b",
+    name: "مولتی ویتامین آقایان - Opti-Men",
+    slug: "on-opti-men-180",
+    groupSlug: "on-opti-men",
+    size: "۱۸۰ قرص",
+    imageUrl: "/images/products/on-opti-men-180.webp",
+    // Same label as on3; only the count differs.
+    description:
+      "اپتی‌من اپتیموم نوتریشن؛ مولتی ویتامین مخصوص آقایان فعال، مکمل غذایی با ویتامین‌ها، مواد معدنی، اسیدهای آمینه و عصاره‌های گیاهی (۳۶ ماده‌ی مؤثر). هر وعده ۳ قرص است و قوطی ۱۸۰ قرصی ۶۰ وعده است.\n" + onOptiMenIngredients,
+    servingSize: "۳ قرص",
+    usage: "روزانه ۳ قرص همراه غذا مصرف کنید.",
+    warnings: onOptiMenWarnings,
+    manufacturerClaims: onOptiMenClaims,
+    brand: "Optimum Nutrition",
+    price: 1990000,
     categorySlug: "vitamins",
   },
 
