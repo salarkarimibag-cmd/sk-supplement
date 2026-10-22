@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import DesktopMenu from "../DesktopMenu";
+import CategoryMenu from "../CategoryMenu";
 import MobileMenu from "../MobileMenu";
 import { useCart } from "@/context/CartContext";
 import ThemeToggle from "@/components/ui/ThemeToggle";
@@ -32,6 +32,7 @@ export default function Header({
   const { totalCount, openCart } = useCart();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const navSections = buildNavSections(categories, brands);
+  const linksOf = (id: string) => navSections.find((section) => section.id === id)?.links ?? [];
 
   return (
     <>
@@ -52,7 +53,11 @@ export default function Header({
           ) : (
             <>
               <div className="flex items-center gap-0 md:gap-2">
-                <MobileMenu sections={navSections} user={user} />
+                <MobileMenu
+                  categoryLinks={linksOf("categories")}
+                  brandLinks={linksOf("brands")}
+                  user={user}
+                />
 
                 <Link href="/" className="-ml-2 flex items-center md:ml-0">
                   <Image
@@ -66,7 +71,7 @@ export default function Header({
                 </Link>
 
                 <div className="hidden md:block">
-                  <DesktopMenu sections={navSections} />
+                  <CategoryMenu sections={navSections} />
                 </div>
               </div>
 
