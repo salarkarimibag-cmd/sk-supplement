@@ -53,6 +53,22 @@ const onSeriousMassWarnings =
 const onSeriousMassClaims =
   "بیش از ۱۲۵۰ کالری در هر وعده برای افزایش وزن و عضله‌سازی\n۵۰ گرم پروتئین در هر وعده\nحدود ۲۵۰ گرم کربوهیدرات در هر وعده\n۳ گرم کراتین افزوده در هر وعده\nبا ویتامین‌ها و مواد معدنی\nادعاهای سلامت مورد تأیید اتحادیه‌ی اروپا: پروتئین در کنار تمرین قدرتی منظم به رشد و حفظ توده‌ی عضلانی کمک می‌کند؛ کربوهیدرات‌ها به بازیابی عملکرد طبیعی عضله پس از فعالیت بدنی بسیار شدید یا طولانی کمک می‌کنند (با مصرف ۴ گرم کربوهیدرات به ازای هر کیلوگرم وزن بدن در ۴ تا ۶ ساعت اول)";
 
+// Shared by every Gold Standard Pre-Workout flavour (EU version).
+const onPreWorkoutVitamins =
+  "نیکوتین‌آمید (ویتامین B3)، کلسیم دی-پانتوتنات (ویتامین B5)، سیانوکوبالامین (ویتامین B12)، عصاره‌ی فلفل سیاه، فولیک اسید، تیامین هیدروکلراید (ویتامین B1) و کوله‌کلسیفرول (ویتامین D3)";
+const onPreWorkoutFacts = [
+  { label: "کافئین (از منابع طبیعی)", amount: "۱۷۵ میلی‌گرم" },
+  { label: "کراتین مونوهیدرات", amount: "۳٫۴ گرم" },
+  { label: "بتا-آلانین", amount: "۱٫۵ گرم" },
+  { label: "پرفورملون (عصاره‌ی هندوانه)", amount: "۲۵۰ میلی‌گرم" },
+];
+const onPreWorkoutUsage =
+  "روزانه ۱ وعده (۱۱ گرم، حدود ۱ اسکوپ صاف) را در ۳۵۰ میلی‌لیتر آب سرد حل کنید و ۱۵ تا ۳۰ دقیقه پیش از تمرین مصرف کنید.\nدر جای خنک و خشک و دور از نور مستقیم خورشید نگهداری کنید.";
+const onPreWorkoutWarnings =
+  "حاوی کافئین (۱۷۵ میلی‌گرم در هر وعده). برای کودکان و زنان باردار توصیه نمی‌شود.\nمکمل غذایی جایگزین رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم نیست.\nاز مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.\nدور از دسترس کودکان نگهداری شود.\nداخل قوطی یک بسته‌ی رطوبت‌گیر هست؛ آن را نخورید و باز نکنید.\nممکن است حاوی شیر، گلوتن، تخم‌مرغ، سویا، آجیل و بادام‌زمینی باشد.";
+const onPreWorkoutClaims =
+  "برای انرژی، تمرکز، قدرت و عملکرد\n۱۷۵ میلی‌گرم کافئین از منابع طبیعی در هر وعده\n۳٫۴ گرم کراتین مونوهیدرات در هر وعده\n۲۵۰ میلی‌گرم پرفورملون (عصاره‌ی هندوانه) در هر وعده\n۱٫۵ گرم بتا-آلانین در هر وعده\nادعاهای سلامت مورد تأیید اتحادیه‌ی اروپا: ویتامین‌های B1، B3، B5، B6 و B12 به متابولیسم طبیعی تولید انرژی کمک می‌کنند؛ کراتین عملکرد بدنی را در تمرین‌های کوتاه‌مدت، پرشدت و پشت‌سرهم افزایش می‌دهد";
+
 const products: BrandProduct[] = [
   // Optimum Nutrition
   {
@@ -645,6 +661,86 @@ const products: BrandProduct[] = [
     brand: "Optimum Nutrition",
     price: 5450000,
     categorySlug: "protein",
+  },
+  {
+    id: "on5",
+    name: "گلد استاندارد پری‌ورک‌اوت - Gold Standard Pre-Workout",
+    slug: "on-gold-standard-pre-workout",
+    groupSlug: "on-gold-standard-pre-workout",
+    flavor: "فروت پانچ",
+    size: "۳۳۰ گرم",
+    imageUrl: "/images/products/on-gold-standard-pre-workout.webp",
+    // The US shop (en-us) has no label record and mislabelled photos, so the
+    // EU version from ON's UK shop (en-gb, gold-standard-pre-workout-powder-eu)
+    // is used: photos and ingredients per flavour. No shop gives a facts
+    // table; doses are from the pack (175 mg caffeine, 3.4 g creatine
+    // monohydrate, 250 mg Performelon) and the description (1.5 g
+    // beta-alanine). The description's "3 g creatine monohydrate" is
+    // overridden by the pack's 3.4 g (≈ 3 g creatine).
+    description: `گلد استاندارد پری‌ورک‌اوت اپتیموم نوتریشن با طعم فروت پانچ؛ مکمل پیش از تمرین با کافئین طبیعی، کراتین مونوهیدرات، بتا-آلانین و ویتامین‌های گروه B برای انرژی، تمرکز و عملکرد. هر وعده (۱۱ گرم) ۱۷۵ میلی‌گرم کافئین دارد و قوطی ۳۳۰ گرمی ۳۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات، بتا-آلانین، اسیدی‌کننده‌ها (سیتریک اسید، مالیک اسید، ال-تارتاریک اسید)، طعم‌دهنده‌ها، ضدکلوخه‌ها (سیلیکات کلسیم، دی‌اکسید سیلیکون)، ال-سیترولین، رنگ‌ها (قرمز چغندر، بتا-کاروتن، کورکومین)، استیل ال-کارنیتین هیدروکلراید، قوام‌دهنده‌ها (کربوکسی‌متیل‌سلولز سدیم، زانتان، کاراگینان)، ان-استیل ال-تیروزین، پیریدوکسین هیدروکلراید (ویتامین B6)، عصاره‌ی هندوانه، کافئین طبیعی، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم)، ${onPreWorkoutVitamins}.`,
+    servingSize: "۱۱ گرم (حدود ۱ اسکوپ صاف)",
+    nutritionFacts: onPreWorkoutFacts,
+    usage: onPreWorkoutUsage,
+    warnings: onPreWorkoutWarnings,
+    manufacturerClaims: onPreWorkoutClaims,
+    brand: "Optimum Nutrition",
+    price: 1350000,
+    categorySlug: "pre-workout",
+  },
+  {
+    id: "on5b",
+    name: "گلد استاندارد پری‌ورک‌اوت - Gold Standard Pre-Workout",
+    slug: "on-gold-standard-pre-workout-blue-raspberry",
+    groupSlug: "on-gold-standard-pre-workout",
+    flavor: "تمشک آبی",
+    size: "۳۳۰ گرم",
+    imageUrl: "/images/products/on-gold-standard-pre-workout-blue-raspberry.webp",
+    // The shop's list names spirulina powder twice; it is listed once here.
+    description: `گلد استاندارد پری‌ورک‌اوت اپتیموم نوتریشن با طعم تمشک آبی؛ مکمل پیش از تمرین با کافئین طبیعی، کراتین مونوهیدرات، بتا-آلانین و ویتامین‌های گروه B برای انرژی، تمرکز و عملکرد. هر وعده (۱۱ گرم) ۱۷۵ میلی‌گرم کافئین دارد و قوطی ۳۳۰ گرمی ۳۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات، بتا-آلانین، اسیدی‌کننده‌ها (سیتریک اسید، مالیک اسید، ال-تارتاریک اسید)، طعم‌دهنده، ضدکلوخه‌ها (سیلیکات کلسیم، دی‌اکسید سیلیکون)، ال-سیترولین، استیل ال-کارنیتین هیدروکلراید، قوام‌دهنده‌ها (کربوکسی‌متیل‌سلولز سدیم، زانتان، کاراگینان)، ان-استیل ال-تیروزین، پیریدوکسین هیدروکلراید (ویتامین B6)، عصاره‌ی هندوانه، کافئین طبیعی، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم)، پودر اسپیرولینا، ${onPreWorkoutVitamins}.`,
+    servingSize: "۱۱ گرم (حدود ۱ اسکوپ صاف)",
+    nutritionFacts: onPreWorkoutFacts,
+    usage: onPreWorkoutUsage,
+    warnings: onPreWorkoutWarnings,
+    manufacturerClaims: onPreWorkoutClaims,
+    brand: "Optimum Nutrition",
+    price: 1350000,
+    categorySlug: "pre-workout",
+  },
+  {
+    id: "on5c",
+    name: "گلد استاندارد پری‌ورک‌اوت - Gold Standard Pre-Workout",
+    slug: "on-gold-standard-pre-workout-green-apple",
+    groupSlug: "on-gold-standard-pre-workout",
+    flavor: "سیب سبز",
+    size: "۳۳۰ گرم",
+    imageUrl: "/images/products/on-gold-standard-pre-workout-green-apple.webp",
+    description: `گلد استاندارد پری‌ورک‌اوت اپتیموم نوتریشن با طعم سیب سبز؛ مکمل پیش از تمرین با کافئین طبیعی، کراتین مونوهیدرات، بتا-آلانین و ویتامین‌های گروه B برای انرژی، تمرکز و عملکرد. هر وعده (۱۱ گرم) ۱۷۵ میلی‌گرم کافئین دارد و قوطی ۳۳۰ گرمی ۳۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات، بتا-آلانین، اسیدی‌کننده‌ها (سیتریک اسید، مالیک اسید، ال-تارتاریک اسید)، طعم‌دهنده‌ها، ضدکلوخه‌ها (سیلیکات کلسیم، دی‌اکسید سیلیکون)، ال-سیترولین، استیل ال-کارنیتین هیدروکلراید، قوام‌دهنده‌ها (کربوکسی‌متیل‌سلولز سدیم، زانتان، کاراگینان)، ان-استیل ال-تیروزین، پیریدوکسین هیدروکلراید (ویتامین B6)، عصاره‌ی هندوانه، رنگ (لوتئین)، کافئین طبیعی، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم)، پودر اسپیرولینا، ${onPreWorkoutVitamins}.`,
+    servingSize: "۱۱ گرم (حدود ۱ اسکوپ صاف)",
+    nutritionFacts: onPreWorkoutFacts,
+    usage: onPreWorkoutUsage,
+    warnings: onPreWorkoutWarnings,
+    manufacturerClaims: onPreWorkoutClaims,
+    brand: "Optimum Nutrition",
+    price: 1350000,
+    categorySlug: "pre-workout",
+  },
+  {
+    id: "on5d",
+    name: "گلد استاندارد پری‌ورک‌اوت - Gold Standard Pre-Workout",
+    slug: "on-gold-standard-pre-workout-watermelon",
+    groupSlug: "on-gold-standard-pre-workout",
+    flavor: "هندوانه",
+    size: "۳۳۰ گرم",
+    imageUrl: "/images/products/on-gold-standard-pre-workout-watermelon.webp",
+    description: `گلد استاندارد پری‌ورک‌اوت اپتیموم نوتریشن با طعم هندوانه؛ مکمل پیش از تمرین با کافئین طبیعی، کراتین مونوهیدرات، بتا-آلانین و ویتامین‌های گروه B برای انرژی، تمرکز و عملکرد. هر وعده (۱۱ گرم) ۱۷۵ میلی‌گرم کافئین دارد و قوطی ۳۳۰ گرمی ۳۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات، بتا-آلانین، طعم‌دهنده‌ها، اسیدی‌کننده‌ها (سیتریک اسید، مالیک اسید، ال-تارتاریک اسید)، ضدکلوخه‌ها (سیلیکات کلسیم، دی‌اکسید سیلیکون)، ال-سیترولین، استیل ال-کارنیتین هیدروکلراید، قوام‌دهنده‌ها (کربوکسی‌متیل‌سلولز سدیم، زانتان، کاراگینان)، ان-استیل ال-تیروزین، پیریدوکسین هیدروکلراید (ویتامین B6)، عصاره‌ی هندوانه، کافئین طبیعی، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم)، رنگ (قرمز چغندر)، ${onPreWorkoutVitamins}.`,
+    servingSize: "۱۱ گرم (حدود ۱ اسکوپ صاف)",
+    nutritionFacts: onPreWorkoutFacts,
+    usage: onPreWorkoutUsage,
+    warnings: onPreWorkoutWarnings,
+    manufacturerClaims: onPreWorkoutClaims,
+    brand: "Optimum Nutrition",
+    price: 1350000,
+    categorySlug: "pre-workout",
   },
 
   // Dymatize
