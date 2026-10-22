@@ -21,9 +21,11 @@ function Section({ title, defaultOpen, children }: { title: string; defaultOpen?
       <summary className="group/summary flex cursor-pointer list-none items-center justify-between py-5 font-bold outline-none [&::-webkit-details-marker]:hidden">
         {title}
         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-zinc-200 text-zinc-900 transition-colors duration-200 group-hover/summary:bg-sky-600 group-hover/summary:text-white group-focus-visible/summary:bg-sky-600 group-focus-visible/summary:text-white dark:bg-zinc-700 dark:text-zinc-100">
+          {/* Optical centering: a chevron's weight sits where its arms are, so
+              ⌄ looks high and ⌃ looks low when merely box-centered; 1px fixes it. */}
           <ChevronDown
             aria-hidden="true"
-            className="h-4 w-4 transition-transform duration-300 group-open:rotate-180"
+            className="h-4 w-4 translate-y-px transition-transform duration-300 group-open:-translate-y-px group-open:rotate-180"
           />
         </span>
       </summary>
