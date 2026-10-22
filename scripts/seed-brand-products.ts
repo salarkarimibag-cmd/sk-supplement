@@ -785,10 +785,117 @@ const products: BrandProduct[] = [
   },
   {
     id: "sc3",
-    name: "کراتین مونوهیدرات - Creatine Monohydrate",
+    // \u200E (left-to-right mark) keeps "100%" with the Latin name that follows it.
+    name: "کراتین مونوهیدرات - \u200E100% Creatine Monohydrate",
     slug: "scitec-creatine-monohydrate",
+    groupSlug: "scitec-creatine-monohydrate",
+    flavor: "بدون طعم",
+    size: "۵۰۰ گرم",
+    imageUrl: "/images/products/scitec-creatine-monohydrate.webp",
+    // Label details from the product page of Scitec's German shop
+    // (scitecshop.de, p9581); claims from the pack photo.
+    description:
+      "۱۰۰٪ کراتین مونوهیدرات سایتک نوتریشن، بدون طعم؛ پودر نوشیدنی از کراتین مونوهیدرات میکرونیزه‌ی خالص. هر وعده (۳٫۴ گرم) ۳ گرم کراتین دارد و بسته‌ی ۵۰۰ گرمی ۱۴۷ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات میکرونیزه ۱۰۰٪.",
+    servingSize: "۳٫۴ گرم (۱/۲ اسکوپ)",
+    nutritionFacts: [
+      { label: "کراتین مونوهیدرات", amount: "۳۴۰۰ میلی‌گرم" },
+      { label: "کراتین", amount: "۳۰۰۰ میلی‌گرم" },
+    ],
+    usage:
+      "روزانه ۱ وعده (۳٫۴ گرم، ۱/۲ اسکوپ) را در ۳۰۰ میلی‌لیتر آب حل کنید و مصرف کنید. در روزهای تمرین ۳۰ دقیقه پیش از تمرین و در روزهای استراحت پیش از غذا. از مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.",
+    warnings:
+      "در مجموعه‌ای تولید می‌شود که شیر، تخم‌مرغ، سویا، بادام‌زمینی، آجیل، کرفس، ماهی، سخت‌پوستان و دی‌اکسید گوگرد را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "۳ گرم کراتین در هر وعده\nوگان\nبدون قند و بدون گلوتن\nکراتین عملکرد بدنی را در تمرین‌های کوتاه‌مدت و پرشدت افزایش می‌دهد (ادعای سلامت مورد تأیید اتحادیه‌ی اروپا)",
     brand: "Scitec Nutrition",
     price: 820000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "sc3s",
+    // \u200E (left-to-right mark) keeps "100%" with the Latin name that follows it.
+    name: "کراتین مونوهیدرات - \u200E100% Creatine Monohydrate",
+    slug: "scitec-creatine-monohydrate-300g",
+    groupSlug: "scitec-creatine-monohydrate",
+    flavor: "بدون طعم",
+    size: "۳۰۰ گرم",
+    imageUrl: "/images/products/scitec-creatine-monohydrate-300g.webp",
+    // Same facts as sc3 on Scitec's German shop (p2164); claims from the pack
+    // photo, which doesn't show the sugar-free and gluten-free marks.
+    description:
+      "۱۰۰٪ کراتین مونوهیدرات سایتک نوتریشن، بدون طعم؛ پودر نوشیدنی از کراتین مونوهیدرات میکرونیزه‌ی خالص. هر وعده (۳٫۴ گرم) ۳ گرم کراتین دارد و بسته‌ی ۳۰۰ گرمی ۸۸ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات میکرونیزه ۱۰۰٪.",
+    servingSize: "۳٫۴ گرم (۱/۲ اسکوپ)",
+    nutritionFacts: [
+      { label: "کراتین مونوهیدرات", amount: "۳۴۰۰ میلی‌گرم" },
+      { label: "کراتین", amount: "۳۰۰۰ میلی‌گرم" },
+    ],
+    usage:
+      "روزانه ۱ وعده (۳٫۴ گرم، ۱/۲ اسکوپ) را در ۳۰۰ میلی‌لیتر آب حل کنید و مصرف کنید. در روزهای تمرین ۳۰ دقیقه پیش از تمرین و در روزهای استراحت پیش از غذا. از مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.",
+    warnings:
+      "در مجموعه‌ای تولید می‌شود که شیر، تخم‌مرغ، سویا، بادام‌زمینی، آجیل، کرفس، ماهی، سخت‌پوستان و دی‌اکسید گوگرد را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "۳ گرم کراتین در هر وعده\nوگان\nکراتین عملکرد بدنی را در تمرین‌های کوتاه‌مدت و پرشدت افزایش می‌دهد (ادعای سلامت مورد تأیید اتحادیه‌ی اروپا)",
+    brand: "Scitec Nutrition",
+    price: 550000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "sc3l",
+    // \u200E (left-to-right mark) keeps "100%" with the Latin name that follows it.
+    name: "کراتین مونوهیدرات - \u200E100% Creatine Monohydrate",
+    slug: "scitec-creatine-monohydrate-1000g",
+    groupSlug: "scitec-creatine-monohydrate",
+    flavor: "بدون طعم",
+    size: "۱۰۰۰ گرم",
+    imageUrl: "/images/products/scitec-creatine-monohydrate-1000g.webp",
+    // The pack photo is the older label design. Facts from Scitec's German
+    // shop (p2166), whose table matches sc3. That page's older text also has a
+    // loading phase (body weight in kg ÷ 3 = grams a day for a week), which
+    // contradicts its own 3.4 g serving, so the current directions are used.
+    description:
+      "۱۰۰٪ کراتین مونوهیدرات سایتک نوتریشن، بدون طعم؛ پودر کراتین مونوهیدرات میکرونیزه‌ی خالص. هر وعده (۳٫۴ گرم) ۳ گرم کراتین دارد و بسته‌ی ۱۰۰۰ گرمی ۲۹۴ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات میکرونیزه ۱۰۰٪.",
+    servingSize: "۳٫۴ گرم (۱/۲ اسکوپ)",
+    nutritionFacts: [
+      { label: "کراتین مونوهیدرات", amount: "۳۴۰۰ میلی‌گرم" },
+      { label: "کراتین", amount: "۳۰۰۰ میلی‌گرم" },
+    ],
+    usage:
+      "روزانه ۱ وعده (۳٫۴ گرم، ۱/۲ اسکوپ) را در ۳۰۰ میلی‌لیتر آب حل کنید و مصرف کنید. در روزهای تمرین ۳۰ دقیقه پیش از تمرین و در روزهای استراحت پیش از غذا. در طول مصرف کراتین آب کافی بنوشید. از مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.",
+    warnings:
+      "در مجموعه‌ای تولید می‌شود که شیر، تخم‌مرغ، سویا، بادام‌زمینی، آجیل، کرفس، ماهی، سخت‌پوستان و دی‌اکسید گوگرد را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "۱۰۰٪ کراتین مونوهیدرات میکرونیزه\nبه گفته‌ی سازنده، کراتین مونوهیدرات در صدها کارآزمایی بالینی بررسی شده و ذخیره‌ی کل کراتین عضله را افزایش می‌دهد",
+    brand: "Scitec Nutrition",
+    price: 1450000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "sc3w",
+    // \u200E (left-to-right mark) keeps "100%" with the Latin name that follows it.
+    name: "کراتین مونوهیدرات - \u200E100% Creatine Monohydrate",
+    slug: "scitec-creatine-monohydrate-watermelon",
+    groupSlug: "scitec-creatine-monohydrate",
+    flavor: "هندوانه",
+    size: "۳۰۰ گرم",
+    imageUrl: "/images/products/scitec-creatine-monohydrate-watermelon.webp",
+    // The fruit in the photo hides the weight; 300 g and the label details are
+    // from Scitec's German shop (p17387): 5 g serving × 68% creatine
+    // monohydrate = 3.4 g, 3 g of it creatine, and 60 × 5 g = 300 g.
+    description:
+      "۱۰۰٪ کراتین مونوهیدرات سایتک نوتریشن با طعم هندوانه؛ پودر نوشیدنی بدون قند از کراتین مونوهیدرات میکرونیزه. هر وعده (۵ گرم) ۳ گرم کراتین دارد و بسته‌ی ۳۰۰ گرمی ۶۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات میکرونیزه ۶۸٪، طعم‌دهنده‌ها، حجم‌دهنده (پلی‌دکستروز)، اسیدی‌کننده (مالیک اسید)، کنسانتره‌ی رنگی خوراکی (مالتودکسترین، کنسانتره‌ی چغندر، سیتریک اسید)، شیرین‌کننده (سوکرالوز) و نمک.",
+    servingSize: "۵ گرم (۱ اسکوپ، معادل ۲ قاشق چای‌خوری)",
+    nutritionFacts: [
+      { label: "کراتین مونوهیدرات", amount: "۳۴۰۰ میلی‌گرم" },
+      { label: "کراتین", amount: "۳۰۰۰ میلی‌گرم" },
+    ],
+    usage:
+      "روزانه ۱ وعده (۵ گرم، ۱ اسکوپ یا ۲ قاشق چای‌خوری) را در ۲۵۰ میلی‌لیتر آب یا نوشیدنی دلخواه حل کنید و مصرف کنید. برای اندازه‌گیری دقیق از ترازوی گرمی استفاده کنید. از مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.",
+    warnings:
+      "مکمل غذایی جایگزین رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم نیست.\nدور از دسترس کودکان نگهداری شود.\nبرای افراد زیر ۱۸ سال، زنان باردار یا شیرده و افرادی که تحت درمان پزشکی هستند توصیه نمی‌شود.\nدر مجموعه‌ای تولید می‌شود که شیر، تخم‌مرغ، سویا، بادام‌زمینی، آجیل، کرفس، ماهی، سخت‌پوستان و دی‌اکسید گوگرد را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "۳ گرم کراتین در هر وعده\nتمام کراتین آن از کراتین مونوهیدرات است\nوگان\nبدون قند (حداکثر ۰٫۵ گرم قند در ۱۰۰ میلی‌لیتر نوشیدنی آماده)\nبدون گلوتن (حداکثر ۲۰ میلی‌گرم گلوتن در هر کیلوگرم نوشیدنی آماده)\nکراتین عملکرد بدنی را در تمرین‌های کوتاه‌مدت و پرشدت افزایش می‌دهد (ادعای سلامت مورد تأیید اتحادیه‌ی اروپا)",
+    brand: "Scitec Nutrition",
+    price: 600000,
     categorySlug: "creatine",
   },
   {
