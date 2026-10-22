@@ -24,7 +24,34 @@ const products: BrandProduct[] = [
     id: "on1",
     name: "وی گلد استاندارد - Gold Standard 100% Whey",
     slug: "on-gold-standard-whey",
-    imageUrl: "/images/products/on-gold-standard-whey.webp",
+    groupSlug: "on-gold-standard-whey",
+    flavor: "شکلات دوبل",
+    size: "۲٫۰۲ کیلوگرم",
+    imageUrl: "/images/products/on-gold-standard-whey-double-rich-chocolate.webp",
+    // Pack photo and label details from ON's German shop (de-de,
+    // gold-standard-100-whey-protein-powder-eu), Double Rich Chocolate
+    // 2.02 kg variant; its label record matches the photo (31 g scoop,
+    // 2020 g ÷ 31 g ≈ 65 servings). The old photo file stays until
+    // production is re-seeded with this imageUrl.
+    description:
+      "وی گلد استاندارد ۱۰۰٪ اپتیموم نوتریشن با طعم شکلات دوبل؛ پودر پروتئینی آماده‌ی مخلوط از ترکیب ایزوله، کنسانتره و ایزوله‌ی هیدرولیزه‌ی پروتئین وی. هر وعده (۳۱ گرم) ۲۴ گرم پروتئین، ۵٫۵ گرم BCAA طبیعی و ۱۱۶ کیلوکالری دارد و بسته‌ی ۲٫۰۲ کیلوگرمی ۶۵ وعده است.\nمواد تشکیل‌دهنده: ترکیب پروتئین وی ۹۳٪ (ایزوله‌ی پروتئین وی، کنسانتره‌ی پروتئین وی، ایزوله‌ی هیدرولیزه‌ی پروتئین وی (از شیر)، امولسیفایر لسیتین سویا)، پودر کاکائوی کم‌چرب، طعم‌دهنده‌ها، قوام‌دهنده (زانتان) و شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم).",
+    servingSize: "۳۱ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۱۶ کیلوکالری" },
+      { label: "چربی", amount: "۱٫۴ گرم" },
+      { label: "چربی اشباع", amount: "۰٫۵ گرم" },
+      { label: "کربوهیدرات", amount: "۱٫۶ گرم" },
+      { label: "قندها", amount: "۱٫۰ گرم" },
+      { label: "فیبر", amount: "۰٫۷ گرم" },
+      { label: "پروتئین", amount: "۲۴ گرم" },
+      { label: "نمک", amount: "۰٫۱۲ گرم" },
+    ],
+    usage:
+      "۱ اسکوپ (۳۱ گرم) را در ۱۸۰ تا ۲۴۰ میلی‌لیتر آب سرد بریزید و با مخلوط‌کن، شیکر یا قاشق هم بزنید تا کاملاً حل شود. بعد از تمرین، بین وعده‌های غذایی یا در طول روز برای رسیدن به پروتئین روزانه مصرف کنید.\nپس از باز کردن، درِ ظرف را محکم ببندید و در جای خنک و خشک نگهداری کنید.",
+    warnings:
+      "حساسیت‌زاها: حاوی شیر و سویا. ممکن است حاوی گلوتن، تخم‌مرغ، آجیل و بادام‌زمینی باشد.",
+    manufacturerClaims:
+      "۲۴ گرم پروتئین وی در هر وعده\nکمتر از ۱۲۰ کالری در هر وعده\n۵٫۵ گرم BCAA طبیعی در هر وعده\n۱۰۰٪ پروتئین آن از وی است\nپروتئین در کنار تمرین قدرتی منظم به رشد و حفظ توده‌ی عضلانی کمک می‌کند (ادعای سلامت مورد تأیید اتحادیه‌ی اروپا)",
     brand: "Optimum Nutrition",
     price: 2450000,
     categorySlug: "protein",
