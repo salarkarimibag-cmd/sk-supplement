@@ -698,8 +698,81 @@ const products: BrandProduct[] = [
     // \u200E (left-to-right mark) keeps "100%" with the Latin name that follows it.
     name: "وی پروتئین پروفشنال - \u200E100% Whey Protein Professional",
     slug: "scitec-whey-protein-professional",
+    groupSlug: "scitec-whey-protein-professional",
+    flavor: "چیزکیک ماچا",
+    size: "۲۳۵۰ گرم",
+    imageUrl: "/images/products/scitec-whey-protein-professional.webp",
+    // Label details from the product page of Scitec's German shop
+    // (scitecshop.de, product p5146), which the pack photo doesn't show. That
+    // page gives one facts table for all flavours, without a Matcha-specific
+    // ingredient list, so flavour-only warnings (caffeine in Iced Coffee,
+    // colourings in some flavours) are left out.
+    description:
+      "۱۰۰٪ وی پروتئین پروفشنال سایتک نوتریشن با طعم چیزکیک ماچا؛ پودر نوشیدنی پروتئینی از کنسانتره و ایزوله‌ی وی، با اسیدهای آمینه و آنزیم‌های گوارشی افزوده. هر وعده (۳۰ گرم) ۲۲ گرم پروتئین و ۱۱۴ کیلوکالری دارد و بسته‌ی ۲۳۵۰ گرمی ۷۸ وعده است.\nپروفایل آمینو اسید در هر ۱۰۰ گرم: اسیدهای آمینه‌ی ضروری ۳۲٫۸ گرم (شامل لوسین ۷٫۷، لیزین ۶٫۴، ترئونین ۴٫۵، ایزولوسین ۴٫۰ و والین ۳٫۹ گرم)، مجموع BCAA ۱۵٫۶ گرم و گلوتامین ۱۳٫۷ گرم.\nمواد تشکیل‌دهنده‌ی پایه: پروتئین‌های فوری وی (کنسانتره و ایزوله‌ی پروتئین وی از شیر، امولسیفایر لسیتین سویا)، تورین، ال-آرژنین، ال-گلوتامین، ال-لوسین، طعم‌دهنده‌ها، نمک دریا، قوام‌دهنده (زانتان)، شیرین‌کننده‌ها (آسه‌سولفام پتاسیم، سوکرالوز)، ضدکلوخه (دی‌اکسید سیلیکون)، بروملائین و پاپائین. ترکیبات اختصاصی هر طعم ممکن است متفاوت باشد.",
+    servingSize: "۳۰ گرم (۳/۴ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۱۴ کیلوکالری" },
+      { label: "چربی", amount: "۱٫۸ گرم" },
+      { label: "چربی اشباع", amount: "۱٫۰ گرم" },
+      { label: "کربوهیدرات", amount: "۲٫۵ گرم" },
+      { label: "قندها", amount: "۱٫۸ گرم" },
+      { label: "پروتئین", amount: "۲۲ گرم" },
+      { label: "نمک", amount: "۰٫۳۹ گرم" },
+      { label: "تورین", amount: "۹۹۰ میلی‌گرم" },
+      { label: "ال-گلوتامین", amount: "۵۰۰ میلی‌گرم" },
+      { label: "ال-آرژنین", amount: "۴۱۴ میلی‌گرم" },
+      { label: "ال-لوسین (افزوده)", amount: "۱۰۰ میلی‌گرم" },
+      { label: "بروملائین", amount: "۱۳ میلی‌گرم" },
+      { label: "پاپائین", amount: "۱۳ میلی‌گرم" },
+    ],
+    usage:
+      "روزانه ۱ وعده (۳۰ گرم، ۳/۴ اسکوپ) را با ۲۵۰ میلی‌لیتر آب مصرف کنید. در روزهای تمرین، بعد از تمرین و در روزهای استراحت، در هر زمانی از روز.",
+    warnings:
+      "حساسیت‌زاها: حاوی شیر و سویا. در مجموعه‌ای تولید می‌شود که شیر، تخم‌مرغ، سویا، بادام‌زمینی، آجیل درختی، کرفس، ماهی، سخت‌پوستان، نرم‌تنان و دی‌اکسید گوگرد را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "تمام پروتئین آن از وی است\nبا اسیدهای آمینه‌ی افزوده\nبا آنزیم‌های گوارشی\nبا پروتئین‌های فوری وی (حل‌شدن سریع)\nبدون گلوتن\nپروتئین به افزایش و حفظ توده‌ی عضلانی و حفظ سلامت استخوان‌ها کمک می‌کند (ادعای سلامت مورد تأیید اتحادیه‌ی اروپا)",
     brand: "Scitec Nutrition",
     price: 2150000,
+    categorySlug: "protein",
+  },
+  {
+    id: "sc1c",
+    // \u200E (left-to-right mark) keeps "100%" with the Latin name that follows it.
+    name: "وی پروتئین پروفشنال - \u200E100% Whey Protein Professional",
+    slug: "scitec-whey-protein-professional-chocolate",
+    groupSlug: "scitec-whey-protein-professional",
+    flavor: "شکلات",
+    size: "۱۸۱۶ گرم",
+    imageUrl: "/images/products/scitec-whey-protein-professional-chocolate.webp",
+    // Same facts table as sc1 on Scitec's German shop (product p17604). The
+    // page lists two "Schokolade" ingredient lists; the one with low-fat
+    // cocoa is used, the other (with beetroot) looks misfiled.
+    description:
+      "۱۰۰٪ وی پروتئین پروفشنال سایتک نوتریشن با طعم شکلات؛ پودر نوشیدنی پروتئینی از کنسانتره و ایزوله‌ی وی، با اسیدهای آمینه و آنزیم‌های گوارشی افزوده. هر وعده (۳۰ گرم) ۲۲ گرم پروتئین و ۱۱۴ کیلوکالری دارد و بسته‌ی ۱۸۱۶ گرمی ۶۰ وعده است.\nپروفایل آمینو اسید در هر ۱۰۰ گرم: اسیدهای آمینه‌ی ضروری ۳۲٫۸ گرم (شامل لوسین ۷٫۷، لیزین ۶٫۴، ترئونین ۴٫۵، ایزولوسین ۴٫۰ و والین ۳٫۹ گرم)، مجموع BCAA ۱۵٫۶ گرم و گلوتامین ۱۳٫۷ گرم.\nمواد تشکیل‌دهنده: پروتئین‌های فوری وی ۸۵٪ (کنسانتره و ایزوله‌ی پروتئین وی از شیر، امولسیفایر لسیتین سویا)، تورین ۳٫۳٪، پودر کاکائوی کم‌چرب، طعم‌دهنده‌ها، ال-آرژنین ۱٫۷٪، ال-گلوتامین ۱٫۷٪، نمک، قوام‌دهنده (زانتان)، ال-لوسین ۰٫۳٪، شیرین‌کننده‌ها (آسه‌سولفام پتاسیم، سوکرالوز)، ضدکلوخه (دی‌اکسید سیلیکون)، بروملائین (از آناناس) ۰٫۰۷٪ و پاپائین (از پاپایا) ۰٫۰۷٪.",
+    servingSize: "۳۰ گرم (۳/۴ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۱۴ کیلوکالری" },
+      { label: "چربی", amount: "۱٫۸ گرم" },
+      { label: "چربی اشباع", amount: "۱٫۰ گرم" },
+      { label: "کربوهیدرات", amount: "۲٫۵ گرم" },
+      { label: "قندها", amount: "۱٫۸ گرم" },
+      { label: "پروتئین", amount: "۲۲ گرم" },
+      { label: "نمک", amount: "۰٫۳۹ گرم" },
+      { label: "تورین", amount: "۹۹۰ میلی‌گرم" },
+      { label: "ال-گلوتامین", amount: "۵۰۰ میلی‌گرم" },
+      { label: "ال-آرژنین", amount: "۴۱۴ میلی‌گرم" },
+      { label: "ال-لوسین (افزوده)", amount: "۱۰۰ میلی‌گرم" },
+      { label: "بروملائین", amount: "۱۳ میلی‌گرم" },
+      { label: "پاپائین", amount: "۱۳ میلی‌گرم" },
+    ],
+    usage:
+      "روزانه ۱ وعده (۳۰ گرم، ۳/۴ اسکوپ) را با ۲۵۰ میلی‌لیتر آب مصرف کنید. در روزهای تمرین، بعد از تمرین و در روزهای استراحت، در هر زمانی از روز.",
+    warnings:
+      "حساسیت‌زاها: حاوی شیر و سویا. در مجموعه‌ای تولید می‌شود که شیر، تخم‌مرغ، سویا، بادام‌زمینی، آجیل درختی، کرفس، ماهی، سخت‌پوستان، نرم‌تنان و دی‌اکسید گوگرد را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "تمام پروتئین آن از وی است\nبا اسیدهای آمینه‌ی افزوده\nبا آنزیم‌های گیاهی گوارشی\nکم‌قند، بدون گلوتن و بدون روغن پالم\nبا پروتئین‌های فوری وی (حل‌شدن سریع)\nپروتئین به افزایش و حفظ توده‌ی عضلانی و حفظ سلامت استخوان‌ها کمک می‌کند (ادعای سلامت مورد تأیید اتحادیه‌ی اروپا)",
+    brand: "Scitec Nutrition",
+    price: 1750000,
     categorySlug: "protein",
   },
   {
@@ -717,6 +790,43 @@ const products: BrandProduct[] = [
     brand: "Scitec Nutrition",
     price: 820000,
     categorySlug: "creatine",
+  },
+  {
+    id: "sc4",
+    // \u200E (left-to-right mark) keeps "100%" with the Latin name that follows it.
+    name: "هیدرو ایزوله - \u200E100% Hydro Isolate",
+    slug: "scitec-hydro-isolate",
+    flavor: "وانیل",
+    size: "۲۰۰۰ گرم",
+    imageUrl: "/images/products/scitec-hydro-isolate.webp",
+    // Flavour, weight and servings from the pack photo (it says 86 servings;
+    // the shop page says 87). The rest is from the product page of Scitec's
+    // German shop (scitecshop.de, p15863). That page's fat and sugar rows
+    // don't add up (0.5 g per 23 g but 1.5 g per 100 g; one sugar value
+    // above the serving's total carbs), so those two rows are left out.
+    description:
+      "۱۰۰٪ هیدرو ایزوله سایتک نوتریشن با طعم وانیل؛ پودر نوشیدنی ایزوله‌ی پروتئین وی هیدرولیزه با اسیدهای آمینه‌ی افزوده (ال-گلوتامین و ال-آرژنین). هر وعده (۲۳ گرم) ۱۹ گرم پروتئین و ۸۶ کیلوکالری دارد و بسته‌ی ۲۰۰۰ گرمی ۸۶ وعده است.\nپروفایل آمینو اسید در هر ۱۰۰ گرم: مجموع BCAA ۱۶٫۶ گرم (لوسین ۸٫۰، ایزولوسین ۴٫۴ و والین ۴٫۲ گرم)، گلوتامین و گلوتامیک اسید ۱۸٫۷ گرم، لیزین ۷٫۰ گرم و ترئونین ۴٫۹ گرم.\nمواد تشکیل‌دهنده‌ی پایه: پروتئین فوری وی هیدرولیزه ۸۵٪ (ایزوله‌ی پروتئین وی هیدرولیزه، امولسیفایر لسیتین سویا)، ال-گلوتامین ۵٫۲٪، ال-آرژنین ۱٫۷٪، طعم‌دهنده‌ها، نمک و شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم). ترکیبات اختصاصی هر طعم ممکن است متفاوت باشد.",
+    servingSize: "۲۳ گرم (۲/۳ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۸۶ کیلوکالری" },
+      { label: "کربوهیدرات", amount: "۱٫۵ گرم" },
+      { label: "پروتئین", amount: "۱۹ گرم" },
+      { label: "نمک", amount: "۰٫۳۲ گرم" },
+      { label: "ال-گلوتامین", amount: "۱۲۰۰ میلی‌گرم" },
+      { label: "ال-آرژنین", amount: "۴۰۰ میلی‌گرم" },
+    ],
+    // The pack and shop page give no directions; this is the store's own
+    // advice, followed by the general guidance of the ISSN position stand on
+    // protein and exercise (Jäger et al., 2017).
+    usage:
+      "پیشنهاد فروشگاه: روزانه ۲ وعده (هر وعده ۲۳ گرم، ۲/۳ اسکوپ) را در آب یا شیر حل کنید و مصرف کنید: یک وعده صبح، و یک وعده بلافاصله بعد از تمرین.\nراهنمای عمومی (بیانیه‌ی موضع انجمن بین‌المللی تغذیه‌ی ورزشی، ISSN): برای بیشتر ورزشکارانی که می‌خواهند عضله بسازند یا حفظ کنند، دریافت کل پروتئین روزانه حدود ۱٫۴ تا ۲ گرم به ازای هر کیلوگرم وزن بدن کافی است. بهتر است این مقدار در وعده‌های ۲۰ تا ۴۰ گرمی و هر ۳ تا ۴ ساعت در طول روز پخش شود. این مکمل جایگزین وعده‌های غذایی متنوع نیست؛ در صورت داشتن بیماری کلیوی یا هر بیماری دیگر، پیش از مصرف با پزشک مشورت کنید.",
+    warnings:
+      "حساسیت‌زاها: حاوی شیر و سویا. در مجموعه‌ای تولید می‌شود که شیر، تخم‌مرغ، سویا، بادام‌زمینی، آجیل درختی، کرفس، ماهی، سخت‌پوستان، نرم‌تنان و دی‌اکسید گوگرد را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "۱۰۰٪ پروتئین از وی هیدرولیزه\nبا ال-گلوتامین و ال-آرژنین افزوده\nبدون قند، بدون گلوتن و بدون روغن پالم\nپروتئین به افزایش و حفظ توده‌ی عضلانی و حفظ سلامت استخوان‌ها کمک می‌کند (ادعای سلامت مورد تأیید اتحادیه‌ی اروپا)",
+    brand: "Scitec Nutrition",
+    price: 2650000,
+    categorySlug: "protein",
   },
 
   // Universal Nutrition
