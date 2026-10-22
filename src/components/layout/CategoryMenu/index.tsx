@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type PointerEvent } from "react";
+import ChevronCircle from "@/components/ui/ChevronCircle";
 import type { NavSection } from "@/lib/navigation";
 
 // How long a dropdown stays open after the mouse leaves it, so a small slip
@@ -9,7 +10,7 @@ import type { NavSection } from "@/lib/navigation";
 const CLOSE_DELAY_MS = 150;
 
 const TOP_ITEM_CLASS =
-  "inline-flex cursor-pointer items-center gap-1 py-5 underline-offset-4 transition-colors hover:text-sky-500 hover:underline";
+  "inline-flex cursor-pointer items-center gap-1.5 py-5 underline-offset-4 transition-colors hover:text-sky-500 hover:underline";
 
 /** One top-level menu item whose links drop down on hover (or click, for keyboard and touch). */
 function NavDropdown({ section }: { section: NavSection }) {
@@ -66,21 +67,10 @@ function NavDropdown({ section }: { section: NavSection }) {
         aria-expanded={isOpen}
         aria-controls={dropdownId}
         onClick={() => setIsOpen((open) => !open)}
-        className={TOP_ITEM_CLASS}
+        className={`group/chevron ${TOP_ITEM_CLASS}`}
       >
         {section.title}
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
-        >
-          <path
-            fillRule="evenodd"
-            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-            clipRule="evenodd"
-          />
-        </svg>
+        <ChevronCircle open={isOpen} size="sm" />
       </button>
 
       {/* pt-2 (not mt-2) leaves the gap under the button inside the

@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ChevronDown, Menu, User, X } from "lucide-react";
+import { Menu, User, X } from "lucide-react";
 import type { HeaderUser } from "@/components/layout/Header";
+import ChevronCircle from "@/components/ui/ChevronCircle";
 import Collapsible from "@/components/ui/Collapsible";
 import type { NavLink } from "@/lib/navigation";
 
@@ -81,15 +82,10 @@ export default function MobileMenu({
                   aria-expanded={isBrandsOpen}
                   aria-controls="mobile-brands"
                   onClick={() => setIsBrandsOpen((open) => !open)}
-                  className={`flex w-full cursor-pointer items-center justify-between text-start ${ITEM_CLASS}`}
+                  className={`group/chevron flex w-full cursor-pointer items-center justify-between text-start ${ITEM_CLASS}`}
                 >
                   برندها
-                  <ChevronDown
-                    aria-hidden="true"
-                    className={`h-5 w-5 transition-transform duration-300 ${
-                      isBrandsOpen ? "rotate-180" : ""
-                    }`}
-                  />
+                  <ChevronCircle open={isBrandsOpen} />
                 </button>
                 <Collapsible open={isBrandsOpen} id="mobile-brands">
                   <ul className="bg-zinc-50 dark:bg-zinc-800/50">
