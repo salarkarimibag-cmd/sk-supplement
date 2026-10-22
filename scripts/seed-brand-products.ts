@@ -748,8 +748,39 @@ const products: BrandProduct[] = [
     id: "dy1",
     name: "ایزو ۱۰۰ - وی ایزوله هیدرولیزه - ISO100",
     slug: "dymatize-iso100",
+    groupSlug: "dymatize-iso100",
+    flavor: "شکلات گورمه",
+    size: "۶۵۰ گرم",
+    imageUrl: "/images/products/dymatize-iso100.webp",
+    // Photo and label details from Dymatize's US site
+    // (dymatize.com/products/iso100-gourmet-chocolate). The only pack photo
+    // there is the 650 g / 20-serving tub (650 ÷ 32 g ≈ 20), so that size is
+    // used. The site gives no directions.
+    description:
+      "ایزو ۱۰۰ دایماتیز با طعم شکلات گورمه؛ پودر پروتئین با ایزوله‌ی وی هیدرولیزه برای جذب و هضم سریع، که لاکتوز، کربوهیدرات، چربی و قند اضافه‌اش فیلتر شده است. هر وعده (۳۲ گرم) ۲۵ گرم پروتئین و ۱۲۰ کیلوکالری دارد و بسته‌ی ۶۵۰ گرمی ۲۰ وعده است.\nپروفایل آمینو اسید در هر وعده: لوسین ۲۶۷۷، ایزولوسین ۱۴۲۱ و والین ۱۴۴۷ میلی‌گرم (مجموع BCAA حدود ۵٫۵ گرم)، گلوتامین و گلوتامیک اسید ۴۴۰۶ میلی‌گرم.\nمواد تشکیل‌دهنده: ایزوله‌ی پروتئین وی هیدرولیزه، ایزوله‌ی پروتئین وی، پودر کاکائو (قلیایی‌شده)؛ کمتر از ۲٪: نمک، لسیتین سویا، طعم‌دهنده‌ی طبیعی و مصنوعی، کلرید پتاسیم، سوکرالوز و استویا (استویول گلیکوزیدها).",
+    servingSize: "۳۲ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۲۰ کیلوکالری" },
+      { label: "چربی", amount: "۱ گرم" },
+      { label: "چربی اشباع", amount: "۰ گرم" },
+      { label: "چربی ترانس", amount: "۰ گرم" },
+      { label: "کلسترول", amount: "۱۰ میلی‌گرم" },
+      { label: "سدیم", amount: "۱۸۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۲ گرم" },
+      { label: "فیبر", amount: "کمتر از ۱ گرم" },
+      { label: "قندها", amount: "۱ گرم" },
+      { label: "قند افزوده", amount: "۰ گرم" },
+      { label: "پروتئین", amount: "۲۵ گرم" },
+      { label: "کلسیم", amount: "۱۲۰ میلی‌گرم" },
+      { label: "آهن", amount: "۰٫۸ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۲۳۰ میلی‌گرم" },
+    ],
+    warnings:
+      "حساسیت‌زاها: حاوی شیر و سویا.\nفقط به‌عنوان مکمل غذایی مصرف شود؛ برای کاهش وزن استفاده نشود.",
+    manufacturerClaims:
+      "۲۵ گرم پروتئین در هر وعده\n۱۰۰٪ پروتئین آن از ایزوله‌ی وی است\nپروتئین وی هیدرولیزه برای جذب سریع\nبدون قند افزوده\nبه‌راحتی در آب، شیر یا جایگزین شیر حل می‌شود\nهضم آسان\nتست‌شده برای مواد ممنوعه (Banned Substance Tested)",
     brand: "Dymatize",
-    price: 2890000,
+    price: 1290000,
     categorySlug: "protein",
   },
   {
@@ -764,9 +795,102 @@ const products: BrandProduct[] = [
     id: "dy3",
     name: "سوپر ماس گینر - Super Mass Gainer",
     slug: "dymatize-super-mass-gainer",
+    groupSlug: "dymatize-super-mass-gainer",
+    flavor: "شکلات",
+    size: "۲٫۷ کیلوگرم",
+    imageUrl: "/images/products/dymatize-super-mass-gainer.webp",
+    // Photo and label details from Dymatize's US site
+    // (dymatize.com/products/super-mass-gainer-rich-chocolate), 6 lb tub:
+    // 8 servings × 335 g ≈ 2.7 kg. Two facts rows don't match their %DV
+    // (vitamin E "14.3 mcg" at 95% fits 14.3 mg; magnesium 130 mg would be
+    // 31%, not 25%), so they are left out.
+    description:
+      "سوپر ماس گینر دایماتیز با طعم شکلات؛ مکمل گینر با ترکیب پروتئین‌های سریع‌جذب و آهسته‌جذب، کربوهیدرات زیاد و ۱۴ ویتامین و ماده‌ی معدنی برای افزایش وزن و حجم عضله. هر وعده (۳۳۵ گرم) ۱۲۸۰ کیلوکالری، ۵۲ گرم پروتئین و ۲۴۵ گرم کربوهیدرات دارد و ظرف ۲٫۷ کیلوگرمی (۶ پوند) ۸ وعده است.\nمواد تشکیل‌دهنده: مالتودکسترین، ترکیب پروتئین (کنسانتره‌ی پروتئین وی، ایزوله‌ی پروتئین شیر، ایزوله‌ی پروتئین وی، پروتئین وی هیدرولیزه، کازئین میسلار)، کریمر آفتابگردان (روغن آفتابگردان، مالتودکسترین، کازئینات سدیم، مونو و دی‌گلیسریدها، توکوفرول‌های طبیعی، تری‌کلسیم فسفات)، پودر کاکائو (قلیایی‌شده)؛ کمتر از ۲٪: کراتین مونوهیدرات، فروکتوز، طعم‌دهنده‌های طبیعی و مصنوعی، ترکیب ویتامین و مواد معدنی (آسکوربات سدیم، دی-آلفا-توکوفریل استات، کلسیم دی-پانتوتنات، یدید پتاسیم، پیریدوکسین هیدروکلراید، تیامین هیدروکلراید، ریبوفلاوین، سیانوکوبالامین)، ترکیب صمغ‌ها (صمغ سلولز، زانتان، کاراگینان)، کلرید پتاسیم، نمک، لسیتین سویا، آسه‌سولفام پتاسیم، سوکرالوز و لسیتین آفتابگردان.",
+    servingSize: "۳۳۵ گرم (۲ و ۱/۲ پیمانه)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۲۸۰ کیلوکالری" },
+      { label: "چربی", amount: "۱۱ گرم" },
+      { label: "چربی اشباع", amount: "۳ گرم" },
+      { label: "چربی ترانس", amount: "۰ گرم" },
+      { label: "کلسترول", amount: "۱۳۰ میلی‌گرم" },
+      { label: "سدیم", amount: "۵۸۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۲۴۵ گرم" },
+      { label: "فیبر", amount: "۳ گرم" },
+      { label: "قندها", amount: "۲۱ گرم" },
+      { label: "قند افزوده", amount: "۱۲ گرم" },
+      { label: "پروتئین", amount: "۵۲ گرم" },
+      { label: "ویتامین C", amount: "۵۳ میلی‌گرم" },
+      { label: "تیامین (B1)", amount: "۰٫۶ میلی‌گرم" },
+      { label: "ریبوفلاوین (B2)", amount: "۰٫۲ میلی‌گرم" },
+      { label: "ویتامین B6", amount: "۱٫۵ میلی‌گرم" },
+      { label: "ویتامین B12", amount: "۱٫۸ میکروگرم" },
+      { label: "پانتوتنیک اسید (B5)", amount: "۸ میلی‌گرم" },
+      { label: "کلسیم", amount: "۹۵۰ میلی‌گرم" },
+      { label: "آهن", amount: "۴٫۵ میلی‌گرم" },
+      { label: "فسفر", amount: "۶۶۰ میلی‌گرم" },
+      { label: "ید", amount: "۱۵۰ میکروگرم" },
+      { label: "پتاسیم", amount: "۱۱۰۰ میلی‌گرم" },
+    ],
+    usage: "هر وعده ۲ و ۱/۲ پیمانه (۳۳۵ گرم) پودر است که با ۷۱۰ میلی‌لیتر (۲۴ اونس) آب مخلوط می‌شود.",
+    warnings: "حساسیت‌زاها: حاوی شیر و سویا.",
+    manufacturerClaims:
+      "۵۲ گرم پروتئین باکیفیت با جذب سریع و آهسته در هر وعده\nدست‌کم ۲۴۵ گرم کربوهیدرات در هر وعده\n۱۰٫۷ گرم BCAA و ۵٫۱ گرم لوسین در هر وعده\nبا ۱۴ ویتامین و ماده‌ی معدنی\nبه‌راحتی مخلوط می‌شود و برای پخت هم مناسب است\nتست‌شده برای مواد ممنوعه (Banned Substance Tested)",
     brand: "Dymatize",
     price: 2150000,
     categorySlug: "protein",
+  },
+  {
+    id: "dy4",
+    name: "کراتین مونوهیدرات - Creatine Monohydrate",
+    slug: "dymatize-creatine-monohydrate",
+    groupSlug: "dymatize-creatine-monohydrate",
+    flavor: "بدون طعم",
+    size: "۳۰۰ گرم",
+    imageUrl: "/images/products/dymatize-creatine-monohydrate.webp",
+    // Photo and label details from Dymatize's US site
+    // (dymatize.com/products/creatine-monohydrate): 60 × 5 g = 300 g. The
+    // site gives no directions or warnings.
+    description:
+      "کراتین مونوهیدرات دایماتیز، بدون طعم؛ مکمل غذایی ۱۰۰٪ کراتین مونوهیدرات کرپیور (Creapure®) بدون پرکننده و افزودنی. هر وعده (۵ گرم) ۵ گرم کراتین مونوهیدرات دارد و قوطی ۳۰۰ گرمی ۶۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات (Creapure®).",
+    servingSize: "۵ گرم (حدود ۱ اسکوپ)",
+    nutritionFacts: [{ label: "کراتین مونوهیدرات (Creapure®)", amount: "۵ گرم" }],
+    manufacturerClaims:
+      "ساخته‌شده با ۱۰۰٪ کرپیور (Creapure®)\nبدون پرکننده و افزودنی\nتست‌شده برای مواد ممنوعه (Banned Substance Tested)\nبه گفته‌ی سازنده، همراه با ورزش و تمرین قدرتی منظم به عضله‌سازی، افزایش قدرت و تمرین‌های پرشدت کمک می‌کند (این ادعا توسط FDA ارزیابی نشده است)\nبدون طعم و آسان‌حل",
+    brand: "Dymatize",
+    price: 850000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "dy5",
+    name: "انرجایز پری‌ورک‌اوت - Energyze Pre-Workout",
+    slug: "dymatize-energyze-pre-workout",
+    groupSlug: "dymatize-energyze-pre-workout",
+    flavor: "لیمو و لیموترش",
+    size: "۴۰۰ گرم",
+    imageUrl: "/images/products/dymatize-energyze-pre-workout.webp",
+    // Photo and label details from Dymatize's US site
+    // (dymatize.com/products/energyze-pre-workout-lemon-lime): 30 × 13.3 g ≈
+    // 400 g. The site gives no directions or warnings; only the caffeine
+    // content is stated as a warning here.
+    description:
+      "انرجایز پری‌ورک‌اوت دایماتیز با طعم لیمو و لیموترش؛ مکمل پیش از تمرین با کافئین کمتر و بدون قند، با ۵ گرم BCAA و ال-سیترولین، ال-تیروزین و ال-تیانین. هر وعده (۱۳٫۳ گرم) ۱۵۰ میلی‌گرم کافئین از عصاره‌ی میوه‌ی قهوه‌ی سبز دارد و قوطی ۴۰۰ گرمی ۳۰ وعده است.\nسایر مواد: سیتریک اسید، پودر لیمو (صمغ عربی، عصاره‌ی لیمو، کنسانتره‌ی آب لیمو)، طعم‌دهنده‌های طبیعی، سوکرالوز، دی‌اکسید سیلیکون، اولئورزین زردچوبه (رنگ) و لسیتین آفتابگردان.",
+    servingSize: "۱۳٫۳ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۳۰ کیلوکالری" },
+      { label: "کربوهیدرات", amount: "کمتر از ۱ گرم" },
+      { label: "BCAA (ال-لوسین، ال-ایزولوسین، ال-والین با نسبت ۲:۱:۱)", amount: "۵ گرم" },
+      { label: "ال-سیترولین", amount: "۴ گرم" },
+      { label: "ال-تیروزین", amount: "۵۰۰ میلی‌گرم" },
+      { label: "ال-تیانین", amount: "۵۰ میلی‌گرم" },
+      { label: "عصاره‌ی میوه‌ی قهوه‌ی سبز", amount: "۱۵۷ میلی‌گرم" },
+      { label: "کافئین (از عصاره‌ی قهوه‌ی سبز)", amount: "۱۵۰ میلی‌گرم" },
+    ],
+    warnings: "حاوی کافئین (۱۵۰ میلی‌گرم در هر وعده).",
+    manufacturerClaims:
+      "کافئین کمتر و بدون قند، برای انرژی پایدار\n۵ گرم ترکیب اسید آمینه که به گفته‌ی سازنده به تمرکز ذهنی کمک می‌کند (این ادعا توسط FDA ارزیابی نشده است)\nبه گفته‌ی سازنده: عملکرد بهتر، انرژی پایدار و ریکاوری سریع‌تر",
+    brand: "Dymatize",
+    price: 1250000,
+    categorySlug: "pre-workout",
   },
 
   // MuscleTech
