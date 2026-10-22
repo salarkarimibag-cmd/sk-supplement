@@ -698,6 +698,12 @@ const products: BrandProduct[] = [
     // \u200E (left-to-right mark) keeps "100%" with the Latin name that follows it.
     name: "وی پروتئین پروفشنال - \u200E100% Whey Protein Professional",
     slug: "scitec-whey-protein-professional",
+    flavor: "چیزکیک ماچا",
+    size: "۲۳۵۰ گرم",
+    imageUrl: "/images/products/scitec-whey-protein-professional.webp",
+    // Only what the front of the pack says; the facts panel wasn't in the photos.
+    description:
+      "۱۰۰٪ وی پروتئین پروفشنال سایتک نوتریشن با طعم چیزکیک ماچا؛ پودر نوشیدنی پروتئینی با اسیدهای آمینه‌ی افزوده که تمام پروتئین آن از وی تأمین می‌شود. بسته‌ی ۲۳۵۰ گرمی ۷۸ وعده است.",
     brand: "Scitec Nutrition",
     price: 2150000,
     categorySlug: "protein",
