@@ -7,7 +7,7 @@ import CategoryShowcase from "@/components/home/CategoryShowcase";
 import Testimonials from "@/components/home/Testimonials";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import LatestArticles from "@/components/home/LatestArticles";
-import { getBestSellers, getLatestProducts } from "@/lib/products";
+import { getAllProducts, getBestSellers, getLatestProducts } from "@/lib/products";
 import { getHeroPromotion } from "@/lib/promotion";
 import { getHomepageReviews } from "@/lib/reviews";
 import { formatVariantSummary } from "@/lib/variants";
@@ -18,11 +18,13 @@ export default async function Home() {
     bestSellers,
     { reviews, totalCount: reviewsCount, averageRating },
     promotion,
+    allProducts,
   ] = await Promise.all([
     getLatestProducts(4),
     getBestSellers(4),
     getHomepageReviews(),
     getHeroPromotion(),
+    getAllProducts(),
   ]);
 
   return (
@@ -59,7 +61,7 @@ export default async function Home() {
         </section>
 
         <section>
-          <CategoryShowcase />
+          <CategoryShowcase products={allProducts} />
         </section>
 
         <p className="shine">True Strength</p>
