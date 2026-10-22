@@ -6,6 +6,7 @@ import SiteAnalytics from "@/components/layout/SiteAnalytics";
 import { CartProvider } from "@/context/CartContext";
 import { getSessionUser } from "@/lib/auth";
 import { getAllCategories } from "@/lib/categoryContent";
+import { getAllBrands } from "@/lib/products";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -65,7 +66,11 @@ const themeInitScript = `
 `;
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const [sessionUser, allCategories] = await Promise.all([getSessionUser(), getAllCategories()]);
+  const [sessionUser, allCategories, brands] = await Promise.all([
+    getSessionUser(),
+    getAllCategories(),
+    getAllBrands(),
+  ]);
   // getSessionUser()/getAllCategories() also carry Mongoose-specific fields
   // (e.g. `_id` as an ObjectId, which has a toJSON method) that React can't
   // pass across the server/client boundary, so only plain fields go through.
@@ -87,7 +92,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="flex min-h-full flex-col">
         <CartProvider>
-          <SiteChrome user={user} categories={categories}>
+          <SiteChrome user={user} categories={categories} brands={brands}>
             {children}
           </SiteChrome>
           <CartDrawer />

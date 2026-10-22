@@ -3,11 +3,12 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import CategoryMenu from "../CategoryMenu";
+import DesktopMenu from "../DesktopMenu";
 import MobileMenu from "../MobileMenu";
 import { useCart } from "@/context/CartContext";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import SearchBar from "@/components/layout/SearchBar";
+import { buildNavSections } from "@/lib/navigation";
 
 export interface HeaderUser {
   id: string;
@@ -22,12 +23,15 @@ export interface NavCategory {
 export default function Header({
   user,
   categories,
+  brands,
 }: {
   user: HeaderUser | null;
   categories: NavCategory[];
+  brands: string[];
 }) {
   const { totalCount, openCart } = useCart();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const navSections = buildNavSections(categories, brands);
 
   return (
     <>
@@ -48,7 +52,7 @@ export default function Header({
           ) : (
             <>
               <div className="flex items-center gap-0 md:gap-2">
-                <MobileMenu categories={categories} />
+                <MobileMenu sections={navSections} user={user} />
 
                 <Link href="/" className="-ml-2 flex items-center md:ml-0">
                   <Image
@@ -62,7 +66,7 @@ export default function Header({
                 </Link>
 
                 <div className="hidden md:block">
-                  <CategoryMenu categories={categories} />
+                  <DesktopMenu sections={navSections} />
                 </div>
               </div>
 

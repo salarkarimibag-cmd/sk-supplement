@@ -11,17 +11,19 @@ export default function SiteChrome({
   children,
   user,
   categories,
+  brands,
 }: {
   children: ReactNode;
   user: HeaderUser | null;
   categories: NavCategory[];
+  brands: string[];
 }) {
   const pathname = usePathname();
   const isCheckout = pathname.startsWith("/checkout");
 
   return (
     <>
-      {!isCheckout && <Header user={user} categories={categories} />}
+      {!isCheckout && <Header user={user} categories={categories} brands={brands} />}
       <main className="flex flex-1 flex-col">{children}</main>
       {!isCheckout && <Footer />}
     </>
