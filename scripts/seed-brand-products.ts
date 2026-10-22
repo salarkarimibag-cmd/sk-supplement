@@ -750,6 +750,38 @@ const products: BrandProduct[] = [
     price: 820000,
     categorySlug: "creatine",
   },
+  {
+    id: "sc4",
+    // \u200E (left-to-right mark) keeps "100%" with the Latin name that follows it.
+    name: "هیدرو ایزوله - \u200E100% Hydro Isolate",
+    slug: "scitec-hydro-isolate",
+    flavor: "وانیل",
+    size: "۲۰۰۰ گرم",
+    imageUrl: "/images/products/scitec-hydro-isolate.webp",
+    // Flavour, weight and servings from the pack photo (it says 86 servings;
+    // the shop page says 87). The rest is from the product page of Scitec's
+    // German shop (scitecshop.de, p15863). That page's fat and sugar rows
+    // don't add up (0.5 g per 23 g but 1.5 g per 100 g; one sugar value
+    // above the serving's total carbs), so those two rows are left out.
+    description:
+      "۱۰۰٪ هیدرو ایزوله سایتک نوتریشن با طعم وانیل؛ پودر نوشیدنی ایزوله‌ی پروتئین وی هیدرولیزه با اسیدهای آمینه‌ی افزوده (ال-گلوتامین و ال-آرژنین). هر وعده (۲۳ گرم) ۱۹ گرم پروتئین و ۸۶ کیلوکالری دارد و بسته‌ی ۲۰۰۰ گرمی ۸۶ وعده است.\nپروفایل آمینو اسید در هر ۱۰۰ گرم: مجموع BCAA ۱۶٫۶ گرم (لوسین ۸٫۰، ایزولوسین ۴٫۴ و والین ۴٫۲ گرم)، گلوتامین و گلوتامیک اسید ۱۸٫۷ گرم، لیزین ۷٫۰ گرم و ترئونین ۴٫۹ گرم.\nمواد تشکیل‌دهنده‌ی پایه: پروتئین فوری وی هیدرولیزه ۸۵٪ (ایزوله‌ی پروتئین وی هیدرولیزه، امولسیفایر لسیتین سویا)، ال-گلوتامین ۵٫۲٪، ال-آرژنین ۱٫۷٪، طعم‌دهنده‌ها، نمک و شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم). ترکیبات اختصاصی هر طعم ممکن است متفاوت باشد.",
+    servingSize: "۲۳ گرم (۲/۳ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۸۶ کیلوکالری" },
+      { label: "کربوهیدرات", amount: "۱٫۵ گرم" },
+      { label: "پروتئین", amount: "۱۹ گرم" },
+      { label: "نمک", amount: "۰٫۳۲ گرم" },
+      { label: "ال-گلوتامین", amount: "۱۲۰۰ میلی‌گرم" },
+      { label: "ال-آرژنین", amount: "۴۰۰ میلی‌گرم" },
+    ],
+    warnings:
+      "حساسیت‌زاها: حاوی شیر و سویا. در مجموعه‌ای تولید می‌شود که شیر، تخم‌مرغ، سویا، بادام‌زمینی، آجیل درختی، کرفس، ماهی، سخت‌پوستان، نرم‌تنان و دی‌اکسید گوگرد را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "۱۰۰٪ پروتئین از وی هیدرولیزه\nبا ال-گلوتامین و ال-آرژنین افزوده\nبدون قند، بدون گلوتن و بدون روغن پالم\nپروتئین به افزایش و حفظ توده‌ی عضلانی و حفظ سلامت استخوان‌ها کمک می‌کند (ادعای سلامت مورد تأیید اتحادیه‌ی اروپا)",
+    brand: "Scitec Nutrition",
+    price: 2650000,
+    categorySlug: "protein",
+  },
 
   // Universal Nutrition
   {
