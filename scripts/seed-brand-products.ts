@@ -935,6 +935,39 @@ const products: BrandProduct[] = [
     price: 2650000,
     categorySlug: "protein",
   },
+  {
+    id: "sc5",
+    name: "بی‌سی‌ای‌ای + گلوتامین اکسپرس - BCAA + Glutamine Xpress",
+    slug: "scitec-bcaa-glutamine-xpress-apple",
+    groupSlug: "scitec-bcaa-glutamine-xpress",
+    flavor: "سیب",
+    size: "۶۰۰ گرم",
+    imageUrl: "/images/products/scitec-bcaa-glutamine-xpress-apple.webp",
+    // Flavour from the pack photo; the rest from the product page of Scitec's
+    // German shop (scitecshop.de, p13026). That page's one ingredient list
+    // names kiwi, melon and apricot flavourings and colourings that don't fit
+    // the apple flavour, so only the shared base ingredients are listed.
+    description:
+      "بی‌سی‌ای‌ای + گلوتامین اکسپرس سایتک نوتریشن با طعم سیب؛ پودر نوشیدنی بدون قند از اسیدهای آمینه‌ی شاخه‌دار (BCAA) با نسبت ۲:۱:۱، ال-گلوتامین و تورین افزوده. هر وعده (۱۲ گرم) ۵ گرم BCAA و ۵ گرم گلوتامین دارد و بسته‌ی ۶۰۰ گرمی ۵۰ وعده است.\nمواد تشکیل‌دهنده‌ی پایه: ال-گلوتامین، ال-لوسین، ال-ایزولوسین، ال-والین، طعم‌دهنده‌ها، تورین، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم) و اسیدی‌کننده (سیتریک اسید). ترکیبات اختصاصی هر طعم ممکن است متفاوت باشد.",
+    servingSize: "۱۲ گرم (۱ و ۱/۴ اسکوپ)",
+    nutritionFacts: [
+      { label: "BCAA", amount: "۵۰۰۰ میلی‌گرم" },
+      { label: "ال-لوسین", amount: "۲۵۰۰ میلی‌گرم" },
+      { label: "ال-ایزولوسین", amount: "۱۲۵۰ میلی‌گرم" },
+      { label: "ال-والین", amount: "۱۲۵۰ میلی‌گرم" },
+      { label: "ال-گلوتامین", amount: "۵۰۰۰ میلی‌گرم" },
+      { label: "تورین", amount: "۳۰۰ میلی‌گرم" },
+    ],
+    usage:
+      "روزانه ۱ وعده (۱۲ گرم، ۱ و ۱/۴ اسکوپ) را در ۶۰۰ میلی‌لیتر آب سرد حل کنید و پیش، حین یا بعد از تمرین مصرف کنید.",
+    warnings:
+      "از مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.\nمکمل غذایی جایگزین رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم نیست.\nدور از دسترس کودکان نگهداری شود.\nدر مجموعه‌ای تولید می‌شود که شیر، تخم‌مرغ، سویا، بادام‌زمینی، آجیل، کرفس، ماهی، سخت‌پوستان و دی‌اکسید گوگرد را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "۵ گرم BCAA با نسبت ۲:۱:۱ در هر وعده\n۵ گرم گلوتامین در هر وعده\nبا تورین افزوده\nبدون قند (در نوشیدنی آماده)\nبدون گلوتن",
+    brand: "Scitec Nutrition",
+    price: 1100000,
+    categorySlug: "aminos",
+  },
 
   // Universal Nutrition
   {
