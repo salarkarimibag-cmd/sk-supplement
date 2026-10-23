@@ -89,7 +89,7 @@ export default function HeroShowcase({
             href={`/products/${bestSeller.id}`}
             className="group mx-auto -mt-2 flex w-[90%] max-w-xs items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-2 pe-3 backdrop-blur-md transition hover:border-white/25 hover:bg-white/10"
           >
-            <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-white">
+            <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-white/10">
               {/* The name is right beside it, so the image is decorative. */}
               <Image
                 src={bestSeller.imageUrl}
