@@ -13,8 +13,8 @@ import { getHomepageReviews } from "@/lib/reviews";
 import { pickShowcaseProducts } from "@/lib/showcase";
 import { formatVariantSummary } from "@/lib/variants";
 
-/** How many products the hero's 3D scene cycles through. */
-const HERO_SCENE_PRODUCTS = 6;
+/** How many products take turns in the hero. */
+const HERO_PRODUCTS = 6;
 
 export default async function Home() {
   const [
@@ -39,12 +39,12 @@ export default async function Home() {
         // Feature a product the visitor can actually buy right now.
         bestSeller={bestSellers.find((product) => product.inStock)}
         promotion={promotion}
-        // Protein and creatine tubs for the 3D scene, in a random order with
+        // Protein and creatine photos for the hero, in a random order with
         // a different brand each turn while there are brands left.
-        sceneProducts={pickShowcaseProducts(
+        showcaseProducts={pickShowcaseProducts(
           allProducts,
           (product) => product.categorySlug === "protein" || product.categorySlug === "creatine",
-          HERO_SCENE_PRODUCTS
+          HERO_PRODUCTS
         )}
       />
 
