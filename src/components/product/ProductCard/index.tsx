@@ -50,7 +50,7 @@ export default function ProductCard({
   return (
     <div className="group/card flex flex-col">
       <Link href={`/products/${id}`} className="group block flex-1">
-        <div className="relative aspect-square bg-white">
+        <div className="relative aspect-square bg-white dark:bg-zinc-900">
           <Image
             src={imageUrl}
             alt={name}
