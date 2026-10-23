@@ -18,32 +18,735 @@ type BrandProduct = Omit<SeedProduct, "inStock" | "description" | "imageUrl" | "
   imageUrl?: string;
 };
 
+// Shared by every Gold Standard 100% Whey flavour: ON's German shop gives
+// the same whey blend, directions, allergen note and claims for all of them.
+const onGoldStandardBlend =
+  "ایزوله‌ی پروتئین وی، کنسانتره‌ی پروتئین وی، ایزوله‌ی هیدرولیزه‌ی پروتئین وی (از شیر)، امولسیفایر لسیتین سویا";
+const onGoldStandardUsage = (scoopGrams: string) =>
+  `۱ اسکوپ (${scoopGrams} گرم) را در ۱۸۰ تا ۲۴۰ میلی‌لیتر آب سرد بریزید و با مخلوط‌کن، شیکر یا قاشق هم بزنید تا کاملاً حل شود. بعد از تمرین، بین وعده‌های غذایی یا در طول روز برای رسیدن به پروتئین روزانه مصرف کنید.\nپس از باز کردن، درِ ظرف را محکم ببندید و در جای خنک و خشک نگهداری کنید.`;
+const onGoldStandardWarnings =
+  "حساسیت‌زاها: حاوی شیر و سویا. ممکن است حاوی گلوتن، تخم‌مرغ، آجیل و بادام‌زمینی باشد.";
+const onGoldStandardClaims =
+  "۲۴ گرم پروتئین وی در هر وعده\nکمتر از ۱۲۰ کالری در هر وعده\n۵٫۵ گرم BCAA طبیعی در هر وعده\n۱۰۰٪ پروتئین آن از وی است\nپروتئین در کنار تمرین قدرتی منظم به رشد و حفظ توده‌ی عضلانی کمک می‌کند (ادعای سلامت مورد تأیید اتحادیه‌ی اروپا)";
+
+// Shared by every Micronised Creatine Powder variant on ON's German shop.
+const onCreatineWarnings =
+  "برای افراد زیر ۱۸ سال مناسب نیست.\nمکمل غذایی جایگزین رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم نیست.\nاز مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.\nدر جای خنک و خشک و دور از دسترس کودکان نگهداری شود.\nممکن است حاوی شیر، سویا، گلوتن، تخم‌مرغ، آجیل و بادام‌زمینی باشد.";
+const onCreatineClaims =
+  "۳ گرم کراتین در هر وعده\nکراتین میکرونیزه: ذرات ریزتر برای حل‌شدن بهتر و ماندن بیشتر در مایع\nکراتین عملکرد بدنی را در تمرین‌های کوتاه‌مدت، پرشدت و پشت‌سرهم افزایش می‌دهد؛ این اثر با مصرف روزانه‌ی ۳ گرم کراتین به دست می‌آید (ادعای سلامت مورد تأیید اتحادیه‌ی اروپا)";
+
+// Shared by both Opti-Men counts (90 and 180 tablets have the same label).
+const onOptiMenIngredients =
+  "مواد تشکیل‌دهنده: پرکننده (سلولز میکروکریستالی)، مخلوط اسیدهای آمینه‌ی شاخه‌دار (ال-لوسین، ال-ایزولوسین، ال-والین)، کربنات کلسیم، اسید اسکوربیک (ویتامین C)، ال-گلوتامین، اکسید منیزیم، ضدکلوخه (دی‌اکسید سیلیکون، اسیدهای چرب خوراکی، نمک‌های منیزیم اسیدهای چرب)، دی-آلفا-توکوفریل استات (ویتامین E)، پوشش (هیدروکسی‌پروپیل متیل‌سلولز، گلیسرین)، نیکوتین‌آمید (ویتامین B3)، پایدارکننده (کراس‌کارملوز سدیم)، آلفا-لیپوئیک اسید، روتین، کلسیم دی-پانتوتنات (ویتامین B5)، عصاره‌ی ریشه‌ی زنجبیل، عصاره‌ی برگ زیتون، عصاره‌ی برگ چای سبز، بیوفلاونوئیدهای مرکبات، بورات سدیم، اکسید روی، اینوزیتول، کولین بیتارترات، پیریدوکسین هیدروکلراید (ویتامین B6)، ال-سلنومتیونین، تیامین هیدروکلراید (ویتامین B1)، سولفات مس، کوله‌کلسیفرول (ویتامین D3)، ریبوفلاوین (ویتامین B2)، رتینیل استات (ویتامین A)، کلرید کروم، لوتئین، فیلوکینون (ویتامین K1)، سیانوکوبالامین (ویتامین B12)، پیکولینات کروم، مولیبدات سدیم، دی-بیوتین، یدید پتاسیم و فولیک اسید.";
+const onOptiMenWarnings =
+  "هر دوز روزانه ۲ میلی‌گرم اپی‌گالوکاتچین گالات (EGCG، از عصاره‌ی چای سبز) دارد؛ حداکثر مصرف روزانه‌ی EGCG ۸۰۰ میلی‌گرم است. ناشتا یا همراه محصولات دیگر حاوی چای سبز مصرف نکنید.\nبرای افراد زیر ۱۸ سال و زنان باردار یا شیرده مناسب نیست.\nمکمل غذایی جایگزین رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم نیست.\nاز مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.\nدر جای خنک و خشک و دور از دسترس کودکان نگهداری شود.";
+const onOptiMenClaims =
+  "۳۶ ماده‌ی مؤثر\nحمایت از متابولیسم و عملکرد سیستم ایمنی\nکاهش خستگی\nادعاهای سلامت مورد تأیید اتحادیه‌ی اروپا: تیامین، نیاسین، پانتوتنیک اسید و ویتامین‌های B6 و B12 به متابولیسم طبیعی تولید انرژی کمک می‌کنند؛ بیوتین، روی و کروم به متابولیسم طبیعی درشت‌مغذی‌ها کمک می‌کنند؛ روی به عملکرد طبیعی سیستم ایمنی و عملکرد شناختی طبیعی کمک می‌کند؛ ویتامین‌های C، B2، B3، B5، B12 و فولیک اسید به کاهش خستگی کمک می‌کنند؛ منیزیم به عملکرد طبیعی عضلات کمک می‌کند؛ پانتوتنیک اسید به عملکرد ذهنی طبیعی کمک می‌کند";
+
+// Shared by every Serious Mass flavour and size on ON's UK shop.
+const onSeriousMassMicronutrients =
+  "مواد معدنی (منیزیم، آهن، روی، منگنز، فلوراید، سلنیوم، ید (از جلبک کلپ)، مس، مولیبدن، کروم)، ویتامین‌ها (C، E، B3، A، پانتوتنیک اسید (B5)، بیوتین، B12، فولیک اسید، D، B6، B1، K، B2)";
+const onSeriousMassUsage = (servingGrams: string) =>
+  `۲ اسکوپ سرپر (حدود ${servingGrams} گرم) را در مخلوط‌کنی که ۷۱۰ میلی‌لیتر آب دارد بریزید و ۳۰ تا ۴۵ ثانیه مخلوط کنید. بعد از تمرین (تا ۳۰ دقیقه)، بین وعده‌های غذایی یا پیش از خواب مصرف کنید.\nپس از باز کردن، درِ ظرف را محکم ببندید و در جای خنک و تاریک نگهداری کنید.`;
+const onSeriousMassWarnings =
+  "برای افراد زیر ۱۸ سال مناسب نیست.\nاین محصول باید بخشی از رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم باشد.\nحساسیت‌زاها: حاوی شیر و سویا. ممکن است حاوی گلوتن، تخم‌مرغ، آجیل و بادام‌زمینی باشد.";
+const onSeriousMassClaims =
+  "بیش از ۱۲۵۰ کالری در هر وعده برای افزایش وزن و عضله‌سازی\n۵۰ گرم پروتئین در هر وعده\nحدود ۲۵۰ گرم کربوهیدرات در هر وعده\n۳ گرم کراتین افزوده در هر وعده\nبا ویتامین‌ها و مواد معدنی\nادعاهای سلامت مورد تأیید اتحادیه‌ی اروپا: پروتئین در کنار تمرین قدرتی منظم به رشد و حفظ توده‌ی عضلانی کمک می‌کند؛ کربوهیدرات‌ها به بازیابی عملکرد طبیعی عضله پس از فعالیت بدنی بسیار شدید یا طولانی کمک می‌کنند (با مصرف ۴ گرم کربوهیدرات به ازای هر کیلوگرم وزن بدن در ۴ تا ۶ ساعت اول)";
+
+// Shared by every Gold Standard Pre-Workout flavour (EU version).
+const onPreWorkoutVitamins =
+  "نیکوتین‌آمید (ویتامین B3)، کلسیم دی-پانتوتنات (ویتامین B5)، سیانوکوبالامین (ویتامین B12)، عصاره‌ی فلفل سیاه، فولیک اسید، تیامین هیدروکلراید (ویتامین B1) و کوله‌کلسیفرول (ویتامین D3)";
+const onPreWorkoutFacts = [
+  { label: "کافئین (از منابع طبیعی)", amount: "۱۷۵ میلی‌گرم" },
+  { label: "کراتین مونوهیدرات", amount: "۳٫۴ گرم" },
+  { label: "بتا-آلانین", amount: "۱٫۵ گرم" },
+  { label: "پرفورملون (عصاره‌ی هندوانه)", amount: "۲۵۰ میلی‌گرم" },
+];
+const onPreWorkoutUsage =
+  "روزانه ۱ وعده (۱۱ گرم، حدود ۱ اسکوپ صاف) را در ۳۵۰ میلی‌لیتر آب سرد حل کنید و ۱۵ تا ۳۰ دقیقه پیش از تمرین مصرف کنید.\nدر جای خنک و خشک و دور از نور مستقیم خورشید نگهداری کنید.";
+const onPreWorkoutWarnings =
+  "حاوی کافئین (۱۷۵ میلی‌گرم در هر وعده). برای کودکان و زنان باردار توصیه نمی‌شود.\nمکمل غذایی جایگزین رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم نیست.\nاز مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.\nدور از دسترس کودکان نگهداری شود.\nداخل قوطی یک بسته‌ی رطوبت‌گیر هست؛ آن را نخورید و باز نکنید.\nممکن است حاوی شیر، گلوتن، تخم‌مرغ، سویا، آجیل و بادام‌زمینی باشد.";
+const onPreWorkoutClaims =
+  "برای انرژی، تمرکز، قدرت و عملکرد\n۱۷۵ میلی‌گرم کافئین از منابع طبیعی در هر وعده\n۳٫۴ گرم کراتین مونوهیدرات در هر وعده\n۲۵۰ میلی‌گرم پرفورملون (عصاره‌ی هندوانه) در هر وعده\n۱٫۵ گرم بتا-آلانین در هر وعده\nادعاهای سلامت مورد تأیید اتحادیه‌ی اروپا: ویتامین‌های B1، B3، B5، B6 و B12 به متابولیسم طبیعی تولید انرژی کمک می‌کنند؛ کراتین عملکرد بدنی را در تمرین‌های کوتاه‌مدت، پرشدت و پشت‌سرهم افزایش می‌دهد";
+
+// Shared by both Syntha-6 flavours on BSN's US site.
+const bsnSynthaUsage =
+  "۱ اسکوپ را با ۱۲۰ تا ۱۵۰ میلی‌لیتر (۴ تا ۵ اونس) آب سرد یا نوشیدنی دلخواه مخلوط کنید؛ هر زمانی از روز: بعد از تمرین، بین وعده‌ها یا به‌عنوان میان‌وعده. برای پروتئین بیشتر و طعم میلک‌شیکی، با شیر بدون چربی یا کم‌چرب مخلوط کنید.";
+const bsnSynthaClaims =
+  "۲۲ گرم پروتئین در هر وعده\n۱۰ گرم اسید آمینه‌ی ضروری طبیعی در هر وعده\nپروتئین برای هر زمانی از روز\nبه گفته‌ی سازنده، همراه با تمرین مقاومتی منظم از عضله‌سازی و ریکاوری پشتیبانی می‌کند (این ادعا توسط FDA ارزیابی نشده است)";
+
 const products: BrandProduct[] = [
   // Optimum Nutrition
   {
     id: "on1",
     name: "وی گلد استاندارد - Gold Standard 100% Whey",
     slug: "on-gold-standard-whey",
-    imageUrl: "/images/products/on-gold-standard-whey.webp",
+    groupSlug: "on-gold-standard-whey",
+    flavor: "شکلات دوبل",
+    size: "۲٫۰۲ کیلوگرم",
+    imageUrl: "/images/products/on-gold-standard-whey-double-rich-chocolate.webp",
+    // Pack photos and label details for every flavour come from ON's German
+    // shop (de-de, gold-standard-100-whey-protein-powder-eu): each variant's
+    // label record matches its photo (weight, servings, scoop size). The old
+    // photo file stays until production is re-seeded with this imageUrl.
+    // Delicious Strawberry and Vanilla Ice Cream have no label record there
+    // (nor on the en-gb and fr-fr shops), so they aren't added.
+    description: `وی گلد استاندارد ۱۰۰٪ اپتیموم نوتریشن با طعم شکلات دوبل؛ پودر پروتئینی آماده‌ی مخلوط از ترکیب ایزوله، کنسانتره و ایزوله‌ی هیدرولیزه‌ی پروتئین وی. هر وعده (۳۱ گرم) ۲۴ گرم پروتئین، ۵٫۵ گرم BCAA طبیعی و ۱۱۶ کیلوکالری دارد و بسته‌ی ۲٫۰۲ کیلوگرمی ۶۵ وعده است.\nمواد تشکیل‌دهنده: ترکیب پروتئین وی ۹۳٪ (${onGoldStandardBlend})، پودر کاکائوی کم‌چرب، طعم‌دهنده‌ها، قوام‌دهنده (زانتان) و شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم).`,
+    servingSize: "۳۱ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۱۶ کیلوکالری" },
+      { label: "چربی", amount: "۱٫۴ گرم" },
+      { label: "چربی اشباع", amount: "۰٫۵ گرم" },
+      { label: "کربوهیدرات", amount: "۱٫۶ گرم" },
+      { label: "قندها", amount: "۱٫۰ گرم" },
+      { label: "فیبر", amount: "۰٫۷ گرم" },
+      { label: "پروتئین", amount: "۲۴ گرم" },
+      { label: "نمک", amount: "۰٫۱۲ گرم" },
+    ],
+    usage: onGoldStandardUsage("۳۱"),
+    warnings: onGoldStandardWarnings,
+    manufacturerClaims: onGoldStandardClaims,
     brand: "Optimum Nutrition",
     price: 2450000,
+    categorySlug: "protein",
+  },
+  {
+    id: "on1b",
+    name: "وی گلد استاندارد - Gold Standard 100% Whey",
+    slug: "on-gold-standard-whey-extreme-milk-chocolate",
+    groupSlug: "on-gold-standard-whey",
+    flavor: "شکلات شیری اکستریم",
+    size: "۲٫۰۲ کیلوگرم",
+    imageUrl: "/images/products/on-gold-standard-whey-extreme-milk-chocolate.webp",
+    description: `وی گلد استاندارد ۱۰۰٪ اپتیموم نوتریشن با طعم شکلات شیری اکستریم؛ پودر پروتئینی آماده‌ی مخلوط از ترکیب ایزوله، کنسانتره و ایزوله‌ی هیدرولیزه‌ی پروتئین وی. هر وعده (۳۲ گرم) ۲۴ گرم پروتئین، ۵٫۵ گرم BCAA طبیعی و ۱۱۹ کیلوکالری دارد و بسته‌ی ۲٫۰۲ کیلوگرمی ۶۳ وعده است.\nمواد تشکیل‌دهنده: ترکیب پروتئین وی ۹۱٪ (${onGoldStandardBlend})، پودر کاکائوی کم‌چرب، طعم‌دهنده‌ها، نمک، قوام‌دهنده (زانتان) و شیرین‌کننده (سوکرالوز).`,
+    servingSize: "۳۲ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۱۹ کیلوکالری" },
+      { label: "چربی", amount: "۱٫۵ گرم" },
+      { label: "چربی اشباع", amount: "۰٫۶ گرم" },
+      { label: "کربوهیدرات", amount: "۲٫۲ گرم" },
+      { label: "قندها", amount: "۱٫۳ گرم" },
+      { label: "فیبر", amount: "۰٫۸ گرم" },
+      { label: "پروتئین", amount: "۲۴ گرم" },
+      { label: "نمک", amount: "۰٫۱۶ گرم" },
+    ],
+    usage: onGoldStandardUsage("۳۲"),
+    warnings: onGoldStandardWarnings,
+    manufacturerClaims: onGoldStandardClaims,
+    brand: "Optimum Nutrition",
+    price: 2450000,
+    categorySlug: "protein",
+  },
+  {
+    id: "on1c",
+    name: "وی گلد استاندارد - Gold Standard 100% Whey",
+    slug: "on-gold-standard-whey-french-vanilla",
+    groupSlug: "on-gold-standard-whey",
+    flavor: "کرم وانیل فرانسوی",
+    size: "۲٫۲۸ کیلوگرم",
+    imageUrl: "/images/products/on-gold-standard-whey-french-vanilla.webp",
+    description: `وی گلد استاندارد ۱۰۰٪ اپتیموم نوتریشن با طعم کرم وانیل فرانسوی؛ پودر پروتئینی آماده‌ی مخلوط از ترکیب ایزوله، کنسانتره و ایزوله‌ی هیدرولیزه‌ی پروتئین وی. هر وعده (۳۰ گرم) ۲۴ گرم پروتئین، ۵٫۵ گرم BCAA طبیعی و ۱۱۳ کیلوکالری دارد و بسته‌ی ۲٫۲۸ کیلوگرمی ۷۶ وعده است.\nمواد تشکیل‌دهنده: ترکیب پروتئین وی ۹۸٪ (${onGoldStandardBlend})، طعم‌دهنده‌ها، نمک، قوام‌دهنده (زانتان)، شیرین‌کننده (سوکرالوز) و رنگ (کورکومین).`,
+    servingSize: "۳۰ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۱۳ کیلوکالری" },
+      { label: "چربی", amount: "۱٫۳ گرم" },
+      { label: "چربی اشباع", amount: "۰٫۴ گرم" },
+      { label: "کربوهیدرات", amount: "۱٫۵ گرم" },
+      { label: "قندها", amount: "۱٫۰ گرم" },
+      { label: "پروتئین", amount: "۲۴ گرم" },
+      { label: "نمک", amount: "۰٫۱۵ گرم" },
+    ],
+    usage: onGoldStandardUsage("۳۰"),
+    warnings: onGoldStandardWarnings,
+    manufacturerClaims: onGoldStandardClaims,
+    brand: "Optimum Nutrition",
+    price: 2750000,
+    categorySlug: "protein",
+  },
+  {
+    id: "on1d",
+    name: "وی گلد استاندارد - Gold Standard 100% Whey",
+    slug: "on-gold-standard-whey-unflavored",
+    groupSlug: "on-gold-standard-whey",
+    flavor: "بدون طعم",
+    size: "۲٫۲۵ کیلوگرم",
+    imageUrl: "/images/products/on-gold-standard-whey-unflavored.webp",
+    description: `وی گلد استاندارد ۱۰۰٪ اپتیموم نوتریشن، بدون طعم و بدون شیرین‌کننده؛ پودر پروتئینی آماده‌ی مخلوط از ترکیب ایزوله، کنسانتره و ایزوله‌ی هیدرولیزه‌ی پروتئین وی. هر وعده (۳۰ گرم) ۲۴ گرم پروتئین، ۵٫۵ گرم BCAA طبیعی و ۱۱۲ کیلوکالری دارد و بسته‌ی ۲٫۲۵ کیلوگرمی ۷۵ وعده است.\nمواد تشکیل‌دهنده: ترکیب پروتئین وی (${onGoldStandardBlend}).`,
+    servingSize: "۳۰ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۱۲ کیلوکالری" },
+      { label: "چربی", amount: "۱٫۲ گرم" },
+      { label: "چربی اشباع", amount: "۰٫۴ گرم" },
+      { label: "کربوهیدرات", amount: "۱٫۳ گرم" },
+      { label: "قندها", amount: "۱٫۰ گرم" },
+      { label: "پروتئین", amount: "۲۴ گرم" },
+      { label: "نمک", amount: "۰٫۱۶ گرم" },
+    ],
+    usage: onGoldStandardUsage("۳۰"),
+    warnings: onGoldStandardWarnings,
+    manufacturerClaims: onGoldStandardClaims,
+    brand: "Optimum Nutrition",
+    price: 2700000,
+    categorySlug: "protein",
+  },
+  {
+    id: "on1e",
+    name: "وی گلد استاندارد - Gold Standard 100% Whey",
+    slug: "on-gold-standard-whey-banana-cream",
+    groupSlug: "on-gold-standard-whey",
+    flavor: "کرم موز",
+    size: "۲٫۰۴ کیلوگرم",
+    imageUrl: "/images/products/on-gold-standard-whey-banana-cream.webp",
+    description: `وی گلد استاندارد ۱۰۰٪ اپتیموم نوتریشن با طعم کرم موز؛ پودر پروتئینی آماده‌ی مخلوط از ترکیب ایزوله، کنسانتره و ایزوله‌ی هیدرولیزه‌ی پروتئین وی. هر وعده (۳۰ گرم) ۲۴ گرم پروتئین، ۵٫۵ گرم BCAA طبیعی و ۱۱۲ کیلوکالری دارد و بسته‌ی ۲٫۰۴ کیلوگرمی ۶۸ وعده است.\nمواد تشکیل‌دهنده: ترکیب پروتئین وی ۹۸٪ (${onGoldStandardBlend})، طعم‌دهنده‌ها (حاوی شیر)، رنگ (کورکومین)، قوام‌دهنده (زانتان) و شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم).`,
+    servingSize: "۳۰ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۱۲ کیلوکالری" },
+      { label: "چربی", amount: "۱٫۲ گرم" },
+      { label: "چربی اشباع", amount: "۰٫۴ گرم" },
+      { label: "کربوهیدرات", amount: "۱٫۶ گرم" },
+      { label: "قندها", amount: "۱٫۰ گرم" },
+      { label: "پروتئین", amount: "۲۴ گرم" },
+      { label: "نمک", amount: "۰٫۱۶ گرم" },
+    ],
+    usage: onGoldStandardUsage("۳۰"),
+    warnings: onGoldStandardWarnings,
+    manufacturerClaims: onGoldStandardClaims,
+    brand: "Optimum Nutrition",
+    price: 2450000,
+    categorySlug: "protein",
+  },
+  {
+    id: "on1f",
+    name: "وی گلد استاندارد - Gold Standard 100% Whey",
+    slug: "on-gold-standard-whey-chocolate-hazelnut",
+    groupSlug: "on-gold-standard-whey",
+    flavor: "شکلات فندقی",
+    size: "۲٫۲۷ کیلوگرم",
+    imageUrl: "/images/products/on-gold-standard-whey-chocolate-hazelnut.webp",
+    description: `وی گلد استاندارد ۱۰۰٪ اپتیموم نوتریشن با طعم شکلات فندقی؛ پودر پروتئینی آماده‌ی مخلوط از ترکیب ایزوله، کنسانتره و ایزوله‌ی هیدرولیزه‌ی پروتئین وی. هر وعده (۳۲ گرم) ۲۴ گرم پروتئین، ۵٫۵ گرم BCAA طبیعی و ۱۱۷ کیلوکالری دارد و بسته‌ی ۲٫۲۷ کیلوگرمی ۷۱ وعده است.\nمواد تشکیل‌دهنده: ترکیب پروتئین وی ۹۱٪ (${onGoldStandardBlend})، پودر کاکائوی کم‌چرب، طعم‌دهنده‌ها (حاوی شیر)، نمک، قوام‌دهنده (زانتان) و شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم).`,
+    servingSize: "۳۲ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۱۷ کیلوکالری" },
+      { label: "چربی", amount: "۱٫۴ گرم" },
+      { label: "چربی اشباع", amount: "۰٫۵ گرم" },
+      { label: "کربوهیدرات", amount: "۲٫۰ گرم" },
+      { label: "قندها", amount: "۱٫۱ گرم" },
+      { label: "فیبر", amount: "۰٫۶ گرم" },
+      { label: "پروتئین", amount: "۲۴ گرم" },
+      { label: "نمک", amount: "۰٫۲۹ گرم" },
+    ],
+    usage: onGoldStandardUsage("۳۲"),
+    warnings: onGoldStandardWarnings,
+    manufacturerClaims: onGoldStandardClaims,
+    brand: "Optimum Nutrition",
+    price: 2750000,
+    categorySlug: "protein",
+  },
+  {
+    id: "on1g",
+    name: "وی گلد استاندارد - Gold Standard 100% Whey",
+    slug: "on-gold-standard-whey-chocolate-peanut-butter",
+    groupSlug: "on-gold-standard-whey",
+    flavor: "شکلات و کره‌ی بادام‌زمینی",
+    size: "۲٫۲۷ کیلوگرم",
+    imageUrl: "/images/products/on-gold-standard-whey-chocolate-peanut-butter.webp",
+    description: `وی گلد استاندارد ۱۰۰٪ اپتیموم نوتریشن با طعم شکلات و کره‌ی بادام‌زمینی؛ پودر پروتئینی آماده‌ی مخلوط از ترکیب ایزوله، کنسانتره و ایزوله‌ی هیدرولیزه‌ی پروتئین وی. هر وعده (۳۲ گرم) ۲۴ گرم پروتئین، ۵٫۵ گرم BCAA طبیعی و ۱۱۷ کیلوکالری دارد و بسته‌ی ۲٫۲۷ کیلوگرمی ۷۱ وعده است.\nمواد تشکیل‌دهنده: ترکیب پروتئین وی ۹۱٪ (${onGoldStandardBlend})، طعم‌دهنده، پودر کاکائوی کم‌چرب، نمک، قوام‌دهنده (زانتان) و شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم).`,
+    servingSize: "۳۲ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۱۷ کیلوکالری" },
+      { label: "چربی", amount: "۱٫۳ گرم" },
+      { label: "چربی اشباع", amount: "۰٫۵ گرم" },
+      { label: "کربوهیدرات", amount: "۲٫۲ گرم" },
+      { label: "قندها", amount: "۱٫۰ گرم" },
+      { label: "فیبر", amount: "۰٫۶ گرم" },
+      { label: "پروتئین", amount: "۲۴ گرم" },
+      { label: "نمک", amount: "۰٫۵ گرم" },
+    ],
+    usage: onGoldStandardUsage("۳۲"),
+    warnings: onGoldStandardWarnings,
+    manufacturerClaims: onGoldStandardClaims,
+    brand: "Optimum Nutrition",
+    price: 2750000,
+    categorySlug: "protein",
+  },
+  {
+    id: "on1h",
+    name: "وی گلد استاندارد - Gold Standard 100% Whey",
+    slug: "on-gold-standard-whey-cookies-cream",
+    groupSlug: "on-gold-standard-whey",
+    flavor: "کوکی و کرم",
+    size: "۲٫۰۲ کیلوگرم",
+    imageUrl: "/images/products/on-gold-standard-whey-cookies-cream.webp",
+    description: `وی گلد استاندارد ۱۰۰٪ اپتیموم نوتریشن با طعم کوکی و کرم؛ پودر پروتئینی آماده‌ی مخلوط از ترکیب ایزوله، کنسانتره و ایزوله‌ی هیدرولیزه‌ی پروتئین وی، با تکه‌های کوکی. هر وعده (۳۲ گرم) ۲۴ گرم پروتئین، ۵٫۵ گرم BCAA طبیعی و ۱۱۹ کیلوکالری دارد و بسته‌ی ۲٫۰۲ کیلوگرمی ۶۳ وعده است.\nمواد تشکیل‌دهنده: ترکیب پروتئین وی ۹۱٪ (${onGoldStandardBlend})، طعم‌دهنده‌ها (حاوی شیر)، خرده‌کوکی ۳٫۲٪ (آرد گندم، شکر، چربی‌های گیاهی (روغن پالم، کلزا)، پودر کاکائوی کم‌چرب، نمک)، قوام‌دهنده (زانتان) و شیرین‌کننده (سوکرالوز).`,
+    servingSize: "۳۲ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۱۹ کیلوکالری" },
+      { label: "چربی", amount: "۱٫۳ گرم" },
+      { label: "چربی اشباع", amount: "۰٫۵ گرم" },
+      { label: "کربوهیدرات", amount: "۳٫۱ گرم" },
+      { label: "قندها", amount: "۱٫۲ گرم" },
+      { label: "پروتئین", amount: "۲۴ گرم" },
+      { label: "نمک", amount: "۰٫۱۶ گرم" },
+    ],
+    usage: onGoldStandardUsage("۳۲"),
+    // The cookie crumb adds wheat, so gluten is an ingredient here, not a trace.
+    warnings:
+      "حساسیت‌زاها: حاوی شیر، سویا و گندم (گلوتن). ممکن است حاوی تخم‌مرغ، آجیل و بادام‌زمینی باشد.",
+    manufacturerClaims: onGoldStandardClaims,
+    brand: "Optimum Nutrition",
+    price: 2450000,
+    categorySlug: "protein",
+  },
+  {
+    id: "on1i",
+    name: "وی گلد استاندارد - Gold Standard 100% Whey",
+    slug: "on-gold-standard-whey-white-chocolate-raspberry",
+    groupSlug: "on-gold-standard-whey",
+    flavor: "شکلات سفید و تمشک",
+    size: "۲٫۲۸ کیلوگرم",
+    imageUrl: "/images/products/on-gold-standard-whey-white-chocolate-raspberry.webp",
+    description: `وی گلد استاندارد ۱۰۰٪ اپتیموم نوتریشن با طعم شکلات سفید و تمشک؛ پودر پروتئینی آماده‌ی مخلوط از ترکیب ایزوله، کنسانتره و ایزوله‌ی هیدرولیزه‌ی پروتئین وی. هر وعده (۳۰ گرم) ۲۴ گرم پروتئین، ۵٫۵ گرم BCAA طبیعی و ۱۱۱ کیلوکالری دارد و بسته‌ی ۲٫۲۸ کیلوگرمی ۷۶ وعده است.\nمواد تشکیل‌دهنده: ترکیب پروتئین وی ۹۸٪ (${onGoldStandardBlend})، تمشک خشک‌شده به روش انجمادی ۱٫۳٪، طعم‌دهنده، قوام‌دهنده (زانتان) و شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم).`,
+    servingSize: "۳۰ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۱۱ کیلوکالری" },
+      { label: "چربی", amount: "۱٫۲ گرم" },
+      { label: "چربی اشباع", amount: "۰٫۴ گرم" },
+      { label: "کربوهیدرات", amount: "۱٫۴ گرم" },
+      { label: "قندها", amount: "۱٫۰ گرم" },
+      { label: "پروتئین", amount: "۲۴ گرم" },
+      { label: "نمک", amount: "۰٫۱۵ گرم" },
+    ],
+    usage: onGoldStandardUsage("۳۰"),
+    warnings: onGoldStandardWarnings,
+    manufacturerClaims: onGoldStandardClaims,
+    brand: "Optimum Nutrition",
+    price: 2750000,
     categorySlug: "protein",
   },
   {
     id: "on2",
     name: "کراتین میکرونیزه - Micronized Creatine Powder",
     slug: "on-micronized-creatine",
+    groupSlug: "on-micronized-creatine",
+    flavor: "بدون طعم",
+    size: "۳۱۷ گرم",
+    imageUrl: "/images/products/on-micronized-creatine.webp",
+    // Photos and label details from ON's German shop (de-de,
+    // micronised-creatine-powder); the shop has no facts table. Every pack
+    // says 3 g creatine per serving. The unflavoured serving is the 3.4 g of
+    // creatine monohydrate the description names (634 g ÷ 186 = 3.4 g); the
+    // label record's "4.5 g" belongs to the flavoured tubs, and its 88
+    // servings for 317 g is overridden by the pack photo's 93 (317 ÷ 3.4).
+    description:
+      "کراتین میکرونیزه‌ی اپتیموم نوتریشن، بدون طعم؛ مکمل غذایی پودر کراتین مونوهیدرات که ذراتش برای حل‌شدن بهتر ریزتر شده است. هر وعده (۳٫۴ گرم) ۳ گرم کراتین دارد و بسته‌ی ۳۱۷ گرمی ۹۳ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات.",
+    servingSize: "۳٫۴ گرم (حدود ۱ قاشق چای‌خوری سرپر)",
+    nutritionFacts: [
+      { label: "کراتین مونوهیدرات", amount: "۳٫۴ گرم" },
+      { label: "کراتین", amount: "۳ گرم" },
+    ],
+    usage:
+      "روزانه ۱ وعده (۳٫۴ گرم، حدود ۱ قاشق چای‌خوری سرپر) را در ۲۵۰ میلی‌لیتر آب سرد، آبمیوه یا نوشیدنی دلخواه حل کنید؛ پیش یا بعد از تمرین. برای حفظ سطح کراتین عضلات، مصرف روزانه توصیه می‌شود.",
+    warnings: onCreatineWarnings,
+    manufacturerClaims: onCreatineClaims,
     brand: "Optimum Nutrition",
     price: 990000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "on2b",
+    name: "کراتین میکرونیزه - Micronized Creatine Powder",
+    slug: "on-micronized-creatine-634g",
+    groupSlug: "on-micronized-creatine",
+    flavor: "بدون طعم",
+    size: "۶۳۴ گرم",
+    imageUrl: "/images/products/on-micronized-creatine-634g.webp",
+    description:
+      "کراتین میکرونیزه‌ی اپتیموم نوتریشن، بدون طعم؛ مکمل غذایی پودر کراتین مونوهیدرات که ذراتش برای حل‌شدن بهتر ریزتر شده است. هر وعده (۳٫۴ گرم) ۳ گرم کراتین دارد و بسته‌ی ۶۳۴ گرمی ۱۸۶ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات.",
+    servingSize: "۳٫۴ گرم (حدود ۱ قاشق چای‌خوری سرپر)",
+    nutritionFacts: [
+      { label: "کراتین مونوهیدرات", amount: "۳٫۴ گرم" },
+      { label: "کراتین", amount: "۳ گرم" },
+    ],
+    usage:
+      "روزانه ۱ وعده (۳٫۴ گرم، حدود ۱ قاشق چای‌خوری سرپر) را در ۲۵۰ میلی‌لیتر آب سرد، آبمیوه یا نوشیدنی دلخواه حل کنید؛ پیش یا بعد از تمرین. برای حفظ سطح کراتین عضلات، مصرف روزانه توصیه می‌شود.",
+    warnings: onCreatineWarnings,
+    manufacturerClaims: onCreatineClaims,
+    brand: "Optimum Nutrition",
+    price: 1650000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "on2c",
+    name: "کراتین میکرونیزه - Micronized Creatine Powder",
+    slug: "on-micronized-creatine-fruit-punch",
+    groupSlug: "on-micronized-creatine",
+    flavor: "فروت پانچ",
+    size: "۳۶۰ گرم",
+    imageUrl: "/images/products/on-micronized-creatine-fruit-punch.webp",
+    // Flavoured tubs: 4.5 g scoop (360 g ÷ 80 = 4.5 g), 3 g creatine per the
+    // pack; the shop gives no amount of creatine monohydrate for them.
+    description:
+      "کراتین میکرونیزه‌ی اپتیموم نوتریشن با طعم فروت پانچ؛ مکمل غذایی پودر کراتین مونوهیدرات با شیرین‌کننده. هر وعده (۴٫۵ گرم) ۳ گرم کراتین دارد و بسته‌ی ۳۶۰ گرمی ۸۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات، اسیدی‌کننده‌ها (سیتریک اسید، مالیک اسید)، طعم‌دهنده‌ها، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم)، نمک و رنگ (آبی درخشان FCF).",
+    servingSize: "۴٫۵ گرم (۱ اسکوپ صاف)",
+    nutritionFacts: [{ label: "کراتین", amount: "۳ گرم" }],
+    usage:
+      "روزانه ۱ وعده (۱ اسکوپ صاف، ۴٫۵ گرم) را در ۲۴۰ میلی‌لیتر آب سرد حل کنید و مصرف کنید.",
+    warnings: onCreatineWarnings,
+    manufacturerClaims: onCreatineClaims,
+    brand: "Optimum Nutrition",
+    price: 990000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "on2d",
+    name: "کراتین میکرونیزه - Micronized Creatine Powder",
+    slug: "on-micronized-creatine-blue-raspberry",
+    groupSlug: "on-micronized-creatine",
+    flavor: "تمشک آبی",
+    size: "۳۶۰ گرم",
+    imageUrl: "/images/products/on-micronized-creatine-blue-raspberry.webp",
+    description:
+      "کراتین میکرونیزه‌ی اپتیموم نوتریشن با طعم تمشک آبی؛ مکمل غذایی پودر کراتین مونوهیدرات با شیرین‌کننده. هر وعده (۴٫۵ گرم) ۳ گرم کراتین دارد و بسته‌ی ۳۶۰ گرمی ۸۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات، اسیدی‌کننده‌ها (سیتریک اسید، مالیک اسید)، طعم‌دهنده‌ها، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم)، نمک و رنگ (آبی درخشان FCF).",
+    servingSize: "۴٫۵ گرم (۱ اسکوپ صاف)",
+    nutritionFacts: [{ label: "کراتین", amount: "۳ گرم" }],
+    usage:
+      "روزانه ۱ وعده (۱ اسکوپ صاف، ۴٫۵ گرم) را در ۲۵۰ میلی‌لیتر آب سرد حل کنید و مصرف کنید.",
+    warnings: onCreatineWarnings,
+    manufacturerClaims: onCreatineClaims,
+    brand: "Optimum Nutrition",
+    price: 990000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "on2e",
+    name: "کراتین میکرونیزه - Micronized Creatine Powder",
+    slug: "on-micronized-creatine-orange",
+    groupSlug: "on-micronized-creatine",
+    flavor: "پرتقال",
+    size: "۲۴۷٫۵ گرم",
+    imageUrl: "/images/products/on-micronized-creatine-orange.webp",
+    description:
+      "کراتین میکرونیزه‌ی اپتیموم نوتریشن با طعم پرتقال؛ مکمل غذایی پودر کراتین مونوهیدرات با شیرین‌کننده. هر وعده (۴٫۵ گرم) ۳ گرم کراتین دارد و بسته‌ی ۲۴۷٫۵ گرمی ۵۵ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات، طعم‌دهنده‌ها، اسیدی‌کننده‌ها (سیتریک اسید، مالیک اسید)، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم)، کنسانتره‌ی چغندر، نمک و رنگ (ریبوفلاوین).",
+    servingSize: "۴٫۵ گرم (۱ اسکوپ صاف)",
+    nutritionFacts: [{ label: "کراتین", amount: "۳ گرم" }],
+    usage:
+      "روزانه ۱ وعده (۱ اسکوپ صاف، ۴٫۵ گرم) را در ۲۵۰ میلی‌لیتر آب سرد حل کنید و مصرف کنید.",
+    warnings: onCreatineWarnings,
+    manufacturerClaims: onCreatineClaims,
+    brand: "Optimum Nutrition",
+    price: 750000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "on2t",
+    name: "قرص کراتین - Creatine Tablets",
+    slug: "on-creatine-tablets",
+    size: "۱۸۰ قرص",
+    imageUrl: "/images/products/on-creatine-tablets.webp",
+    // Dose and count from the pack photo (3.0 g creatine monohydrate per
+    // serving, 180 tablets, 60 servings). ON's German shop page (de-de,
+    // creatine-tablets-180) has no facts table and says "3 g pure creatine",
+    // which doesn't match the label's 3 g of monohydrate, so the label wins
+    // and that line is left out. Directions and warnings are from that page.
+    description:
+      "قرص کراتین اپتیموم نوتریشن؛ مکمل غذایی کراتین مونوهیدرات به شکل قرص. هر وعده (۳ قرص) ۳ گرم کراتین مونوهیدرات دارد و هر قوطی ۱۸۰ قرص، یعنی ۶۰ وعده است.",
+    servingSize: "۳ قرص",
+    nutritionFacts: [{ label: "کراتین مونوهیدرات", amount: "۳ گرم" }],
+    usage:
+      "روزانه ۳ قرص مصرف کنید. برای بهترین نتیجه، همراه نوشیدنی ورزشی یا شیک پروتئین دلخواهتان.",
+    warnings:
+      "مکمل غذایی جایگزین رژیم غذایی متنوع نیست.\nاز مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.\nدور از دسترس کودکان نگهداری شود.",
+    manufacturerClaims:
+      "کراتین مونوهیدرات خالص با کیفیت بالا\nبدون افزودنی و پرکننده‌ی غیرضروری\nبه گفته‌ی سازنده، کراتین عملکرد را در تمرین‌های کوتاه‌مدت، پرشدت و پشت‌سرهم بهبود می‌دهد؛ طبق ادعای سلامت مورد تأیید اتحادیه‌ی اروپا، این اثر با مصرف روزانه‌ی ۳ گرم کراتین به دست می‌آید",
+    brand: "Optimum Nutrition",
+    price: 790000,
     categorySlug: "creatine",
   },
   {
     id: "on3",
     name: "مولتی ویتامین آقایان - Opti-Men",
     slug: "on-opti-men",
+    groupSlug: "on-opti-men",
+    size: "۹۰ قرص",
+    imageUrl: "/images/products/on-opti-men.webp",
+    // Photo and label details from ON's German shop (de-de,
+    // opti-men-multivitamin-tablets). No shop (de, gb, fr) gives the amount
+    // of each vitamin and mineral, so the facts table stays empty. The pack
+    // says 36 active ingredients (the shop text says 38); the pack wins.
+    description:
+      "اپتی‌من اپتیموم نوتریشن؛ مولتی ویتامین مخصوص آقایان فعال، مکمل غذایی با ویتامین‌ها، مواد معدنی، اسیدهای آمینه و عصاره‌های گیاهی (۳۶ ماده‌ی مؤثر). هر وعده ۳ قرص است و قوطی ۹۰ قرصی ۳۰ وعده است.\n" + onOptiMenIngredients,
+    servingSize: "۳ قرص",
+    usage: "روزانه ۳ قرص همراه غذا مصرف کنید.",
+    warnings: onOptiMenWarnings,
+    manufacturerClaims: onOptiMenClaims,
     brand: "Optimum Nutrition",
     price: 1150000,
     categorySlug: "vitamins",
+  },
+  {
+    id: "on3b",
+    name: "مولتی ویتامین آقایان - Opti-Men",
+    slug: "on-opti-men-180",
+    groupSlug: "on-opti-men",
+    size: "۱۸۰ قرص",
+    imageUrl: "/images/products/on-opti-men-180.webp",
+    // Same label as on3; only the count differs.
+    description:
+      "اپتی‌من اپتیموم نوتریشن؛ مولتی ویتامین مخصوص آقایان فعال، مکمل غذایی با ویتامین‌ها، مواد معدنی، اسیدهای آمینه و عصاره‌های گیاهی (۳۶ ماده‌ی مؤثر). هر وعده ۳ قرص است و قوطی ۱۸۰ قرصی ۶۰ وعده است.\n" + onOptiMenIngredients,
+    servingSize: "۳ قرص",
+    usage: "روزانه ۳ قرص همراه غذا مصرف کنید.",
+    warnings: onOptiMenWarnings,
+    manufacturerClaims: onOptiMenClaims,
+    brand: "Optimum Nutrition",
+    price: 1990000,
+    categorySlug: "vitamins",
+  },
+  {
+    id: "on4",
+    name: "سریوس مس - گینر - Serious Mass",
+    slug: "on-serious-mass",
+    groupSlug: "on-serious-mass",
+    flavor: "شکلات",
+    size: "۲٫۷۳ کیلوگرم",
+    imageUrl: "/images/products/on-serious-mass.webp",
+    // Photos and label details from ON's UK shop (en-gb,
+    // serious-mass-weight-gainer-protein-powder-eu): the German shop sells a
+    // newer formula (2.67/5.34 kg) with no label record anywhere, so the UK
+    // packs are used. Each pack shows the same calories, protein, carbs and
+    // 3 g creatine as its record; the creatine amount is from the pack.
+    description: `سریوس مس اپتیموم نوتریشن با طعم شکلات؛ پودر گینر پرکالری آماده‌ی مخلوط با پروتئین، کربوهیدرات، ویتامین‌ها و مواد معدنی برای افزایش وزن و عضله‌سازی. هر وعده (۳۳۶ گرم، ۲ اسکوپ) ۱۲۶۲ کیلوکالری، ۵۰ گرم پروتئین، ۲۴۸ گرم کربوهیدرات و ۳ گرم کراتین دارد و ظرف ۲٫۷۳ کیلوگرمی ۸ وعده است.\nمواد تشکیل‌دهنده: مالتودکسترین ذرت، کنسانتره‌ی پروتئین وی (از شیر)، امولسیفایر (لسیتین، حاوی سویا)، پودر کاکائوی کم‌چرب، کراتین مونوهیدرات، طعم‌دهنده، کمپلکس مواد معدنی شیر، ${onSeriousMassMicronutrients}، نمک، پایدارکننده‌ها (صمغ سلولز، صمغ گوار، کاراگینان) و شیرین‌کننده (سوکرالوز).`,
+    servingSize: "۳۳۶ گرم (۲ اسکوپ سرپر)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۲۶۲ کیلوکالری" },
+      { label: "چربی", amount: "۷٫۰ گرم" },
+      { label: "چربی اشباع", amount: "۳٫۹ گرم" },
+      { label: "کربوهیدرات", amount: "۲۴۸ گرم" },
+      { label: "قندها", amount: "۱۱ گرم" },
+      { label: "پروتئین", amount: "۵۰ گرم" },
+      { label: "نمک", amount: "۱٫۱۷ گرم" },
+      { label: "کراتین", amount: "۳ گرم" },
+    ],
+    usage: onSeriousMassUsage("۳۳۶"),
+    warnings: onSeriousMassWarnings,
+    manufacturerClaims: onSeriousMassClaims,
+    brand: "Optimum Nutrition",
+    price: 2950000,
+    categorySlug: "protein",
+  },
+  {
+    id: "on4b",
+    name: "سریوس مس - گینر - Serious Mass",
+    slug: "on-serious-mass-chocolate-5kg",
+    groupSlug: "on-serious-mass",
+    flavor: "شکلات",
+    size: "۵٫۴۵ کیلوگرم",
+    imageUrl: "/images/products/on-serious-mass-chocolate-5kg.webp",
+    description: `سریوس مس اپتیموم نوتریشن با طعم شکلات؛ پودر گینر پرکالری آماده‌ی مخلوط با پروتئین، کربوهیدرات، ویتامین‌ها و مواد معدنی برای افزایش وزن و عضله‌سازی. هر وعده (۳۳۶ گرم، ۲ اسکوپ) ۱۲۶۲ کیلوکالری، ۵۰ گرم پروتئین، ۲۴۸ گرم کربوهیدرات و ۳ گرم کراتین دارد و کیسه‌ی ۵٫۴۵ کیلوگرمی ۱۶ وعده است.\nمواد تشکیل‌دهنده: مالتودکسترین ذرت، کنسانتره‌ی پروتئین وی (از شیر)، امولسیفایر (لسیتین، حاوی سویا)، پودر کاکائوی کم‌چرب، کراتین مونوهیدرات، طعم‌دهنده، کمپلکس مواد معدنی شیر، ${onSeriousMassMicronutrients}، نمک، پایدارکننده‌ها (صمغ سلولز، صمغ گوار، کاراگینان) و شیرین‌کننده (سوکرالوز).`,
+    servingSize: "۳۳۶ گرم (۲ اسکوپ سرپر)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۲۶۲ کیلوکالری" },
+      { label: "چربی", amount: "۷٫۰ گرم" },
+      { label: "چربی اشباع", amount: "۳٫۹ گرم" },
+      { label: "کربوهیدرات", amount: "۲۴۸ گرم" },
+      { label: "قندها", amount: "۱۱ گرم" },
+      { label: "پروتئین", amount: "۵۰ گرم" },
+      { label: "نمک", amount: "۱٫۱۷ گرم" },
+      { label: "کراتین", amount: "۳ گرم" },
+    ],
+    usage: onSeriousMassUsage("۳۳۶"),
+    warnings: onSeriousMassWarnings,
+    manufacturerClaims: onSeriousMassClaims,
+    brand: "Optimum Nutrition",
+    price: 5450000,
+    categorySlug: "protein",
+  },
+  {
+    id: "on4c",
+    name: "سریوس مس - گینر - Serious Mass",
+    slug: "on-serious-mass-vanilla",
+    groupSlug: "on-serious-mass",
+    flavor: "وانیل",
+    size: "۲٫۷۳ کیلوگرم",
+    imageUrl: "/images/products/on-serious-mass-vanilla.webp",
+    description: `سریوس مس اپتیموم نوتریشن با طعم وانیل؛ پودر گینر پرکالری آماده‌ی مخلوط با پروتئین، کربوهیدرات، ویتامین‌ها و مواد معدنی برای افزایش وزن و عضله‌سازی. هر وعده (۳۳۵ گرم، ۲ اسکوپ) ۱۲۵۹ کیلوکالری، ۵۰ گرم پروتئین، ۲۵۰ گرم کربوهیدرات و ۳ گرم کراتین دارد و ظرف ۲٫۷۳ کیلوگرمی ۸ وعده است.\nمواد تشکیل‌دهنده: مالتودکسترین ذرت، کنسانتره‌ی پروتئین وی (از شیر)، امولسیفایر (لسیتین، حاوی سویا)، طعم‌دهنده‌ها، کراتین مونوهیدرات، کمپلکس مواد معدنی شیر، نمک، ${onSeriousMassMicronutrients}، پایدارکننده‌ها (صمغ سلولز، صمغ گوار، کاراگینان) و شیرین‌کننده (سوکرالوز).`,
+    servingSize: "۳۳۵ گرم (۲ اسکوپ سرپر)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۲۵۹ کیلوکالری" },
+      { label: "چربی", amount: "۶٫۲ گرم" },
+      { label: "چربی اشباع", amount: "۳٫۴ گرم" },
+      { label: "کربوهیدرات", amount: "۲۵۰ گرم" },
+      { label: "قندها", amount: "۱۲ گرم" },
+      { label: "پروتئین", amount: "۵۰ گرم" },
+      { label: "نمک", amount: "۱٫۸۹ گرم" },
+      { label: "کراتین", amount: "۳ گرم" },
+    ],
+    usage: onSeriousMassUsage("۳۳۵"),
+    warnings: onSeriousMassWarnings,
+    manufacturerClaims: onSeriousMassClaims,
+    brand: "Optimum Nutrition",
+    price: 2950000,
+    categorySlug: "protein",
+  },
+  {
+    id: "on4d",
+    name: "سریوس مس - گینر - Serious Mass",
+    slug: "on-serious-mass-vanilla-5kg",
+    groupSlug: "on-serious-mass",
+    flavor: "وانیل",
+    size: "۵٫۴۵ کیلوگرم",
+    imageUrl: "/images/products/on-serious-mass-vanilla-5kg.webp",
+    description: `سریوس مس اپتیموم نوتریشن با طعم وانیل؛ پودر گینر پرکالری آماده‌ی مخلوط با پروتئین، کربوهیدرات، ویتامین‌ها و مواد معدنی برای افزایش وزن و عضله‌سازی. هر وعده (۳۳۵ گرم، ۲ اسکوپ) ۱۲۵۹ کیلوکالری، ۵۰ گرم پروتئین، ۲۵۰ گرم کربوهیدرات و ۳ گرم کراتین دارد و کیسه‌ی ۵٫۴۵ کیلوگرمی ۱۶ وعده است.\nمواد تشکیل‌دهنده: مالتودکسترین ذرت، کنسانتره‌ی پروتئین وی (از شیر)، امولسیفایر (لسیتین، حاوی سویا)، طعم‌دهنده‌ها، کراتین مونوهیدرات، کمپلکس مواد معدنی شیر، نمک، ${onSeriousMassMicronutrients}، پایدارکننده‌ها (صمغ سلولز، صمغ گوار، کاراگینان) و شیرین‌کننده (سوکرالوز).`,
+    servingSize: "۳۳۵ گرم (۲ اسکوپ سرپر)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۲۵۹ کیلوکالری" },
+      { label: "چربی", amount: "۶٫۲ گرم" },
+      { label: "چربی اشباع", amount: "۳٫۴ گرم" },
+      { label: "کربوهیدرات", amount: "۲۵۰ گرم" },
+      { label: "قندها", amount: "۱۲ گرم" },
+      { label: "پروتئین", amount: "۵۰ گرم" },
+      { label: "نمک", amount: "۱٫۸۹ گرم" },
+      { label: "کراتین", amount: "۳ گرم" },
+    ],
+    usage: onSeriousMassUsage("۳۳۵"),
+    warnings: onSeriousMassWarnings,
+    manufacturerClaims: onSeriousMassClaims,
+    brand: "Optimum Nutrition",
+    price: 5450000,
+    categorySlug: "protein",
+  },
+  {
+    id: "on4e",
+    name: "سریوس مس - گینر - Serious Mass",
+    slug: "on-serious-mass-strawberry",
+    groupSlug: "on-serious-mass",
+    flavor: "توت‌فرنگی",
+    size: "۲٫۷۳ کیلوگرم",
+    imageUrl: "/images/products/on-serious-mass-strawberry.webp",
+    description: `سریوس مس اپتیموم نوتریشن با طعم توت‌فرنگی؛ پودر گینر پرکالری آماده‌ی مخلوط با پروتئین، کربوهیدرات، ویتامین‌ها و مواد معدنی برای افزایش وزن و عضله‌سازی. هر وعده (۳۳۵ گرم، ۲ اسکوپ) ۱۲۵۹ کیلوکالری، ۵۰ گرم پروتئین، ۲۵۰ گرم کربوهیدرات و ۳ گرم کراتین دارد و ظرف ۲٫۷۳ کیلوگرمی ۸ وعده است.\nمواد تشکیل‌دهنده: مالتودکسترین ذرت، کنسانتره‌ی پروتئین وی (از شیر)، امولسیفایر (لسیتین، حاوی سویا)، طعم‌دهنده‌ها، کراتین مونوهیدرات، کمپلکس مواد معدنی شیر، کنسانتره‌ی چغندر، نمک، ${onSeriousMassMicronutrients}، پایدارکننده‌ها (صمغ سلولز، صمغ گوار، کاراگینان) و شیرین‌کننده (سوکرالوز).`,
+    servingSize: "۳۳۵ گرم (۲ اسکوپ سرپر)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۲۵۹ کیلوکالری" },
+      { label: "چربی", amount: "۶٫۲ گرم" },
+      { label: "چربی اشباع", amount: "۳٫۴ گرم" },
+      { label: "کربوهیدرات", amount: "۲۵۰ گرم" },
+      { label: "قندها", amount: "۱۲ گرم" },
+      { label: "پروتئین", amount: "۵۰ گرم" },
+      { label: "نمک", amount: "۱٫۸۸ گرم" },
+      { label: "کراتین", amount: "۳ گرم" },
+    ],
+    usage: onSeriousMassUsage("۳۳۵"),
+    warnings: onSeriousMassWarnings,
+    manufacturerClaims: onSeriousMassClaims,
+    brand: "Optimum Nutrition",
+    price: 2950000,
+    categorySlug: "protein",
+  },
+  {
+    id: "on4f",
+    name: "سریوس مس - گینر - Serious Mass",
+    slug: "on-serious-mass-strawberry-5kg",
+    groupSlug: "on-serious-mass",
+    flavor: "توت‌فرنگی",
+    size: "۵٫۴۵ کیلوگرم",
+    imageUrl: "/images/products/on-serious-mass-strawberry-5kg.webp",
+    description: `سریوس مس اپتیموم نوتریشن با طعم توت‌فرنگی؛ پودر گینر پرکالری آماده‌ی مخلوط با پروتئین، کربوهیدرات، ویتامین‌ها و مواد معدنی برای افزایش وزن و عضله‌سازی. هر وعده (۳۳۵ گرم، ۲ اسکوپ) ۱۲۵۹ کیلوکالری، ۵۰ گرم پروتئین، ۲۵۰ گرم کربوهیدرات و ۳ گرم کراتین دارد و کیسه‌ی ۵٫۴۵ کیلوگرمی ۱۶ وعده است.\nمواد تشکیل‌دهنده: مالتودکسترین ذرت، کنسانتره‌ی پروتئین وی (از شیر)، امولسیفایر (لسیتین، حاوی سویا)، طعم‌دهنده‌ها، کراتین مونوهیدرات، کمپلکس مواد معدنی شیر، کنسانتره‌ی چغندر، نمک، ${onSeriousMassMicronutrients}، پایدارکننده‌ها (صمغ سلولز، صمغ گوار، کاراگینان) و شیرین‌کننده (سوکرالوز).`,
+    servingSize: "۳۳۵ گرم (۲ اسکوپ سرپر)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۲۵۹ کیلوکالری" },
+      { label: "چربی", amount: "۶٫۲ گرم" },
+      { label: "چربی اشباع", amount: "۳٫۴ گرم" },
+      { label: "کربوهیدرات", amount: "۲۵۰ گرم" },
+      { label: "قندها", amount: "۱۲ گرم" },
+      { label: "پروتئین", amount: "۵۰ گرم" },
+      { label: "نمک", amount: "۱٫۸۸ گرم" },
+      { label: "کراتین", amount: "۳ گرم" },
+    ],
+    usage: onSeriousMassUsage("۳۳۵"),
+    warnings: onSeriousMassWarnings,
+    manufacturerClaims: onSeriousMassClaims,
+    brand: "Optimum Nutrition",
+    price: 5450000,
+    categorySlug: "protein",
+  },
+  {
+    id: "on5",
+    name: "گلد استاندارد پری‌ورک‌اوت - Gold Standard Pre-Workout",
+    slug: "on-gold-standard-pre-workout",
+    groupSlug: "on-gold-standard-pre-workout",
+    flavor: "فروت پانچ",
+    size: "۳۳۰ گرم",
+    imageUrl: "/images/products/on-gold-standard-pre-workout.webp",
+    // The US shop (en-us) has no label record and mislabelled photos, so the
+    // EU version from ON's UK shop (en-gb, gold-standard-pre-workout-powder-eu)
+    // is used: photos and ingredients per flavour. No shop gives a facts
+    // table; doses are from the pack (175 mg caffeine, 3.4 g creatine
+    // monohydrate, 250 mg Performelon) and the description (1.5 g
+    // beta-alanine). The description's "3 g creatine monohydrate" is
+    // overridden by the pack's 3.4 g (≈ 3 g creatine).
+    description: `گلد استاندارد پری‌ورک‌اوت اپتیموم نوتریشن با طعم فروت پانچ؛ مکمل پیش از تمرین با کافئین طبیعی، کراتین مونوهیدرات، بتا-آلانین و ویتامین‌های گروه B برای انرژی، تمرکز و عملکرد. هر وعده (۱۱ گرم) ۱۷۵ میلی‌گرم کافئین دارد و قوطی ۳۳۰ گرمی ۳۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات، بتا-آلانین، اسیدی‌کننده‌ها (سیتریک اسید، مالیک اسید، ال-تارتاریک اسید)، طعم‌دهنده‌ها، ضدکلوخه‌ها (سیلیکات کلسیم، دی‌اکسید سیلیکون)، ال-سیترولین، رنگ‌ها (قرمز چغندر، بتا-کاروتن، کورکومین)، استیل ال-کارنیتین هیدروکلراید، قوام‌دهنده‌ها (کربوکسی‌متیل‌سلولز سدیم، زانتان، کاراگینان)، ان-استیل ال-تیروزین، پیریدوکسین هیدروکلراید (ویتامین B6)، عصاره‌ی هندوانه، کافئین طبیعی، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم)، ${onPreWorkoutVitamins}.`,
+    servingSize: "۱۱ گرم (حدود ۱ اسکوپ صاف)",
+    nutritionFacts: onPreWorkoutFacts,
+    usage: onPreWorkoutUsage,
+    warnings: onPreWorkoutWarnings,
+    manufacturerClaims: onPreWorkoutClaims,
+    brand: "Optimum Nutrition",
+    price: 1350000,
+    categorySlug: "pre-workout",
+  },
+  {
+    id: "on5b",
+    name: "گلد استاندارد پری‌ورک‌اوت - Gold Standard Pre-Workout",
+    slug: "on-gold-standard-pre-workout-blue-raspberry",
+    groupSlug: "on-gold-standard-pre-workout",
+    flavor: "تمشک آبی",
+    size: "۳۳۰ گرم",
+    imageUrl: "/images/products/on-gold-standard-pre-workout-blue-raspberry.webp",
+    // The shop's list names spirulina powder twice; it is listed once here.
+    description: `گلد استاندارد پری‌ورک‌اوت اپتیموم نوتریشن با طعم تمشک آبی؛ مکمل پیش از تمرین با کافئین طبیعی، کراتین مونوهیدرات، بتا-آلانین و ویتامین‌های گروه B برای انرژی، تمرکز و عملکرد. هر وعده (۱۱ گرم) ۱۷۵ میلی‌گرم کافئین دارد و قوطی ۳۳۰ گرمی ۳۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات، بتا-آلانین، اسیدی‌کننده‌ها (سیتریک اسید، مالیک اسید، ال-تارتاریک اسید)، طعم‌دهنده، ضدکلوخه‌ها (سیلیکات کلسیم، دی‌اکسید سیلیکون)، ال-سیترولین، استیل ال-کارنیتین هیدروکلراید، قوام‌دهنده‌ها (کربوکسی‌متیل‌سلولز سدیم، زانتان، کاراگینان)، ان-استیل ال-تیروزین، پیریدوکسین هیدروکلراید (ویتامین B6)، عصاره‌ی هندوانه، کافئین طبیعی، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم)، پودر اسپیرولینا، ${onPreWorkoutVitamins}.`,
+    servingSize: "۱۱ گرم (حدود ۱ اسکوپ صاف)",
+    nutritionFacts: onPreWorkoutFacts,
+    usage: onPreWorkoutUsage,
+    warnings: onPreWorkoutWarnings,
+    manufacturerClaims: onPreWorkoutClaims,
+    brand: "Optimum Nutrition",
+    price: 1350000,
+    categorySlug: "pre-workout",
+  },
+  {
+    id: "on5c",
+    name: "گلد استاندارد پری‌ورک‌اوت - Gold Standard Pre-Workout",
+    slug: "on-gold-standard-pre-workout-green-apple",
+    groupSlug: "on-gold-standard-pre-workout",
+    flavor: "سیب سبز",
+    size: "۳۳۰ گرم",
+    imageUrl: "/images/products/on-gold-standard-pre-workout-green-apple.webp",
+    description: `گلد استاندارد پری‌ورک‌اوت اپتیموم نوتریشن با طعم سیب سبز؛ مکمل پیش از تمرین با کافئین طبیعی، کراتین مونوهیدرات، بتا-آلانین و ویتامین‌های گروه B برای انرژی، تمرکز و عملکرد. هر وعده (۱۱ گرم) ۱۷۵ میلی‌گرم کافئین دارد و قوطی ۳۳۰ گرمی ۳۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات، بتا-آلانین، اسیدی‌کننده‌ها (سیتریک اسید، مالیک اسید، ال-تارتاریک اسید)، طعم‌دهنده‌ها، ضدکلوخه‌ها (سیلیکات کلسیم، دی‌اکسید سیلیکون)، ال-سیترولین، استیل ال-کارنیتین هیدروکلراید، قوام‌دهنده‌ها (کربوکسی‌متیل‌سلولز سدیم، زانتان، کاراگینان)، ان-استیل ال-تیروزین، پیریدوکسین هیدروکلراید (ویتامین B6)، عصاره‌ی هندوانه، رنگ (لوتئین)، کافئین طبیعی، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم)، پودر اسپیرولینا، ${onPreWorkoutVitamins}.`,
+    servingSize: "۱۱ گرم (حدود ۱ اسکوپ صاف)",
+    nutritionFacts: onPreWorkoutFacts,
+    usage: onPreWorkoutUsage,
+    warnings: onPreWorkoutWarnings,
+    manufacturerClaims: onPreWorkoutClaims,
+    brand: "Optimum Nutrition",
+    price: 1350000,
+    categorySlug: "pre-workout",
+  },
+  {
+    id: "on5d",
+    name: "گلد استاندارد پری‌ورک‌اوت - Gold Standard Pre-Workout",
+    slug: "on-gold-standard-pre-workout-watermelon",
+    groupSlug: "on-gold-standard-pre-workout",
+    flavor: "هندوانه",
+    size: "۳۳۰ گرم",
+    imageUrl: "/images/products/on-gold-standard-pre-workout-watermelon.webp",
+    description: `گلد استاندارد پری‌ورک‌اوت اپتیموم نوتریشن با طعم هندوانه؛ مکمل پیش از تمرین با کافئین طبیعی، کراتین مونوهیدرات، بتا-آلانین و ویتامین‌های گروه B برای انرژی، تمرکز و عملکرد. هر وعده (۱۱ گرم) ۱۷۵ میلی‌گرم کافئین دارد و قوطی ۳۳۰ گرمی ۳۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات، بتا-آلانین، طعم‌دهنده‌ها، اسیدی‌کننده‌ها (سیتریک اسید، مالیک اسید، ال-تارتاریک اسید)، ضدکلوخه‌ها (سیلیکات کلسیم، دی‌اکسید سیلیکون)، ال-سیترولین، استیل ال-کارنیتین هیدروکلراید، قوام‌دهنده‌ها (کربوکسی‌متیل‌سلولز سدیم، زانتان، کاراگینان)، ان-استیل ال-تیروزین، پیریدوکسین هیدروکلراید (ویتامین B6)، عصاره‌ی هندوانه، کافئین طبیعی، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم)، رنگ (قرمز چغندر)، ${onPreWorkoutVitamins}.`,
+    servingSize: "۱۱ گرم (حدود ۱ اسکوپ صاف)",
+    nutritionFacts: onPreWorkoutFacts,
+    usage: onPreWorkoutUsage,
+    warnings: onPreWorkoutWarnings,
+    manufacturerClaims: onPreWorkoutClaims,
+    brand: "Optimum Nutrition",
+    price: 1350000,
+    categorySlug: "pre-workout",
   },
 
   // Dymatize
@@ -51,8 +754,39 @@ const products: BrandProduct[] = [
     id: "dy1",
     name: "ایزو ۱۰۰ - وی ایزوله هیدرولیزه - ISO100",
     slug: "dymatize-iso100",
+    groupSlug: "dymatize-iso100",
+    flavor: "شکلات گورمه",
+    size: "۶۵۰ گرم",
+    imageUrl: "/images/products/dymatize-iso100.webp",
+    // Photo and label details from Dymatize's US site
+    // (dymatize.com/products/iso100-gourmet-chocolate). The only pack photo
+    // there is the 650 g / 20-serving tub (650 ÷ 32 g ≈ 20), so that size is
+    // used. The site gives no directions.
+    description:
+      "ایزو ۱۰۰ دایماتیز با طعم شکلات گورمه؛ پودر پروتئین با ایزوله‌ی وی هیدرولیزه برای جذب و هضم سریع، که لاکتوز، کربوهیدرات، چربی و قند اضافه‌اش فیلتر شده است. هر وعده (۳۲ گرم) ۲۵ گرم پروتئین و ۱۲۰ کیلوکالری دارد و بسته‌ی ۶۵۰ گرمی ۲۰ وعده است.\nپروفایل آمینو اسید در هر وعده: لوسین ۲۶۷۷، ایزولوسین ۱۴۲۱ و والین ۱۴۴۷ میلی‌گرم (مجموع BCAA حدود ۵٫۵ گرم)، گلوتامین و گلوتامیک اسید ۴۴۰۶ میلی‌گرم.\nمواد تشکیل‌دهنده: ایزوله‌ی پروتئین وی هیدرولیزه، ایزوله‌ی پروتئین وی، پودر کاکائو (قلیایی‌شده)؛ کمتر از ۲٪: نمک، لسیتین سویا، طعم‌دهنده‌ی طبیعی و مصنوعی، کلرید پتاسیم، سوکرالوز و استویا (استویول گلیکوزیدها).",
+    servingSize: "۳۲ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۲۰ کیلوکالری" },
+      { label: "چربی", amount: "۱ گرم" },
+      { label: "چربی اشباع", amount: "۰ گرم" },
+      { label: "چربی ترانس", amount: "۰ گرم" },
+      { label: "کلسترول", amount: "۱۰ میلی‌گرم" },
+      { label: "سدیم", amount: "۱۸۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۲ گرم" },
+      { label: "فیبر", amount: "کمتر از ۱ گرم" },
+      { label: "قندها", amount: "۱ گرم" },
+      { label: "قند افزوده", amount: "۰ گرم" },
+      { label: "پروتئین", amount: "۲۵ گرم" },
+      { label: "کلسیم", amount: "۱۲۰ میلی‌گرم" },
+      { label: "آهن", amount: "۰٫۸ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۲۳۰ میلی‌گرم" },
+    ],
+    warnings:
+      "حساسیت‌زاها: حاوی شیر و سویا.\nفقط به‌عنوان مکمل غذایی مصرف شود؛ برای کاهش وزن استفاده نشود.",
+    manufacturerClaims:
+      "۲۵ گرم پروتئین در هر وعده\n۱۰۰٪ پروتئین آن از ایزوله‌ی وی است\nپروتئین وی هیدرولیزه برای جذب سریع\nبدون قند افزوده\nبه‌راحتی در آب، شیر یا جایگزین شیر حل می‌شود\nهضم آسان\nتست‌شده برای مواد ممنوعه (Banned Substance Tested)",
     brand: "Dymatize",
-    price: 2890000,
+    price: 1290000,
     categorySlug: "protein",
   },
   {
@@ -67,9 +801,102 @@ const products: BrandProduct[] = [
     id: "dy3",
     name: "سوپر ماس گینر - Super Mass Gainer",
     slug: "dymatize-super-mass-gainer",
+    groupSlug: "dymatize-super-mass-gainer",
+    flavor: "شکلات",
+    size: "۲٫۷ کیلوگرم",
+    imageUrl: "/images/products/dymatize-super-mass-gainer.webp",
+    // Photo and label details from Dymatize's US site
+    // (dymatize.com/products/super-mass-gainer-rich-chocolate), 6 lb tub:
+    // 8 servings × 335 g ≈ 2.7 kg. Two facts rows don't match their %DV
+    // (vitamin E "14.3 mcg" at 95% fits 14.3 mg; magnesium 130 mg would be
+    // 31%, not 25%), so they are left out.
+    description:
+      "سوپر ماس گینر دایماتیز با طعم شکلات؛ مکمل گینر با ترکیب پروتئین‌های سریع‌جذب و آهسته‌جذب، کربوهیدرات زیاد و ۱۴ ویتامین و ماده‌ی معدنی برای افزایش وزن و حجم عضله. هر وعده (۳۳۵ گرم) ۱۲۸۰ کیلوکالری، ۵۲ گرم پروتئین و ۲۴۵ گرم کربوهیدرات دارد و ظرف ۲٫۷ کیلوگرمی (۶ پوند) ۸ وعده است.\nمواد تشکیل‌دهنده: مالتودکسترین، ترکیب پروتئین (کنسانتره‌ی پروتئین وی، ایزوله‌ی پروتئین شیر، ایزوله‌ی پروتئین وی، پروتئین وی هیدرولیزه، کازئین میسلار)، کریمر آفتابگردان (روغن آفتابگردان، مالتودکسترین، کازئینات سدیم، مونو و دی‌گلیسریدها، توکوفرول‌های طبیعی، تری‌کلسیم فسفات)، پودر کاکائو (قلیایی‌شده)؛ کمتر از ۲٪: کراتین مونوهیدرات، فروکتوز، طعم‌دهنده‌های طبیعی و مصنوعی، ترکیب ویتامین و مواد معدنی (آسکوربات سدیم، دی-آلفا-توکوفریل استات، کلسیم دی-پانتوتنات، یدید پتاسیم، پیریدوکسین هیدروکلراید، تیامین هیدروکلراید، ریبوفلاوین، سیانوکوبالامین)، ترکیب صمغ‌ها (صمغ سلولز، زانتان، کاراگینان)، کلرید پتاسیم، نمک، لسیتین سویا، آسه‌سولفام پتاسیم، سوکرالوز و لسیتین آفتابگردان.",
+    servingSize: "۳۳۵ گرم (۲ و ۱/۲ پیمانه)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۲۸۰ کیلوکالری" },
+      { label: "چربی", amount: "۱۱ گرم" },
+      { label: "چربی اشباع", amount: "۳ گرم" },
+      { label: "چربی ترانس", amount: "۰ گرم" },
+      { label: "کلسترول", amount: "۱۳۰ میلی‌گرم" },
+      { label: "سدیم", amount: "۵۸۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۲۴۵ گرم" },
+      { label: "فیبر", amount: "۳ گرم" },
+      { label: "قندها", amount: "۲۱ گرم" },
+      { label: "قند افزوده", amount: "۱۲ گرم" },
+      { label: "پروتئین", amount: "۵۲ گرم" },
+      { label: "ویتامین C", amount: "۵۳ میلی‌گرم" },
+      { label: "تیامین (B1)", amount: "۰٫۶ میلی‌گرم" },
+      { label: "ریبوفلاوین (B2)", amount: "۰٫۲ میلی‌گرم" },
+      { label: "ویتامین B6", amount: "۱٫۵ میلی‌گرم" },
+      { label: "ویتامین B12", amount: "۱٫۸ میکروگرم" },
+      { label: "پانتوتنیک اسید (B5)", amount: "۸ میلی‌گرم" },
+      { label: "کلسیم", amount: "۹۵۰ میلی‌گرم" },
+      { label: "آهن", amount: "۴٫۵ میلی‌گرم" },
+      { label: "فسفر", amount: "۶۶۰ میلی‌گرم" },
+      { label: "ید", amount: "۱۵۰ میکروگرم" },
+      { label: "پتاسیم", amount: "۱۱۰۰ میلی‌گرم" },
+    ],
+    usage: "هر وعده ۲ و ۱/۲ پیمانه (۳۳۵ گرم) پودر است که با ۷۱۰ میلی‌لیتر (۲۴ اونس) آب مخلوط می‌شود.",
+    warnings: "حساسیت‌زاها: حاوی شیر و سویا.",
+    manufacturerClaims:
+      "۵۲ گرم پروتئین باکیفیت با جذب سریع و آهسته در هر وعده\nدست‌کم ۲۴۵ گرم کربوهیدرات در هر وعده\n۱۰٫۷ گرم BCAA و ۵٫۱ گرم لوسین در هر وعده\nبا ۱۴ ویتامین و ماده‌ی معدنی\nبه‌راحتی مخلوط می‌شود و برای پخت هم مناسب است\nتست‌شده برای مواد ممنوعه (Banned Substance Tested)",
     brand: "Dymatize",
     price: 2150000,
     categorySlug: "protein",
+  },
+  {
+    id: "dy4",
+    name: "کراتین مونوهیدرات - Creatine Monohydrate",
+    slug: "dymatize-creatine-monohydrate",
+    groupSlug: "dymatize-creatine-monohydrate",
+    flavor: "بدون طعم",
+    size: "۳۰۰ گرم",
+    imageUrl: "/images/products/dymatize-creatine-monohydrate.webp",
+    // Photo and label details from Dymatize's US site
+    // (dymatize.com/products/creatine-monohydrate): 60 × 5 g = 300 g. The
+    // site gives no directions or warnings.
+    description:
+      "کراتین مونوهیدرات دایماتیز، بدون طعم؛ مکمل غذایی ۱۰۰٪ کراتین مونوهیدرات کرپیور (Creapure®) بدون پرکننده و افزودنی. هر وعده (۵ گرم) ۵ گرم کراتین مونوهیدرات دارد و قوطی ۳۰۰ گرمی ۶۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات (Creapure®).",
+    servingSize: "۵ گرم (حدود ۱ اسکوپ)",
+    nutritionFacts: [{ label: "کراتین مونوهیدرات (Creapure®)", amount: "۵ گرم" }],
+    manufacturerClaims:
+      "ساخته‌شده با ۱۰۰٪ کرپیور (Creapure®)\nبدون پرکننده و افزودنی\nتست‌شده برای مواد ممنوعه (Banned Substance Tested)\nبه گفته‌ی سازنده، همراه با ورزش و تمرین قدرتی منظم به عضله‌سازی، افزایش قدرت و تمرین‌های پرشدت کمک می‌کند (این ادعا توسط FDA ارزیابی نشده است)\nبدون طعم و آسان‌حل",
+    brand: "Dymatize",
+    price: 850000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "dy5",
+    name: "انرجایز پری‌ورک‌اوت - Energyze Pre-Workout",
+    slug: "dymatize-energyze-pre-workout",
+    groupSlug: "dymatize-energyze-pre-workout",
+    flavor: "لیمو و لیموترش",
+    size: "۴۰۰ گرم",
+    imageUrl: "/images/products/dymatize-energyze-pre-workout.webp",
+    // Photo and label details from Dymatize's US site
+    // (dymatize.com/products/energyze-pre-workout-lemon-lime): 30 × 13.3 g ≈
+    // 400 g. The site gives no directions or warnings; only the caffeine
+    // content is stated as a warning here.
+    description:
+      "انرجایز پری‌ورک‌اوت دایماتیز با طعم لیمو و لیموترش؛ مکمل پیش از تمرین با کافئین کمتر و بدون قند، با ۵ گرم BCAA و ال-سیترولین، ال-تیروزین و ال-تیانین. هر وعده (۱۳٫۳ گرم) ۱۵۰ میلی‌گرم کافئین از عصاره‌ی میوه‌ی قهوه‌ی سبز دارد و قوطی ۴۰۰ گرمی ۳۰ وعده است.\nسایر مواد: سیتریک اسید، پودر لیمو (صمغ عربی، عصاره‌ی لیمو، کنسانتره‌ی آب لیمو)، طعم‌دهنده‌های طبیعی، سوکرالوز، دی‌اکسید سیلیکون، اولئورزین زردچوبه (رنگ) و لسیتین آفتابگردان.",
+    servingSize: "۱۳٫۳ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۳۰ کیلوکالری" },
+      { label: "کربوهیدرات", amount: "کمتر از ۱ گرم" },
+      { label: "BCAA (ال-لوسین، ال-ایزولوسین، ال-والین با نسبت ۲:۱:۱)", amount: "۵ گرم" },
+      { label: "ال-سیترولین", amount: "۴ گرم" },
+      { label: "ال-تیروزین", amount: "۵۰۰ میلی‌گرم" },
+      { label: "ال-تیانین", amount: "۵۰ میلی‌گرم" },
+      { label: "عصاره‌ی میوه‌ی قهوه‌ی سبز", amount: "۱۵۷ میلی‌گرم" },
+      { label: "کافئین (از عصاره‌ی قهوه‌ی سبز)", amount: "۱۵۰ میلی‌گرم" },
+    ],
+    warnings: "حاوی کافئین (۱۵۰ میلی‌گرم در هر وعده).",
+    manufacturerClaims:
+      "کافئین کمتر و بدون قند، برای انرژی پایدار\n۵ گرم ترکیب اسید آمینه که به گفته‌ی سازنده به تمرکز ذهنی کمک می‌کند (این ادعا توسط FDA ارزیابی نشده است)\nبه گفته‌ی سازنده: عملکرد بهتر، انرژی پایدار و ریکاوری سریع‌تر",
+    brand: "Dymatize",
+    price: 1250000,
+    categorySlug: "pre-workout",
   },
 
   // MuscleTech
@@ -607,8 +1434,68 @@ const products: BrandProduct[] = [
   },
   {
     id: "mt3",
-    name: "هیدروکسی‌کات هاردکور - Hydroxycut Hardcore",
-    slug: "muscletech-hydroxycut-hardcore",
+    name: "هیدروکسی‌کات اورجینال - چربی‌سوز - Hydroxycut Original",
+    slug: "hydroxycut-original",
+    size: "۷۲ کپسول",
+    imageUrl: "/images/products/hydroxycut-original.webp",
+    // Pack photo, Supplement Facts panel (72 ct) and directions from
+    // hydroxycut.com/products/hydroxycut-original: 72 ÷ 2 = 36 servings.
+    // Replaces the Hydroxycut Hardcore placeholder, whose label has 50 mg
+    // yohimbe extract. Plum, baobab and cardamom have no amounts on the
+    // label, so they are only in the description. The site gives no
+    // warnings beyond the caffeine amount.
+    description:
+      "هیدروکسی‌کات اورجینال (نام قبلی: Pro Clinical)؛ کپسول کاهش وزن با عصاره‌ی قهوه‌ی روبوستا (C. canephora robusta)، سرکه‌ی سیب و کافئین، به‌همراه ویتامین D و ویتامین‌های گروه B. هر وعده (۲ کپسول) ۲۰۰ میلی‌گرم کافئین دارد و قوطی ۷۲ کپسولی ۳۶ وعده است.\nترکیب Weight Loss Plus: عصاره‌ی قهوه‌ی روبوستا (۴۵٪ کلروژنیک اسید)، سرکه‌ی سیب، آلو، عصاره‌ی بائوباب و هل.\nسایر مواد: آرد برنج، کپسول (ژلاتین گاوی، دی‌اکسید تیتانیوم)، استئارات منیزیم، دی‌اکسید سیلیکون.",
+    servingSize: "۲ کپسول",
+    nutritionFacts: [
+      { label: "ویتامین D (کوله‌کلسیفرول)", amount: "۱۰ میکروگرم" },
+      { label: "تیامین (ویتامین B1)", amount: "۰٫۳ میلی‌گرم" },
+      { label: "ریبوفلاوین (ویتامین B2)", amount: "۰٫۳ میلی‌گرم" },
+      { label: "نیاسین (نیاسینامید)", amount: "۴ میلی‌گرم" },
+      { label: "ویتامین B6", amount: "۰٫۴ میلی‌گرم" },
+      { label: "ویتامین B12", amount: "۶ میکروگرم" },
+      { label: "کمپلکس هیدروکسی‌کات (کل)", amount: "۶۰۴ میلی‌گرم" },
+      { label: "عصاره‌ی قهوه‌ی روبوستا (۴۵٪ کلروژنیک اسید)", amount: "۲۰۰ میلی‌گرم" },
+      { label: "سرکه‌ی سیب", amount: "۱۰۰ میلی‌گرم" },
+      { label: "عصاره‌ی قهوه (Coffea robusta)", amount: "۲۰۴ میلی‌گرم" },
+      { label: "کافئین (از عصاره‌ی قهوه)", amount: "۲۰۰ میلی‌گرم" },
+    ],
+    usage:
+      "برای سنجش تحمل بدن، روزهای ۱ تا ۳: ۱ کپسول دو بار در روز؛ از روز ۴ به بعد: ۲ کپسول دو بار در روز، هر بار ۳۰ تا ۶۰ دقیقه پیش از دو وعده‌ی اصلی غذا و با یک لیوان آب.\nدر هر ۴ ساعت بیش از ۲ کپسول و در ۲۴ ساعت بیش از ۴ کپسول مصرف نکنید.\nبرای بهترین نتیجه، ۶۰ روز همراه با رژیم کم‌کالری و ورزش منظم مصرف کنید و روزانه ۸ لیوان آب بنوشید. پیش از مصرف کل برچسب را بخوانید.",
+    warnings: "حاوی کافئین: ۲۰۰ میلی‌گرم در هر وعده (تا ۴۰۰ میلی‌گرم در روز).",
+    manufacturerClaims:
+      "ماده‌ی کلیدی کاهش وزن: عصاره‌ی قهوه‌ی روبوستا (C. canephora robusta) با پشتوانه‌ی دو مطالعه به گفته‌ی سازنده: میانگین ۱۰٫۹۵ پوند (حدود ۵ کیلوگرم) کاهش وزن در ۶۰ روز با رژیم کم‌کالری در برابر ۵٫۴ پوند در گروه دارونما، و ۳٫۷ پوند در ۸ هفته با رژیم و ورزش متوسط در برابر ۱٫۲۵ پوند\nکافئین برای انرژی و افزایش موقت کالری‌سوزی\nبا سرکه‌ی سیب و ویتامین‌های ضروری\n«پرفروش‌ترین برند مکمل کاهش وزن آمریکا» (به گفته‌ی سازنده)",
+    brand: "MuscleTech",
+    price: 1190000,
+    categorySlug: "fat-burner",
+  },
+  {
+    id: "mt3w",
+    name: "هیدروکسی‌کات پلاس وومن - چربی‌سوز بانوان - Hydroxycut +Women",
+    slug: "hydroxycut-plus-women",
+    size: "۶۰ کپسول",
+    imageUrl: "/images/products/hydroxycut-plus-women.webp",
+    // Pack photo, Supplement Facts panel (60 ct) and directions from
+    // hydroxycut.com/products/hydroxycut-pluswomen: 60 ÷ 2 = 30 servings.
+    // Folate 340 mcg DFE = 200 mcg folic acid × 1.7; biotin and iron match
+    // their %DV. Ingredients inside the blends have no separate amounts.
+    description:
+      "هیدروکسی‌کات پلاس وومن (نام قبلی: Hydroxycut Max)؛ فرمول کاهش وزن مخصوص بانوان در کپسول‌های مایع سریع‌رهش، با عصاره‌ی قهوه‌ی روبوستا (C. canephora robusta) و کافئین، به‌همراه بیوتین، کلاژن، اسید فولیک و آهن. هر وعده (۲ کپسول) ۱۵۰ میلی‌گرم کافئین دارد و قوطی ۶۰ کپسولی ۳۰ وعده است.\nترکیب HydroxyBoost™: کافئین، انبه، کیوی، روغن آووکادو. ترکیب ProDefine™: عصاره‌ی قهوه‌ی روبوستا (۴۵٪ کلروژنیک اسید)، عصاره‌ی برگ انجیر هندی. ترکیب Radiance Support: کلاژن هیدرولیزشده، دی‌اکسید سیلیکون، ال-سیستئین، ال-متیونین.\nسایر مواد: روغن کنجد، کپسول (ژلاتین، رنگ قرمز FD&C شماره‌ی ۴۰).",
+    servingSize: "۲ کپسول مایع سریع‌رهش",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۰ کیلوکالری" },
+      { label: "چربی", amount: "۱ گرم" },
+      { label: "فولات (۲۰۰ میکروگرم اسید فولیک)", amount: "۳۴۰ میکروگرم DFE" },
+      { label: "بیوتین", amount: "۳۰۰ میکروگرم" },
+      { label: "آهن (فروس گلوکونات)", amount: "۲ میلی‌گرم" },
+      { label: "کمپلکس هیدروکسی‌کات پلاس وومن (کل)", amount: "۴۳۰٫۸ میلی‌گرم" },
+      { label: "کافئین", amount: "۱۵۰ میلی‌گرم" },
+    ],
+    usage:
+      "برای سنجش تحمل بدن، روزهای ۱ تا ۳: ۱ کپسول دو بار در روز؛ از روز ۴ به بعد: ۱ وعده (۲ کپسول) دو بار در روز، ۳۰ تا ۶۰ دقیقه پیش از دو وعده‌ی اصلی غذا (مثلاً صبحانه و ناهار).\nبین وعده‌ها و پیش از شام چیزی نخورید. تا ۵ ساعت پیش از خواب مصرف نکنید.\nدر هر ۴ ساعت بیش از ۲ کپسول و در ۲۴ ساعت بیش از ۴ کپسول مصرف نکنید.\nبرای بهترین نتیجه، ۶۰ روز همراه با رژیم غذایی و ورزش مصرف کنید.",
+    warnings: "حاوی کافئین: ۱۵۰ میلی‌گرم در هر وعده (تا ۳۰۰ میلی‌گرم در روز).\nحساسیت‌زا: حاوی کنجد.",
+    manufacturerClaims:
+      "ماده‌ی کلیدی کاهش وزن: عصاره‌ی قهوه‌ی روبوستا (C. canephora robusta) با پشتوانه‌ی دو مطالعه به گفته‌ی سازنده: میانگین ۱۰٫۹۵ پوند (حدود ۵ کیلوگرم) کاهش وزن در ۶۰ روز با رژیم کم‌کالری، و ۳٫۷ پوند در ۸ هفته با رژیم و ورزش متوسط\nانرژی سریع و افزایش متابولیسم با کافئین\nبا بیوتین و کلاژن، و مواد مناسب بانوان: اسید فولیک و آهن",
     brand: "MuscleTech",
     price: 1190000,
     categorySlug: "fat-burner",
@@ -619,6 +1506,63 @@ const products: BrandProduct[] = [
     id: "bsn1",
     name: "سینتا ۶ - Syntha-6",
     slug: "bsn-syntha-6",
+    groupSlug: "bsn-syntha-6",
+    flavor: "میلک‌شیک شکلات",
+    size: "۱٫۳۲ کیلوگرم",
+    imageUrl: "/images/products/bsn-syntha-6.webp",
+    // Pack photo from BSN's US site (gobsn.com/products/syntha-6-protein),
+    // Chocolate Milkshake 2.91 lb / 28 servings. The site's only facts panel
+    // is for Blueberry Pancake (bsn1b), so this flavour has just what its
+    // pack front shows: 22 g protein and 10 g essential amino acids.
+    description:
+      "سینتا ۶ بی‌اس‌ان با طعم میلک‌شیک شکلات؛ ماتریکس پروتئینی فوق‌ممتاز از چند منبع پروتئین (طبق سایت سازنده: کنسانتره و ایزوله‌ی پروتئین وی، کازئینات کلسیم، کازئین میسلار، ایزوله‌ی پروتئین شیر و آلبومین تخم‌مرغ) برای هر زمانی از روز. هر وعده ۲۲ گرم پروتئین و ۱۰ گرم اسید آمینه‌ی ضروری طبیعی دارد و بسته‌ی ۱٫۳۲ کیلوگرمی ۲۸ وعده است.",
+    servingSize: "۱ اسکوپ",
+    nutritionFacts: [
+      { label: "پروتئین", amount: "۲۲ گرم" },
+      { label: "اسیدهای آمینه‌ی ضروری (طبیعی)", amount: "۱۰ گرم" },
+    ],
+    usage: bsnSynthaUsage,
+    // The site lists milk and egg proteins; this flavour's full ingredient
+    // and allergen list isn't published there.
+    warnings: "حساسیت‌زاها: حاوی شیر و تخم‌مرغ (طبق منابع پروتئینی که سایت سازنده نام برده است).",
+    manufacturerClaims: bsnSynthaClaims,
+    brand: "BSN",
+    price: 2350000,
+    categorySlug: "protein",
+  },
+  {
+    id: "bsn1b",
+    name: "سینتا ۶ - Syntha-6",
+    slug: "bsn-syntha-6-blueberry-pancake",
+    groupSlug: "bsn-syntha-6",
+    flavor: "پنکیک بلوبری",
+    size: "۱٫۳۲ کیلوگرم",
+    imageUrl: "/images/products/bsn-syntha-6-blueberry-pancake.webp",
+    // Pack photo and the Nutrition Facts panel image from BSN's US site
+    // (Blueberry Pancake, 28 servings): 28 × 47 g ≈ 1.32 kg; every row
+    // matches its %DV.
+    description:
+      "سینتا ۶ بی‌اس‌ان با طعم پنکیک بلوبری؛ ماتریکس پروتئینی فوق‌ممتاز از چند منبع پروتئین برای هر زمانی از روز. هر وعده (۴۷ گرم) ۲۲ گرم پروتئین، ۱۰ گرم اسید آمینه‌ی ضروری طبیعی و ۲۰۰ کیلوکالری دارد و بسته‌ی ۱٫۳۲ کیلوگرمی ۲۸ وعده است.\nمواد تشکیل‌دهنده: ماتریکس پروتئین (کنسانتره‌ی پروتئین وی، کازئینات کلسیم، ایزوله‌ی پروتئین وی هیدرولیزه، ایزوله‌ی پروتئین وی، کازئین میسلار، ایزوله‌ی پروتئین شیر)، پلی‌دکستروز، کریمر (روغن آفتابگردان، شربت ذرت جامد، کازئینات سدیم، مونو و دی‌گلیسریدها، دی‌پتاسیم فسفات، تری‌کلسیم فسفات، لسیتین سویا، توکوفرول‌ها)، مالتودکسترین، طعم‌دهنده‌ی طبیعی و مصنوعی، پودر MCT (تری‌گلیسریدهای با زنجیره‌ی متوسط، دی‌اکسید سیلیکون، مالتودکسترین)، لسیتین آفتابگردان و/یا سویا، صمغ سلولز، نمک، سوکرالوز و رنگ‌های آبی ۲ و قرمز ۴۰.",
+    servingSize: "۴۷ گرم (حدود ۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۲۰۰ کیلوکالری" },
+      { label: "چربی", amount: "۵ گرم" },
+      { label: "چربی اشباع", amount: "۲ گرم" },
+      { label: "کلسترول", amount: "۹۰ میلی‌گرم" },
+      { label: "سدیم", amount: "۲۰۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۱۶ گرم" },
+      { label: "فیبر", amount: "۶ گرم" },
+      { label: "قندها", amount: "۳ گرم" },
+      { label: "قند افزوده", amount: "۱ گرم" },
+      { label: "پروتئین", amount: "۲۲ گرم" },
+      { label: "کلسیم", amount: "۱۲۰ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۱۹۰ میلی‌گرم" },
+      { label: "فسفر", amount: "۱۴۰ میلی‌گرم" },
+      { label: "منیزیم", amount: "۱۵ میلی‌گرم" },
+    ],
+    usage: bsnSynthaUsage,
+    warnings: "حساسیت‌زاها: حاوی شیر و سویا.",
+    manufacturerClaims: bsnSynthaClaims,
     brand: "BSN",
     price: 2350000,
     categorySlug: "protein",
@@ -627,9 +1571,114 @@ const products: BrandProduct[] = [
     id: "bsn2",
     name: "ان‌او اکسپلود - N.O.-Xplode",
     slug: "bsn-no-xplode",
+    groupSlug: "bsn-no-xplode",
+    flavor: "بلو رز (تمشک آبی)",
+    size: "۲۹۶ گرم",
+    imageUrl: "/images/products/bsn-no-xplode.webp",
+    // Pack photo and Supplement Facts panel image from BSN's US site
+    // (gobsn.com/products/no-xplode-pre-workout, Blue Raz 16 servings):
+    // 16 × 18.5 g = 296 g; every %DV row checks out. Caffeine (275 mg, on
+    // the pack front) and beta-alanine (1.8 g, page text) sit inside the
+    // proprietary blends. The site gives no warnings, so only the caffeine
+    // content is stated.
+    description:
+      "ان‌او اکسپلود بی‌اس‌ان با طعم بلو رز؛ پیش‌تمرین افسانه‌ای (اولین پیش‌تمرین کامل، از ۲۰۰۴) برای انرژی انفجاری، تمرکز، پمپ و استقامت. هر وعده (۱۸٫۵ گرم) ۲۷۵ میلی‌گرم کافئین دارد و قوطی ۲۹۶ گرمی ۱۶ وعده است.\nترکیب اختصاصی N.O.-XPLODE: ماتریکس میوژنیک ۵٫۱ گرم (کراتین مونوهیدرات، تورین، دی‌کلسیم فسفات، دی‌سدیم فسفات، AstraGin®)؛ اندورا شات ۲٫۹ گرم (بتا-آلانین، بی‌کربنات پتاسیم، بی‌کربنات سدیم، اکسید منیزیم، کوله‌کلسیفرول)؛ ترمیک انرژی ۱٫۳ گرم (ان-استیل تیروزین، ال-تیروزین، کافئین بی‌آب، بیوفلاونوئید گریپ‌فروت)؛ ان‌او آلفا فیوژن ۱ گرم (ال-سیترولین مالات، عصاره‌ی ریشه‌ی دانشن، عصاره‌ی پوست انگور، عصاره‌ی آمله (CAPROS®)، عصاره‌ی زالزالک، فولیک اسید)؛ شاک کامپوزیت ۲۹۰ میلی‌گرم (DMAE بیتارترات، ال-فنیل‌آلانین، نیکوتینیک اسید، کلسیم دی-پانتوتنات، عصاره‌ی هوپرزیا، تیامین، پیریدوکسین، سیانوکوبالامین).\nسایر مواد: طعم‌دهنده‌ی طبیعی و مصنوعی، سیتریک اسید، مالیک اسید، سیلیکات کلسیم، دی‌اکسید سیلیکون، سوکرالوز، آسه‌سولفام پتاسیم و رنگ‌های آبی ۱ و آبی ۲.",
+    servingSize: "۱۸٫۵ گرم (حدود ۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۲۰ کیلوکالری" },
+      { label: "کربوهیدرات", amount: "۵ گرم" },
+      { label: "ویتامین D", amount: "۱۲٫۵ میکروگرم" },
+      { label: "تیامین (B1)", amount: "۲ میلی‌گرم" },
+      { label: "نیاسین", amount: "۲۰ میلی‌گرم" },
+      { label: "ویتامین B6", amount: "۲ میلی‌گرم" },
+      { label: "فولات", amount: "۳۳۰ میکروگرم DFE" },
+      { label: "ویتامین B12", amount: "۶ میکروگرم" },
+      { label: "پانتوتنیک اسید", amount: "۱۰ میلی‌گرم" },
+      { label: "کلسیم", amount: "۴۰ میلی‌گرم" },
+      { label: "منیزیم", amount: "۱۲۵ میلی‌گرم" },
+      { label: "سدیم", amount: "۱۰۰ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۲۰۰ میلی‌گرم" },
+      { label: "ماتریکس میوژنیک", amount: "۵٫۱ گرم" },
+      { label: "اندورا شات", amount: "۲٫۹ گرم" },
+      { label: "ترمیک انرژی", amount: "۱٫۳ گرم" },
+      { label: "ان‌او آلفا فیوژن", amount: "۱ گرم" },
+      { label: "شاک کامپوزیت", amount: "۲۹۰ میلی‌گرم" },
+      { label: "کافئین (روی بسته)", amount: "۲۷۵ میلی‌گرم" },
+      { label: "بتا-آلانین (طبق سایت سازنده)", amount: "۱٫۸ گرم" },
+    ],
+    usage:
+      "۱۸٫۵ گرم (حدود ۱ اسکوپ) را با ۱۲۰ تا ۱۸۰ میلی‌لیتر (۴ تا ۶ اونس) آب سرد مخلوط کنید و ۲۰ تا ۳۰ دقیقه پیش از تمرین مصرف کنید. تکان ندهید؛ پودر را هم بزنید.",
+    warnings: "حاوی ۲۷۵ میلی‌گرم کافئین در هر وعده.",
+    manufacturerClaims:
+      "انرژی انفجاری، تمرکز شدید، پمپ و استقامت بیشتر\nاولین پیش‌تمرین کامل، عرضه‌شده در ۲۰۰۴ (به گفته‌ی سازنده)\nساخت آمریکا\n(این ادعاها توسط FDA ارزیابی نشده است)",
     brand: "BSN",
     price: 1450000,
     categorySlug: "pre-workout",
+  },
+  {
+    id: "bsn4",
+    name: "کراتین - Creatine",
+    slug: "bsn-creatine",
+    groupSlug: "bsn-creatine",
+    flavor: "بدون طعم",
+    size: "۳۰۹ گرم",
+    imageUrl: "/images/products/bsn-creatine.webp",
+    // Pack photo and Supplement Facts panel image from BSN's US site
+    // (gobsn.com/products/creatine): 60 × 5 g; the pack's net weight is
+    // 309 g. The site gives no warnings.
+    description:
+      "کراتین بی‌اس‌ان، بدون طعم؛ کراتین مونوهیدرات میکرونیزه برای حل‌شدن سریع، بدون پرکننده و افزودنی، مناسب برای ترکیب با مکمل‌های دیگر. هر وعده (۵ گرم) ۵ گرم کراتین مونوهیدرات دارد و قوطی ۳۰۹ گرمی ۶۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات میکرونیزه (سایر مواد: ندارد).",
+    servingSize: "۵ گرم (حدود ۱ اسکوپ)",
+    nutritionFacts: [{ label: "کراتین مونوهیدرات میکرونیزه", amount: "۵ گرم" }],
+    usage:
+      "۵ گرم (حدود ۱ اسکوپ) را با ۲۴۰ تا ۳۵۰ میلی‌لیتر (۸ تا ۱۲ اونس) آب یا نوشیدنی دلخواه مخلوط کنید؛ بعد از تمرین یا هر زمانی از روز.",
+    manufacturerClaims:
+      "۵ گرم کراتین مونوهیدرات در هر وعده\nبدون پرکننده و افزودنی\nمیکرونیزه برای حل‌شدن سریع\nبه گفته‌ی سازنده، از قدرت و توان عضله و بازچرخش ATP در تمرین پرشدت پشتیبانی می‌کند (این ادعا توسط FDA ارزیابی نشده است)",
+    brand: "BSN",
+    price: 750000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "bsn5",
+    name: "ترو مس - گینر - True-Mass",
+    slug: "bsn-true-mass",
+    groupSlug: "bsn-true-mass",
+    flavor: "میلک‌شیک شکلات",
+    size: "۲٫۶۴ کیلوگرم",
+    imageUrl: "/images/products/bsn-true-mass.webp",
+    // Pack photo and Nutrition Facts panel image from BSN's US site
+    // (gobsn.com/products/true-mass, Chocolate Milkshake 16 servings):
+    // 16 × 165 g ≈ 2.64 kg. The protein %DV (86%) is lower than 47 g ÷ 50 g
+    // because US labels base it on digestibility-corrected protein, so the
+    // row is kept. The site gives no warnings.
+    description:
+      "ترو مس بی‌اس‌ان با طعم میلک‌شیک شکلات؛ گینر فوق‌ممتاز با ماتریکس پروتئین و کربوهیدرات (نسبت حدود ۲ به ۱) و MCT، برای ورزشکارانی که به کالری بیشتری نیاز دارند. هر وعده (۱۶۵ گرم) ۶۹۰ کیلوکالری، ۴۷ گرم پروتئین و ۸۷ گرم کربوهیدرات دارد و ظرف ۲٫۶۴ کیلوگرمی ۱۶ وعده است.\nمواد تشکیل‌دهنده: ماتریکس پروتئین (کنسانتره‌ی پروتئین وی، کازئینات کلسیم، ایزوله‌ی پروتئین وی هیدرولیزه، ایزوله‌ی پروتئین وی، کازئین میسلار، ایزوله‌ی پروتئین شیر)، پلی‌دکستروز، کریمر (روغن آفتابگردان، شربت ذرت جامد، کازئینات سدیم، مونو و دی‌گلیسریدها، دی‌پتاسیم فسفات، تری‌کلسیم فسفات، لسیتین سویا، توکوفرول‌ها)، مالتودکسترین، طعم‌دهنده‌ی طبیعی و مصنوعی، پودر MCT (تری‌گلیسریدهای با زنجیره‌ی متوسط، دی‌اکسید سیلیکون، مالتودکسترین)، لسیتین آفتابگردان و/یا سویا، صمغ سلولز، نمک، سوکرالوز و رنگ‌های آبی ۲ و قرمز ۴۰.",
+    servingSize: "۱۶۵ گرم (حدود ۳ اسکوپ سرپر)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۶۹۰ کیلوکالری" },
+      { label: "چربی", amount: "۱۷ گرم" },
+      { label: "چربی اشباع", amount: "۵ گرم" },
+      { label: "کلسترول", amount: "۱۴۵ میلی‌گرم" },
+      { label: "سدیم", amount: "۳۸۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۸۷ گرم" },
+      { label: "فیبر", amount: "۵ گرم" },
+      { label: "قندها", amount: "۱۵ گرم" },
+      { label: "قند افزوده", amount: "۳ گرم" },
+      { label: "پروتئین", amount: "۴۷ گرم" },
+      { label: "کلسیم", amount: "۴۱۰ میلی‌گرم" },
+      { label: "آهن", amount: "۴٫۲ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۱۰۶۰ میلی‌گرم" },
+      { label: "فسفر", amount: "۴۷۰ میلی‌گرم" },
+      { label: "منیزیم", amount: "۱۰۰ میلی‌گرم" },
+    ],
+    usage:
+      "۱۶۵ گرم (حدود ۳ اسکوپ سرپر) را با ۴۷۰ میلی‌لیتر (۱۶ اونس) آب سرد یا نوشیدنی دلخواه مخلوط کنید؛ بعد از تمرین، بین وعده‌ها و/یا پیش از خواب. روزانه ۱ وعده یا به اندازه‌ی نیاز پروتئین و کالری‌تان. برای پروتئین و کالری بیشتر و طعم میلک‌شیکی، با شیر مخلوط کنید.",
+    warnings: "حساسیت‌زاها: حاوی شیر و سویا.",
+    manufacturerClaims:
+      "۴۷ گرم پروتئین و ۶۹۰ کالری در هر وعده\n۲۰ گرم اسید آمینه‌ی ضروری و ۹٫۵ گرم BCAA طبیعی در هر وعده\nبا تری‌گلیسریدهای زنجیره‌متوسط (MCT)\nبه گفته‌ی سازنده، همراه با تمرین مقاومتی منظم از عضله‌سازی و ریکاوری پشتیبانی می‌کند (این ادعا توسط FDA ارزیابی نشده است)",
+    brand: "BSN",
+    price: 2650000,
+    categorySlug: "protein",
   },
   {
     id: "bsn3",
@@ -645,14 +1694,128 @@ const products: BrandProduct[] = [
     id: "ce1",
     name: "سی‌فور اورجینال - C4 Original",
     slug: "cellucor-c4-original",
+    groupSlug: "cellucor-c4-original",
+    flavor: "آیسی بلو رز (تمشک آبی یخی)",
+    size: "۲۶۷ گرم",
+    imageUrl: "/images/products/cellucor-c4-original.webp",
+    // Pack photo and Supplement Facts panel image from Cellucor's US site
+    // (cellucor.com/products/c4-original, Icy Blue Razz): 30 × 8.9 g = 267 g.
+    // Directions and warnings are from that page's text.
+    description:
+      "سی‌فور اورجینال سلوکور با طعم آیسی بلو رز؛ مکمل پیش از تمرین (نسل پنجم فرمول) برای انرژی، تمرکز، استقامت عضلانی و پمپ، بدون قند و رنگ مصنوعی. هر وعده (۸٫۹ گرم) ۲۰۰ میلی‌گرم کافئین و ۲ گرم بتا-آلانین کارنوسین دارد و قوطی ۲۶۷ گرمی ۳۰ وعده است.\nسایر مواد: سیتریک اسید، مالیک اسید، دی‌اکسید سیلیکون، طعم‌دهنده‌های طبیعی و مصنوعی، سیلیکات کلسیم، سوکرالوز، آسه‌سولفام پتاسیم و عصاره‌ی اسپیرولینا (رنگ).",
+    servingSize: "۸٫۹ گرم (حدود ۱ اسکوپ صاف)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۰ کیلوکالری" },
+      { label: "کربوهیدرات", amount: "۱ گرم" },
+      { label: "قندها", amount: "۰ گرم" },
+      { label: "ویتامین B6 (پیریدوکسال-۵-فسفات)", amount: "۳٫۴ میلی‌گرم" },
+      { label: "فولات (متیل‌تتراهیدروفولات)", amount: "۱۰۰ میکروگرم DFE" },
+      { label: "ویتامین B12 (متیل‌کوبالامین)", amount: "۶ میکروگرم" },
+      { label: "کولین (کولین بیتارترات)", amount: "۲۲۵ میلی‌گرم" },
+      { label: "مجموعه‌ی استقامت عضلانی و عملکرد", amount: "۴٫۵ گرم" },
+      { label: "بتا-آلانین کارنوسین (CarnoSyn®)", amount: "۲ گرم" },
+      { label: "ال-سیترولین (Velox®)", amount: "۱٫۲ گرم" },
+      { label: "ال-آرژنین (Velox®)", amount: "۱٫۲ گرم" },
+      { label: "پپتیدهای عدس (PeptiPump®)", amount: "۱۰۰ میلی‌گرم" },
+      { label: "کراتین نیترات (NO3-T®)", amount: "۱ گرم" },
+      { label: "مجموعه‌ی انرژی و تمرکز", amount: "۲۰۵ میلی‌گرم" },
+      { label: "کافئین بی‌آب", amount: "۲۰۰ میلی‌گرم" },
+      { label: "عصاره‌ی هوپرزیا (۱٪ هوپرزین A)", amount: "۵ میلی‌گرم" },
+    ],
+    usage:
+      "۱ اسکوپ را با ۱۸۰ تا ۲۴۰ میلی‌لیتر (۶ تا ۸ اونس) آب مخلوط کنید و ۲۰ تا ۳۰ دقیقه پیش از تمرین مصرف کنید. اگر بار اول است، با نصف اسکوپ شروع کنید تا تحمل بدنتان را بسنجید.\nدر جای خنک و خشک نگهداری کنید.",
+    warnings:
+      "فقط برای بزرگسالان سالم ۱۸ سال به بالا.\nحاوی ۲۰۰ میلی‌گرم کافئین در هر وعده؛ اگر مصرف کافئین را محدود می‌کنید استفاده نکنید و آن را با منابع دیگر کافئین یا محرک‌ها همراه نکنید.\nدر دوران بارداری یا شیردهی، یا اگر نیترات (برای درد قفسه‌ی سینه) یا داروهای مهارکننده‌ی PDE-5 (برای اختلال نعوظ) مصرف می‌کنید، استفاده نکنید.\nاگر داروهای ضدافسردگی (MAOI یا SSRI)، رقیق‌کننده‌ی خون، داروهای ضدالتهاب غیراستروئیدی (NSAID)، سودوافدرین یا مکمل و داروی دیگری مصرف می‌کنید، یا بیماری‌هایی مانند فشار خون، دیابت، بیماری قلبی، کبدی، کلیوی یا تیروئید، اضطراب، تشنج یا مشکل ادراری مربوط به پروستات دارید، پیش از مصرف با پزشک مشورت کنید.\nدو هفته پیش از جراحی مصرف را قطع کنید.\nدر صورت بروز هر واکنش نامطلوب، مصرف را قطع و با پزشک تماس بگیرید.\nاز مقدار توصیه‌شده بیشتر مصرف نکنید.\nاگر پلمب ایمنی شکسته یا موجود نیست استفاده نکنید.\nدور از دسترس کودکان نگهداری شود.",
+    manufacturerClaims:
+      "برند شماره‌ی ۱ پیش‌تمرین در جهان (به گفته‌ی سازنده)\nانرژی، تمرکز، استقامت و پمپ عضلانی\nپپتیدهای طراحی‌شده با هوش مصنوعی (PeptiPump®)\nبدون قند و بدون رنگ مصنوعی\n(این ادعاها توسط FDA ارزیابی نشده است)",
     brand: "Cellucor",
     price: 1390000,
     categorySlug: "pre-workout",
   },
   {
+    id: "ce4",
+    name: "سی‌فور وی پروتئین - C4 Whey Protein",
+    slug: "cellucor-c4-whey-protein",
+    groupSlug: "cellucor-c4-whey-protein",
+    flavor: "شکلات و کره‌ی بادام‌زمینی ریسز",
+    size: "۱٫۱۳ کیلوگرم",
+    imageUrl: "/images/products/cellucor-c4-whey-protein.webp",
+    // Pack photo and Nutrition Facts panel image from Cellucor's US site
+    // (cellucor.com/products/c4-whey-protein, REESE'S flavour, the only one
+    // with a facts panel there): 28 × 40.2 g ≈ 1.13 kg; every row matches
+    // its %DV. The page gives no warnings.
+    description:
+      "سی‌فور وی پروتئین سلوکور با طعم شکلات و کره‌ی بادام‌زمینی ریسز (REESE'S)؛ پودر پروتئین وی از کنسانتره و ایزوله‌ی وی، بدون قند افزوده و بدون گلوتن. هر وعده (۴۰٫۲ گرم) ۲۵ گرم پروتئین و ۱۴۰ کیلوکالری دارد و بسته‌ی ۱٫۱۳ کیلوگرمی ۲۸ وعده است.\nمواد تشکیل‌دهنده: کنسانتره‌ی پروتئین وی، ایزوله‌ی پروتئین وی، آرد بادام‌زمینی نیمه‌چربی‌گرفته، پودر کاکائو (قلیایی‌شده)، طعم‌دهنده‌های طبیعی و مصنوعی، کلرید پتاسیم، لسیتین آفتابگردان، نمک، صمغ زانتان، صمغ سلولز، سوکرالوز و آسه‌سولفام پتاسیم.",
+    servingSize: "۴۰٫۲ گرم (حدود ۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۴۰ کیلوکالری" },
+      { label: "چربی", amount: "۲٫۵ گرم" },
+      { label: "چربی اشباع", amount: "۲ گرم" },
+      { label: "چربی ترانس", amount: "۰ گرم" },
+      { label: "کلسترول", amount: "۸۰ میلی‌گرم" },
+      { label: "سدیم", amount: "۱۹۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۴ گرم" },
+      { label: "فیبر", amount: "۱ گرم" },
+      { label: "قندها", amount: "۲ گرم" },
+      { label: "قند افزوده", amount: "۰ گرم" },
+      { label: "پروتئین", amount: "۲۵ گرم" },
+      { label: "کلسیم", amount: "۱۴۰ میلی‌گرم" },
+      { label: "آهن", amount: "۱ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۴۹۰ میلی‌گرم" },
+    ],
+    usage: "۱ اسکوپ (۴۰٫۲ گرم) را با آب مخلوط کنید، یا برای افزایش پروتئین به دستور پخت غذاها اضافه کنید.",
+    warnings: "حساسیت‌زاها: حاوی شیر و بادام‌زمینی.",
+    manufacturerClaims:
+      "۲۵ گرم پروتئین وی در هر اسکوپ برای رشد و ریکاوری عضله\nبدون قند افزوده\nبدون گلوتن\nکمک به ساخت و حفظ عضله‌ی بدون چربی (به گفته‌ی سازنده؛ این ادعا توسط FDA ارزیابی نشده است)",
+    brand: "Cellucor",
+    price: 1650000,
+    categorySlug: "protein",
+  },
+  {
+    id: "ce5",
+    name: "کراتین مونوهیدرات میکرونیزه - Cor-Performance Creatine",
+    slug: "cellucor-creatine",
+    groupSlug: "cellucor-creatine",
+    flavor: "بدون طعم",
+    size: "۳۶۰ گرم",
+    imageUrl: "/images/products/cellucor-creatine.webp",
+    // Pack photo and Supplement Facts image from Cellucor's US site
+    // (cellucor.com/products/creatine-monohydrate-powder): 72 × 5 g = 360 g.
+    // The page gives no directions or warnings.
+    description:
+      "کراتین سلوکور (Cor-Performance)، بدون طعم؛ مکمل غذایی کراتین مونوهیدرات میکرونیزه برای حل‌شدن بهتر در آب، بدون هیچ ماده‌ی دیگر. هر وعده (۵ گرم) ۵ گرم کراتین مونوهیدرات دارد و قوطی ۳۶۰ گرمی ۷۲ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات میکرونیزه (سایر مواد: ندارد).",
+    servingSize: "۵ گرم (حدود ۱ اسکوپ صاف)",
+    nutritionFacts: [{ label: "کراتین مونوهیدرات میکرونیزه", amount: "۵ گرم" }],
+    manufacturerClaims:
+      "۵ گرم کراتین مونوهیدرات میکرونیزه در هر وعده\nبدون قند، بدون رنگ مصنوعی و بدون چربی\nبه گفته‌ی سازنده، همراه با تمرین مقاومتی به عضله‌ی بدون چربی و افزایش قدرت کمک می‌کند و از حافظه پشتیبانی می‌کند (این ادعاها توسط FDA ارزیابی نشده است)",
+    brand: "Cellucor",
+    price: 850000,
+    categorySlug: "creatine",
+  },
+  {
     id: "ce2",
-    name: "سوپر اچ‌دی - Super HD",
-    slug: "cellucor-super-hd",
+    name: "سوپر ترمو - چربی‌سوز بدون محرک - Super Thermo",
+    slug: "cellucor-super-thermo",
+    size: "۶۰ کپسول",
+    imageUrl: "/images/products/cellucor-super-thermo.webp",
+    // Pack photo and Supplement Facts panel from cellucor.com/products/
+    // super-thermo: 60 ÷ 2 = 30 servings; 20 mg cayenne × 5% = the 1 mg
+    // capsaicinoids on the pack front. Replaces the SuperHD placeholder,
+    // whose label (like Super Shred's) has yohimbe; SuperHD also has
+    // rauwolfia. The site gives no directions or warnings.
+    description:
+      "سوپر ترمو سلوکور؛ چربی‌سوز بدون محرک (بدون کافئین) برای کالری‌سوزی، متابولیسم و کنترل اشتها. هر وعده (۲ کپسول) ۵۰۰ میلی‌گرم پپتید DNF-10®، ۴۰۰ میلی‌گرم بربرین، ۱۰۰ میلی‌گرم ۵-HTP و ۲۰ میلی‌گرم عصاره‌ی فلفل قرمز دارد و قوطی ۶۰ کپسولی ۳۰ وعده است.\nسایر مواد: کپسول گیاهی (هیپروملوز)، میکروکریستالین سلولز، استئارات منیزیم، دی‌اکسید سیلیکون.",
+    servingSize: "۲ کپسول",
+    nutritionFacts: [
+      { label: "کروم (Chromax®، کروم پیکولینات)", amount: "۲۰۰ میکروگرم" },
+      { label: "پپتید مخمر DNF-10®", amount: "۵۰۰ میلی‌گرم" },
+      { label: "بربرین HCl", amount: "۴۰۰ میلی‌گرم" },
+      { label: "۵-HTP (از عصاره‌ی دانه‌ی گریفونیا)", amount: "۱۰۰ میلی‌گرم" },
+      { label: "عصاره‌ی برگ بانابا (۱٪ کوروسولیک اسید)", amount: "۵۰ میلی‌گرم" },
+      { label: "عصاره‌ی فلفل قرمز (۵٪ کپسایسینوئید)", amount: "۲۰ میلی‌گرم" },
+    ],
+    manufacturerClaims:
+      "چربی‌سوز بدون محرک\nبه گفته‌ی سازنده: کالری‌سوزی و متابولیسم بیشتر با عصاره‌ی فلفل قرمز، سیری و کنترل اشتها با DNF-10® و کمک به مدیریت قند خون (در محدوده‌ی طبیعی) با بربرین، بانابا و Chromax® (این ادعاها توسط FDA ارزیابی نشده است)",
     brand: "Cellucor",
     price: 1290000,
     categorySlug: "fat-burner",
@@ -671,8 +1834,33 @@ const products: BrandProduct[] = [
     id: "mp1",
     name: "ایمپکت وی پروتئین - Impact Whey Protein",
     slug: "myprotein-impact-whey",
+    groupSlug: "myprotein-impact-whey",
+    flavor: "شکلات اسموت",
+    size: "۲٫۷ کیلوگرم",
+    imageUrl: "/images/products/myprotein-impact-whey.webp",
+    // Photo and label details from MyProtein's UK site (myprotein.com,
+    // impact-whey-protein-powder, variation 17712168 = Chocolate Smooth,
+    // 90 servings / 2.7 kg, the size with its own pack photo): 90 × 30 g.
+    description:
+      "ایمپکت وی پروتئین مای‌پروتئین با طعم شکلات اسموت؛ پودر کنسانتره‌ی پروتئین وی، پرفروش‌ترین وی بریتانیا و اروپا به گفته‌ی سازنده. هر وعده (۳۰ گرم) ۲۲ گرم پروتئین و ۱۱۳ کیلوکالری دارد و بسته‌ی ۲٫۷ کیلوگرمی ۹۰ وعده است. مناسب گیاه‌خواران (لاکتو).\nمواد تشکیل‌دهنده: کنسانتره‌ی پروتئین وی (از شیر) ۹۶٪ (حاوی امولسیفایرهای لسیتین سویا و لسیتین آفتابگردان)، پودر کاکائوی کم‌چرب، طعم‌دهنده و شیرین‌کننده (سوکرالوز).",
+    servingSize: "۳۰ گرم (حدود ۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۱۳ کیلوکالری" },
+      { label: "چربی", amount: "۱٫۹ گرم" },
+      { label: "چربی اشباع", amount: "۱٫۲ گرم" },
+      { label: "کربوهیدرات", amount: "۲٫۰ گرم" },
+      { label: "قندها", amount: "۱٫۵ گرم" },
+      { label: "پروتئین", amount: "۲۲ گرم" },
+      { label: "نمک", amount: "۰٫۱۳ گرم" },
+    ],
+    usage:
+      "۳۰ گرم (حدود ۱ اسکوپ) را با ۲۵۰ میلی‌لیتر آب یا شیر مخلوط کنید و ۳۰ دقیقه پیش و/یا بعد از تمرین مصرف کنید. پودر به مرور ته‌نشین می‌شود؛ برای دقت بیشتر آن را وزن کنید.\nدر جای خنک و خشک و دور از نور مستقیم خورشید نگهداری کنید.",
+    warnings:
+      "حساسیت‌زاها: حاوی شیر و سویا.\nاین محصول باید در کنار رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم مصرف شود.",
+    manufacturerClaims:
+      "تا ۲۳ گرم پروتئین در هر وعده (بسته به طعم)\nحدود ۵ گرم BCAA طبیعی در هر وعده\nدارای گواهی Informed Choice (تست مواد ممنوعه) و Informed Protein (تأیید مقدار پروتئین برچسب)\nپرفروش‌ترین وی پروتئین بریتانیا و اروپا (به گفته‌ی سازنده)\nادعاهای سلامت مورد تأیید اتحادیه‌ی اروپا: پروتئین به رشد و حفظ توده‌ی عضلانی و حفظ سلامت استخوان‌ها کمک می‌کند",
     brand: "MyProtein",
-    price: 1650000,
+    price: 3950000,
     categorySlug: "protein",
   },
   {
@@ -685,11 +1873,143 @@ const products: BrandProduct[] = [
   },
   {
     id: "mp3",
-    name: "کراتین مونوهیدرات - Creatine Monohydrate",
+    name: "ایمپکت کراتین مونوهیدرات - Impact Creatine",
     slug: "myprotein-creatine-monohydrate",
+    groupSlug: "myprotein-creatine-monohydrate",
+    flavor: "بدون طعم",
+    size: "۵۰۰ گرم",
+    imageUrl: "/images/products/myprotein-creatine-monohydrate.webp",
+    // Photo and label details from MyProtein's UK site (myprotein.com,
+    // creatine-monohydrate-powder, variation 10530054 = Unflavoured,
+    // 147 servings / 0.5 kg): 147 × 3.4 g ≈ 500 g.
+    description:
+      "ایمپکت کراتین مای‌پروتئین، بدون طعم؛ پودر ۱۰۰٪ کراتین مونوهیدرات بدون فاز بارگیری. هر وعده (۳٫۴ گرم) ۳ گرم کراتین دارد و بسته‌ی ۵۰۰ گرمی ۱۴۷ وعده است. مناسب گیاه‌خواران و وگان‌ها.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات.",
+    servingSize: "۳٫۴ گرم (حدود ۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "کراتین مونوهیدرات", amount: "۳٫۴ گرم" },
+      { label: "کراتین", amount: "۳٫۰ گرم" },
+    ],
+    usage:
+      "روزانه ۱ بار، ۳٫۴ گرم (حدود ۱ اسکوپ) را با ۲۵۰ میلی‌لیتر آب مخلوط کنید، تکان دهید و پیش یا بعد از تمرین مصرف کنید. پودر به مرور ته‌نشین می‌شود؛ برای دقت بیشتر آن را وزن کنید.\nدر جای خنک و خشک و دور از نور مستقیم خورشید نگهداری کنید.",
+    warnings:
+      "از مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.\nمکمل غذایی جایگزین رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم نیست.\nدور از دسترس کودکان نگهداری شود.\nدر مجموعه‌ای تولید می‌شود که شیر را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "۳ گرم کراتین در هر وعده؛ بدون نیاز به فاز بارگیری\nدارای گواهی Informed Choice (تست مواد ممنوعه)\nکراتین عملکرد بدنی را در تمرین‌های کوتاه‌مدت، پرشدت و پشت‌سرهم افزایش می‌دهد؛ این اثر با مصرف روزانه‌ی ۳ گرم کراتین به دست می‌آید (ادعای سلامت مورد تأیید اتحادیه‌ی اروپا)",
     brand: "MyProtein",
     price: 750000,
     categorySlug: "creatine",
+  },
+  {
+    id: "mp4",
+    name: "ایمپکت ویت گینر - Impact Weight Gainer",
+    slug: "myprotein-impact-weight-gainer",
+    groupSlug: "myprotein-impact-weight-gainer",
+    flavor: "شکلات اسموت",
+    size: "۳ کیلوگرم",
+    imageUrl: "/images/products/myprotein-impact-weight-gainer.webp",
+    // Photo and label details from MyProtein's UK site (myprotein.com,
+    // impact-weight-gainer, variation 17921182 = Chocolate Smooth,
+    // 30 servings / 3 kg): 30 × 100 g. The page's table matches the
+    // chocolate per-100 g panel in that variant's gallery; a gallery
+    // infographic says 29 g protein / 51 g carbs / 383 kcal for the same
+    // 100 g, which contradicts both, so its numbers are left out.
+    description:
+      "ایمپکت ویت گینر مای‌پروتئین با طعم شکلات اسموت؛ گینر با پروتئین باکیفیت (ترکیب پروتئین‌های سریع و آهسته‌جذب) و کربوهیدرات پیچیده از آرد جو دوسر، برای افزایش حجم و قدرت در کنار تمرین مقاومتی. هر وعده (۱۰۰ گرم) ۳۷۲ کیلوکالری، ۲۸ گرم پروتئین و ۵۲ گرم کربوهیدرات دارد و بسته‌ی ۳ کیلوگرمی ۳۰ وعده است. مناسب گیاه‌خواران (لاکتو).\nمواد تشکیل‌دهنده: آرد جو دوسر ۵۱٪، ترکیب پروتئین ۲۸٪ (کنسانتره‌ی پروتئین شیر، ایزوله‌ی پروتئین شیر، کنسانتره‌ی پروتئین وی (از شیر)؛ حاوی امولسیفایر لسیتین آفتابگردان)، مالتودکسترین، پودر کاکائوی کم‌چرب، طعم‌دهنده و شیرین‌کننده (سوکرالوز).",
+    servingSize: "۱۰۰ گرم (حدود ۳ و ۱/۳ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۳۷۲ کیلوکالری" },
+      { label: "چربی", amount: "۵٫۱ گرم" },
+      { label: "چربی اشباع", amount: "۱٫۸ گرم" },
+      { label: "کربوهیدرات", amount: "۵۲ گرم" },
+      { label: "قندها", amount: "۲٫۸ گرم" },
+      { label: "پروتئین", amount: "۲۸ گرم" },
+      { label: "نمک", amount: "۰٫۰۹ گرم" },
+    ],
+    usage:
+      "۱۰۰ گرم (حدود ۳ و ۱/۳ اسکوپ) را با ۵۰۰ میلی‌لیتر شیر پرچرب یا آب مخلوط کنید و ۳۰ ثانیه تکان دهید؛ بهترین زمان مصرف بین وعده‌های غذایی است. پودر به مرور ته‌نشین می‌شود؛ برای دقت بیشتر آن را وزن کنید.\nدر جای خنک و خشک و دور از نور مستقیم خورشید نگهداری کنید.",
+    warnings:
+      "حساسیت‌زاها: حاوی شیر و جو دوسر (گلوتن). ممکن است حاوی منابع دیگر گلوتن (گندم، جو) باشد.\nاین محصول باید در کنار رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم مصرف شود.",
+    manufacturerClaims:
+      "پروتئین باکیفیت و کربوهیدرات پیچیده برای افزایش حجم و قدرت\nترکیب پروتئین‌های سریع و آهسته‌جذب\nادعاهای سلامت مورد تأیید اتحادیه‌ی اروپا: پروتئین به رشد و حفظ توده‌ی عضلانی کمک می‌کند؛ کربوهیدرات‌ها به بازیابی عملکرد طبیعی عضله پس از فعالیت بدنی بسیار شدید یا طولانی کمک می‌کنند (با مصرف ۴ گرم کربوهیدرات به ازای هر کیلوگرم وزن بدن در ۴ تا ۶ ساعت اول)",
+    brand: "MyProtein",
+    price: 2350000,
+    categorySlug: "protein",
+  },
+  {
+    id: "mp5",
+    name: "د پری‌ورک‌اوت - THE Pre-Workout",
+    slug: "myprotein-the-pre-workout",
+    groupSlug: "myprotein-the-pre-workout",
+    flavor: "تمشک آبی",
+    size: "۳۰ وعده",
+    imageUrl: "/images/products/myprotein-the-pre-workout.webp",
+    // Photo and label details from MyProtein's UK site (myprotein.com,
+    // the-pre-workout, variation 15150230 = Blue Raspberry, 30 servings).
+    // It only comes in Blue Raspberry and Orange Mango Passionfruit. The site
+    // gives no net weight (30 × 15.7 g ≈ 471 g), so the size is servings.
+    description:
+      "د پری‌ورک‌اوت (سری PRO) مای‌پروتئین با طعم تمشک آبی؛ پیش‌تمرین پیشرفته با کافئین، کراتین و مواد مؤثر بر تمرکز (سیتی‌کولین Cognizin®). هر وعده (۱۵٫۷ گرم) ۲۰۰ میلی‌گرم کافئین، ۴ گرم ال-سیترولین و ۳ گرم کراتین دارد و هر قوطی ۳۰ وعده است. مناسب گیاه‌خواران و وگان‌ها.\nمواد تشکیل‌دهنده: ال-سیترولین، کراتین مونوهیدرات، بتا-آلانین، طعم‌دهنده‌ها، بتائین بی‌آب، اسیدی‌کننده‌ها (سیتریک اسید، مالیک اسید)، طعم‌دهنده‌های طبیعی، ال-تیروزین، ضدکلوخه‌ها (دی‌اکسید سیلیکون، سیلیکات کلسیم)، سیتی‌کولین (Cognizin®)، کافئین بی‌آب، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم)، عصاره‌ی اسپیرولینا، ویتامین C، Senactiv® (عصاره‌ی ریشه‌ی پاناکس نوتوجینسنگ و میوه‌ی نسترن)، AstraGin® (عصاره‌ی ریشه‌ی گون و پاناکس نوتوجینسنگ)، سولفات آهن، نیاسین، BioPerine® (عصاره‌ی فلفل سیاه)، ویتامین B1 و ویتامین B12.",
+    servingSize: "۱۵٫۷ گرم (حدود ۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "ال-سیترولین", amount: "۴ گرم" },
+      { label: "کراتین", amount: "۳ گرم" },
+      { label: "بتا-آلانین", amount: "۲ گرم" },
+      { label: "بتائین بی‌آب", amount: "۱ گرم" },
+      { label: "ال-تیروزین", amount: "۷۵۰ میلی‌گرم" },
+      { label: "سیتی‌کولین (Cognizin®)", amount: "۲۵۰ میلی‌گرم" },
+      { label: "کافئین", amount: "۲۰۰ میلی‌گرم" },
+      { label: "Senactiv®", amount: "۵۰ میلی‌گرم" },
+      { label: "AstraGin®", amount: "۲۵ میلی‌گرم" },
+      { label: "BioPerine®", amount: "۲٫۵ میلی‌گرم" },
+      { label: "ویتامین C", amount: "۷۵ میلی‌گرم" },
+      { label: "آهن", amount: "۶ میلی‌گرم" },
+      { label: "نیاسین", amount: "۳ میلی‌گرم" },
+      { label: "ویتامین B1", amount: "۱٫۱ میلی‌گرم" },
+      { label: "ویتامین B12", amount: "۱۵ میکروگرم" },
+    ],
+    usage:
+      "روزانه ۱ بار، ۱۵٫۷ گرم (حدود ۱ اسکوپ) را با ۳۵۰ میلی‌لیتر آب مخلوط کنید و ۳۰ دقیقه پیش از تمرین مصرف کنید. پودر به مرور ته‌نشین می‌شود؛ برای دقت بیشتر آن را وزن کنید.\nدر جای خنک و خشک و دور از نور مستقیم خورشید نگهداری کنید.",
+    warnings:
+      "کافئین بالا (۶۳ میلی‌گرم در ۱۰۰ میلی‌لیتر نوشیدنی آماده). برای کودکان و زنان باردار یا شیرده توصیه نمی‌شود.\nخطر خفگی: داخل قوطی یک بسته‌ی سیلیکاژل هست که خوردنی نیست؛ اگر بسته پاره یا آسیب‌دیده است، محصول را دور بریزید.\nاز مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.\nمکمل غذایی جایگزین رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم نیست.\nدور از دسترس کودکان نگهداری شود.\nدر مجموعه‌ای تولید می‌شود که شیر را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "۲۰۰ میلی‌گرم کافئین برای تمرکز و استقامت بیشتر\n۲۵۰ میلی‌گرم سیتی‌کولین Cognizin®\n۳ گرم کراتین برای تمرین‌های پرشدت\nسرشار از ویتامین‌های گروه B\nدارای گواهی Informed Choice (تست مواد ممنوعه)\nادعای سلامت مورد تأیید اتحادیه‌ی اروپا: ویتامین B12 به کاهش خستگی و عملکرد طبیعی روانی کمک می‌کند",
+    brand: "MyProtein",
+    price: 1450000,
+    categorySlug: "pre-workout",
+  },
+  {
+    id: "mp6",
+    name: "ترموپیور - چربی‌سوز - Thermopure",
+    slug: "myprotein-thermopure",
+    size: "۹۰ کپسول",
+    imageUrl: "/images/products/myprotein-thermopure.webp",
+    // Pack photo and nutrition panels from myprotein.com/p/sports-nutrition/
+    // thermopure/10530152 (Myvitamins line, 90 capsules): 90 ÷ 3 = 30
+    // servings. The page text and the facts images give the same amounts.
+    description:
+      "ترموپیور مای‌پروتئین (سری Myvitamins)؛ کپسول ترموژنیک با کافئین، عصاره‌ی چای سبز، ال-تیروزین، ال-تئانین، فلفل قرمز، BioPerine®، کروم و ویتامین‌های B6 و B12. هر وعده‌ی روزانه (۳ کپسول) ۱۸۰ میلی‌گرم کافئین دارد و قوطی ۹۰ کپسولی ۳۰ وعده است. مناسب گیاه‌خواران و وگان‌ها.\nمواد تشکیل‌دهنده: آرد برنج قهوه‌ای، عصاره‌ی چای سبز ۱۵:۱، پوسته‌ی کپسول (هیدروکسی‌پروپیل متیل‌سلولز، آب)، ال-تیروزین، کافئین بدون آب، ال-تئانین، پودر فلفل قرمز، ویتامین B6، عصاره‌ی فلفل سیاه ۵۰:۱ (BioPerine®)، کروم پیکولینات، ویتامین B12.",
+    servingSize: "۳ کپسول (وعده‌ی روزانه)",
+    nutritionFacts: [
+      { label: "کافئین", amount: "۱۸۰ میلی‌گرم" },
+      { label: "عصاره‌ی چای سبز (۱۵:۱)", amount: "۳۷۵ میلی‌گرم" },
+      { label: "EGCG (از چای سبز)", amount: "۳۷٫۵ میلی‌گرم" },
+      { label: "ال-تیروزین", amount: "۲۰۰ میلی‌گرم" },
+      { label: "ال-تئانین", amount: "۱۲۵ میلی‌گرم" },
+      { label: "پودر فلفل قرمز", amount: "۵۰ میلی‌گرم" },
+      { label: "BioPerine® (عصاره‌ی فلفل سیاه ۵۰:۱)", amount: "۵٫۱ میلی‌گرم" },
+      { label: "کروم (پیکولینات)", amount: "۱۱۵ میکروگرم" },
+      { label: "ویتامین B6", amount: "۵٫۱ میلی‌گرم" },
+      { label: "ویتامین B12", amount: "۲۱ میکروگرم" },
+    ],
+    usage:
+      "روزانه ۳ کپسول، ترجیحاً پیش از ورزش. در روزهای بدون ورزش، صبح، بعدازظهر و عصر هر بار ۱ کپسول.\nدر جای خنک و خشک و دور از نور مستقیم خورشید نگهداری کنید.",
+    warnings:
+      "حاوی ۱۸۰ میلی‌گرم کافئین در هر وعده؛ برای کودکان و زنان باردار توصیه نمی‌شود.\nدر صورت مصرف دیگر محصولات حاوی چای سبز، در دوران بارداری یا شیردهی، زیر ۱۸ سال یا در حال روزه‌داری (ناشتا) مصرف نکنید.\nهر وعده ۳۷٫۵ میلی‌گرم EGCG دارد؛ مصرف روزانه‌ی EGCG نباید از ۸۰۰ میلی‌گرم بیشتر شود.\nاز مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.\nمکمل غذایی جایگزین رژیم غذایی متنوع و شیوه‌ی زندگی سالم نیست.\nدور از دسترس کودکان نگهداری شود.\nحساسیت‌زا: ممکن است حاوی سویا باشد. در مجموعه‌ای تولید می‌شود که شیر را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "کافئین به افزایش استقامت در ورزش کمک می‌کند\nکروم به متابولیسم طبیعی درشت‌مغذی‌ها کمک می‌کند\nویتامین‌های B6 و B12 به عملکرد طبیعی سیستم ایمنی کمک می‌کنند",
+    brand: "MyProtein",
+    price: 950000,
+    categorySlug: "fat-burner",
   },
 
   // Scitec Nutrition
@@ -785,10 +2105,117 @@ const products: BrandProduct[] = [
   },
   {
     id: "sc3",
-    name: "کراتین مونوهیدرات - Creatine Monohydrate",
+    // \u200E (left-to-right mark) keeps "100%" with the Latin name that follows it.
+    name: "کراتین مونوهیدرات - \u200E100% Creatine Monohydrate",
     slug: "scitec-creatine-monohydrate",
+    groupSlug: "scitec-creatine-monohydrate",
+    flavor: "بدون طعم",
+    size: "۵۰۰ گرم",
+    imageUrl: "/images/products/scitec-creatine-monohydrate.webp",
+    // Label details from the product page of Scitec's German shop
+    // (scitecshop.de, p9581); claims from the pack photo.
+    description:
+      "۱۰۰٪ کراتین مونوهیدرات سایتک نوتریشن، بدون طعم؛ پودر نوشیدنی از کراتین مونوهیدرات میکرونیزه‌ی خالص. هر وعده (۳٫۴ گرم) ۳ گرم کراتین دارد و بسته‌ی ۵۰۰ گرمی ۱۴۷ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات میکرونیزه ۱۰۰٪.",
+    servingSize: "۳٫۴ گرم (۱/۲ اسکوپ)",
+    nutritionFacts: [
+      { label: "کراتین مونوهیدرات", amount: "۳۴۰۰ میلی‌گرم" },
+      { label: "کراتین", amount: "۳۰۰۰ میلی‌گرم" },
+    ],
+    usage:
+      "روزانه ۱ وعده (۳٫۴ گرم، ۱/۲ اسکوپ) را در ۳۰۰ میلی‌لیتر آب حل کنید و مصرف کنید. در روزهای تمرین ۳۰ دقیقه پیش از تمرین و در روزهای استراحت پیش از غذا. از مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.",
+    warnings:
+      "در مجموعه‌ای تولید می‌شود که شیر، تخم‌مرغ، سویا، بادام‌زمینی، آجیل، کرفس، ماهی، سخت‌پوستان و دی‌اکسید گوگرد را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "۳ گرم کراتین در هر وعده\nوگان\nبدون قند و بدون گلوتن\nکراتین عملکرد بدنی را در تمرین‌های کوتاه‌مدت و پرشدت افزایش می‌دهد (ادعای سلامت مورد تأیید اتحادیه‌ی اروپا)",
     brand: "Scitec Nutrition",
     price: 820000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "sc3s",
+    // \u200E (left-to-right mark) keeps "100%" with the Latin name that follows it.
+    name: "کراتین مونوهیدرات - \u200E100% Creatine Monohydrate",
+    slug: "scitec-creatine-monohydrate-300g",
+    groupSlug: "scitec-creatine-monohydrate",
+    flavor: "بدون طعم",
+    size: "۳۰۰ گرم",
+    imageUrl: "/images/products/scitec-creatine-monohydrate-300g.webp",
+    // Same facts as sc3 on Scitec's German shop (p2164); claims from the pack
+    // photo, which doesn't show the sugar-free and gluten-free marks.
+    description:
+      "۱۰۰٪ کراتین مونوهیدرات سایتک نوتریشن، بدون طعم؛ پودر نوشیدنی از کراتین مونوهیدرات میکرونیزه‌ی خالص. هر وعده (۳٫۴ گرم) ۳ گرم کراتین دارد و بسته‌ی ۳۰۰ گرمی ۸۸ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات میکرونیزه ۱۰۰٪.",
+    servingSize: "۳٫۴ گرم (۱/۲ اسکوپ)",
+    nutritionFacts: [
+      { label: "کراتین مونوهیدرات", amount: "۳۴۰۰ میلی‌گرم" },
+      { label: "کراتین", amount: "۳۰۰۰ میلی‌گرم" },
+    ],
+    usage:
+      "روزانه ۱ وعده (۳٫۴ گرم، ۱/۲ اسکوپ) را در ۳۰۰ میلی‌لیتر آب حل کنید و مصرف کنید. در روزهای تمرین ۳۰ دقیقه پیش از تمرین و در روزهای استراحت پیش از غذا. از مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.",
+    warnings:
+      "در مجموعه‌ای تولید می‌شود که شیر، تخم‌مرغ، سویا، بادام‌زمینی، آجیل، کرفس، ماهی، سخت‌پوستان و دی‌اکسید گوگرد را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "۳ گرم کراتین در هر وعده\nوگان\nکراتین عملکرد بدنی را در تمرین‌های کوتاه‌مدت و پرشدت افزایش می‌دهد (ادعای سلامت مورد تأیید اتحادیه‌ی اروپا)",
+    brand: "Scitec Nutrition",
+    price: 550000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "sc3l",
+    // \u200E (left-to-right mark) keeps "100%" with the Latin name that follows it.
+    name: "کراتین مونوهیدرات - \u200E100% Creatine Monohydrate",
+    slug: "scitec-creatine-monohydrate-1000g",
+    groupSlug: "scitec-creatine-monohydrate",
+    flavor: "بدون طعم",
+    size: "۱۰۰۰ گرم",
+    imageUrl: "/images/products/scitec-creatine-monohydrate-1000g.webp",
+    // The pack photo is the older label design. Facts from Scitec's German
+    // shop (p2166), whose table matches sc3. That page's older text also has a
+    // loading phase (body weight in kg ÷ 3 = grams a day for a week), which
+    // contradicts its own 3.4 g serving, so the current directions are used.
+    description:
+      "۱۰۰٪ کراتین مونوهیدرات سایتک نوتریشن، بدون طعم؛ پودر کراتین مونوهیدرات میکرونیزه‌ی خالص. هر وعده (۳٫۴ گرم) ۳ گرم کراتین دارد و بسته‌ی ۱۰۰۰ گرمی ۲۹۴ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات میکرونیزه ۱۰۰٪.",
+    servingSize: "۳٫۴ گرم (۱/۲ اسکوپ)",
+    nutritionFacts: [
+      { label: "کراتین مونوهیدرات", amount: "۳۴۰۰ میلی‌گرم" },
+      { label: "کراتین", amount: "۳۰۰۰ میلی‌گرم" },
+    ],
+    usage:
+      "روزانه ۱ وعده (۳٫۴ گرم، ۱/۲ اسکوپ) را در ۳۰۰ میلی‌لیتر آب حل کنید و مصرف کنید. در روزهای تمرین ۳۰ دقیقه پیش از تمرین و در روزهای استراحت پیش از غذا. در طول مصرف کراتین آب کافی بنوشید. از مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.",
+    warnings:
+      "در مجموعه‌ای تولید می‌شود که شیر، تخم‌مرغ، سویا، بادام‌زمینی، آجیل، کرفس، ماهی، سخت‌پوستان و دی‌اکسید گوگرد را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "۱۰۰٪ کراتین مونوهیدرات میکرونیزه\nبه گفته‌ی سازنده، کراتین مونوهیدرات در صدها کارآزمایی بالینی بررسی شده و ذخیره‌ی کل کراتین عضله را افزایش می‌دهد",
+    brand: "Scitec Nutrition",
+    price: 1450000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "sc3w",
+    // \u200E (left-to-right mark) keeps "100%" with the Latin name that follows it.
+    name: "کراتین مونوهیدرات - \u200E100% Creatine Monohydrate",
+    slug: "scitec-creatine-monohydrate-watermelon",
+    groupSlug: "scitec-creatine-monohydrate",
+    flavor: "هندوانه",
+    size: "۳۰۰ گرم",
+    imageUrl: "/images/products/scitec-creatine-monohydrate-watermelon.webp",
+    // The fruit in the photo hides the weight; 300 g and the label details are
+    // from Scitec's German shop (p17387): 5 g serving × 68% creatine
+    // monohydrate = 3.4 g, 3 g of it creatine, and 60 × 5 g = 300 g.
+    description:
+      "۱۰۰٪ کراتین مونوهیدرات سایتک نوتریشن با طعم هندوانه؛ پودر نوشیدنی بدون قند از کراتین مونوهیدرات میکرونیزه. هر وعده (۵ گرم) ۳ گرم کراتین دارد و بسته‌ی ۳۰۰ گرمی ۶۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات میکرونیزه ۶۸٪، طعم‌دهنده‌ها، حجم‌دهنده (پلی‌دکستروز)، اسیدی‌کننده (مالیک اسید)، کنسانتره‌ی رنگی خوراکی (مالتودکسترین، کنسانتره‌ی چغندر، سیتریک اسید)، شیرین‌کننده (سوکرالوز) و نمک.",
+    servingSize: "۵ گرم (۱ اسکوپ، معادل ۲ قاشق چای‌خوری)",
+    nutritionFacts: [
+      { label: "کراتین مونوهیدرات", amount: "۳۴۰۰ میلی‌گرم" },
+      { label: "کراتین", amount: "۳۰۰۰ میلی‌گرم" },
+    ],
+    usage:
+      "روزانه ۱ وعده (۵ گرم، ۱ اسکوپ یا ۲ قاشق چای‌خوری) را در ۲۵۰ میلی‌لیتر آب یا نوشیدنی دلخواه حل کنید و مصرف کنید. برای اندازه‌گیری دقیق از ترازوی گرمی استفاده کنید. از مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.",
+    warnings:
+      "مکمل غذایی جایگزین رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم نیست.\nدور از دسترس کودکان نگهداری شود.\nبرای افراد زیر ۱۸ سال، زنان باردار یا شیرده و افرادی که تحت درمان پزشکی هستند توصیه نمی‌شود.\nدر مجموعه‌ای تولید می‌شود که شیر، تخم‌مرغ، سویا، بادام‌زمینی، آجیل، کرفس، ماهی، سخت‌پوستان و دی‌اکسید گوگرد را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "۳ گرم کراتین در هر وعده\nتمام کراتین آن از کراتین مونوهیدرات است\nوگان\nبدون قند (حداکثر ۰٫۵ گرم قند در ۱۰۰ میلی‌لیتر نوشیدنی آماده)\nبدون گلوتن (حداکثر ۲۰ میلی‌گرم گلوتن در هر کیلوگرم نوشیدنی آماده)\nکراتین عملکرد بدنی را در تمرین‌های کوتاه‌مدت و پرشدت افزایش می‌دهد (ادعای سلامت مورد تأیید اتحادیه‌ی اروپا)",
+    brand: "Scitec Nutrition",
+    price: 600000,
     categorySlug: "creatine",
   },
   {
@@ -828,6 +2255,71 @@ const products: BrandProduct[] = [
     price: 2650000,
     categorySlug: "protein",
   },
+  {
+    id: "sc5",
+    name: "بی‌سی‌ای‌ای + گلوتامین اکسپرس - BCAA + Glutamine Xpress",
+    slug: "scitec-bcaa-glutamine-xpress-apple",
+    groupSlug: "scitec-bcaa-glutamine-xpress",
+    flavor: "سیب",
+    size: "۶۰۰ گرم",
+    imageUrl: "/images/products/scitec-bcaa-glutamine-xpress-apple.webp",
+    // Flavour from the pack photo; the rest from the product page of Scitec's
+    // German shop (scitecshop.de, p13026). That page's one ingredient list
+    // names kiwi, melon and apricot flavourings and colourings that don't fit
+    // the apple flavour, so only the shared base ingredients are listed.
+    description:
+      "بی‌سی‌ای‌ای + گلوتامین اکسپرس سایتک نوتریشن با طعم سیب؛ پودر نوشیدنی بدون قند از اسیدهای آمینه‌ی شاخه‌دار (BCAA) با نسبت ۲:۱:۱، ال-گلوتامین و تورین افزوده. هر وعده (۱۲ گرم) ۵ گرم BCAA و ۵ گرم گلوتامین دارد و بسته‌ی ۶۰۰ گرمی ۵۰ وعده است.\nمواد تشکیل‌دهنده‌ی پایه: ال-گلوتامین، ال-لوسین، ال-ایزولوسین، ال-والین، طعم‌دهنده‌ها، تورین، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم) و اسیدی‌کننده (سیتریک اسید). ترکیبات اختصاصی هر طعم ممکن است متفاوت باشد.",
+    servingSize: "۱۲ گرم (۱ و ۱/۴ اسکوپ)",
+    nutritionFacts: [
+      { label: "BCAA", amount: "۵۰۰۰ میلی‌گرم" },
+      { label: "ال-لوسین", amount: "۲۵۰۰ میلی‌گرم" },
+      { label: "ال-ایزولوسین", amount: "۱۲۵۰ میلی‌گرم" },
+      { label: "ال-والین", amount: "۱۲۵۰ میلی‌گرم" },
+      { label: "ال-گلوتامین", amount: "۵۰۰۰ میلی‌گرم" },
+      { label: "تورین", amount: "۳۰۰ میلی‌گرم" },
+    ],
+    usage:
+      "روزانه ۱ وعده (۱۲ گرم، ۱ و ۱/۴ اسکوپ) را در ۶۰۰ میلی‌لیتر آب سرد حل کنید و پیش، حین یا بعد از تمرین مصرف کنید.",
+    warnings:
+      "از مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.\nمکمل غذایی جایگزین رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم نیست.\nدور از دسترس کودکان نگهداری شود.\nدر مجموعه‌ای تولید می‌شود که شیر، تخم‌مرغ، سویا، بادام‌زمینی، آجیل، کرفس، ماهی، سخت‌پوستان و دی‌اکسید گوگرد را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "۵ گرم BCAA با نسبت ۲:۱:۱ در هر وعده\n۵ گرم گلوتامین در هر وعده\nبا تورین افزوده\nبدون قند (در نوشیدنی آماده)\nبدون گلوتن",
+    brand: "Scitec Nutrition",
+    price: 1100000,
+    categorySlug: "aminos",
+  },
+  {
+    id: "sc6",
+    name: "ترمو ایکس - چربی‌سوز - Thermo-X",
+    slug: "scitec-thermo-x",
+    size: "۱۰۰ کپسول",
+    imageUrl: "/images/products/scitec-thermo-x.webp",
+    // Pack photo, nutrition table, ingredients and directions from
+    // scitecshop.de (Thermo-X 100 kap., p2317): 100 ÷ 3 = 33 servings, as
+    // the pack front says. The shop gives no warnings beyond the allergen
+    // note.
+    description:
+      "ترمو ایکس سایتک؛ فرمول محرک کنترل وزن و چربی بدن، بدون افدرین، با کافئین، ال-تیروزین، ال-کارنیتین، عصاره‌ی گارسینیا کامبوجیا (HCA) و عصاره‌ی کولئوس فورسکولی. هر وعده‌ی روزانه (۳ کپسول) ۱۸۰ میلی‌گرم کافئین دارد و قوطی ۱۰۰ کپسولی ۳۳ وعده است.\nمواد تشکیل‌دهنده: ال-تیروزین ۳۱٪، پوسته‌ی کپسول [ژلاتین، براق‌کننده (شلاک)، رنگ (اکسیدها و هیدروکسیدهای آهن)، تنظیم‌کننده‌های اسیدیته (آمونیوم هیدروکسید، پتاسیم هیدروکسید)]، عصاره‌ی میوه‌ی گارسینیا کامبوجیا ۱۶٪، ال-کارنیتین ال-تارترات ۱۶٪، کافئین بدون آب ۹٪، عصاره‌ی ریشه‌ی کولئوس فورسکولی ۶٪، حجم‌دهنده (ژل سلولز)، ضدکلوخه (نمک‌های منیزیم اسیدهای چرب).",
+    servingSize: "۳ کپسول (۳ بار در روز، هر بار ۱ کپسول)",
+    nutritionFacts: [
+      { label: "ال-تیروزین", amount: "۶۰۰ میلی‌گرم" },
+      { label: "عصاره‌ی گارسینیا کامبوجیا", amount: "۳۰۰ میلی‌گرم" },
+      { label: "هیدروکسی سیتریک اسید - HCA (از عصاره‌ی گارسینیا)", amount: "۱۸۰ میلی‌گرم" },
+      { label: "ال-کارنیتین ال-تارترات", amount: "۳۰۰ میلی‌گرم" },
+      { label: "ال-کارنیتین (از ال-کارنیتین ال-تارترات)", amount: "۲۰۵ میلی‌گرم" },
+      { label: "کافئین", amount: "۱۸۰ میلی‌گرم" },
+      { label: "عصاره‌ی کولئوس فورسکولی", amount: "۱۱۳ میلی‌گرم" },
+      { label: "فورسکولین (از عصاره‌ی کولئوس)", amount: "۱۱ میلی‌گرم" },
+    ],
+    usage: "روزانه ۳ بار، هر بار ۱ کپسول، ۳۰ دقیقه پیش از تمرین و پیش از وعده‌های غذایی مصرف کنید.",
+    warnings:
+      "حاوی کافئین: ۱۸۰ میلی‌گرم در وعده‌ی روزانه.\nممکن است حاوی ردپای پروتئین شیر، سویا و تخم‌مرغ، آجیل، بادام‌زمینی و گلوتن باشد. در کارخانه‌ای تولید می‌شود که مواد غذایی حاوی شیر، تخم‌مرغ، گلوتن، سویا، بادام‌زمینی، آجیل، کرفس، ماهی، سخت‌پوستان، نرم‌تنان و دی‌اکسید گوگرد را هم تولید می‌کند.",
+    manufacturerClaims:
+      "فرمول محرک کنترل وزن، بدون افدرین\n۶۰۰ میلی‌گرم ال-تیروزین، ۲۰۵ میلی‌گرم ال-کارنیتین، ۱۸۰ میلی‌گرم HCA، ۱۸۰ میلی‌گرم کافئین و ۱۱ میلی‌گرم فورسکولین در هر وعده\nبه گفته‌ی فروشگاه رسمی سایتک: HCA به کنترل وزن، چربی بدن و احساس گرسنگی کمک می‌کند",
+    brand: "Scitec Nutrition",
+    price: 1050000,
+    categorySlug: "fat-burner",
+  },
 
   // Universal Nutrition
   {
@@ -839,20 +2331,122 @@ const products: BrandProduct[] = [
     categorySlug: "vitamins",
   },
   {
-    id: "un2",
-    name: "ریل گینز - گینر - Real Gains",
-    slug: "universal-real-gains",
-    brand: "Universal Nutrition",
-    price: 2050000,
-    categorySlug: "protein",
-  },
-  {
     id: "un3",
     name: "انیمال پامپ - پیش‌تمرین - Animal Pump",
     slug: "universal-animal-pump",
+    groupSlug: "universal-animal-pump",
+    size: "۳۰ پک",
+    imageUrl: "/images/products/universal-animal-pump.webp",
+    // Pack photo and Supplement Facts panel image from Universal's Animal
+    // site (animalpak.com/products/animal-pump-pre-workout-supplement), 30
+    // packs. Pills per pack (9) and the 200 mg caffeine of the red pill are
+    // from that page's FAQ. The site gives no directions or warnings beyond
+    // the panel's allergen note.
+    description:
+      "انیمال پامپ یونیورسال؛ پیش‌تمرین کپسولی در پک‌های روزانه (هر پک ۹ قرص و کپسول، از جمله یک کپسول قرمز محرک که می‌شود آن را کنار گذاشت) برای پمپ، حجم سلولی، گردش خون، انرژی و تمرکز. قوطی ۳۰ پک، یعنی ۳۰ وعده است.\nمجموعه‌ها در هر پک: ماتریکس پایه‌ی کراتین ۳۰۰۰ میلی‌گرم (کراتین مونوهیدرات، دی‌کراتین مالات)؛ مجموعه‌ی NO Blast ۲۰۰۰ میلی‌گرم (آرژنین آلفا-کتوگلوتارات، سیترولین مالات، ال-آرژنین، بتا-آلانین، ال-نوروالین)؛ مجموعه‌ی Energy Rush ۷۰۰ میلی‌گرم (ترکیب متیل‌زانتین: کافئین بی‌آب، دانه‌ی کولا، دانه‌ی گوارانا؛ ال-تیروزین، هوپرزین A)؛ مجموعه‌ی آنتی‌اکسیدان ۵۰۰ میلی‌گرم (چغندر، عصاره‌ی هسته‌ی انگور، عصاره‌ی برگ چای سبز (EGCG)، آلفا لیپوئیک اسید)؛ مجموعه‌ی Pump Transport ۷۰۰ میلی‌گرم (ال-تورین، ریشه‌ی زنجبیل، AstraGin™، عصاره‌ی دانه‌ی شنبلیله، BioPerine®).\nسایر مواد: دی‌کلسیم فسفات، ژلاتین (گاوی)، سلولز میکروکریستالی، مالتودکسترین، منیزیم استئارات، استئاریک اسید، دی‌اکسید تیتانیوم، رنگ‌های قرمز ۴۰، زرد ۵ و آبی ۱ و پوشش دارویی.",
+    servingSize: "۱ پک (۹ قرص و کپسول)",
+    nutritionFacts: [
+      { label: "ماتریکس پایه‌ی کراتین", amount: "۳۰۰۰ میلی‌گرم" },
+      { label: "مجموعه‌ی NO Blast", amount: "۲۰۰۰ میلی‌گرم" },
+      { label: "مجموعه‌ی Energy Rush", amount: "۷۰۰ میلی‌گرم" },
+      { label: "مجموعه‌ی آنتی‌اکسیدان", amount: "۵۰۰ میلی‌گرم" },
+      { label: "مجموعه‌ی Pump Transport", amount: "۷۰۰ میلی‌گرم" },
+      { label: "کافئین (کپسول قرمز، طبق سایت سازنده)", amount: "۲۰۰ میلی‌گرم" },
+    ],
+    warnings:
+      "حاوی کافئین (۲۰۰ میلی‌گرم در کپسول قرمز هر پک).\nحاوی ژلاتین گاوی.\nدر مجموعه‌ای تولید می‌شود که شیر، سویا، تخم‌مرغ، بادام‌زمینی، آجیل درختی، ماهی، صدف، گندم و کنجد را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "اولین پیش‌تمرین کپسولی (به گفته‌ی سازنده)\nپمپ و حجم سلولی بیشتر، بهبود گردش خون با تقویت‌کننده‌های نیتریک اکساید، و محرک‌ها و نوتروپیک‌ها برای انرژی و تمرکز\nکپسول محرک جدا، تا بتوانید بدون کافئین هم مصرف کنید\n(این ادعاها توسط FDA ارزیابی نشده است)",
     brand: "Universal Nutrition",
     price: 1390000,
     categorySlug: "pre-workout",
+  },
+  {
+    id: "un4",
+    name: "انیمال وی - Animal Whey",
+    slug: "universal-animal-whey",
+    groupSlug: "universal-animal-whey",
+    flavor: "شکلات",
+    size: "۹۰۷ گرم",
+    imageUrl: "/images/products/universal-animal-whey.webp",
+    // Pack photo from Universal's Animal site
+    // (animalpak.com/products/animal-whey-iso-protein-supplement, Chocolate
+    // 2 lb bag). The site has no facts panel or ingredient list for it, so
+    // only the pack front's numbers and note are used.
+    description:
+      "انیمال وی یونیورسال با طعم شکلات؛ پودر پروتئین وی سرشار از ایزوله، باکیفیت و آسان‌هضم. هر وعده ۲۵ گرم پروتئین، ۵٫۶ گرم BCAA و بدون قند افزوده است و کیسه‌ی ۹۰۷ گرمی (۲ پوند) حدود ۲۷ وعده است.",
+    servingSize: "۱ اسکوپ",
+    nutritionFacts: [
+      { label: "پروتئین", amount: "۲۵ گرم" },
+      { label: "BCAA", amount: "۵٫۶ گرم" },
+      { label: "قند افزوده", amount: "۰ گرم" },
+    ],
+    warnings:
+      "فقط به‌عنوان مکمل غذایی مصرف شود؛ برای کاهش وزن استفاده نشود. این محصول غذای کم‌کالری نیست.",
+    manufacturerClaims:
+      "پروتئین وی سرشار از ایزوله، باکیفیت و آسان‌هضم\n۲۵ گرم پروتئین در هر وعده\nبدون قند افزوده\nبه گفته‌ی سازنده، به ترمیم بافت عضله و کاهش کوفتگی بعد از تمرین کمک می‌کند (این ادعا توسط FDA ارزیابی نشده است)",
+    brand: "Universal Nutrition",
+    price: 1950000,
+    categorySlug: "protein",
+  },
+  {
+    id: "un5",
+    name: "انیمال کراتین میکرونیزه - Animal Micronized Creatine",
+    slug: "universal-animal-creatine",
+    groupSlug: "universal-animal-creatine",
+    flavor: "بدون طعم",
+    size: "۳۰۰ گرم",
+    imageUrl: "/images/products/universal-animal-creatine.webp",
+    // Pack photo and Supplement Facts panel image from Universal's Animal
+    // site (animalpak.com/products/animal-micronized-creatine-powder-supplement,
+    // 300 g): about 60 servings of 5 g.
+    description:
+      "انیمال کراتین یونیورسال، بدون طعم؛ ۱۰۰٪ کراتین مونوهیدرات خالص و میکرونیزه. هر وعده (حدود ۵ گرم) ۵ گرم کراتین مونوهیدرات دارد و قوطی ۳۰۰ گرمی حدود ۶۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات.",
+    servingSize: "۱ اسکوپ (حدود ۵ گرم)",
+    nutritionFacts: [{ label: "کراتین مونوهیدرات", amount: "۵۰۰۰ میلی‌گرم" }],
+    usage:
+      "روزانه ۱ اسکوپ را با ۲۴۰ تا ۳۵۰ میلی‌لیتر (۸ تا ۱۲ اونس) نوشیدنی دلخواه مخلوط کنید.\nدر جای خنک و خشک و دور از گرما، رطوبت و نور خورشید نگهداری کنید.",
+    warnings:
+      "دور از دسترس کودکان نگهداری شود.\nپیش از مصرف با پزشک مشورت کنید.\nدر مجموعه‌ای تولید می‌شود که شیر، سویا، تخم‌مرغ، بادام‌زمینی، آجیل درختی، ماهی، صدف و گندم را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "۱۰۰٪ کراتین مونوهیدرات خالص و میکرونیزه\nبه گفته‌ی سازنده، به عضله‌سازی و ریکاوری، قدرت و استقامت و عملکرد شناختی کمک می‌کند (این ادعاها توسط FDA ارزیابی نشده است)\nساخت آمریکا، تولید در کارخانه‌ی دارای GMP",
+    brand: "Universal Nutrition",
+    price: 750000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "un6",
+    name: "انیمال کاتس - چربی‌سوز - Animal Cuts",
+    slug: "universal-animal-cuts",
+    size: "۴۲ پک",
+    imageUrl: "/images/products/universal-animal-cuts.webp",
+    // Pack photo and Supplement Facts panel (with dosage and warnings) from
+    // animalpak.com/products/animal-cuts-fat-burner-supplement, pill packs.
+    // The complexes add up to 3,730 mg per pack, so the page's "nearly
+    // 8,500 mg" claim is left out. Ingredients inside each complex have no
+    // separate amounts on the label.
+    description:
+      "انیمال کاتس یونیورسال؛ چربی‌سوز کامل در پک‌های قرص با ۸ کمپلکس: ترموژنیک (محرک)، متابولیک، تیروئید، دفع آب، نوتروپیک، مهار کورتیزول، افزایش CCK (کنترل اشتها) و جذب بهتر. برای آقایان و بانوان. هر پک یک وعده است و جعبه ۴۲ پک دارد. کپسول قرمز کمپلکس محرک و کپسول‌های آبی کمپلکس دفع آب است.\nکمپلکس محرک: کافئین بدون آب، دانه‌ی کولا، دانه‌ی گوارانا، برگ یربا ماته، رزبری کتون، عصاره‌ی ریشه‌ی کولئوس فورسکولی. کمپلکس متابولیک: عصاره‌ی برگ چای سبز (پلی‌فنول/EGCG)، عصاره‌ی چای اولانگ، عصاره‌ی چای سیاه، عصاره‌ی دانه‌ی قهوه. کمپلکس تیروئید: ال-تیروزین، عصاره‌ی برگ زیتون، مریم‌گلی. کمپلکس دفع آب: ریشه‌ی قاصدک، برگ انگور خرس (آربوتین)، میوه‌ی سرو کوهی، دانه‌ی کرفس. کمپلکس نوتروپیک: پودر کاکائو، DMAE بیتارترات، هوپرزین A. کمپلکس مهار کورتیزول: عصاره‌ی اشواگاندا، جینسینگ سیبری. کمپلکس CCK: چا-د-بوگره، پودر سرکه‌ی سیب. کمپلکس جذب: Astragin™ (جینسینگ پاناکس، گون)، عصاره‌ی فلفل سیاه (BioPerine®).\nسایر مواد: ژلاتین (گاوی)، دی‌کلسیم فسفات، استئارات منیزیم، استئاریک اسید، میکروکریستالین سلولز، دی‌اکسید تیتانیوم، دی‌اکسید سیلیکون، رنگ‌های FD&C قرمز ۴۰، آبی ۱، زرد ۵ و زرد ۶.",
+    servingSize: "۱ پک",
+    nutritionFacts: [
+      { label: "کمپلکس محرک (ترموژنیک)", amount: "۷۵۰ میلی‌گرم" },
+      { label: "کمپلکس متابولیک", amount: "۷۵۰ میلی‌گرم" },
+      { label: "کمپلکس تیروئید", amount: "۳۵۰ میلی‌گرم" },
+      { label: "کمپلکس دفع آب", amount: "۷۵۰ میلی‌گرم" },
+      { label: "کمپلکس نوتروپیک", amount: "۵۰۰ میلی‌گرم" },
+      { label: "کمپلکس مهار کورتیزول", amount: "۳۰۰ میلی‌گرم" },
+      { label: "کمپلکس افزایش CCK", amount: "۳۰۰ میلی‌گرم" },
+      { label: "کمپلکس جذب بهتر", amount: "۳۰ میلی‌گرم" },
+    ],
+    usage:
+      "روزانه ۲ پک به مدت ۳ هفته‌ی پیاپی: ۱ پک پس از بیدار شدن و پک دوم ۴ تا ۶ ساعت بعد. پک‌ها را با یک وعده‌ی سبک غذا مصرف کنید و در دوره‌ی مصرف آب کافی بنوشید.\nچرخه‌ی ۳ هفته مصرف و ۱ هفته استراحت را رعایت کنید؛ پس از هفته‌ی استراحت می‌توانید دوباره شروع کنید.",
+    warnings:
+      "برای افراد زیر ۱۸ سال مناسب نیست. پیش از مصرف با پزشک مشورت کنید. حاوی کافئین است؛ همراه با دیگر محصولات کافئین‌دار مصرف نکنید. عوارض احتمالی: عصبی بودن، تحریک‌پذیری، سردرد، بی‌خوابی، علائم گوارشی و گاهی تپش قلب.\nاگر خودتان یا خانواده‌تان سابقه‌ی بیماری قلبی، تیروئید، کبد، کلیه، دیابت، فشار خون بالا، سردردهای مکرر، افسردگی یا دیگر بیماری‌های روانی، گلوکوم، مشکل در ادرار کردن، بزرگی پروستات یا تشنج دارید، یا داروی مهارکننده‌ی MAO، ضدافسردگی یا هر داروی دیگر، مکمل یا داروی با نسخه و بدون نسخه مصرف می‌کنید، با پزشک مشورت کنید.\nاگر علائم مشکل کبدی مانند زردی پوست یا چشم، درد معده، ادرار تیره، تعریق، تهوع، خستگی غیرعادی و/یا بی‌اشتهایی دیدید، مصرف را قطع کنید و با پزشک مشورت کنید. موارد نادر و غیرقابل‌پیش‌بینی آسیب کبدی همراه با محصولات حاوی عصاره‌ی چای سبز گزارش شده است.\nدو هفته پیش از جراحی مصرف را قطع کنید. در دوران بارداری یا شیردهی مصرف نکنید. از مقدار توصیه‌شده بیشتر مصرف نکنید.\nدر مجموعه‌ای تولید می‌شود که شیر، سویا، تخم‌مرغ، بادام‌زمینی، آجیل درختی، ماهی، صدف و گندم را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "چربی‌سوز، لیپولیتیک، دیورتیک (دفع آب) و متابولیک در یک بسته\nبه گفته‌ی سازنده: افزایش متابولیسم، کمک به کنترل اشتها، تمرکز و وضوح ذهنی، پاسخ سالم به استرس و کاهش احتباس آب و نفخ (این ادعاها توسط FDA ارزیابی نشده است)\nحفظ حجم عضله با گیاهان نگه‌دارنده‌ی پتاسیم (به گفته‌ی سازنده)",
+    brand: "Universal Nutrition",
+    price: 1650000,
+    categorySlug: "fat-burner",
   },
 
   // BPI Sports
@@ -860,8 +2454,96 @@ const products: BrandProduct[] = [
     id: "bpi1",
     name: "ایزو اچ‌دی - وی ایزوله - ISO HD",
     slug: "bpi-iso-hd",
+    groupSlug: "bpi-iso-hd",
+    flavor: "بستنی شکلاتی",
+    size: "۷۱۳ گرم",
+    imageUrl: "/images/products/bpi-iso-hd.webp",
+    // Pack photo and Supplement Facts panel image from BPI's US site
+    // (bpisports.com/products/iso-hd, Chocolate Ice Cream 23 servings, the
+    // flavour with a facts panel): 713 g ÷ 32 g ≈ 23 servings.
+    description:
+      "ایزو اچ‌دی بی‌پی‌آی با طعم بستنی شکلاتی؛ ۱۰۰٪ پروتئین ایزوله‌ی وی خالص برای جذب سریع و ریکاوری سریع عضله. هر وعده (۳۲ گرم) ۲۵ گرم پروتئین، ۱ گرم کربوهیدرات، ۱ گرم چربی و ۱۲۰ کیلوکالری دارد و قوطی ۷۱۳ گرمی حدود ۲۳ وعده است.\nمواد تشکیل‌دهنده: ایزوله‌ی پروتئین وی، کاکائوی رد راست، طعم‌دهنده‌های طبیعی و مصنوعی، لسیتین سویا، سلولز، صمغ، آسه‌سولفام پتاسیم، نمک، سوکرالوز و ترهالوز.",
+    servingSize: "۳۲ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۲۰ کیلوکالری" },
+      { label: "چربی", amount: "۱ گرم" },
+      { label: "چربی اشباع", amount: "۰ گرم" },
+      { label: "چربی ترانس", amount: "۰ گرم" },
+      { label: "کلسترول", amount: "۱۵ میلی‌گرم" },
+      { label: "سدیم", amount: "۱۷۵ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۱ گرم" },
+      { label: "فیبر", amount: "۰ گرم" },
+      { label: "قندها", amount: "۱ گرم" },
+      { label: "پروتئین", amount: "۲۵ گرم" },
+      { label: "کلسیم", amount: "۷۹ میلی‌گرم" },
+      { label: "آهن", amount: "۲ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۱۶۷ میلی‌گرم" },
+    ],
+    warnings:
+      "حساسیت‌زاها: حاوی شیر و سویا.\nدر مجموعه‌ای تولید می‌شود که شیر، سویا، گندم، تخم‌مرغ، صدف، آجیل درختی، بادام‌زمینی و کنجد را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "۱۰۰٪ پروتئین ایزوله‌ی خالص\n۲۵ گرم پروتئین، ۱ گرم کربوهیدرات و ۱ گرم چربی در هر اسکوپ\nبه گفته‌ی سازنده، جذب سریع و ریکاوری سریع عضله (این ادعا توسط FDA ارزیابی نشده است)",
     brand: "BPI Sports",
     price: 2250000,
+    categorySlug: "protein",
+  },
+  {
+    id: "bpi4",
+    name: "کراتین میکرونیزه - Micronized Creatine",
+    slug: "bpi-micronized-creatine",
+    groupSlug: "bpi-micronized-creatine",
+    flavor: "بدون طعم",
+    size: "۶۰۰ گرم",
+    imageUrl: "/images/products/bpi-micronized-creatine.webp",
+    // Pack photo and Supplement Facts panel image from BPI's US site
+    // (bpisports.com/products/micronized-creatine-1, 120 servings): 120 × 5 g
+    // = 600 g. The site gives no directions or warnings.
+    description:
+      "کراتین میکرونیزه‌ی بی‌پی‌آی، بدون طعم و بدون رنگ مصنوعی؛ ۱۰۰٪ کراتین مونوهیدرات خالص و میکرونیزه. هر وعده (۵ گرم) ۵ گرم کراتین مونوهیدرات دارد و قوطی ۶۰۰ گرمی ۱۲۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات (سایر مواد: ندارد).",
+    servingSize: "۵ گرم (۱ اسکوپ)",
+    nutritionFacts: [{ label: "کراتین مونوهیدرات", amount: "۵ گرم" }],
+    manufacturerClaims:
+      "۱۰۰٪ کراتین میکرونیزه‌ی خالص\nبدون رنگ مصنوعی\nبه گفته‌ی سازنده: قدرت بیشتر، رشد و ریکاوری عضله و عملکرد ورزشی بهتر (این ادعاها توسط FDA ارزیابی نشده است)",
+    brand: "BPI Sports",
+    price: 950000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "bpi5",
+    name: "بالک ماسل ایکس‌ال - گینر - Bulk Muscle XL",
+    slug: "bpi-bulk-muscle-xl",
+    groupSlug: "bpi-bulk-muscle-xl",
+    flavor: "شکلات",
+    size: "۵٫۹۵ کیلوگرم",
+    imageUrl: "/images/products/bpi-bulk-muscle-xl.webp",
+    // Pack photo and Supplement Facts panel image from BPI's US site
+    // (bpisports.com/products/bulk-muscle-xl-…, 13 lb bag): 48 × 124 g =
+    // 5952 g. The panel's "Calories from Fat: 5" doesn't fit 2.5 g of fat
+    // (≈ 22 kcal), so that row is left out. The site gives no directions or
+    // warnings.
+    description:
+      "بالک ماسل ایکس‌ال بی‌پی‌آی با طعم شکلات؛ گینر پیشرفته برای افزایش وزن و حجم. هر وعده (۱۲۴ گرم) ۴۹۷ کیلوکالری، ۲۵ گرم پروتئین و ۸۸ گرم کربوهیدرات دارد و کیسه‌ی ۵٫۹۵ کیلوگرمی (۱۳ پوند) حدود ۴۸ وعده است. ساخت آمریکا.\nمواد تشکیل‌دهنده: مالتودکسترین، کنسانتره‌ی پروتئین وی، طعم‌دهنده‌های طبیعی و مصنوعی، کاکائوی رد راست، صمغ سلولز، سوکرالوز و آسه‌سولفام پتاسیم.",
+    servingSize: "۱۲۴ گرم (۲ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۴۹۷ کیلوکالری" },
+      { label: "چربی", amount: "۲٫۵ گرم" },
+      { label: "چربی اشباع", amount: "۰ گرم" },
+      { label: "چربی ترانس", amount: "۰ گرم" },
+      { label: "کلسترول", amount: "۴ میلی‌گرم" },
+      { label: "سدیم", amount: "۶۰ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۱۶۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۸۸ گرم" },
+      { label: "فیبر", amount: "۱ گرم" },
+      { label: "قندها", amount: "۱٫۵ گرم" },
+      { label: "پروتئین", amount: "۲۵ گرم" },
+      { label: "کلسیم", amount: "۹۰ میلی‌گرم" },
+    ],
+    warnings:
+      "حساسیت‌زاها: حاوی شیر و سویا.\nدر مجموعه‌ای تولید می‌شود که تخم‌مرغ، آجیل درختی و گندم را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "گینر پیشرفته برای افزایش وزن و حجم\n۲۵ گرم پروتئین و ۸۸ گرم کربوهیدرات در هر وعده\nساخت آمریکا",
+    brand: "BPI Sports",
+    price: 4950000,
     categorySlug: "protein",
   },
   {
@@ -880,23 +2562,208 @@ const products: BrandProduct[] = [
     price: 780000,
     categorySlug: "creatine",
   },
+  {
+    id: "bpi6",
+    name: "سی‌ال‌ای + کارنیتین - چربی‌سوز بدون محرک - CLA + Carnitine",
+    slug: "bpi-cla-carnitine",
+    groupSlug: "bpi-cla-carnitine",
+    flavor: "اسنو کون (یخ در بهشت)",
+    size: "۳۵۰ گرم",
+    imageUrl: "/images/products/bpi-cla-carnitine.webp",
+    // Pack photo and Supplement Facts panel from bpisports.com/products/
+    // cla-plus-carnitine (Snow Cone, 50 servings, 12.34 oz / 350 g). The
+    // label says 50 × 7.4 g, which would be 370 g, so the serving count is
+    // left out. Chosen over RoxyLean, whose label has yohimbe and rauwolfia.
+    // The site gives no directions or warnings.
+    description:
+      "سی‌ال‌ای + کارنیتین بی‌پی‌آی با طعم اسنو کون؛ پودر چربی‌سوز بدون محرک (بدون کافئین) و بدون قند با اسیدهای چرب امگا ۶ و CLA (اسید لینولئیک مزدوج) و ترکیب سه نوع کارنیتین. هر اسکوپ (۷٫۴ گرم) ۲٫۵ گرم ترکیب امگا ۶ و CLA، ۲ گرم ترکیب کارنیتین و ۱۰۰۰ واحد ویتامین D3 دارد.\nترکیب امگا ۶ و CLA: پودر روغن نارگیل، پودر روغن آووکادو، پودر روغن گلرنگ (منبع CLA). ترکیب کارنیتین: کارنیتین بتائین بدون آب، ال-کارنیتین تارترات، گلیسین پروپیونیل ال-کارنیتین HCl.\nسایر مواد: مالتودکسترین، سیلیس، اسید سیتریک، طعم‌دهنده‌های طبیعی و مصنوعی، سوکرالوز، اسید مالیک، آسه‌سولفام پتاسیم، کلرید سدیم.",
+    servingSize: "۷٫۴ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۳۵ کیلوکالری" },
+      { label: "چربی", amount: "۲ گرم" },
+      { label: "ویتامین D3 (کوله‌کلسیفرول)", amount: "۲۵ میکروگرم (۱۰۰۰ واحد)" },
+      { label: "ترکیب اسیدهای چرب امگا ۶ و CLA", amount: "۲٫۵ گرم" },
+      { label: "ترکیب کارنیتین", amount: "۲ گرم" },
+    ],
+    manufacturerClaims:
+      "بدون محرک (بدون کافئین) و بدون قند، بدون رنگ مصنوعی\n۲٫۵ گرم امگا ۶ و CLA، ۲ گرم کارنیتین و ۱۰۰۰ واحد ویتامین D3 در هر اسکوپ\nبه گفته‌ی سازنده: کمک به کاهش چربی بدن و حفظ عضله‌ی بدون چربی، و تبدیل چربی به انرژی (این ادعاها توسط FDA ارزیابی نشده است)",
+    brand: "BPI Sports",
+    price: 1250000,
+    categorySlug: "fat-burner",
+  },
 
   // Evogen
   {
-    id: "ev1",
-    name: "ای‌وی‌پی ایکس‌اس - پیش‌تمرین - EVP-XS",
-    slug: "evogen-evp-xs",
+    id: "ev3",
+    name: "ایزوجکت - وی ایزوله - Isoject",
+    slug: "evogen-isoject",
+    groupSlug: "evogen-isoject",
+    flavor: "شکلات",
+    size: "۸۰۰ گرم",
+    imageUrl: "/images/products/evogen-isoject.webp",
+    // Pack photo and Nutrition Facts panel image from Evogen's US site
+    // (evogennutrition.com/products/isoject, Chocolate): 800 g ÷ 32 g = 25.
+    // The potassium row (169 mg at "2%") doesn't match its %DV (≈ 4%), so it
+    // is left out. The site gives no directions or warnings.
+    description:
+      "ایزوجکت اوو‌ژن با طعم شکلات؛ پودر پروتئین ایزوله‌ی وی فوق‌خالص با فیلتراسیون سرد و آنزیم IGNITOR® برای جذب بهتر. هر وعده (۳۲ گرم) ۲۵ گرم پروتئین، ۱۲٫۲ گرم EAA، ۵٫۴ گرم BCAA و ۱۲۰ کیلوکالری دارد و قوطی ۸۰۰ گرمی حدود ۲۵ وعده است.\nمواد تشکیل‌دهنده: ایزوله‌ی پروتئین وی با فیلتراسیون سرد، کاکائوی قلیایی‌شده، طعم‌دهنده‌های طبیعی و مصنوعی، نمک، صمغ زانتان، لسیتین سویا و/یا آفتابگردان، آنزیم IGNITOR® (آمینوپپتیداز، پروتئاز، پپتیداز)، سوکرالوز و آسه‌سولفام پتاسیم.",
+    servingSize: "۳۲ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۲۰ کیلوکالری" },
+      { label: "چربی", amount: "۱ گرم" },
+      { label: "چربی اشباع", amount: "۰ گرم" },
+      { label: "چربی ترانس", amount: "۰ گرم" },
+      { label: "کلسترول", amount: "۱۵ میلی‌گرم" },
+      { label: "سدیم", amount: "۱۹۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۳ گرم" },
+      { label: "فیبر", amount: "۱ گرم" },
+      { label: "قندها", amount: "۲ گرم" },
+      { label: "قند افزوده", amount: "۰ گرم" },
+      { label: "پروتئین", amount: "۲۵ گرم" },
+      { label: "کلسیم", amount: "۹۶ میلی‌گرم" },
+      { label: "آهن", amount: "۱ میلی‌گرم" },
+    ],
+    warnings: "حساسیت‌زاها: حاوی شیر و سویا.",
+    manufacturerClaims:
+      "۲۵ گرم پروتئین، ۱۲٫۲ گرم EAA و ۵٫۴ گرم BCAA در هر وعده\nایزوله‌ی وی فوق‌خالص با فیلتراسیون سرد\nبه گفته‌ی سازنده: خلوص، ریکاوری و جذب بهتر (این ادعاها توسط FDA ارزیابی نشده است)",
     brand: "Evogen",
-    price: 1490000,
+    price: 2150000,
+    categorySlug: "protein",
+  },
+  {
+    id: "ev4",
+    name: "کراتین مونوهیدرات میکرونیزه - Creatine",
+    slug: "evogen-creatine",
+    groupSlug: "evogen-creatine",
+    flavor: "بدون طعم",
+    size: "۳۰۰ گرم",
+    imageUrl: "/images/products/evogen-creatine.webp",
+    // Pack photo and Supplement Facts panel image from Evogen's US site
+    // (evogennutrition.com/products/creatine-monohydrate, 60 servings
+    // unflavoured, NSF Certified for Sport): about 60 × 5 g = 300 g.
+    description:
+      "کراتین اوو‌ژن (سری Essential)، بدون طعم؛ پودر کراتین مونوهیدرات میکرونیزه با گواهی NSF Certified for Sport. هر وعده (۵ گرم) ۵ گرم کراتین مونوهیدرات دارد و قوطی ۳۰۰ گرمی حدود ۶۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات میکرونیزه.",
+    servingSize: "۵ گرم (۱ اسکوپ)",
+    nutritionFacts: [{ label: "کراتین مونوهیدرات میکرونیزه", amount: "۵ گرم" }],
+    warnings:
+      "فقط برای بزرگسالان سالم ۱۸ سال به بالا. در دوران بارداری یا شیردهی مصرف نکنید.\nاگر داروی تجویزی یا بدون نسخه مصرف می‌کنید یا بیماری دارید، پیش از مصرف با پزشک مشورت کنید.\nدر صورت بروز هر واکنش نامطلوب، فوراً مصرف را قطع و با پزشک تماس بگیرید.\nدو هفته پیش از جراحی مصرف را قطع کنید.\nاگر پلمب ایمنی شکسته یا موجود نیست استفاده نکنید. در جای خنک و خشک و دور از دسترس کودکان نگهداری شود.\nحساسیت‌زا ندارد؛ در مجموعه‌ای تولید می‌شود که شیر، ماهی، سخت‌پوستان، آجیل درختی، گندم، بادام‌زمینی، سویا و تخم‌مرغ را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "کراتین مونوهیدرات میکرونیزه با گواهی NSF Certified for Sport\nبه گفته‌ی سازنده: افزایش قدرت و توان، حجم عضله و پشتیبانی از عملکرد شناختی (این ادعاها توسط FDA ارزیابی نشده است)",
+    brand: "Evogen",
+    price: 850000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "ev5",
+    name: "سوپر هیوج - گینر - Super Huge",
+    slug: "evogen-super-huge",
+    groupSlug: "evogen-super-huge",
+    flavor: "شیک شکلات",
+    size: "۵٫۴۴ کیلوگرم",
+    imageUrl: "/images/products/evogen-super-huge.webp",
+    // Pack photo and Nutrition Facts panel image from Evogen's US site
+    // (evogennutrition.com/products/super-huge-mass-gainer, Chocolate Shake
+    // 12 lb): 5440 g ÷ 313 g ≈ 17 servings; every row matches its %DV.
+    description:
+      "سوپر هیوج اوو‌ژن با طعم شیک شکلات؛ گینر با پروتئین ممتاز و کربوهیدرات تمیز (ترکیب مالتودکسترین، آرد جو دوسر و نشاسته‌ی نخود Carb10™) برای حجم و افزایش وزن. هر وعده (۳۱۳ گرم) ۱۲۲۰ کیلوکالری، ۵۰ گرم پروتئین، ۲۲۶ گرم کربوهیدرات، ۲۲ گرم EAA و ۱۰ گرم BCAA دارد و کیسه‌ی ۵٫۴۴ کیلوگرمی (۱۲ پوند) حدود ۱۷ وعده است.\nمواد تشکیل‌دهنده: ترکیب کربوهیدرات (مالتودکسترین، آرد جو دوسر، نشاسته‌ی نخود (Carb10™))، ترکیب پروتئین (کنسانتره‌ی پروتئین وی، ایزوله‌ی پروتئین وی، کازئین میسلار، پروتئین وی هیدرولیزه، کنسانتره‌ی پروتئین شیر)، کریمر نارگیل (روغن نارگیل، مالتودکسترین، نشاسته، مونو و دی‌گلیسریدها، تری‌کلسیم فسفات)، کاکائوی قلیایی‌شده، طعم‌دهنده‌ی طبیعی و مصنوعی، نمک، سوکرالوز، پروتئاز، آسه‌سولفام پتاسیم، لسیتین سویا و/یا آفتابگردان، پودر روغن MCT و لاکتاز.",
+    servingSize: "۳۱۳ گرم (۵ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۲۲۰ کیلوکالری" },
+      { label: "چربی", amount: "۱۲ گرم" },
+      { label: "چربی اشباع", amount: "۸ گرم" },
+      { label: "چربی ترانس", amount: "۰ گرم" },
+      { label: "کلسترول", amount: "۱۴۰ میلی‌گرم" },
+      { label: "سدیم", amount: "۳۹۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۲۲۶ گرم" },
+      { label: "فیبر", amount: "۴ گرم" },
+      { label: "قندها", amount: "۱۲ گرم" },
+      { label: "قند افزوده", amount: "۲ گرم" },
+      { label: "پروتئین", amount: "۵۰ گرم" },
+      { label: "کلسیم", amount: "۴۷۸ میلی‌گرم" },
+      { label: "آهن", amount: "۴ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۷۱۵ میلی‌گرم" },
+    ],
+    warnings: "حساسیت‌زاها: حاوی شیر و سویا. حاوی جو دوسر و روغن نارگیل.",
+    manufacturerClaims:
+      "۱۲۲۰ کالری و ۵۰ گرم پروتئین در هر وعده\n۲۲ گرم EAA، ۱۰ گرم BCAA و ۵ گرم لوسین در هر وعده\nپروتئین ممتاز و کربوهیدرات تمیز، بدون افزایش ناگهانی قند خون (به گفته‌ی سازنده)\nبرای حجم عضله و افزایش وزن",
+    brand: "Evogen",
+    price: 5250000,
+    categorySlug: "protein",
+  },
+  {
+    id: "ev6",
+    name: "ای‌وی‌پی تری‌دی - پیش‌تمرین بدون محرک - EVP-3D",
+    slug: "evogen-evp-3d",
+    groupSlug: "evogen-evp-3d",
+    flavor: "قهوه‌ی موکای سرد",
+    size: "۵۴۴ گرم",
+    imageUrl: "/images/products/evogen-evp-3d.webp",
+    // Pack photo and Supplement Facts panel image from Evogen's US site
+    // (evogennutrition.com/products/evp-3d, Iced Mocha): 40 × 13.6 g = 544 g.
+    // Chosen over the high-stim EVP Xtreme N.O., which adds yohimbe. The
+    // site gives no directions or warnings beyond the panel.
+    description:
+      "ای‌وی‌پی تری‌دی اوو‌ژن با طعم قهوه‌ی موکای سرد؛ پیش‌تمرین بدون محرک (بدون کافئین) برای پمپ، تمرکز ذهنی و حجم عضله، با فناوری نیترات NO3-T®. هر وعده (۱۳٫۶ گرم) ۳ گرم ال-سیترولین، ۱٫۶ گرم بتا-آلانین و ۱٫۲۵ گرم کراتین مونوهیدرات دارد و قوطی ۵۴۴ گرمی حدود ۴۰ وعده (یا ۲۰ وعده‌ی دوتایی) است.\nسایر مواد: روغن آفتابگردان، قهوه‌ی کلمبیایی خشک‌شده، طعم‌دهنده‌های طبیعی و مصنوعی، سیلیکات کلسیم، سیلیس، کاکائو، ترکیب صمغ‌ها (سلولز، زانتان، کاراگینان)، دی‌اکسید تیتانیوم، آسه‌سولفام پتاسیم و سوکرالوز.",
+    servingSize: "۱۳٫۶ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۵ کیلوکالری" },
+      { label: "چربی", amount: "۰٫۵ گرم" },
+      { label: "کربوهیدرات", amount: "۱ گرم" },
+      { label: "سدیم (نمک صورتی هیمالیا)", amount: "۶۰ میلی‌گرم" },
+      { label: "ال-سیترولین", amount: "۳۰۰۰ میلی‌گرم" },
+      { label: "بتا-آلانین", amount: "۱۶۰۰ میلی‌گرم" },
+      { label: "آرژنین نیترات (NO3-T®)", amount: "۱۰۰۰ میلی‌گرم" },
+      { label: "کراتین مونوهیدرات", amount: "۱۲۵۰ میلی‌گرم" },
+      { label: "پودر آب نارگیل", amount: "۵۰۰ میلی‌گرم" },
+      { label: "ال-تیروزین", amount: "۵۰۰ میلی‌گرم" },
+      { label: "DMAE (دی‌متیل‌آمینواتانول)", amount: "۳۰۰ میلی‌گرم" },
+      { label: "عصاره‌ی قارچ یال شیر", amount: "۲۵۰ میلی‌گرم" },
+    ],
+    usage: "برای تازه ماندن، می‌توانید پس از باز کردن آن را در یخچال نگهداری کنید.",
+    warnings:
+      "حساسیت‌زاها: حاوی شیر و آجیل درختی (نارگیل). در مجموعه‌ای تولید می‌شود که بادام‌زمینی، گندم و تخم‌مرغ را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "بدون محرک (بدون کافئین)\nپمپ، تمرکز ذهنی و حجم عضله (به گفته‌ی سازنده؛ این ادعاها توسط FDA ارزیابی نشده است)\nفناوری ثبت‌شده‌ی نیترات NO3-T®",
+    brand: "Evogen",
+    price: 1550000,
     categorySlug: "pre-workout",
   },
   {
-    id: "ev2",
-    name: "گلیکوفیوز - کربوهیدرات ریکاوری - Glycofuse",
-    slug: "evogen-glycofuse",
+    id: "ev7",
+    name: "ایووبرن بدون کافئین - چربی‌سوز - Evoburn Caffeine Free",
+    slug: "evogen-evoburn-caffeine-free",
+    groupSlug: "evogen-evoburn-caffeine-free",
+    flavor: "انگور",
+    size: "۱۴۶ گرم",
+    imageUrl: "/images/products/evogen-evoburn-caffeine-free.webp",
+    // Pack photo, Supplement Facts panel and directions/warnings from
+    // evogennutrition.com/products/evoburn-elite-thermogenic-powder-caffeine-
+    // free (Grape Blast): 30 × 4.87 g ≈ 146 g. Chosen over the regular
+    // Evoburn, whose label has yohimbe. The site's warning copy still says
+    // "contains caffeine" (copied from the regular version), so those
+    // caffeine-only lines are left out.
+    description:
+      "ایووبرن بدون کافئین اوو‌ژن با طعم انگور؛ پودر ترموژنیک (چربی‌سوز) بدون کافئین، طراحی‌شده توسط هانی رامبد، برای کمک به متابولیسم، کنترل اشتها و تمرکز در دوره‌ی کات، با برچسب کاملاً شفاف و بدون ترکیب اختصاصی. هر وعده (۴٫۸۷ گرم) ۵۰۰ میلی‌گرم MitoBurn®، ۲۵۰ میلی‌گرم InnoSlim® و ۵۰۰ میلی‌گرم ال-تیروزین دارد و قوطی ۱۴۶ گرمی حدود ۳۰ وعده است.\nسایر مواد: اسید سیتریک، اسید مالیک، طعم‌دهنده‌های طبیعی و مصنوعی، سیلیکات کلسیم، سوکرالوز، سیلیس، عصاره‌ی پوست انگور، آسه‌سولفام پتاسیم.",
+    servingSize: "۴٫۸۷ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "ال-تیروزین", amount: "۵۰۰ میلی‌گرم" },
+      { label: "عصاره‌ی کاکائو", amount: "۲۰۰ میلی‌گرم" },
+      { label: "DMAE بیتارترات", amount: "۲۰۰ میلی‌گرم" },
+      { label: "عصاره‌ی پرتقال تلخ (Advantra Z® ۲۵٪)", amount: "۴۰ میلی‌گرم" },
+      { label: "MitoBurn® (ال-بتا-آمینوایزوبوتیریک اسید)", amount: "۵۰۰ میلی‌گرم" },
+      { label: "InnoSlim® (ریشه‌ی گون و جینسینگ پاناکس نوتوجینسنگ)", amount: "۲۵۰ میلی‌گرم" },
+      { label: "ProGBB® (گاما-بوتیروبتائین اتیل استر کلراید)", amount: "۴۰ میلی‌گرم" },
+      { label: "BioPerine® (عصاره‌ی فلفل سیاه)", amount: "۵ میلی‌گرم" },
+    ],
+    usage:
+      "در چند نوبت اول، برای سنجش تحمل بدن نصف وعده (۱/۲ اسکوپ) مصرف کنید و بعد سراغ یک اسکوپ کامل بروید. صبح، ناشتا و ۲۰ تا ۳۰ دقیقه پیش از اولین وعده‌ی غذا یا شیک پروتئین، با ۳۰۰ تا ۳۵۰ میلی‌لیتر (۱۰ تا ۱۲ اونس) آب سرد مخلوط کنید. برای بهترین نتیجه همراه با رژیم غذایی و برنامه‌ی تمرینی مصرف کنید.\nبیش از ۸ هفته پشت سر هم مصرف نکنید و پس از آن ۴ هفته استراحت دهید. پس از باز کردن در یخچال نگهداری کنید.",
+    warnings:
+      "فقط برای افراد سالم ۱۸ تا ۵۰ سال. در دوران بارداری یا شیردهی مصرف نکنید.\nپیش از مصرف با پزشک مشورت کنید، به‌ویژه اگر دارو، مکمل یا داروی بدون نسخه مصرف می‌کنید یا بیماری زمینه‌ای دارید، از جمله فشار خون بالا یا پایین، آریتمی قلبی، سکته، بیماری قلب، کبد، کلیه یا تیروئید، تشنج، بیماری روانی، دیابت، مشکل در ادرار کردن به علت بزرگی پروستات، یا اگر مهارکننده‌ی MAO-B، MAOI، SSRI یا هر داروی سروتونرژیک دیگر مصرف می‌کنید.\nدو هفته پیش از جراحی مصرف را قطع کنید. همراه با الکل مصرف نکنید. در صورت بروز هر واکنش نامطلوب، فوراً مصرف را قطع و با پزشک مشورت کنید. از مقدار توصیه‌شده بیشتر مصرف نکنید.\nاگر بسته‌بندی دستکاری شده است استفاده نکنید. دور از دسترس کودکان و در جای خنک و خشک نگهداری شود.\nممکن است حاوی موادی باشد که برخی سازمان‌های ورزشی ممنوع کرده‌اند؛ مسئولیت نتیجه‌ی آزمایش‌های دوپینگ با مصرف‌کننده است.\nحساسیت‌زا ندارد؛ در مجموعه‌ای تولید می‌شود که شیر، ماهی، سخت‌پوستان، آجیل درختی، گندم، بادام‌زمینی، سویا و تخم‌مرغ را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "بدون کافئین\nطراحی‌شده توسط هانی رامبد («The Pro Creator»)، مربی ۲۵ بار قهرمان مسترالمپیا\nبرچسب کاملاً شفاف، بدون ترکیب اختصاصی، با مواد ثبت‌شده‌ی MitoBurn®، InnoSlim® و ProGBB®\nبه گفته‌ی سازنده: کمک به متابولیسم، کنترل اشتها و تمرکز، و حفظ عضله در دوره‌ی کات (این ادعاها توسط FDA ارزیابی نشده است)",
     brand: "Evogen",
-    price: 1350000,
-    categorySlug: "aminos",
+    price: 1450000,
+    categorySlug: "fat-burner",
   },
 ];
 
