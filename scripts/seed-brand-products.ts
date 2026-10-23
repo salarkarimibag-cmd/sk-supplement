@@ -2408,6 +2408,141 @@ const products: BrandProduct[] = [
     price: 1350000,
     categorySlug: "aminos",
   },
+  {
+    id: "ev3",
+    name: "ایزوجکت - وی ایزوله - Isoject",
+    slug: "evogen-isoject",
+    groupSlug: "evogen-isoject",
+    flavor: "شکلات",
+    size: "۸۰۰ گرم",
+    imageUrl: "/images/products/evogen-isoject.webp",
+    // Pack photo and Nutrition Facts panel image from Evogen's US site
+    // (evogennutrition.com/products/isoject, Chocolate): 800 g ÷ 32 g = 25.
+    // The potassium row (169 mg at "2%") doesn't match its %DV (≈ 4%), so it
+    // is left out. The site gives no directions or warnings.
+    description:
+      "ایزوجکت اوو‌ژن با طعم شکلات؛ پودر پروتئین ایزوله‌ی وی فوق‌خالص با فیلتراسیون سرد و آنزیم IGNITOR® برای جذب بهتر. هر وعده (۳۲ گرم) ۲۵ گرم پروتئین، ۱۲٫۲ گرم EAA، ۵٫۴ گرم BCAA و ۱۲۰ کیلوکالری دارد و قوطی ۸۰۰ گرمی حدود ۲۵ وعده است.\nمواد تشکیل‌دهنده: ایزوله‌ی پروتئین وی با فیلتراسیون سرد، کاکائوی قلیایی‌شده، طعم‌دهنده‌های طبیعی و مصنوعی، نمک، صمغ زانتان، لسیتین سویا و/یا آفتابگردان، آنزیم IGNITOR® (آمینوپپتیداز، پروتئاز، پپتیداز)، سوکرالوز و آسه‌سولفام پتاسیم.",
+    servingSize: "۳۲ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۲۰ کیلوکالری" },
+      { label: "چربی", amount: "۱ گرم" },
+      { label: "چربی اشباع", amount: "۰ گرم" },
+      { label: "چربی ترانس", amount: "۰ گرم" },
+      { label: "کلسترول", amount: "۱۵ میلی‌گرم" },
+      { label: "سدیم", amount: "۱۹۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۳ گرم" },
+      { label: "فیبر", amount: "۱ گرم" },
+      { label: "قندها", amount: "۲ گرم" },
+      { label: "قند افزوده", amount: "۰ گرم" },
+      { label: "پروتئین", amount: "۲۵ گرم" },
+      { label: "کلسیم", amount: "۹۶ میلی‌گرم" },
+      { label: "آهن", amount: "۱ میلی‌گرم" },
+    ],
+    warnings: "حساسیت‌زاها: حاوی شیر و سویا.",
+    manufacturerClaims:
+      "۲۵ گرم پروتئین، ۱۲٫۲ گرم EAA و ۵٫۴ گرم BCAA در هر وعده\nایزوله‌ی وی فوق‌خالص با فیلتراسیون سرد\nبه گفته‌ی سازنده: خلوص، ریکاوری و جذب بهتر (این ادعاها توسط FDA ارزیابی نشده است)",
+    brand: "Evogen",
+    price: 2150000,
+    categorySlug: "protein",
+  },
+  {
+    id: "ev4",
+    name: "کراتین مونوهیدرات میکرونیزه - Creatine",
+    slug: "evogen-creatine",
+    groupSlug: "evogen-creatine",
+    flavor: "بدون طعم",
+    size: "۳۰۰ گرم",
+    imageUrl: "/images/products/evogen-creatine.webp",
+    // Pack photo and Supplement Facts panel image from Evogen's US site
+    // (evogennutrition.com/products/creatine-monohydrate, 60 servings
+    // unflavoured, NSF Certified for Sport): about 60 × 5 g = 300 g.
+    description:
+      "کراتین اوو‌ژن (سری Essential)، بدون طعم؛ پودر کراتین مونوهیدرات میکرونیزه با گواهی NSF Certified for Sport. هر وعده (۵ گرم) ۵ گرم کراتین مونوهیدرات دارد و قوطی ۳۰۰ گرمی حدود ۶۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات میکرونیزه.",
+    servingSize: "۵ گرم (۱ اسکوپ)",
+    nutritionFacts: [{ label: "کراتین مونوهیدرات میکرونیزه", amount: "۵ گرم" }],
+    warnings:
+      "فقط برای بزرگسالان سالم ۱۸ سال به بالا. در دوران بارداری یا شیردهی مصرف نکنید.\nاگر داروی تجویزی یا بدون نسخه مصرف می‌کنید یا بیماری دارید، پیش از مصرف با پزشک مشورت کنید.\nدر صورت بروز هر واکنش نامطلوب، فوراً مصرف را قطع و با پزشک تماس بگیرید.\nدو هفته پیش از جراحی مصرف را قطع کنید.\nاگر پلمب ایمنی شکسته یا موجود نیست استفاده نکنید. در جای خنک و خشک و دور از دسترس کودکان نگهداری شود.\nحساسیت‌زا ندارد؛ در مجموعه‌ای تولید می‌شود که شیر، ماهی، سخت‌پوستان، آجیل درختی، گندم، بادام‌زمینی، سویا و تخم‌مرغ را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "کراتین مونوهیدرات میکرونیزه با گواهی NSF Certified for Sport\nبه گفته‌ی سازنده: افزایش قدرت و توان، حجم عضله و پشتیبانی از عملکرد شناختی (این ادعاها توسط FDA ارزیابی نشده است)",
+    brand: "Evogen",
+    price: 850000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "ev5",
+    name: "سوپر هیوج - گینر - Super Huge",
+    slug: "evogen-super-huge",
+    groupSlug: "evogen-super-huge",
+    flavor: "شیک شکلات",
+    size: "۵٫۴۴ کیلوگرم",
+    imageUrl: "/images/products/evogen-super-huge.webp",
+    // Pack photo and Nutrition Facts panel image from Evogen's US site
+    // (evogennutrition.com/products/super-huge-mass-gainer, Chocolate Shake
+    // 12 lb): 5440 g ÷ 313 g ≈ 17 servings; every row matches its %DV.
+    description:
+      "سوپر هیوج اوو‌ژن با طعم شیک شکلات؛ گینر با پروتئین ممتاز و کربوهیدرات تمیز (ترکیب مالتودکسترین، آرد جو دوسر و نشاسته‌ی نخود Carb10™) برای حجم و افزایش وزن. هر وعده (۳۱۳ گرم) ۱۲۲۰ کیلوکالری، ۵۰ گرم پروتئین، ۲۲۶ گرم کربوهیدرات، ۲۲ گرم EAA و ۱۰ گرم BCAA دارد و کیسه‌ی ۵٫۴۴ کیلوگرمی (۱۲ پوند) حدود ۱۷ وعده است.\nمواد تشکیل‌دهنده: ترکیب کربوهیدرات (مالتودکسترین، آرد جو دوسر، نشاسته‌ی نخود (Carb10™))، ترکیب پروتئین (کنسانتره‌ی پروتئین وی، ایزوله‌ی پروتئین وی، کازئین میسلار، پروتئین وی هیدرولیزه، کنسانتره‌ی پروتئین شیر)، کریمر نارگیل (روغن نارگیل، مالتودکسترین، نشاسته، مونو و دی‌گلیسریدها، تری‌کلسیم فسفات)، کاکائوی قلیایی‌شده، طعم‌دهنده‌ی طبیعی و مصنوعی، نمک، سوکرالوز، پروتئاز، آسه‌سولفام پتاسیم، لسیتین سویا و/یا آفتابگردان، پودر روغن MCT و لاکتاز.",
+    servingSize: "۳۱۳ گرم (۵ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۲۲۰ کیلوکالری" },
+      { label: "چربی", amount: "۱۲ گرم" },
+      { label: "چربی اشباع", amount: "۸ گرم" },
+      { label: "چربی ترانس", amount: "۰ گرم" },
+      { label: "کلسترول", amount: "۱۴۰ میلی‌گرم" },
+      { label: "سدیم", amount: "۳۹۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۲۲۶ گرم" },
+      { label: "فیبر", amount: "۴ گرم" },
+      { label: "قندها", amount: "۱۲ گرم" },
+      { label: "قند افزوده", amount: "۲ گرم" },
+      { label: "پروتئین", amount: "۵۰ گرم" },
+      { label: "کلسیم", amount: "۴۷۸ میلی‌گرم" },
+      { label: "آهن", amount: "۴ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۷۱۵ میلی‌گرم" },
+    ],
+    warnings: "حساسیت‌زاها: حاوی شیر و سویا. حاوی جو دوسر و روغن نارگیل.",
+    manufacturerClaims:
+      "۱۲۲۰ کالری و ۵۰ گرم پروتئین در هر وعده\n۲۲ گرم EAA، ۱۰ گرم BCAA و ۵ گرم لوسین در هر وعده\nپروتئین ممتاز و کربوهیدرات تمیز، بدون افزایش ناگهانی قند خون (به گفته‌ی سازنده)\nبرای حجم عضله و افزایش وزن",
+    brand: "Evogen",
+    price: 5250000,
+    categorySlug: "protein",
+  },
+  {
+    id: "ev6",
+    name: "ای‌وی‌پی تری‌دی - پیش‌تمرین بدون محرک - EVP-3D",
+    slug: "evogen-evp-3d",
+    groupSlug: "evogen-evp-3d",
+    flavor: "قهوه‌ی موکای سرد",
+    size: "۵۴۴ گرم",
+    imageUrl: "/images/products/evogen-evp-3d.webp",
+    // Pack photo and Supplement Facts panel image from Evogen's US site
+    // (evogennutrition.com/products/evp-3d, Iced Mocha): 40 × 13.6 g = 544 g.
+    // Chosen over the high-stim EVP Xtreme N.O., which adds yohimbe. The
+    // site gives no directions or warnings beyond the panel.
+    description:
+      "ای‌وی‌پی تری‌دی اوو‌ژن با طعم قهوه‌ی موکای سرد؛ پیش‌تمرین بدون محرک (بدون کافئین) برای پمپ، تمرکز ذهنی و حجم عضله، با فناوری نیترات NO3-T®. هر وعده (۱۳٫۶ گرم) ۳ گرم ال-سیترولین، ۱٫۶ گرم بتا-آلانین و ۱٫۲۵ گرم کراتین مونوهیدرات دارد و قوطی ۵۴۴ گرمی حدود ۴۰ وعده (یا ۲۰ وعده‌ی دوتایی) است.\nسایر مواد: روغن آفتابگردان، قهوه‌ی کلمبیایی خشک‌شده، طعم‌دهنده‌های طبیعی و مصنوعی، سیلیکات کلسیم، سیلیس، کاکائو، ترکیب صمغ‌ها (سلولز، زانتان، کاراگینان)، دی‌اکسید تیتانیوم، آسه‌سولفام پتاسیم و سوکرالوز.",
+    servingSize: "۱۳٫۶ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۵ کیلوکالری" },
+      { label: "چربی", amount: "۰٫۵ گرم" },
+      { label: "کربوهیدرات", amount: "۱ گرم" },
+      { label: "سدیم (نمک صورتی هیمالیا)", amount: "۶۰ میلی‌گرم" },
+      { label: "ال-سیترولین", amount: "۳۰۰۰ میلی‌گرم" },
+      { label: "بتا-آلانین", amount: "۱۶۰۰ میلی‌گرم" },
+      { label: "آرژنین نیترات (NO3-T®)", amount: "۱۰۰۰ میلی‌گرم" },
+      { label: "کراتین مونوهیدرات", amount: "۱۲۵۰ میلی‌گرم" },
+      { label: "پودر آب نارگیل", amount: "۵۰۰ میلی‌گرم" },
+      { label: "ال-تیروزین", amount: "۵۰۰ میلی‌گرم" },
+      { label: "DMAE (دی‌متیل‌آمینواتانول)", amount: "۳۰۰ میلی‌گرم" },
+      { label: "عصاره‌ی قارچ یال شیر", amount: "۲۵۰ میلی‌گرم" },
+    ],
+    usage: "برای تازه ماندن، می‌توانید پس از باز کردن آن را در یخچال نگهداری کنید.",
+    warnings:
+      "حساسیت‌زاها: حاوی شیر و آجیل درختی (نارگیل). در مجموعه‌ای تولید می‌شود که بادام‌زمینی، گندم و تخم‌مرغ را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "بدون محرک (بدون کافئین)\nپمپ، تمرکز ذهنی و حجم عضله (به گفته‌ی سازنده؛ این ادعاها توسط FDA ارزیابی نشده است)\nفناوری ثبت‌شده‌ی نیترات NO3-T®",
+    brand: "Evogen",
+    price: 1550000,
+    categorySlug: "pre-workout",
+  },
 ];
 
 async function main() {
