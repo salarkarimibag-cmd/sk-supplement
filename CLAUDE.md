@@ -83,3 +83,5 @@ Models: documents already in the database won't have a newly added field, so mak
 - The user is learning web development and wrote this project themselves.
 - Whenever you make a change, explain it fully and in detail: what you changed, why, and what concept or standard it relates to. Do not just make the edit silently.
 - Write clean, standard, idiomatic code (consistent with Next.js/React/TypeScript conventions and this repo's ESLint config).
+- Keep changes surgical: change only what the task needs. Don't reformat or rewrite unrelated code; if you notice a problem in it, just tell the user.
+- Ask a question only when a request is ambiguous enough that two readings would lead to different work. Otherwise state your assumption in the explanation and continue.
