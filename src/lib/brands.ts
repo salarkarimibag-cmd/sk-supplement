@@ -11,6 +11,7 @@ const PERSIAN_BRAND_NAMES: Record<string, string> = {
   Evogen: "ایووژن",
   MuscleTech: "ماسل‌تک",
   MyProtein: "مای‌پروتئین",
+  Nutrex: "ناترکس",
   "Optimum Nutrition": "اپتیموم نوتریشن",
   "Scitec Nutrition": "سایتک نوتریشن",
   "Universal Nutrition": "یونیورسال نوتریشن",
