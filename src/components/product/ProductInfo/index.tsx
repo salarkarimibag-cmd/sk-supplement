@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ChevronDown } from "lucide-react";
+import ChevronCircle from "@/components/ui/ChevronCircle";
 import type { NutritionFact } from "@/lib/productDetails";
 
 interface ProductInfoProps {
@@ -12,17 +12,15 @@ interface ProductInfoProps {
 /**
  * One collapsible section. A native <details>/<summary> opens and closes
  * without JavaScript, is announced as expandable by screen readers, and its
- * content stays in the HTML for search engines even while closed.
+ * content stays in the HTML for search engines even while closed. The
+ * open/close slide comes from the `details::details-content` rule in globals.css.
  */
 function Section({ title, defaultOpen, children }: { title: string; defaultOpen?: boolean; children: ReactNode }) {
   return (
     <details open={defaultOpen} className="group border-b border-zinc-200 dark:border-zinc-800">
-      <summary className="flex cursor-pointer list-none items-center justify-between py-4 font-bold [&::-webkit-details-marker]:hidden">
+      <summary className="group/chevron flex cursor-pointer list-none items-center justify-between py-5 font-bold outline-none [&::-webkit-details-marker]:hidden">
         {title}
-        <ChevronDown
-          aria-hidden="true"
-          className="h-5 w-5 shrink-0 text-zinc-500 transition-transform group-open:rotate-180"
-        />
+        <ChevronCircle />
       </summary>
       <div className="pb-5 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{children}</div>
     </details>

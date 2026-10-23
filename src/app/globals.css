@@ -101,6 +101,41 @@ p.shine {
   }
 }
 
+/* The home hero's product: a slow float, with its floor shadow and glow in step. */
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4%);
+  }
+}
+
+@keyframes hero-shadow {
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scaleX(0.8);
+    opacity: 0.6;
+  }
+}
+
+@keyframes hero-glow {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
 @keyframes fade-in-up {
   0% {
     opacity: 0;
@@ -109,6 +144,29 @@ p.shine {
   100% {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/*
+ * Slide <details> open and closed. `height: auto` can only be animated with
+ * interpolate-size (Chromium for now); other browsers skip this block and
+ * the sections just open instantly, as before.
+ */
+@supports (interpolate-size: allow-keywords) {
+  :root {
+    interpolate-size: allow-keywords;
+  }
+
+  details::details-content {
+    height: 0;
+    overflow: clip;
+    transition:
+      height 300ms ease-out,
+      content-visibility 300ms allow-discrete;
+  }
+
+  details[open]::details-content {
+    height: auto;
   }
 }
 

@@ -12,16 +12,18 @@ export const metadata: Metadata = { title: "همه محصولات" };
 const PAGE_SIZE = 12;
 
 export default async function ProductsPage(props: PageProps<"/products">) {
-  const { page: pageParam, sort, flavor, size } = await props.searchParams;
+  const { page: pageParam, sort, flavor, size, brand } = await props.searchParams;
   const allProducts = await getAllProducts();
 
   const selectedFlavors = toParamArray(flavor);
   const selectedSizes = toParamArray(size);
+  const selectedBrands = toParamArray(brand);
   const sortValue = Array.isArray(sort) ? sort[0] : (sort ?? "featured");
 
   const filteredProducts = filterProducts(allProducts, {
     flavors: selectedFlavors,
     sizes: selectedSizes,
+    brands: selectedBrands,
   });
   // One card per flavor/size group, collapsed after filtering and sorting so
   // the card shown is the group member that matches them best.
@@ -29,6 +31,7 @@ export default async function ProductsPage(props: PageProps<"/products">) {
 
   const flavorOptions = countByAttribute(allProducts, "flavor");
   const sizeOptions = countByAttribute(allProducts, "size");
+  const brandOptions = countByAttribute(allProducts, "brand");
 
   const requestedPage = Number(Array.isArray(pageParam) ? pageParam[0] : pageParam) || 1;
   const totalPages = Math.max(1, Math.ceil(sortedProducts.length / PAGE_SIZE));
@@ -43,6 +46,7 @@ export default async function ProductsPage(props: PageProps<"/products">) {
     const params = new URLSearchParams();
     for (const value of selectedFlavors) params.append("flavor", value);
     for (const value of selectedSizes) params.append("size", value);
+    for (const value of selectedBrands) params.append("brand", value);
     if (sortValue !== "featured") params.set("sort", sortValue);
     if (page !== 1) params.set("page", String(page));
     const query = params.toString();
@@ -62,6 +66,9 @@ export default async function ProductsPage(props: PageProps<"/products">) {
           <span className="text-sm text-zinc-500">فیلتر:</span>
           <FilterDropdown label="طعم" paramName="flavor" options={flavorOptions} />
           <FilterDropdown label="سایز" paramName="size" options={sizeOptions} />
+          {brandOptions.length > 0 && (
+            <FilterDropdown label="برند" paramName="brand" options={brandOptions} />
+          )}
         </div>
 
         <div className="flex items-center gap-4">

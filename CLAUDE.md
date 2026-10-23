@@ -27,6 +27,12 @@ Vercel deploys `master` straight to the live site, so never commit or push to `m
 - Push the branch → check its Vercel Preview → open a PR; the user merges it on GitHub.
 - Local dev and Preview use the `sk-supplement-dev` database; Production uses `sk-supplement`.
 
+Several Claude sessions often work on this repo at once, and a folder has only one working tree: a branch switch or an uncommitted change in it affects every session using that folder. So each task gets its own worktree:
+
+- Start in a new worktree, not the main `sk-supplement` folder: `git worktree add ../sk-supplement-<topic> -b <branch> origin/master`, then edit and run everything there. It has no `node_modules` or `.env.local` yet: run `npm install` and copy `.env.local` from the main folder.
+- Stage only the files your task changed (`git add <paths>`, never `git add -A` or `git add .`). Changes you didn't make belong to someone else: leave them alone and tell the user.
+- Once the PR is merged, remove the worktree with `git worktree remove ../sk-supplement-<topic>`.
+
 ## Environment variables
 
 Set in `.env.local` (locally) and in Vercel. Never commit their values.

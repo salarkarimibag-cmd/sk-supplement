@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, Star } from "lucide-react";
-import HeroScene from "@/components/home/HeroScene";
+import HeroProducts from "@/components/home/HeroProducts";
 import { trustBadges } from "@/components/product/TrustBadges";
 import Price from "@/components/ui/Price";
 import type { ListedProduct } from "@/lib/products";
 import type { HeroPromotion } from "@/lib/promotion";
+import type { ShowcaseProduct } from "@/lib/showcase";
 
 // The text blocks fade up into place one after another when the page loads,
 // using the fade-in-up keyframes in globals.css (as Testimonials does).
@@ -24,29 +25,32 @@ interface HeroShowcaseProps {
   /** Average of the approved store reviews (0 when there are none). */
   averageRating: number;
   reviewCount: number;
-  /** The best-selling product to feature under the 3D tub, if any. */
+  /** The best-selling product to feature under the product photos, if any. */
   bestSeller?: Pick<ListedProduct, "id" | "name" | "price" | "imageUrl">;
   /** The advertised discount code, or null to show the generic offer text. */
   promotion: HeroPromotion | null;
+  /** Products whose photos take turns on the end side of the hero. */
+  showcaseProducts: ShowcaseProduct[];
 }
 
 /**
  * The home page hero: a dark, full-width section with a photo behind, the
- * page's headline on the start (right) side and an animated 3D scene (a
- * supplement tub with capsules around it) in the dark empty part of the
+ * page's headline on the start (right) side and real product photos, taking
+ * turns with an animation, in the dark empty part of the
  * photo on the end (left) side, clear of the man in it. It stays dark in
  * both themes.
  *
  * Besides the headline it carries what helps a visitor decide to buy: the
  * current offer, one clear call to action, the store's real review score
- * and the same trust claims as the product page. A small card under the 3D
- * tub links it to a real product: the current best seller.
+ * and the same trust claims as the product page. A small card under the
+ * product photos links to the current best seller.
  */
 export default function HeroShowcase({
   averageRating,
   reviewCount,
   bestSeller,
   promotion,
+  showcaseProducts,
 }: HeroShowcaseProps) {
   return (
     <section className="relative isolate overflow-hidden bg-black">
@@ -64,21 +68,21 @@ export default function HeroShowcase({
           sizes="100vw"
           // His head is close to the photo's top edge, so the crop always
           // keeps the top. On phones it also shifts so he stands right of
-          // center, leaving the top-left corner for the 3D scene.
+          // center, leaving the top-left corner for the products.
           className="object-cover object-[34%_top] sm:object-[42%_top] md:object-top"
         />
         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-black via-black/60 to-transparent md:hidden" />
       </div>
       {/* From md up: darkest behind the text (the start side), fading toward
-          the scene, and a soft bottom edge. On phones the text sits below the
+          the products, and a soft bottom edge. On phones the text sits below the
           photo instead, so the man isn't darkened. */}
       <div className="absolute inset-0 -z-10 hidden bg-linear-to-l from-black/90 via-black/50 to-black/20 md:block" />
       <div className="absolute inset-x-0 bottom-0 -z-10 hidden h-1/3 bg-linear-to-t from-black/80 to-transparent md:block" />
 
-      {/* The 3D scene hugs the end (left, in RTL) edge of the screen: the
+      {/* The product photos hug the end (left, in RTL) edge of the screen: the
           top corner on phones, the vertical middle on wider screens. */}
       <div className="absolute inset-e-0 top-2 w-56 sm:w-72 md:top-1/2 md:w-[32%] md:max-w-md md:-translate-y-1/2">
-        <HeroScene />
+        <HeroProducts products={showcaseProducts} />
 
         {bestSeller && (
           <Link
@@ -111,7 +115,7 @@ export default function HeroShowcase({
       </div>
 
       {/* On phones the text starts low on the photo, where it has faded to
-          black, so it neither covers the man nor the 3D scene. */}
+          black, so it neither covers the man nor the products. */}
       <div className="mx-auto flex max-w-6xl items-center px-6 pt-80 pb-14 sm:pt-96 md:min-h-150 md:py-24">
         <div className="text-start">
           {/* The seasonal offer, as a small pill above the headline. */}

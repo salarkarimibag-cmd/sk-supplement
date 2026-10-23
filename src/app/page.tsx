@@ -7,10 +7,14 @@ import CategoryShowcase from "@/components/home/CategoryShowcase";
 import Testimonials from "@/components/home/Testimonials";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import LatestArticles from "@/components/home/LatestArticles";
-import { getBestSellers, getLatestProducts } from "@/lib/products";
+import { getAllProducts, getBestSellers, getLatestProducts } from "@/lib/products";
 import { getHeroPromotion } from "@/lib/promotion";
 import { getHomepageReviews } from "@/lib/reviews";
+import { pickShowcaseProducts } from "@/lib/showcase";
 import { formatVariantSummary } from "@/lib/variants";
+
+/** How many products take turns in the hero. */
+const HERO_PRODUCTS = 6;
 
 export default async function Home() {
   const [
@@ -18,11 +22,13 @@ export default async function Home() {
     bestSellers,
     { reviews, totalCount: reviewsCount, averageRating },
     promotion,
+    allProducts,
   ] = await Promise.all([
     getLatestProducts(4),
     getBestSellers(4),
     getHomepageReviews(),
     getHeroPromotion(),
+    getAllProducts(),
   ]);
 
   return (
@@ -33,6 +39,13 @@ export default async function Home() {
         // Feature a product the visitor can actually buy right now.
         bestSeller={bestSellers.find((product) => product.inStock)}
         promotion={promotion}
+        // Protein and creatine photos for the hero, in a random order with
+        // a different brand each turn while there are brands left.
+        showcaseProducts={pickShowcaseProducts(
+          allProducts,
+          (product) => product.categorySlug === "protein" || product.categorySlug === "creatine",
+          HERO_PRODUCTS
+        )}
       />
 
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6">
@@ -59,7 +72,7 @@ export default async function Home() {
         </section>
 
         <section>
-          <CategoryShowcase />
+          <CategoryShowcase products={allProducts} />
         </section>
 
         <p className="shine">True Strength</p>

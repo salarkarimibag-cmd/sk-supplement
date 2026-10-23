@@ -8,6 +8,7 @@ import MobileMenu from "../MobileMenu";
 import { useCart } from "@/context/CartContext";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import SearchBar from "@/components/layout/SearchBar";
+import { buildNavSections } from "@/lib/navigation";
 
 export interface HeaderUser {
   id: string;
@@ -22,12 +23,16 @@ export interface NavCategory {
 export default function Header({
   user,
   categories,
+  brands,
 }: {
   user: HeaderUser | null;
   categories: NavCategory[];
+  brands: string[];
 }) {
   const { totalCount, openCart } = useCart();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const navSections = buildNavSections(categories, brands);
+  const linksOf = (id: string) => navSections.find((section) => section.id === id)?.links ?? [];
 
   return (
     <>
@@ -48,7 +53,11 @@ export default function Header({
           ) : (
             <>
               <div className="flex items-center gap-0 md:gap-2">
-                <MobileMenu categories={categories} />
+                <MobileMenu
+                  categoryLinks={linksOf("categories")}
+                  brandLinks={linksOf("brands")}
+                  user={user}
+                />
 
                 <Link href="/" className="-ml-2 flex items-center md:ml-0">
                   <Image
@@ -62,7 +71,7 @@ export default function Header({
                 </Link>
 
                 <div className="hidden md:block">
-                  <CategoryMenu categories={categories} />
+                  <CategoryMenu sections={navSections} />
                 </div>
               </div>
 
