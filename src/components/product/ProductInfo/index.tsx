@@ -14,10 +14,11 @@ interface ProductInfoProps {
  * without JavaScript, is announced as expandable by screen readers, and its
  * content stays in the HTML for search engines even while closed. The
  * open/close slide comes from the `details::details-content` rule in globals.css.
+ * Every section starts closed; the shopper opens the ones they want.
  */
-function Section({ title, defaultOpen, children }: { title: string; defaultOpen?: boolean; children: ReactNode }) {
+function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <details open={defaultOpen} className="group border-b border-zinc-200 dark:border-zinc-800">
+    <details className="group border-b border-zinc-200 dark:border-zinc-800">
       <summary className="group/chevron flex cursor-pointer list-none items-center justify-between py-5 font-bold outline-none [&::-webkit-details-marker]:hidden">
         {title}
         <ChevronCircle />
@@ -40,7 +41,7 @@ export default function ProductInfo({
   return (
     <section aria-label="مشخصات محصول" className="border-t border-zinc-200 dark:border-zinc-800">
       {hasNutrition && (
-        <Section title="ارزش غذایی" defaultOpen>
+        <Section title="ارزش غذایی">
           <table className="w-full text-start">
             {servingSize && (
               <caption className="pb-3 text-start text-zinc-500">هر وعده: {servingSize}</caption>
