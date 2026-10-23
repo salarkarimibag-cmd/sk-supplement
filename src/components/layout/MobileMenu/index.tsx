@@ -3,10 +3,25 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Menu, User, X } from "lucide-react";
-import type { NavCategory } from "@/components/layout/Header";
+import type { HeaderUser } from "@/components/layout/Header";
+import ChevronCircle from "@/components/ui/ChevronCircle";
+import Collapsible from "@/components/ui/Collapsible";
+import type { NavLink } from "@/lib/navigation";
 
-export default function MobileMenu({ categories }: { categories: NavCategory[] }) {
+const ITEM_CLASS =
+  "px-6 py-4 text-lg transition-colors hover:bg-zinc-100 hover:text-sky-600 dark:hover:bg-zinc-800";
+
+export default function MobileMenu({
+  categoryLinks,
+  brandLinks,
+  user,
+}: {
+  categoryLinks: NavLink[];
+  brandLinks: NavLink[];
+  user: HeaderUser | null;
+}) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isBrandsOpen, setIsBrandsOpen] = useState(false);
   const [topOffset, setTopOffset] = useState(0);
 
   useEffect(() => {
@@ -22,6 +37,7 @@ export default function MobileMenu({ categories }: { categories: NavCategory[] }
 
   function close() {
     setIsOpen(false);
+    setIsBrandsOpen(false);
   }
 
   return (
@@ -52,23 +68,44 @@ export default function MobileMenu({ categories }: { categories: NavCategory[] }
       >
         <nav dir="rtl" aria-label="منوی موبایل" className="flex-1 overflow-y-auto">
           <ul>
-            {categories.map((category) => (
-              <li key={category.slug}>
-                <Link
-                  href={`/collections/${category.slug}`}
-                  onClick={close}
-                  className="block px-6 py-4 text-lg transition-colors hover:bg-zinc-100 hover:text-sky-600 dark:hover:bg-zinc-800"
-                >
-                  {category.title}
+            {categoryLinks.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} onClick={close} className={`block ${ITEM_CLASS}`}>
+                  {link.label}
                 </Link>
               </li>
             ))}
+            {brandLinks.length > 0 && (
+              <li>
+                <button
+                  type="button"
+                  aria-expanded={isBrandsOpen}
+                  aria-controls="mobile-brands"
+                  onClick={() => setIsBrandsOpen((open) => !open)}
+                  className={`group/chevron flex w-full cursor-pointer items-center justify-between text-start ${ITEM_CLASS}`}
+                >
+                  برندها
+                  <ChevronCircle open={isBrandsOpen} />
+                </button>
+                <Collapsible open={isBrandsOpen} id="mobile-brands">
+                  <ul className="bg-zinc-50 dark:bg-zinc-800/50">
+                    {brandLinks.map((link) => (
+                      <li key={link.href}>
+                        <Link
+                          href={link.href}
+                          onClick={close}
+                          className="block py-3 ps-10 pe-6 text-base transition-colors hover:bg-zinc-100 hover:text-sky-600 dark:hover:bg-zinc-800"
+                        >
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </Collapsible>
+              </li>
+            )}
             <li>
-              <Link
-                href="/blogs"
-                onClick={close}
-                className="block px-6 py-4 text-lg transition-colors hover:bg-zinc-100 hover:text-sky-600 dark:hover:bg-zinc-800"
-              >
+              <Link href="/blogs" onClick={close} className={`block ${ITEM_CLASS}`}>
                 بلاگ
               </Link>
             </li>
@@ -77,12 +114,12 @@ export default function MobileMenu({ categories }: { categories: NavCategory[] }
 
         <div className="border-t border-black/8 bg-zinc-50 px-6 py-5 dark:border-white/8 dark:bg-zinc-800">
           <Link
-            href="/account/login"
+            href={user ? "/account/profile" : "/account/login"}
             onClick={close}
             className="flex items-center gap-2 text-sm font-semibold text-sky-500 transition-colors hover:text-sky-600"
           >
             <User aria-hidden="true" className="h-5 w-5" />
-            ورود
+            {user ? "حساب کاربری" : "ورود"}
           </Link>
         </div>
       </div>

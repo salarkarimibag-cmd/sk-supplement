@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ChevronDown } from "lucide-react";
+import ChevronCircle from "@/components/ui/ChevronCircle";
 import type { NutritionFact } from "@/lib/productDetails";
 
 interface ProductInfoProps {
@@ -18,16 +18,9 @@ interface ProductInfoProps {
 function Section({ title, defaultOpen, children }: { title: string; defaultOpen?: boolean; children: ReactNode }) {
   return (
     <details open={defaultOpen} className="group border-b border-zinc-200 dark:border-zinc-800">
-      <summary className="group/summary flex cursor-pointer list-none items-center justify-between py-5 font-bold outline-none [&::-webkit-details-marker]:hidden">
+      <summary className="group/chevron flex cursor-pointer list-none items-center justify-between py-5 font-bold outline-none [&::-webkit-details-marker]:hidden">
         {title}
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-zinc-200 text-zinc-900 transition-colors duration-200 group-hover/summary:bg-sky-600 group-hover/summary:text-white group-focus-visible/summary:bg-sky-600 group-focus-visible/summary:text-white dark:bg-zinc-700 dark:text-zinc-100">
-          {/* Optical centering: a chevron's weight sits where its arms are, so
-              ⌄ looks high and ⌃ looks low when merely box-centered; 1px fixes it. */}
-          <ChevronDown
-            aria-hidden="true"
-            className="h-4 w-4 translate-y-px transition-transform duration-300 group-open:-translate-y-px group-open:rotate-180"
-          />
-        </span>
+        <ChevronCircle />
       </summary>
       <div className="pb-5 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{children}</div>
     </details>

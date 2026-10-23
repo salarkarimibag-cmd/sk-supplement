@@ -12,6 +12,7 @@
     "seed": "tsx scripts/seed-products.ts",
     "seed:more-products": "tsx scripts/seed-more-products.ts",
     "remove-generic-products": "tsx scripts/remove-generic-products.ts",
+    "remove-brand-products": "tsx scripts/remove-brand-products.ts",
     "seed:brand-products": "tsx scripts/seed-brand-products.ts",
     "seed:categories": "tsx scripts/seed-categories.ts",
     "seed:descriptions": "tsx scripts/seed-product-descriptions.ts",

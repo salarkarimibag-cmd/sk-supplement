@@ -23,6 +23,13 @@ export async function getAllProducts(): Promise<CatalogProduct[]> {
   return products.map(withInStock);
 }
 
+/** Every brand that at least one product has, alphabetically, for the site menu. */
+export async function getAllBrands(): Promise<string[]> {
+  await connectToDatabase();
+  const brands = await ProductModel.distinct<string>("brand");
+  return brands.filter(Boolean).sort((a, b) => a.localeCompare(b, "fa"));
+}
+
 // A MongoDB ObjectId starts with its creation time, so sorting by `_id`
 // descending lists the newest products first without a `createdAt` field.
 export async function getLatestProducts(limit: number): Promise<ListedProduct[]> {

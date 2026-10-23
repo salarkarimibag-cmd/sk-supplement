@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import ChevronCircle from "@/components/ui/ChevronCircle";
 import type { FilterOptionCount } from "@/lib/catalogFilters";
 
 interface FilterDropdownProps {
@@ -60,24 +61,13 @@ export default function FilterDropdown({ label, paramName, options }: FilterDrop
       <button
         type="button"
         onClick={() => setIsOpen((open) => !open)}
-        className={`flex cursor-pointer items-center gap-1 rounded px-3 py-1.5 text-sm ${
+        className={`group/chevron flex cursor-pointer items-center gap-1.5 rounded px-3 py-1.5 text-sm ${
           isOpen ? "border border-zinc-900 dark:border-zinc-100" : "border border-transparent"
         }`}
       >
         {label}
         {selected.size > 0 && <span className="text-xs text-sky-600">({selected.size})</span>}
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          className={`h-4 w-4 text-zinc-500 transition-transform ${isOpen ? "rotate-180" : ""}`}
-        >
-          <path
-            fillRule="evenodd"
-            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-            clipRule="evenodd"
-          />
-        </svg>
+        <ChevronCircle open={isOpen} size="sm" />
       </button>
 
       {isOpen && (
