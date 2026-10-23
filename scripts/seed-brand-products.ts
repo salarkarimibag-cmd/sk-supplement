@@ -2196,9 +2196,85 @@ const products: BrandProduct[] = [
     id: "un3",
     name: "انیمال پامپ - پیش‌تمرین - Animal Pump",
     slug: "universal-animal-pump",
+    groupSlug: "universal-animal-pump",
+    size: "۳۰ پک",
+    imageUrl: "/images/products/universal-animal-pump.webp",
+    // Pack photo and Supplement Facts panel image from Universal's Animal
+    // site (animalpak.com/products/animal-pump-pre-workout-supplement), 30
+    // packs. Pills per pack (9) and the 200 mg caffeine of the red pill are
+    // from that page's FAQ. The site gives no directions or warnings beyond
+    // the panel's allergen note.
+    description:
+      "انیمال پامپ یونیورسال؛ پیش‌تمرین کپسولی در پک‌های روزانه (هر پک ۹ قرص و کپسول، از جمله یک کپسول قرمز محرک که می‌شود آن را کنار گذاشت) برای پمپ، حجم سلولی، گردش خون، انرژی و تمرکز. قوطی ۳۰ پک، یعنی ۳۰ وعده است.\nمجموعه‌ها در هر پک: ماتریکس پایه‌ی کراتین ۳۰۰۰ میلی‌گرم (کراتین مونوهیدرات، دی‌کراتین مالات)؛ مجموعه‌ی NO Blast ۲۰۰۰ میلی‌گرم (آرژنین آلفا-کتوگلوتارات، سیترولین مالات، ال-آرژنین، بتا-آلانین، ال-نوروالین)؛ مجموعه‌ی Energy Rush ۷۰۰ میلی‌گرم (ترکیب متیل‌زانتین: کافئین بی‌آب، دانه‌ی کولا، دانه‌ی گوارانا؛ ال-تیروزین، هوپرزین A)؛ مجموعه‌ی آنتی‌اکسیدان ۵۰۰ میلی‌گرم (چغندر، عصاره‌ی هسته‌ی انگور، عصاره‌ی برگ چای سبز (EGCG)، آلفا لیپوئیک اسید)؛ مجموعه‌ی Pump Transport ۷۰۰ میلی‌گرم (ال-تورین، ریشه‌ی زنجبیل، AstraGin™، عصاره‌ی دانه‌ی شنبلیله، BioPerine®).\nسایر مواد: دی‌کلسیم فسفات، ژلاتین (گاوی)، سلولز میکروکریستالی، مالتودکسترین، منیزیم استئارات، استئاریک اسید، دی‌اکسید تیتانیوم، رنگ‌های قرمز ۴۰، زرد ۵ و آبی ۱ و پوشش دارویی.",
+    servingSize: "۱ پک (۹ قرص و کپسول)",
+    nutritionFacts: [
+      { label: "ماتریکس پایه‌ی کراتین", amount: "۳۰۰۰ میلی‌گرم" },
+      { label: "مجموعه‌ی NO Blast", amount: "۲۰۰۰ میلی‌گرم" },
+      { label: "مجموعه‌ی Energy Rush", amount: "۷۰۰ میلی‌گرم" },
+      { label: "مجموعه‌ی آنتی‌اکسیدان", amount: "۵۰۰ میلی‌گرم" },
+      { label: "مجموعه‌ی Pump Transport", amount: "۷۰۰ میلی‌گرم" },
+      { label: "کافئین (کپسول قرمز، طبق سایت سازنده)", amount: "۲۰۰ میلی‌گرم" },
+    ],
+    warnings:
+      "حاوی کافئین (۲۰۰ میلی‌گرم در کپسول قرمز هر پک).\nحاوی ژلاتین گاوی.\nدر مجموعه‌ای تولید می‌شود که شیر، سویا، تخم‌مرغ، بادام‌زمینی، آجیل درختی، ماهی، صدف، گندم و کنجد را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "اولین پیش‌تمرین کپسولی (به گفته‌ی سازنده)\nپمپ و حجم سلولی بیشتر، بهبود گردش خون با تقویت‌کننده‌های نیتریک اکساید، و محرک‌ها و نوتروپیک‌ها برای انرژی و تمرکز\nکپسول محرک جدا، تا بتوانید بدون کافئین هم مصرف کنید\n(این ادعاها توسط FDA ارزیابی نشده است)",
     brand: "Universal Nutrition",
     price: 1390000,
     categorySlug: "pre-workout",
+  },
+  {
+    id: "un4",
+    name: "انیمال وی - Animal Whey",
+    slug: "universal-animal-whey",
+    groupSlug: "universal-animal-whey",
+    flavor: "شکلات",
+    size: "۹۰۷ گرم",
+    imageUrl: "/images/products/universal-animal-whey.webp",
+    // Pack photo from Universal's Animal site
+    // (animalpak.com/products/animal-whey-iso-protein-supplement, Chocolate
+    // 2 lb bag). The site has no facts panel or ingredient list for it, so
+    // only the pack front's numbers and note are used.
+    description:
+      "انیمال وی یونیورسال با طعم شکلات؛ پودر پروتئین وی سرشار از ایزوله، باکیفیت و آسان‌هضم. هر وعده ۲۵ گرم پروتئین، ۵٫۶ گرم BCAA و بدون قند افزوده است و کیسه‌ی ۹۰۷ گرمی (۲ پوند) حدود ۲۷ وعده است.",
+    servingSize: "۱ اسکوپ",
+    nutritionFacts: [
+      { label: "پروتئین", amount: "۲۵ گرم" },
+      { label: "BCAA", amount: "۵٫۶ گرم" },
+      { label: "قند افزوده", amount: "۰ گرم" },
+    ],
+    warnings:
+      "فقط به‌عنوان مکمل غذایی مصرف شود؛ برای کاهش وزن استفاده نشود. این محصول غذای کم‌کالری نیست.",
+    manufacturerClaims:
+      "پروتئین وی سرشار از ایزوله، باکیفیت و آسان‌هضم\n۲۵ گرم پروتئین در هر وعده\nبدون قند افزوده\nبه گفته‌ی سازنده، به ترمیم بافت عضله و کاهش کوفتگی بعد از تمرین کمک می‌کند (این ادعا توسط FDA ارزیابی نشده است)",
+    brand: "Universal Nutrition",
+    price: 1950000,
+    categorySlug: "protein",
+  },
+  {
+    id: "un5",
+    name: "انیمال کراتین میکرونیزه - Animal Micronized Creatine",
+    slug: "universal-animal-creatine",
+    groupSlug: "universal-animal-creatine",
+    flavor: "بدون طعم",
+    size: "۳۰۰ گرم",
+    imageUrl: "/images/products/universal-animal-creatine.webp",
+    // Pack photo and Supplement Facts panel image from Universal's Animal
+    // site (animalpak.com/products/animal-micronized-creatine-powder-supplement,
+    // 300 g): about 60 servings of 5 g.
+    description:
+      "انیمال کراتین یونیورسال، بدون طعم؛ ۱۰۰٪ کراتین مونوهیدرات خالص و میکرونیزه. هر وعده (حدود ۵ گرم) ۵ گرم کراتین مونوهیدرات دارد و قوطی ۳۰۰ گرمی حدود ۶۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات.",
+    servingSize: "۱ اسکوپ (حدود ۵ گرم)",
+    nutritionFacts: [{ label: "کراتین مونوهیدرات", amount: "۵۰۰۰ میلی‌گرم" }],
+    usage:
+      "روزانه ۱ اسکوپ را با ۲۴۰ تا ۳۵۰ میلی‌لیتر (۸ تا ۱۲ اونس) نوشیدنی دلخواه مخلوط کنید.\nدر جای خنک و خشک و دور از گرما، رطوبت و نور خورشید نگهداری کنید.",
+    warnings:
+      "دور از دسترس کودکان نگهداری شود.\nپیش از مصرف با پزشک مشورت کنید.\nدر مجموعه‌ای تولید می‌شود که شیر، سویا، تخم‌مرغ، بادام‌زمینی، آجیل درختی، ماهی، صدف و گندم را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "۱۰۰٪ کراتین مونوهیدرات خالص و میکرونیزه\nبه گفته‌ی سازنده، به عضله‌سازی و ریکاوری، قدرت و استقامت و عملکرد شناختی کمک می‌کند (این ادعاها توسط FDA ارزیابی نشده است)\nساخت آمریکا، تولید در کارخانه‌ی دارای GMP",
+    brand: "Universal Nutrition",
+    price: 750000,
+    categorySlug: "creatine",
   },
 
   // BPI Sports
