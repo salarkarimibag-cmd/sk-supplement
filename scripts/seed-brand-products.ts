@@ -2282,8 +2282,96 @@ const products: BrandProduct[] = [
     id: "bpi1",
     name: "ایزو اچ‌دی - وی ایزوله - ISO HD",
     slug: "bpi-iso-hd",
+    groupSlug: "bpi-iso-hd",
+    flavor: "بستنی شکلاتی",
+    size: "۷۱۳ گرم",
+    imageUrl: "/images/products/bpi-iso-hd.webp",
+    // Pack photo and Supplement Facts panel image from BPI's US site
+    // (bpisports.com/products/iso-hd, Chocolate Ice Cream 23 servings, the
+    // flavour with a facts panel): 713 g ÷ 32 g ≈ 23 servings.
+    description:
+      "ایزو اچ‌دی بی‌پی‌آی با طعم بستنی شکلاتی؛ ۱۰۰٪ پروتئین ایزوله‌ی وی خالص برای جذب سریع و ریکاوری سریع عضله. هر وعده (۳۲ گرم) ۲۵ گرم پروتئین، ۱ گرم کربوهیدرات، ۱ گرم چربی و ۱۲۰ کیلوکالری دارد و قوطی ۷۱۳ گرمی حدود ۲۳ وعده است.\nمواد تشکیل‌دهنده: ایزوله‌ی پروتئین وی، کاکائوی رد راست، طعم‌دهنده‌های طبیعی و مصنوعی، لسیتین سویا، سلولز، صمغ، آسه‌سولفام پتاسیم، نمک، سوکرالوز و ترهالوز.",
+    servingSize: "۳۲ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۲۰ کیلوکالری" },
+      { label: "چربی", amount: "۱ گرم" },
+      { label: "چربی اشباع", amount: "۰ گرم" },
+      { label: "چربی ترانس", amount: "۰ گرم" },
+      { label: "کلسترول", amount: "۱۵ میلی‌گرم" },
+      { label: "سدیم", amount: "۱۷۵ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۱ گرم" },
+      { label: "فیبر", amount: "۰ گرم" },
+      { label: "قندها", amount: "۱ گرم" },
+      { label: "پروتئین", amount: "۲۵ گرم" },
+      { label: "کلسیم", amount: "۷۹ میلی‌گرم" },
+      { label: "آهن", amount: "۲ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۱۶۷ میلی‌گرم" },
+    ],
+    warnings:
+      "حساسیت‌زاها: حاوی شیر و سویا.\nدر مجموعه‌ای تولید می‌شود که شیر، سویا، گندم، تخم‌مرغ، صدف، آجیل درختی، بادام‌زمینی و کنجد را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "۱۰۰٪ پروتئین ایزوله‌ی خالص\n۲۵ گرم پروتئین، ۱ گرم کربوهیدرات و ۱ گرم چربی در هر اسکوپ\nبه گفته‌ی سازنده، جذب سریع و ریکاوری سریع عضله (این ادعا توسط FDA ارزیابی نشده است)",
     brand: "BPI Sports",
     price: 2250000,
+    categorySlug: "protein",
+  },
+  {
+    id: "bpi4",
+    name: "کراتین میکرونیزه - Micronized Creatine",
+    slug: "bpi-micronized-creatine",
+    groupSlug: "bpi-micronized-creatine",
+    flavor: "بدون طعم",
+    size: "۶۰۰ گرم",
+    imageUrl: "/images/products/bpi-micronized-creatine.webp",
+    // Pack photo and Supplement Facts panel image from BPI's US site
+    // (bpisports.com/products/micronized-creatine-1, 120 servings): 120 × 5 g
+    // = 600 g. The site gives no directions or warnings.
+    description:
+      "کراتین میکرونیزه‌ی بی‌پی‌آی، بدون طعم و بدون رنگ مصنوعی؛ ۱۰۰٪ کراتین مونوهیدرات خالص و میکرونیزه. هر وعده (۵ گرم) ۵ گرم کراتین مونوهیدرات دارد و قوطی ۶۰۰ گرمی ۱۲۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات (سایر مواد: ندارد).",
+    servingSize: "۵ گرم (۱ اسکوپ)",
+    nutritionFacts: [{ label: "کراتین مونوهیدرات", amount: "۵ گرم" }],
+    manufacturerClaims:
+      "۱۰۰٪ کراتین میکرونیزه‌ی خالص\nبدون رنگ مصنوعی\nبه گفته‌ی سازنده: قدرت بیشتر، رشد و ریکاوری عضله و عملکرد ورزشی بهتر (این ادعاها توسط FDA ارزیابی نشده است)",
+    brand: "BPI Sports",
+    price: 950000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "bpi5",
+    name: "بالک ماسل ایکس‌ال - گینر - Bulk Muscle XL",
+    slug: "bpi-bulk-muscle-xl",
+    groupSlug: "bpi-bulk-muscle-xl",
+    flavor: "شکلات",
+    size: "۵٫۹۵ کیلوگرم",
+    imageUrl: "/images/products/bpi-bulk-muscle-xl.webp",
+    // Pack photo and Supplement Facts panel image from BPI's US site
+    // (bpisports.com/products/bulk-muscle-xl-…, 13 lb bag): 48 × 124 g =
+    // 5952 g. The panel's "Calories from Fat: 5" doesn't fit 2.5 g of fat
+    // (≈ 22 kcal), so that row is left out. The site gives no directions or
+    // warnings.
+    description:
+      "بالک ماسل ایکس‌ال بی‌پی‌آی با طعم شکلات؛ گینر پیشرفته برای افزایش وزن و حجم. هر وعده (۱۲۴ گرم) ۴۹۷ کیلوکالری، ۲۵ گرم پروتئین و ۸۸ گرم کربوهیدرات دارد و کیسه‌ی ۵٫۹۵ کیلوگرمی (۱۳ پوند) حدود ۴۸ وعده است. ساخت آمریکا.\nمواد تشکیل‌دهنده: مالتودکسترین، کنسانتره‌ی پروتئین وی، طعم‌دهنده‌های طبیعی و مصنوعی، کاکائوی رد راست، صمغ سلولز، سوکرالوز و آسه‌سولفام پتاسیم.",
+    servingSize: "۱۲۴ گرم (۲ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۴۹۷ کیلوکالری" },
+      { label: "چربی", amount: "۲٫۵ گرم" },
+      { label: "چربی اشباع", amount: "۰ گرم" },
+      { label: "چربی ترانس", amount: "۰ گرم" },
+      { label: "کلسترول", amount: "۴ میلی‌گرم" },
+      { label: "سدیم", amount: "۶۰ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۱۶۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۸۸ گرم" },
+      { label: "فیبر", amount: "۱ گرم" },
+      { label: "قندها", amount: "۱٫۵ گرم" },
+      { label: "پروتئین", amount: "۲۵ گرم" },
+      { label: "کلسیم", amount: "۹۰ میلی‌گرم" },
+    ],
+    warnings:
+      "حساسیت‌زاها: حاوی شیر و سویا.\nدر مجموعه‌ای تولید می‌شود که تخم‌مرغ، آجیل درختی و گندم را هم فرآوری می‌کند.",
+    manufacturerClaims:
+      "گینر پیشرفته برای افزایش وزن و حجم\n۲۵ گرم پروتئین و ۸۸ گرم کربوهیدرات در هر وعده\nساخت آمریکا",
+    brand: "BPI Sports",
+    price: 4950000,
     categorySlug: "protein",
   },
   {
