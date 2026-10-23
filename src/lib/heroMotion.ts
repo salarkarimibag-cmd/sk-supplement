@@ -37,3 +37,35 @@ export function pulse(time: number, period: number, duration: number, offset = 0
   if (t >= duration) return 0;
   return Math.sin((t / duration) * Math.PI) ** 2;
 }
+
+/** Seconds each product stays on show before it flips to the next. */
+export const PRODUCT_CYCLE = 6;
+/** Seconds a flip takes, from facing front through edge-on and back. */
+export const FLIP_DURATION = 1;
+
+/**
+ * Which product shows at `time` and how far it's turned. `step` counts up by
+ * one per product (wrap it with % to index a list); `turn` is the rotation
+ * around the vertical axis in radians: 0 while facing the viewer. A flip
+ * speeds up into edge-on (+π/2), where the next product is swapped in unseen,
+ * then slows down out of the other edge (−π/2) back to 0. At time 0 the
+ * first product faces the viewer, so a still scene shows it front on.
+ */
+export function productFlip(time: number): { step: number; turn: number } {
+  const half = FLIP_DURATION / 2;
+  // Shifted by half a flip: each step begins with the second half of a flip,
+  // which time 0 skips, so the first product starts out facing the viewer.
+  const shifted = time + half;
+  const step = Math.floor(shifted / PRODUCT_CYCLE);
+  const t = shifted - step * PRODUCT_CYCLE;
+
+  let turn = 0;
+  if (t < half) {
+    const arriving = t / half;
+    turn = -((1 - arriving) ** 2) * (Math.PI / 2);
+  } else if (t > PRODUCT_CYCLE - half) {
+    const leaving = (t - (PRODUCT_CYCLE - half)) / half;
+    turn = leaving ** 2 * (Math.PI / 2);
+  }
+  return { step, turn };
+}

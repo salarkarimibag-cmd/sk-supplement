@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { ContactShadows, Environment, Lightformer } from "@react-three/drei";
-import { MathUtils, Vector2, type Group } from "three";
-import { lidOpenness, pulse } from "@/lib/heroMotion";
-import { createGrainTexture, createLabelTexture } from "./textures";
+import { DoubleSide, MathUtils, Vector2, type Group, type Mesh, type MeshBasicMaterial } from "three";
+import { lidOpenness, productFlip, pulse } from "@/lib/heroMotion";
+import { createGrainTexture, createLabelTexture, loadPackTexture, type PackTexture } from "./textures";
 
 // Real moulded plastic is never pure black: a very dark grey reads as black
 // but still shows its shape under light.
@@ -14,7 +14,8 @@ const LID_PLASTIC = "#141414";
 const CAPSULE_WHITE = "#ecebe8";
 const CAPSULE_BLUE = "#1f4f8a";
 
-const IDLE_SPIN_SPEED = 0.15; // radians per second
+/** How fast the fallback tub turns on its own, in radians per second. */
+const IDLE_SPIN_SPEED = 0.15;
 /** The resting angle: seen slightly from above, like a product shot. */
 const BASE_TILT_X = 0.18;
 /** How far the scene leans toward the pointer. */
@@ -79,6 +80,24 @@ const CAPSULES = Array.from({ length: 7 }, (_, i) => ({
   scale: 0.85 + (i % 3) * 0.12,
   popOffset: i * 2.1,
 }));
+
+// The product photos stand on flat planes, all the same height (about as tall
+// as the tub) and no wider than PACK_MAX_WIDTH, so a wide tub doesn't crowd
+// the capsules. A flat photo can't spin all the way round like the tub, so it
+// only sways a little, and flips like a card to show the next product.
+const PACK_HEIGHT = 2.9;
+const PACK_MAX_WIDTH = 2.6;
+/** Where the packs' bottom edges stand, level with the tub's base. */
+const PACK_BOTTOM = -1.5;
+/** How far a pack sways from side to side while it rests, in radians. */
+const PACK_SWAY = 0.12;
+
+/** The plane's width and height for a pack: PACK_HEIGHT tall, unless too wide. */
+function packSize(aspect: number): [width: number, height: number] {
+  const width = PACK_HEIGHT * aspect;
+  if (width <= PACK_MAX_WIDTH) return [width, PACK_HEIGHT];
+  return [PACK_MAX_WIDTH, PACK_MAX_WIDTH / aspect];
+}
 
 /** Pointer position across the whole window, from -1 to 1 on each axis. */
 function useWindowPointer() {
@@ -183,6 +202,49 @@ function Tub({ time }: { time: RefObject<number> }) {
   );
 }
 
+/** Real product photos, one at a time, flipping to the next every few seconds. */
+function Packs({ packs, time }: { packs: PackTexture[]; time: RefObject<number> }) {
+  const mesh = useRef<Mesh>(null);
+  const material = useRef<MeshBasicMaterial>(null);
+  const [firstWidth, firstHeight] = packSize(packs[0].aspect);
+
+  useFrame(() => {
+    if (!mesh.current || !material.current) return;
+    const t = time.current;
+    const { step, turn } = productFlip(t);
+    const pack = packs[step % packs.length];
+    const [width, height] = packSize(pack.aspect);
+
+    // Swapping the map is cheap: the material stays the same, so nothing has
+    // to be recompiled. productFlip only changes `step` while edge-on.
+    material.current.map = pack.texture;
+    mesh.current.scale.set(width, height, 1);
+    // Stand on PACK_BOTTOM and bob gently, as if floating.
+    mesh.current.position.y = PACK_BOTTOM + height / 2 + Math.sin(t * 1.1) * 0.04;
+    mesh.current.rotation.y = turn + Math.sin(t * 0.5) * PACK_SWAY;
+  });
+
+  return (
+    <mesh ref={mesh} scale={[firstWidth, firstHeight, 1]} position-y={PACK_BOTTOM + firstHeight / 2}>
+      <planeGeometry />
+      {/* The photo already has its own studio lighting, so it's shown as is:
+          a "basic" material ignores the scene's lights, and toneMapped={false}
+          keeps its colors exactly as photographed. alphaTest drops the fully
+          transparent pixels, so they don't hide capsules passing behind. Both
+          sides are drawn because the pointer tilt can turn a flipping pack a
+          little past edge-on. */}
+      <meshBasicMaterial
+        ref={material}
+        map={packs[0].texture}
+        transparent
+        alphaTest={0.05}
+        side={DoubleSide}
+        toneMapped={false}
+      />
+    </mesh>
+  );
+}
+
 function Capsules({ time }: { time: RefObject<number> }) {
   const capsules = useRef<(Group | null)[]>([]);
 
@@ -230,7 +292,14 @@ function Capsules({ time }: { time: RefObject<number> }) {
   );
 }
 
-function Composition({ animate }: { animate: boolean }) {
+interface CompositionProps {
+  animate: boolean;
+  /** The product photos to show; when empty, the drawn SK tub stands in. */
+  packs: PackTexture[];
+}
+
+function Composition({ animate, packs }: CompositionProps) {
+  const hasPacks = packs.length > 0;
   const root = useRef<Group>(null);
   // Our own clock: it only advances while animating, so the scene resumes
   // where it left off after being off-screen.
@@ -245,16 +314,19 @@ function Composition({ animate }: { animate: boolean }) {
 
     // Ease toward the pointer instead of snapping to it.
     const targetX = BASE_TILT_X + pointer.current.y * POINTER_TILT;
-    const targetY = time.current * IDLE_SPIN_SPEED + pointer.current.x * POINTER_TILT;
+    // Only the round tub keeps turning; the flat photos turn by flipping.
+    const spin = hasPacks ? 0 : time.current * IDLE_SPIN_SPEED;
+    const targetY = spin + pointer.current.x * POINTER_TILT;
     root.current.rotation.x = MathUtils.damp(root.current.rotation.x, targetX, POINTER_DAMPING, delta);
     root.current.rotation.y = MathUtils.damp(root.current.rotation.y, targetY, POINTER_DAMPING, delta);
   });
 
   return (
     <group ref={root} rotation-x={BASE_TILT_X}>
-      {/* Lowered a little so the tall tub, with its lid lifted, stays centred. */}
+      {/* Lowered a little so the tall pack (or the tub with its lid lifted)
+          stays centred. */}
       <group position-y={-0.2}>
-        <Tub time={time} />
+        {hasPacks ? <Packs packs={packs} time={time} /> : <Tub time={time} />}
         <Capsules time={time} />
       </group>
     </group>
@@ -264,15 +336,36 @@ function Composition({ animate }: { animate: boolean }) {
 interface SceneProps {
   /** False while the scene is off-screen, to stop rendering and save battery. */
   isActive: boolean;
+  /** Product photos (transparent cutouts) to show in turn, in this order. */
+  imageUrls: string[];
 }
 
-export default function Scene({ isActive }: SceneProps) {
+export default function Scene({ isActive, imageUrls }: SceneProps) {
   const [isReady, setIsReady] = useState(false);
+  // null while the photos are loading. Those that fail to load, or aren't
+  // cutouts, are left out.
+  const [packs, setPacks] = useState<PackTexture[] | null>(null);
   // This module never runs on the server (it's loaded with ssr: false), so
   // `window` is safe to read here.
   const [prefersReducedMotion] = useState(
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches
   );
+
+  useEffect(() => {
+    let isCurrent = true;
+    let loaded: PackTexture[] = [];
+    Promise.all(imageUrls.map(loadPackTexture)).then((results) => {
+      loaded = results.filter((pack) => pack !== null);
+      if (isCurrent) setPacks(loaded);
+      else loaded.forEach((pack) => pack.texture.dispose());
+    });
+    // Textures live on the GPU, outside JavaScript's garbage collection, so
+    // they're freed by hand once they're no longer shown.
+    return () => {
+      isCurrent = false;
+      loaded.forEach((pack) => pack.texture.dispose());
+    };
+  }, [imageUrls]);
 
   return (
     <Canvas
@@ -283,13 +376,15 @@ export default function Scene({ isActive }: SceneProps) {
       // (reduced motion) or an off-screen one, that means almost never.
       frameloop={isActive && !prefersReducedMotion ? "always" : "demand"}
       onCreated={() => setIsReady(true)}
-      className={`transition-opacity duration-1000 ${isReady ? "opacity-100" : "opacity-0"}`}
+      // Fade in once the canvas is set up and the photos are in, so the
+      // scene doesn't appear first without its product.
+      className={`transition-opacity duration-1000 ${isReady && packs ? "opacity-100" : "opacity-0"}`}
     >
       <ambientLight intensity={0.15} />
       <directionalLight position={[-4, 5, 5]} intensity={1.4} />
-      <Composition animate={!prefersReducedMotion} />
+      {packs && <Composition animate={!prefersReducedMotion} packs={packs} />}
 
-      {/* A soft shadow on an invisible floor grounds the tub, as in a
+      {/* A soft shadow on an invisible floor grounds the pack, as in a
           studio product photo. It sits outside the tilting group, so it
           stays level. */}
       <ContactShadows position={[0, -2.15, 0]} scale={7} blur={2.6} far={3} opacity={0.7} resolution={256} />

@@ -6,6 +6,7 @@ import { trustBadges } from "@/components/product/TrustBadges";
 import Price from "@/components/ui/Price";
 import type { ListedProduct } from "@/lib/products";
 import type { HeroPromotion } from "@/lib/promotion";
+import type { ShowcaseProduct } from "@/lib/showcase";
 
 // The text blocks fade up into place one after another when the page loads,
 // using the fade-in-up keyframes in globals.css (as Testimonials does).
@@ -28,12 +29,15 @@ interface HeroShowcaseProps {
   bestSeller?: Pick<ListedProduct, "id" | "name" | "price" | "imageUrl">;
   /** The advertised discount code, or null to show the generic offer text. */
   promotion: HeroPromotion | null;
+  /** Products whose photos the 3D scene shows in turn (the SK tub if none). */
+  sceneProducts: ShowcaseProduct[];
 }
 
 /**
  * The home page hero: a dark, full-width section with a photo behind, the
- * page's headline on the start (right) side and an animated 3D scene (a
- * supplement tub with capsules around it) in the dark empty part of the
+ * page's headline on the start (right) side and an animated 3D scene (real
+ * product photos flipping from one to the next, with capsules around them)
+ * in the dark empty part of the
  * photo on the end (left) side, clear of the man in it. It stays dark in
  * both themes.
  *
@@ -47,6 +51,7 @@ export default function HeroShowcase({
   reviewCount,
   bestSeller,
   promotion,
+  sceneProducts,
 }: HeroShowcaseProps) {
   return (
     <section className="relative isolate overflow-hidden bg-black">
@@ -78,7 +83,7 @@ export default function HeroShowcase({
       {/* The 3D scene hugs the end (left, in RTL) edge of the screen: the
           top corner on phones, the vertical middle on wider screens. */}
       <div className="absolute inset-e-0 top-2 w-56 sm:w-72 md:top-1/2 md:w-[32%] md:max-w-md md:-translate-y-1/2">
-        <HeroScene />
+        <HeroScene products={sceneProducts} />
 
         {bestSeller && (
           <Link

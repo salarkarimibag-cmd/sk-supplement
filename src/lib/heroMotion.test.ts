@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { LID_PHASES, easeInOutCubic, lidOpenness, pulse } from "./heroMotion";
+import {
+  FLIP_DURATION,
+  LID_PHASES,
+  PRODUCT_CYCLE,
+  easeInOutCubic,
+  lidOpenness,
+  productFlip,
+  pulse,
+} from "./heroMotion";
 
 const { closed, opening, open, closing } = LID_PHASES;
 const cycle = closed + opening + open + closing;
@@ -49,5 +57,35 @@ describe("pulse", () => {
   it("shifts by the offset and repeats every period", () => {
     expect(pulse(2.5, 6, 1, 2)).toBeCloseTo(1);
     expect(pulse(8.5, 6, 1, 2)).toBeCloseTo(1);
+  });
+});
+
+describe("productFlip", () => {
+  // The first flip's edge-on moment: the swap from product 0 to product 1.
+  const firstSwap = PRODUCT_CYCLE - FLIP_DURATION / 2;
+
+  it("starts on the first product, facing the viewer", () => {
+    expect(productFlip(0)).toEqual({ step: 0, turn: 0 });
+  });
+
+  it("swaps products while edge-on, so the swap can't be seen", () => {
+    expect(productFlip(firstSwap - 0.0001).step).toBe(0);
+    expect(productFlip(firstSwap - 0.0001).turn).toBeCloseTo(Math.PI / 2);
+    expect(productFlip(firstSwap).step).toBe(1);
+    expect(productFlip(firstSwap).turn).toBeCloseTo(-Math.PI / 2);
+  });
+
+  it("faces the viewer again once the flip is over", () => {
+    expect(productFlip(firstSwap + FLIP_DURATION / 2)).toEqual({ step: 1, turn: 0 });
+    expect(productFlip(firstSwap + PRODUCT_CYCLE).step).toBe(2);
+  });
+
+  it("never jumps between frames, apart from the edge-on swap", () => {
+    for (let t = 0; t < PRODUCT_CYCLE * 2; t += 1 / 60) {
+      const now = productFlip(t);
+      const next = productFlip(t + 1 / 60);
+      if (next.step !== now.step) continue;
+      expect(Math.abs(next.turn - now.turn)).toBeLessThan(0.15);
+    }
   });
 });
