@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { ComponentType } from "react";
 import { notFound } from "next/navigation";
 import ProductCard from "@/components/product/ProductCard";
-import CollectionBanner from "@/components/collections/CollectionBanner";
+import CollectionHero from "@/components/collections/CollectionHero";
 import FilterDropdown from "@/components/collections/FilterDropdown";
 import SortSelect from "@/components/collections/SortSelect";
 import ProteinInfoSection from "@/components/collections/ProteinInfoSection";
@@ -14,7 +14,11 @@ import VitaminsInfoSection from "@/components/collections/VitaminsInfoSection";
 import { getCategoryContent } from "@/lib/categoryContent";
 import { getProductsByCategory } from "@/lib/products";
 import { countByAttribute, filterProducts, sortProducts, toParamArray } from "@/lib/catalogFilters";
+import { pickShowcaseProducts } from "@/lib/showcase";
 import { collapseGroups, formatVariantSummary } from "@/lib/variants";
+
+/** How many of the category's products take turns in the hero. */
+const HERO_PRODUCTS = 6;
 
 // Long-form explanatory content shown below the product grid, keyed by category slug.
 const infoSectionBySlug: Record<string, ComponentType> = {
@@ -66,18 +70,17 @@ export default async function CollectionPage(props: PageProps<"/collections/[slu
 
   return (
     <div>
-      <CollectionBanner
+      <CollectionHero
         title={info.title}
-        image={info.bannerImage}
-        mobileImage={info.bannerImageMobile}
-        aspect={info.bannerAspect}
+        description={info.description}
+        // Photos from the whole category, not just the filtered ones, in a
+        // new random order on every visit with a different brand each turn
+        // while there are brands left.
+        products={pickShowcaseProducts(categoryProducts, () => true, HERO_PRODUCTS)}
       />
 
       <div className="mx-auto w-full max-w-6xl px-6 py-12">
-        <h1 className="text-3xl font-extrabold sm:text-4xl">{info.title}</h1>
-        <p className="mt-4 max-w-2xl text-zinc-600 dark:text-zinc-400">{info.description}</p>
-
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 py-4">
           <div className="flex items-center gap-4">
             <span className="text-sm text-zinc-500">فیلتر:</span>
             {brandOptions.length > 0 && (
