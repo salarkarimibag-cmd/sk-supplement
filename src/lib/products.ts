@@ -105,8 +105,8 @@ export async function getProductGroup(groupSlug: string): Promise<VariantProduct
   await connectToDatabase();
   const products = await ProductModel.find(
     { groupSlug },
-    { _id: 0, id: 1, flavor: 1, size: 1, stock: 1 }
-  ).lean<Pick<Product, "id" | "flavor" | "size" | "stock">[]>();
+    { _id: 0, id: 1, flavor: 1, size: 1, stock: 1, imageUrl: 1 }
+  ).lean<Pick<Product, "id" | "flavor" | "size" | "stock" | "imageUrl">[]>();
   return products.map(({ stock, ...product }) => ({ ...product, inStock: stock > 0 }));
 }
 

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { getImageProps } from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ViewTransition } from "react";
 import Pagination from "@/components/ui/Pagination";
 import Price from "@/components/ui/Price";
 import StarRating from "@/components/ui/StarRating";
@@ -21,7 +22,12 @@ import { getProductReviewsPage } from "@/lib/reviews";
 import { SALES_OPEN } from "@/lib/sales";
 import { SITE_URL } from "@/lib/site";
 import { buildBreadcrumbJsonLd, buildProductJsonLd } from "@/lib/structuredData";
-import { buildVariantOptions, formatVariantSummary } from "@/lib/variants";
+import {
+  buildVariantOptions,
+  formatVariantSummary,
+  PRODUCT_PHOTO_SIZES,
+  VARIANT_SWITCH,
+} from "@/lib/variants";
 
 const REVIEWS_PAGE_SIZE = 6;
 
@@ -57,6 +63,17 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
     return page === 1 ? `${productPath}#reviews` : `${productPath}?reviews=${page}#reviews`;
   }
 
+  const { props: photo } = getImageProps({
+    src: product.imageUrl,
+    alt: product.name,
+    fill: true,
+    // The page's main image: fetched right away and ahead of the rest.
+    loading: "eager",
+    fetchPriority: "high",
+    sizes: PRODUCT_PHOTO_SIZES,
+    className: "object-contain",
+  });
+
   const variants = buildVariantOptions(product, group);
   const hasVariantChoice = variants.flavors.length > 1 || variants.sizes.length > 1;
 
@@ -90,14 +107,26 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
 
       <div className="mt-6 grid gap-10 lg:grid-cols-2">
         <div className="relative aspect-square bg-white">
-          <Image
-            src={product.imageUrl}
-            alt={product.name}
-            fill
-            preload
-            sizes="(min-width: 1024px) 50vw, 100vw"
-            className="object-contain"
-          />
+          {/* On a flavor or size switch the old photo sweeps out and the new
+              one sweeps in, like the home hero. The key makes the two photos
+              an exit/enter pair; any other navigation shows the photo as is. */}
+          <ViewTransition
+            key={product.id}
+            name="product-photo"
+            share={{ [VARIANT_SWITCH]: "variant-photo", default: "none" }}
+            default="none"
+          >
+            <div className="absolute inset-0">
+              {/* A plain <img> (with the same optimized sources as <Image>,
+                  from getImageProps) because <Image> sets onLoad, and React
+                  only holds the animation until the new photo is decoded for
+                  an <img> without it. The variant link has usually loaded the
+                  photo already; this covers the rest, so the new photo never
+                  arrives after its animation and just pops in. */}
+              {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text -- alt comes from getImageProps */}
+              <img {...photo} />
+            </div>
+          </ViewTransition>
           {!product.inStock && (
             <span className="absolute bottom-3 right-3 rounded-full bg-zinc-900 px-3 py-1 text-xs font-bold text-white dark:bg-white dark:text-zinc-900">
               ناموجود

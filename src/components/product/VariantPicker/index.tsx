@@ -1,5 +1,13 @@
-import Link from "next/link";
-import type { VariantOption, VariantOptions } from "@/lib/variants";
+import { getImageProps } from "next/image";
+import VariantLink from "@/components/product/VariantLink";
+import { PRODUCT_PHOTO_SIZES, type VariantOption, type VariantOptions } from "@/lib/variants";
+
+/** The optimized sources of a variant's photo, as its product page will request them. */
+function photoSources(imageUrl: string | undefined) {
+  if (!imageUrl) return undefined;
+  const { props } = getImageProps({ src: imageUrl, alt: "", fill: true, sizes: PRODUCT_PHOTO_SIZES });
+  return props.srcSet ? { srcSet: props.srcSet, sizes: PRODUCT_PHOTO_SIZES } : undefined;
+}
 
 function OptionRow({ label, options }: { label: string; options: VariantOption[] }) {
   const selected = options.find((option) => option.selected);
@@ -14,10 +22,9 @@ function OptionRow({ label, options }: { label: string; options: VariantOption[]
         <ul className="mt-2 flex flex-wrap gap-2">
           {options.map((option) => (
             <li key={option.value}>
-              <Link
+              <VariantLink
                 href={`/products/${option.productId}`}
-                // Switching flavor or size shouldn't jump back to the top of the page.
-                scroll={false}
+                photo={option.selected ? undefined : photoSources(option.imageUrl)}
                 aria-current={option.selected ? "page" : undefined}
                 className={`inline-block rounded-full border px-4 py-1.5 text-sm transition-colors ${
                   option.selected
@@ -27,7 +34,7 @@ function OptionRow({ label, options }: { label: string; options: VariantOption[]
               >
                 {option.value}
                 {!option.available && <span className="sr-only"> (ناموجود)</span>}
-              </Link>
+              </VariantLink>
             </li>
           ))}
         </ul>

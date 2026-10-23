@@ -152,6 +152,83 @@ p.shine {
 }
 
 /*
+ * A product page's photo on a flavor or size switch (the `variant-photo`
+ * view transition): the old pack sweeps out to one side while the new one
+ * sweeps in from the other, turning upright and coming into focus, as in the
+ * home hero. Both are snapshots drawn above the page, so they're clipped to
+ * the photo's frame and can't fly over the text beside it.
+ */
+
+/*
+ * When only the photo changes, React shrinks the transition's layer to 0×0
+ * (so the rest of the page stays live), and Chromium then clips the photos
+ * away along with it. Here it keeps the size of the screen; !important is
+ * what overrides React's inline animation, and the layer still lets clicks
+ * through (pointer-events below).
+ */
+:root:active-view-transition-type(variant-switch)::view-transition {
+  width: 100vw !important;
+  height: 100vh !important;
+}
+
+::view-transition-group(.variant-photo) {
+  overflow: clip;
+}
+
+::view-transition-old(.variant-photo),
+::view-transition-new(.variant-photo) {
+  /* The default blend is for two snapshots fading in place; these move apart. */
+  mix-blend-mode: normal;
+}
+
+/* The old photo leaves quickly so it doesn't compete with the new one. */
+::view-transition-old(.variant-photo) {
+  animation: variant-photo-out 400ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+::view-transition-new(.variant-photo) {
+  animation: variant-photo-in 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes variant-photo-out {
+  to {
+    opacity: 0;
+    transform: translateX(-20%) scale(0.85) rotate(-8deg);
+    filter: blur(4px);
+  }
+}
+
+@keyframes variant-photo-in {
+  from {
+    opacity: 0;
+    transform: translateX(20%) scale(0.85) rotate(8deg);
+    filter: blur(4px);
+  }
+}
+
+/* Clicks during the animation reach the page instead of the overlay. */
+::view-transition {
+  pointer-events: none;
+}
+
+/* With reduced motion, the photos only crossfade, without moving. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(.variant-photo) {
+    animation: 200ms ease-out both variant-photo-fade reverse;
+  }
+
+  ::view-transition-new(.variant-photo) {
+    animation: 200ms ease-out both variant-photo-fade;
+  }
+}
+
+@keyframes variant-photo-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/*
  * Slide <details> open and closed. `height: auto` can only be animated with
  * interpolate-size (Chromium for now); other browsers skip this block and
  * the sections just open instantly, as before.

@@ -25,6 +25,15 @@ describe("buildVariantOptions", () => {
     ]);
   });
 
+  it("gives each option the photo of the product it links to", () => {
+    const withPhoto = { ...vanSmall, imageUrl: "/images/van.png" };
+    const { flavors } = buildVariantOptions(chocSmall, [chocSmall, withPhoto]);
+    expect(flavors.find((o) => o.value === "وانیلی")).toMatchObject({
+      productId: "p2",
+      imageUrl: "/images/van.png",
+    });
+  });
+
   it("sorts sizes by number, Persian digits included", () => {
     const tenKilo: VariantProduct = { id: "p7", flavor: "شکلاتی", size: "۱۰ کیلو", inStock: true };
     const { sizes } = buildVariantOptions(chocSmall, [tenKilo, chocLarge, chocSmall]);
