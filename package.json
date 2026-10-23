@@ -20,7 +20,8 @@
     "seed:reviews": "tsx scripts/seed-reviews.ts",
     "set-admin": "tsx scripts/set-admin.ts",
     "normalize-emails": "tsx scripts/normalize-emails.ts",
-    "reset-ratings-and-sales": "tsx scripts/reset-ratings-and-sales.ts"
+    "reset-ratings-and-sales": "tsx scripts/reset-ratings-and-sales.ts",
+    "use-webp-photos": "tsx scripts/use-webp-photos.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
