@@ -6,12 +6,15 @@ export interface VariantProduct {
   flavor?: string;
   size?: string;
   inStock: boolean;
+  imageUrl?: string;
 }
 
 export interface VariantOption {
   value: string;
   /** The product to open when this option is picked. */
   productId: string;
+  /** That product's photo, loaded before switching so it can animate in. */
+  imageUrl?: string;
   selected: boolean;
   available: boolean;
 }
@@ -20,6 +23,16 @@ export interface VariantOptions {
   flavors: VariantOption[];
   sizes: VariantOption[];
 }
+
+/**
+ * The view-transition type of a flavor or size switch. The variant links tag
+ * their navigation with it, and only then does the product photo animate
+ * (the `variant-photo` rules in globals.css).
+ */
+export const VARIANT_SWITCH = "variant-switch";
+
+/** The `sizes` of a product page's photo, shared with the variant links that preload it. */
+export const PRODUCT_PHOTO_SIZES = "(min-width: 1024px) 50vw, 100vw";
 
 type Axis = "flavor" | "size";
 
@@ -42,6 +55,7 @@ function optionsFor(axis: Axis, current: VariantProduct, group: VariantProduct[]
     return {
       value,
       productId: target.id,
+      imageUrl: target.imageUrl,
       selected: value === current[axis],
       available: target.inStock,
     };
