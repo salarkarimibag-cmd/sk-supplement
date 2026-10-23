@@ -79,11 +79,17 @@ const PRODUCTS_PER_ROW = 3;
 // because Tailwind only generates classes it finds whole in the source.
 const MOTION = "transition duration-700 ease-out";
 
-// The cards are zinc-100, the same light gray as the backdrop of the few
-// photos that aren't transparent cutouts, so those blend in too.
-const CARD_CLASS = "relative aspect-square rounded-2xl bg-zinc-100 shadow-xl";
+// The box each pack sits in. The photos are transparent cutouts, so the pack
+// stands right on the tile with no card behind it.
+const PACK_BOX_CLASS = "relative aspect-square";
 
-// Fan positions, [left, middle, right] by number of cards: at rest the packs
+// drop-shadow (unlike box-shadow) follows the pack's outline, not its box. In
+// dark mode a dark shadow would vanish, and black tubs would melt into the
+// black tile, so there it's a faint light glow instead.
+const PACK_SHADOW_CLASS =
+  "drop-shadow-[0_12px_14px_rgb(0_0_0/0.3)] dark:drop-shadow-[0_0_14px_rgb(255_255_255/0.18)]";
+
+// Fan positions, [left, middle, right] by number of packs: at rest they
 // overlap; when active they spread apart and the middle one lifts.
 const FAN_CLASSES: Record<number, string[]> = {
   1: ["z-10 group-hover:scale-110 group-hover:rotate-3 group-data-active:scale-110 group-data-active:rotate-3"],
@@ -112,7 +118,7 @@ function PackImage({ product, sizes }: { product: ShowcaseProduct; sizes: string
       alt=""
       fill
       sizes={sizes}
-      className="object-contain p-[8%]"
+      className={`object-contain ${PACK_SHADOW_CLASS}`}
     />
   );
 }
@@ -128,7 +134,7 @@ function ProductFan({ products }: { products: ShowcaseProduct[] }) {
       {ordered.map((product, index) => (
         <div
           key={product.id}
-          className={`mx-[-3%] w-[34%] ${CARD_CLASS} ${MOTION} ${positions[index]}`}
+          className={`mx-[-3%] w-[34%] ${PACK_BOX_CLASS} ${MOTION} ${positions[index]}`}
         >
           <PackImage product={product} sizes="(min-width: 768px) 12vw, 18vw" />
         </div>
@@ -140,9 +146,9 @@ function ProductFan({ products }: { products: ShowcaseProduct[] }) {
 /**
  * One row of packs per entry, like shelves; rows without photos are left out.
  *
- * Each row is a size container, so a card can be as big as the row is tall
+ * Each row is a size container, so a pack can be as big as the row is tall
  * (100cqh) but never wider than 28% of the row (28cqw): on a narrow, tall
- * tile the width decides, on a wide one the height does, and three cards plus
+ * tile the width decides, on a wide one the height does, and three packs plus
  * two 4% gaps always fit.
  */
 function ProductShelves({ rows }: { rows: ShowcaseProduct[][] }) {
@@ -154,7 +160,7 @@ function ProductShelves({ rows }: { rows: ShowcaseProduct[][] }) {
           className={`@container-size flex min-h-0 flex-1 items-center justify-center gap-[4%] ${MOTION} ${SHELF_ROW_CLASSES[index % 2]}`}
         >
           {row.map((product) => (
-            <div key={product.id} className={`size-[min(100cqh,28cqw)] ${CARD_CLASS}`}>
+            <div key={product.id} className={`size-[min(100cqh,28cqw)] ${PACK_BOX_CLASS}`}>
               <PackImage product={product} sizes="(min-width: 768px) 8vw, 22vw" />
             </div>
           ))}
@@ -181,7 +187,7 @@ export default function CategoryShowcase({ products }: { products: CatalogProduc
           <ShowcaseTile
             key={tile.href}
             href={tile.href}
-            className={`group relative flex aspect-square items-end overflow-hidden bg-white p-5 md:aspect-auto md:h-auto dark:bg-black ${tile.className ?? ""}`}
+            className={`group relative flex aspect-square items-end overflow-hidden bg-background p-5 md:aspect-auto md:h-auto ${tile.className ?? ""}`}
           >
             {/* Gradients can't be transitioned, so the colors are a layer that fades in. */}
             <div
