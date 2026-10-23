@@ -106,7 +106,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
       </nav>
 
       <div className="mt-6 grid gap-10 lg:grid-cols-2">
-        <div className="relative aspect-square bg-white">
+        <div className="relative aspect-square bg-white dark:bg-zinc-900">
           {/* On a flavor or size switch the old photo sweeps out and the new
               one sweeps in, like the home hero. The key makes the two photos
               an exit/enter pair; any other navigation shows the photo as is. */}
