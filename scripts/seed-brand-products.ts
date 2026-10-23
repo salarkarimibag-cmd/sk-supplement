@@ -790,14 +790,6 @@ const products: BrandProduct[] = [
     categorySlug: "protein",
   },
   {
-    id: "dy2",
-    name: "الیت کازئین - Elite Casein",
-    slug: "dymatize-elite-casein",
-    brand: "Dymatize",
-    price: 2390000,
-    categorySlug: "protein",
-  },
-  {
     id: "dy3",
     name: "سوپر ماس گینر - Super Mass Gainer",
     slug: "dymatize-super-mass-gainer",
@@ -1680,14 +1672,6 @@ const products: BrandProduct[] = [
     price: 2650000,
     categorySlug: "protein",
   },
-  {
-    id: "bsn3",
-    name: "آمینو ایکس - Amino X",
-    slug: "bsn-amino-x",
-    brand: "BSN",
-    price: 1250000,
-    categorySlug: "aminos",
-  },
 
   // Cellucor
   {
@@ -1820,14 +1804,6 @@ const products: BrandProduct[] = [
     price: 1290000,
     categorySlug: "fat-burner",
   },
-  {
-    id: "ce3",
-    name: "آلفا آمینو - Alpha Amino",
-    slug: "cellucor-alpha-amino",
-    brand: "Cellucor",
-    price: 1190000,
-    categorySlug: "aminos",
-  },
 
   // MyProtein
   {
@@ -1861,14 +1837,6 @@ const products: BrandProduct[] = [
       "تا ۲۳ گرم پروتئین در هر وعده (بسته به طعم)\nحدود ۵ گرم BCAA طبیعی در هر وعده\nدارای گواهی Informed Choice (تست مواد ممنوعه) و Informed Protein (تأیید مقدار پروتئین برچسب)\nپرفروش‌ترین وی پروتئین بریتانیا و اروپا (به گفته‌ی سازنده)\nادعاهای سلامت مورد تأیید اتحادیه‌ی اروپا: پروتئین به رشد و حفظ توده‌ی عضلانی و حفظ سلامت استخوان‌ها کمک می‌کند",
     brand: "MyProtein",
     price: 3950000,
-    categorySlug: "protein",
-  },
-  {
-    id: "mp2",
-    name: "ایمپکت وی ایزوله - Impact Whey Isolate",
-    slug: "myprotein-impact-whey-isolate",
-    brand: "MyProtein",
-    price: 2050000,
     categorySlug: "protein",
   },
   {
@@ -2096,14 +2064,6 @@ const products: BrandProduct[] = [
     categorySlug: "protein",
   },
   {
-    id: "sc2",
-    name: "جامبو - گینر حجم‌ساز - Jumbo",
-    slug: "scitec-jumbo",
-    brand: "Scitec Nutrition",
-    price: 1950000,
-    categorySlug: "protein",
-  },
-  {
     id: "sc3",
     // \u200E (left-to-right mark) keeps "100%" with the Latin name that follows it.
     name: "کراتین مونوهیدرات - \u200E100% Creatine Monohydrate",
@@ -2323,14 +2283,6 @@ const products: BrandProduct[] = [
 
   // Universal Nutrition
   {
-    id: "un1",
-    name: "انیمال پک - مولتی ویتامین ورزشی - Animal Pak",
-    slug: "universal-animal-pak",
-    brand: "Universal Nutrition",
-    price: 1490000,
-    categorySlug: "vitamins",
-  },
-  {
     id: "un3",
     name: "انیمال پامپ - پیش‌تمرین - Animal Pump",
     slug: "universal-animal-pump",
@@ -2545,22 +2497,6 @@ const products: BrandProduct[] = [
     brand: "BPI Sports",
     price: 4950000,
     categorySlug: "protein",
-  },
-  {
-    id: "bpi2",
-    name: "بست بی‌سی‌ای‌ای - Best BCAA",
-    slug: "bpi-best-bcaa",
-    brand: "BPI Sports",
-    price: 1150000,
-    categorySlug: "aminos",
-  },
-  {
-    id: "bpi3",
-    name: "بست کراتین - Best Creatine",
-    slug: "bpi-best-creatine",
-    brand: "BPI Sports",
-    price: 780000,
-    categorySlug: "creatine",
   },
   {
     id: "bpi6",

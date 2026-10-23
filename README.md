@@ -40,8 +40,7 @@ cp .env.example .env.local
 Run these once against a fresh database (each is safe to re-run — they upsert, not duplicate):
 
 ```bash
-npm run seed              # products
-npm run seed:more-products # a few extra products (creatine/health-wellness/vitamins)
+npm run seed:brand-products # products
 npm run seed:categories   # category content (title, description, banner)
 npm run seed:blogs        # blog posts
 npm run seed:discounts    # discount codes (WELCOME10, SK50000)
@@ -76,8 +75,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run lint` | Lint with ESLint |
 | `npm test` | Run the Vitest unit test suite once |
 | `npm run test:watch` | Run Vitest in watch mode |
-| `npm run seed` | Seed products |
-| `npm run seed:more-products` | Seed extra products (creatine/health-wellness/vitamins) |
+| `npm run seed:brand-products` | Seed products |
 | `npm run seed:categories` | Seed category content |
 | `npm run seed:blogs` | Seed blog posts |
 | `npm run seed:discounts` | Seed discount codes |
