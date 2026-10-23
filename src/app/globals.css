@@ -112,6 +112,29 @@ p.shine {
   }
 }
 
+/*
+ * Slide <details> open and closed. `height: auto` can only be animated with
+ * interpolate-size (Chromium for now); other browsers skip this block and
+ * the sections just open instantly, as before.
+ */
+@supports (interpolate-size: allow-keywords) {
+  :root {
+    interpolate-size: allow-keywords;
+  }
+
+  details::details-content {
+    height: 0;
+    overflow: clip;
+    transition:
+      height 300ms ease-out,
+      content-visibility 300ms allow-discrete;
+  }
+
+  details[open]::details-content {
+    height: auto;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
