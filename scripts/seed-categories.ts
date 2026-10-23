@@ -53,14 +53,6 @@ const categories: Category[] = [
     bannerAspect: "4.8 / 1",
   },
   {
-    slug: "health-wellness",
-    title: "سلامت و تندرستی",
-    description: "مکمل‌های روزمره برای حمایت از سلامت عمومی، گوارش و ایمنی بدن.",
-    // TODO: no dedicated banner image exists yet for this category; replace with real artwork.
-    bannerImage: "/images/promo-banner.webp",
-    bannerAspect: "4.8 / 1",
-  },
-  {
     slug: "vitamins",
     title: "ویتامین‌ها",
     description: "ویتامین‌ها و مواد معدنی ضروری برای تکمیل رژیم غذایی روزانه‌ی شما.",
