@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ComponentType } from "react";
-import Image from "next/image";
 import ProductCard from "@/components/product/ProductCard";
+import CollectionBanner from "@/components/collections/CollectionBanner";
 import FilterDropdown from "@/components/collections/FilterDropdown";
 import SortSelect from "@/components/collections/SortSelect";
 import ProteinInfoSection from "@/components/collections/ProteinInfoSection";
@@ -75,19 +75,12 @@ export default async function CollectionPage(props: PageProps<"/collections/[slu
 
   return (
     <div>
-      <div
-        className="relative w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900"
-        style={{ aspectRatio: info.bannerAspect }}
-      >
-        <Image
-          src={info.bannerImage}
-          alt={info.title}
-          fill
-          preload
-          sizes="100vw"
-          className="object-cover"
-        />
-      </div>
+      <CollectionBanner
+        title={info.title}
+        image={info.bannerImage}
+        mobileImage={info.bannerImageMobile}
+        aspect={info.bannerAspect}
+      />
 
       <div className="mx-auto w-full max-w-6xl px-6 py-12">
         <h1 className="text-3xl font-extrabold sm:text-4xl">{info.title}</h1>
