@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { ShowcaseProduct } from "@/lib/showcase";
 
@@ -47,14 +48,16 @@ type PhotoStatus = "ready" | "unusable";
 /**
  * The hero's product showcase: real product photos, one at a time, taking
  * turns every few seconds. The one on show floats gently above a soft
- * shadow, with a blue glow behind it. Purely decorative (the hero's text and
- * links carry the content), so it's hidden from screen readers.
+ * shadow, with a blue glow behind it, and links to its product page.
  */
 export default function HeroProducts({ products }: { products: ShowcaseProduct[] }) {
   // Each photo is checked once it loads; those that fail to load, or have a
   // background, are left out.
   const [statuses, setStatuses] = useState<Record<string, PhotoStatus>>({});
   const [step, setStep] = useState(0);
+  // Held while the pointer is over the product or it has keyboard focus, so
+  // it doesn't change just as the visitor goes to click it.
+  const [isPaused, setIsPaused] = useState(false);
 
   // The slideshow starts once every photo has been checked, so the order
   // never shifts under the visitor as photos arrive.
@@ -63,10 +66,11 @@ export default function HeroProducts({ products }: { products: ShowcaseProduct[]
   const current = ready.length > 0 ? step % ready.length : -1;
 
   useEffect(() => {
-    if (ready.length < 2) return;
+    if (ready.length < 2 || isPaused) return;
+    // Restarted on resume, so the product stays a full turn after a pause.
     const timer = setInterval(() => setStep((value) => value + 1), SLIDE_MS);
     return () => clearInterval(timer);
-  }, [ready.length]);
+  }, [ready.length, isPaused]);
 
   function settle(id: string, status: PhotoStatus) {
     setStatuses((previous) => ({ ...previous, [id]: status }));
@@ -76,7 +80,7 @@ export default function HeroProducts({ products }: { products: ShowcaseProduct[]
   if (products.length === 0 || (isSettled && ready.length === 0)) return null;
 
   return (
-    <div className="relative aspect-square w-full" aria-hidden="true">
+    <div className="relative aspect-square w-full">
       {/* A soft brand-blue glow behind the product, breathing slowly. */}
       <div className="absolute inset-[22%] animate-[hero-glow_6s_ease-in-out_infinite] rounded-full bg-sky-500/25 blur-3xl" />
 
@@ -85,17 +89,33 @@ export default function HeroProducts({ products }: { products: ShowcaseProduct[]
           duration, so they stay in step. */}
       <div className="absolute inset-x-[28%] bottom-[9%] h-[6%] animate-[hero-shadow_6s_ease-in-out_infinite] rounded-[50%] bg-black/70 blur-md" />
 
-      <div className="absolute inset-[12%] animate-[hero-float_6s_ease-in-out_infinite]">
+      <div
+        className="absolute inset-[12%] animate-[hero-float_6s_ease-in-out_infinite]"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+        onFocus={() => setIsPaused(true)}
+        onBlur={() => setIsPaused(false)}
+      >
         {products.map((product) => {
           const index = ready.indexOf(product);
+          const isActive = index !== -1 && index === current;
           const state =
             index === -1 ? SLIDE_STATES.waiting : slideState(index, current, ready.length);
+          // Only the product on show can be clicked or reached with Tab; the
+          // hidden ones are also hidden from screen readers.
           return (
-            <div key={product.id} className={`absolute inset-0 ${SLIDE_MOTION} ${state}`}>
+            <Link
+              key={product.id}
+              href={`/products/${product.id}`}
+              tabIndex={isActive ? undefined : -1}
+              aria-hidden={!isActive}
+              className={`group absolute inset-0 rounded-3xl outline-offset-4 ${SLIDE_MOTION} ${state} ${isActive ? "" : "pointer-events-none"}`}
+            >
               {statuses[product.id] !== "unusable" && (
                 <Image
                   src={product.imageUrl}
-                  alt=""
+                  // The photo names the link: the product's name.
+                  alt={product.name}
                   fill
                   // The box is about 3/4 of the hero's product column.
                   sizes="(min-width: 768px) 24vw, 14rem"
@@ -105,10 +125,11 @@ export default function HeroProducts({ products }: { products: ShowcaseProduct[]
                     settle(product.id, isCutout(event.currentTarget) ? "ready" : "unusable")
                   }
                   onError={() => settle(product.id, "unusable")}
-                  className="object-contain drop-shadow-[0_20px_30px_rgb(0_0_0/0.5)]"
+                  // Leans in a little under the pointer, to show it's clickable.
+                  className="object-contain drop-shadow-[0_20px_30px_rgb(0_0_0/0.5)] transition-transform duration-500 group-hover:scale-105"
                 />
               )}
-            </div>
+            </Link>
           );
         })}
       </div>
