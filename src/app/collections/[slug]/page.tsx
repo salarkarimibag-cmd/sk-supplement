@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ComponentType } from "react";
+import { notFound } from "next/navigation";
 import ProductCard from "@/components/product/ProductCard";
 import CollectionBanner from "@/components/collections/CollectionBanner";
 import FilterDropdown from "@/components/collections/FilterDropdown";
@@ -9,7 +10,6 @@ import AminosInfoSection from "@/components/collections/AminosInfoSection";
 import FatBurnerInfoSection from "@/components/collections/FatBurnerInfoSection";
 import PreWorkoutInfoSection from "@/components/collections/PreWorkoutInfoSection";
 import CreatineInfoSection from "@/components/collections/CreatineInfoSection";
-import HealthWellnessInfoSection from "@/components/collections/HealthWellnessInfoSection";
 import VitaminsInfoSection from "@/components/collections/VitaminsInfoSection";
 import { getCategoryContent } from "@/lib/categoryContent";
 import { getProductsByCategory } from "@/lib/products";
@@ -23,7 +23,6 @@ const infoSectionBySlug: Record<string, ComponentType> = {
   "fat-burner": FatBurnerInfoSection,
   "pre-workout": PreWorkoutInfoSection,
   creatine: CreatineInfoSection,
-  "health-wellness": HealthWellnessInfoSection,
   vitamins: VitaminsInfoSection,
 };
 
@@ -32,13 +31,16 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug } = await props.params;
   const info = await getCategoryContent(slug);
-  return { title: info?.title ?? `دسته‌بندی: ${slug}` };
+  return { title: info?.title ?? "دسته‌بندی یافت نشد" };
 }
 
 export default async function CollectionPage(props: PageProps<"/collections/[slug]">) {
   const { slug } = await props.params;
   const { sort, flavor, size, brand } = await props.searchParams;
   const info = await getCategoryContent(slug);
+  // Every category lives in the database, so an unknown or removed slug
+  // (an old link to a deleted category) gets a real 404, not an empty page.
+  if (!info) notFound();
   const categoryProducts = await getProductsByCategory(slug);
 
   const selectedFlavors = toParamArray(flavor);
@@ -61,17 +63,6 @@ export default async function CollectionPage(props: PageProps<"/collections/[slu
   const sizeOptions = countByAttribute(categoryProducts, "size");
   const brandOptions = countByAttribute(categoryProducts, "brand");
   const InfoSection = infoSectionBySlug[slug];
-
-  if (!info) {
-    return (
-      <div className="mx-auto w-full max-w-6xl px-6 py-12">
-        <h1 className="text-2xl font-bold">دسته‌بندی: {slug}</h1>
-        <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-          محصولات این دسته به‌زودی نمایش داده می‌شوند.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div>
