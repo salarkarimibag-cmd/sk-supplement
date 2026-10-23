@@ -1,9 +1,7 @@
-import { CanvasTexture, RepeatWrapping, SRGBColorSpace, Texture } from "three";
-import { cutoutBounds } from "@/lib/cutout";
+import { CanvasTexture, RepeatWrapping, SRGBColorSpace } from "three";
 
-// Textures for the hero's 3D scene. The fallback tub's are drawn on canvases
-// at runtime, so no image or font files are downloaded; the product photos
-// are loaded from the shop's own images. Client-only (they need `document`).
+// Textures for the hero's protein tub, drawn on canvases at runtime so no
+// image or font files are downloaded. Client-only (they need `document`).
 
 const SKY = "#0284c7";
 const SKY_LIGHT = "#38bdf8";
@@ -120,56 +118,4 @@ export function createLabelTexture() {
   texture.colorSpace = SRGBColorSpace;
   texture.anisotropy = 8;
   return texture;
-}
-
-/** A product photo ready to show in 3D, cropped to the pack. */
-export interface PackTexture {
-  texture: Texture;
-  /** The pack's width ÷ height, so the plane it's shown on isn't stretched. */
-  aspect: number;
-}
-
-/** Size of the small copy of a photo whose pixels are scanned for the crop. */
-const SCAN_SIZE = 128;
-
-/**
- * Loads a product photo as a texture cropped to the pack, without the empty
- * margin around it, so every pack stands the same height. Resolves to null
- * when the photo fails to load or isn't a transparent cutout (a photo with a
- * solid background would show up as a rectangle in the scene).
- */
-export async function loadPackTexture(url: string): Promise<PackTexture | null> {
-  const image = new Image();
-  image.src = url;
-  try {
-    await image.decode();
-  } catch {
-    return null;
-  }
-
-  // Scanning a small copy is plenty to find the pack's edges, and fast.
-  const canvas = document.createElement("canvas");
-  canvas.width = SCAN_SIZE;
-  canvas.height = SCAN_SIZE;
-  const context = canvas.getContext("2d", { willReadFrequently: true });
-  if (!context) return null;
-  context.drawImage(image, 0, 0, SCAN_SIZE, SCAN_SIZE);
-  const pixels = context.getImageData(0, 0, SCAN_SIZE, SCAN_SIZE).data;
-  const bounds = cutoutBounds(pixels, SCAN_SIZE, SCAN_SIZE);
-  if (!bounds) return null;
-
-  const texture = new Texture(image);
-  texture.colorSpace = SRGBColorSpace;
-  texture.anisotropy = 8;
-  // Show only the pack's part of the photo. Texture coordinates run from 0
-  // to 1 with y pointing up, while pixel rows count down from the top.
-  const width = (bounds.right - bounds.left) / SCAN_SIZE;
-  const height = (bounds.bottom - bounds.top) / SCAN_SIZE;
-  texture.repeat.set(width, height);
-  texture.offset.set(bounds.left / SCAN_SIZE, 1 - bounds.bottom / SCAN_SIZE);
-  texture.needsUpdate = true;
-
-  // The scan was square, so convert back to the photo's real proportions.
-  const aspect = (width * image.naturalWidth) / (height * image.naturalHeight);
-  return { texture, aspect };
 }

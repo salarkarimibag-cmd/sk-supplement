@@ -3,9 +3,10 @@
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { ContactShadows, Environment, Lightformer } from "@react-three/drei";
-import { DoubleSide, MathUtils, Vector2, type Group, type Mesh, type MeshBasicMaterial } from "three";
+import { MathUtils, Vector2, type Group, type Mesh, type MeshStandardMaterial } from "three";
 import { lidOpenness, productFlip, pulse } from "@/lib/heroMotion";
-import { createGrainTexture, createLabelTexture, loadPackTexture, type PackTexture } from "./textures";
+import { loadPack, type Pack } from "./pack";
+import { createGrainTexture, createLabelTexture } from "./textures";
 
 // Real moulded plastic is never pure black: a very dark grey reads as black
 // but still shows its shape under light.
@@ -81,22 +82,27 @@ const CAPSULES = Array.from({ length: 7 }, (_, i) => ({
   popOffset: i * 2.1,
 }));
 
-// The product photos stand on flat planes, all the same height (about as tall
-// as the tub) and no wider than PACK_MAX_WIDTH, so a wide tub doesn't crowd
-// the capsules. A flat photo can't spin all the way round like the tub, so it
-// only sways a little, and flips like a card to show the next product.
+// The product packs all stand the same height (about as tall as the tub)
+// and no wider than PACK_MAX_WIDTH, so a wide one doesn't crowd the capsules.
+// The photo only shows the pack's front, so instead of spinning all the way
+// round like the tub, a pack sways from side to side, enough to show its
+// depth, and flips to the next product every few seconds.
 const PACK_HEIGHT = 2.9;
 const PACK_MAX_WIDTH = 2.6;
 /** Where the packs' bottom edges stand, level with the tub's base. */
 const PACK_BOTTOM = -1.5;
-/** How far a pack sways from side to side while it rests, in radians. */
-const PACK_SWAY = 0.12;
+/** How far a pack sways from side to side while it rests, in radians (≈26°). */
+const PACK_SWAY = 0.45;
+/**
+ * How much of the photo's own brightness the pack keeps regardless of the
+ * scene's lights. The photo is already lit, so full scene lighting on top
+ * would make it too dark; a little keeps the curve's shading visible.
+ */
+const PACK_GLOW = 0.55;
 
-/** The plane's width and height for a pack: PACK_HEIGHT tall, unless too wide. */
-function packSize(aspect: number): [width: number, height: number] {
-  const width = PACK_HEIGHT * aspect;
-  if (width <= PACK_MAX_WIDTH) return [width, PACK_HEIGHT];
-  return [PACK_MAX_WIDTH, PACK_MAX_WIDTH / aspect];
+/** How much a pack is scaled: PACK_HEIGHT tall, unless that makes it too wide. */
+function packScale(aspect: number) {
+  return Math.min(PACK_HEIGHT, PACK_MAX_WIDTH / aspect);
 }
 
 /** Pointer position across the whole window, from -1 to 1 on each axis. */
@@ -202,46 +208,60 @@ function Tub({ time }: { time: RefObject<number> }) {
   );
 }
 
-/** Real product photos, one at a time, flipping to the next every few seconds. */
-function Packs({ packs, time }: { packs: PackTexture[]; time: RefObject<number> }) {
-  const mesh = useRef<Mesh>(null);
-  const material = useRef<MeshBasicMaterial>(null);
-  const [firstWidth, firstHeight] = packSize(packs[0].aspect);
+/** Real products, one at a time, flipping to the next every few seconds. */
+function Packs({ packs, time }: { packs: Pack[]; time: RefObject<number> }) {
+  const group = useRef<Group>(null);
+  const front = useRef<Mesh>(null);
+  const back = useRef<Mesh>(null);
+  const material = useRef<MeshStandardMaterial>(null);
+  const first = packs[0];
 
   useFrame(() => {
-    if (!mesh.current || !material.current) return;
+    if (!group.current || !front.current || !back.current || !material.current) return;
     const t = time.current;
     const { step, turn } = productFlip(t);
     const pack = packs[step % packs.length];
-    const [width, height] = packSize(pack.aspect);
 
-    // Swapping the map is cheap: the material stays the same, so nothing has
-    // to be recompiled. productFlip only changes `step` while edge-on.
+    // Swapping the body and the photo is cheap: the material stays the
+    // same, so nothing has to be recompiled. productFlip only changes `step`
+    // while the pack is edge-on.
+    front.current.geometry = pack.geometry;
+    back.current.geometry = pack.geometry;
+    // The back shares the front's material, so both sides always match.
+    back.current.material = material.current;
     material.current.map = pack.texture;
-    mesh.current.scale.set(width, height, 1);
+    material.current.emissiveMap = pack.texture;
+    // Shrink away while turning edge-on (cos(±π/2) = 0) and grow back, so
+    // the body's thin, stretched-looking sides never fill the view.
+    // (A scale of exactly 0 can't be inverted for lighting, hence the floor.)
+    group.current.scale.setScalar(packScale(pack.aspect) * Math.max(Math.cos(turn), 0.001));
     // Stand on PACK_BOTTOM and bob gently, as if floating.
-    mesh.current.position.y = PACK_BOTTOM + height / 2 + Math.sin(t * 1.1) * 0.04;
-    mesh.current.rotation.y = turn + Math.sin(t * 0.5) * PACK_SWAY;
+    group.current.position.y = PACK_BOTTOM + Math.sin(t * 1.1) * 0.04;
+    group.current.rotation.y = turn + Math.sin(t * 0.45) * PACK_SWAY;
   });
 
   return (
-    <mesh ref={mesh} scale={[firstWidth, firstHeight, 1]} position-y={PACK_BOTTOM + firstHeight / 2}>
-      <planeGeometry />
-      {/* The photo already has its own studio lighting, so it's shown as is:
-          a "basic" material ignores the scene's lights, and toneMapped={false}
-          keeps its colors exactly as photographed. alphaTest drops the fully
-          transparent pixels, so they don't hide capsules passing behind. Both
-          sides are drawn because the pointer tilt can turn a flipping pack a
-          little past edge-on. */}
-      <meshBasicMaterial
-        ref={material}
-        map={packs[0].texture}
-        transparent
-        alphaTest={0.05}
-        side={DoubleSide}
-        toneMapped={false}
-      />
-    </mesh>
+    <group ref={group} position-y={PACK_BOTTOM} scale={packScale(first.aspect)}>
+      {/* The photo is projected onto the body's front. alphaTest cuts away
+          its transparent background, so only the pack's outline is left,
+          and alphaToCoverage smooths that cut edge. */}
+      <mesh ref={front} geometry={first.geometry}>
+        <meshStandardMaterial
+          ref={material}
+          map={first.texture}
+          emissive="white"
+          emissiveMap={first.texture}
+          emissiveIntensity={PACK_GLOW}
+          roughness={0.4}
+          alphaTest={0.5}
+          alphaToCoverage
+        />
+      </mesh>
+      {/* The back is the front mirrored (scale -1 in depth), closing the
+          body. Its print is the front's in reverse, but the pack never
+          turns far enough for that to be seen. */}
+      <mesh ref={back} geometry={first.geometry} scale-z={-1} />
+    </group>
   );
 }
 
@@ -295,7 +315,7 @@ function Capsules({ time }: { time: RefObject<number> }) {
 interface CompositionProps {
   animate: boolean;
   /** The product photos to show; when empty, the drawn SK tub stands in. */
-  packs: PackTexture[];
+  packs: Pack[];
 }
 
 function Composition({ animate, packs }: CompositionProps) {
@@ -314,7 +334,7 @@ function Composition({ animate, packs }: CompositionProps) {
 
     // Ease toward the pointer instead of snapping to it.
     const targetX = BASE_TILT_X + pointer.current.y * POINTER_TILT;
-    // Only the round tub keeps turning; the flat photos turn by flipping.
+    // Only the round tub keeps turning; the packs sway and flip instead.
     const spin = hasPacks ? 0 : time.current * IDLE_SPIN_SPEED;
     const targetY = spin + pointer.current.x * POINTER_TILT;
     root.current.rotation.x = MathUtils.damp(root.current.rotation.x, targetX, POINTER_DAMPING, delta);
@@ -344,7 +364,7 @@ export default function Scene({ isActive, imageUrls }: SceneProps) {
   const [isReady, setIsReady] = useState(false);
   // null while the photos are loading. Those that fail to load, or aren't
   // cutouts, are left out.
-  const [packs, setPacks] = useState<PackTexture[] | null>(null);
+  const [packs, setPacks] = useState<Pack[] | null>(null);
   // This module never runs on the server (it's loaded with ssr: false), so
   // `window` is safe to read here.
   const [prefersReducedMotion] = useState(
@@ -353,17 +373,22 @@ export default function Scene({ isActive, imageUrls }: SceneProps) {
 
   useEffect(() => {
     let isCurrent = true;
-    let loaded: PackTexture[] = [];
-    Promise.all(imageUrls.map(loadPackTexture)).then((results) => {
+    let loaded: Pack[] = [];
+    // Textures and bodies live on the GPU, outside JavaScript's garbage
+    // collection, so they're freed by hand once they're no longer shown.
+    const dispose = (packs: Pack[]) =>
+      packs.forEach(({ texture, geometry }) => {
+        texture.dispose();
+        geometry.dispose();
+      });
+    Promise.all(imageUrls.map(loadPack)).then((results) => {
       loaded = results.filter((pack) => pack !== null);
       if (isCurrent) setPacks(loaded);
-      else loaded.forEach((pack) => pack.texture.dispose());
+      else dispose(loaded);
     });
-    // Textures live on the GPU, outside JavaScript's garbage collection, so
-    // they're freed by hand once they're no longer shown.
     return () => {
       isCurrent = false;
-      loaded.forEach((pack) => pack.texture.dispose());
+      dispose(loaded);
     };
   }, [imageUrls]);
 
