@@ -24,6 +24,12 @@ const nextConfig: NextConfig = {
   // Don't advertise "X-Powered-By: Next.js": it tells attackers which
   // framework (and so which known bugs) to try, and helps nobody else.
   poweredByHeader: false,
+  images: {
+    // <Image> serves AVIF to browsers that accept it (usually 20–30% smaller
+    // than WebP at the same quality) and WebP to the rest; the order matters,
+    // the first format the browser accepts wins.
+    formats: ["image/avif", "image/webp"],
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
