@@ -1,5 +1,5 @@
 import VariantLink from "@/components/product/VariantLink";
-import VariantRailPanel from "@/components/product/VariantRailPanel";
+import VariantRailPanel, { type RailTab } from "@/components/product/VariantRailPanel";
 import { photoSources } from "@/components/product/VariantPicker";
 import type { VariantOption, VariantOptions } from "@/lib/variants";
 
@@ -28,24 +28,14 @@ function RailOptions({ options }: { options: VariantOption[] }) {
 }
 
 /**
- * Mobile-only flavor and size choices that hang over the sides of the product
- * photo, so the photo stays in view while the shopper switches. Flavors sit on
- * the reading-start edge and sizes on the other. Render it inside the photo's
- * relatively positioned box.
+ * Mobile-only flavor and size choices on one glass strip over the right edge
+ * of the product photo, so the photo stays in view while the shopper
+ * switches. Render it inside a VariantPhotoFrame.
  */
 export default function VariantRail({ flavors, sizes }: VariantOptions) {
-  return (
-    <>
-      {flavors.length > 1 && (
-        <VariantRailPanel label="طعم" selected={flavors.find((option) => option.selected)?.value} side="start" viewTransitionName="variant-rail-flavors">
-          <RailOptions options={flavors} />
-        </VariantRailPanel>
-      )}
-      {sizes.length > 1 && (
-        <VariantRailPanel label="وزن" selected={sizes.find((option) => option.selected)?.value} side="end" viewTransitionName="variant-rail-sizes">
-          <RailOptions options={sizes} />
-        </VariantRailPanel>
-      )}
-    </>
-  );
+  const tabs: RailTab[] = [];
+  if (flavors.length > 1) tabs.push({ id: "flavors", label: "طعم", content: <RailOptions options={flavors} /> });
+  if (sizes.length > 1) tabs.push({ id: "sizes", label: "وزن", content: <RailOptions options={sizes} /> });
+
+  return tabs.length > 0 ? <VariantRailPanel tabs={tabs} /> : null;
 }
