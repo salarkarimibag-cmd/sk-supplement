@@ -1,21 +1,11 @@
 import { connectToDatabase } from "@/lib/db";
 import { ProductModel } from "@/models/Product";
 import { getSessionAdmin } from "@/lib/auth";
+import { isDuplicateKeyError } from "@/lib/mongoErrors";
 import { toSetAndUnset } from "@/lib/mongoUpdate";
 import { productDetailsSchema, withoutEmptyDetails } from "@/lib/productDetails";
+import { productInputErrorMessage, productUpdateSchema } from "@/lib/productInput";
 import { productGroupSchema } from "@/lib/variants";
-
-interface UpdateProductBody {
-  name?: string;
-  slug?: string;
-  description?: string;
-  price?: number;
-  categorySlug?: string;
-  imageUrl?: string;
-  stock?: number;
-  flavor?: string;
-  size?: string;
-}
 
 export async function PATCH(
   request: Request,
@@ -27,7 +17,12 @@ export async function PATCH(
   }
 
   const { id } = await params;
-  const body: UpdateProductBody = (await request.json().catch(() => null)) ?? {};
+  const body: unknown = await request.json().catch(() => null);
+
+  const parsed = productUpdateSchema.safeParse(body);
+  if (!parsed.success) {
+    return Response.json({ message: productInputErrorMessage(parsed.error) }, { status: 400 });
+  }
 
   const details = productDetailsSchema.safeParse(body);
   if (!details.success) {
@@ -44,24 +39,29 @@ export async function PATCH(
 
   await connectToDatabase();
 
-  const update: Record<string, unknown> = {};
-  if (body.name) update.name = body.name;
-  if (body.slug) update.slug = body.slug;
-  if (body.description !== undefined) update.description = body.description;
-  if (body.price !== undefined) update.price = body.price;
-  if (body.categorySlug) update.categorySlug = body.categorySlug;
-  if (body.imageUrl) update.imageUrl = body.imageUrl;
-  if (body.stock !== undefined) update.stock = body.stock;
-  if (body.flavor !== undefined) update.flavor = body.flavor || undefined;
-  if (body.size !== undefined) update.size = body.size || undefined;
+  // Only the fields that were sent are in parsed.data, so the others keep
+  // their saved values.
+  const { flavor, size, ...fields } = parsed.data;
+  const update: Record<string, unknown> = { ...fields };
+  if (flavor !== undefined) update.flavor = flavor || undefined;
+  if (size !== undefined) update.size = size || undefined;
   if (group.data.groupSlug !== undefined) update.groupSlug = group.data.groupSlug || undefined;
   Object.assign(update, withoutEmptyDetails(details.data));
 
-  // Cleared optional fields (flavor, size, group, label details) are undefined here
-  // and must be removed explicitly, or Mongoose would keep the old values.
-  const product = await ProductModel.findOneAndUpdate({ id }, toSetAndUnset(update), {
-    returnDocument: "after",
-  });
+  let product;
+  try {
+    // Cleared optional fields (flavor, size, group, label details) are undefined here
+    // and must be removed explicitly, or Mongoose would keep the old values.
+    product = await ProductModel.findOneAndUpdate({ id }, toSetAndUnset(update), {
+      returnDocument: "after",
+    });
+  } catch (error) {
+    // The new slug belongs to another product (the slug index is unique).
+    if (isDuplicateKeyError(error)) {
+      return Response.json({ message: "این اسلاگ قبلاً ثبت شده است." }, { status: 409 });
+    }
+    throw error;
+  }
 
   if (!product) {
     return Response.json({ message: "محصول پیدا نشد." }, { status: 404 });
