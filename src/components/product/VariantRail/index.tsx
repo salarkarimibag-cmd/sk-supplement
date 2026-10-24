@@ -14,7 +14,7 @@ function RailOptions({ options }: { options: VariantOption[] }) {
             aria-current={option.selected ? "page" : undefined}
             className={`block rounded-xl px-2.5 py-1.5 text-start text-[11px] leading-snug transition-colors ${
               option.selected
-                ? "bg-sky-600 font-bold text-white"
+                ? "bg-gradient-to-b from-sky-500 to-sky-700 font-bold text-white shadow-md shadow-sky-700/30"
                 : "text-zinc-900 active:bg-black/10 dark:text-zinc-100 dark:active:bg-white/15"
             } ${option.available ? "" : "line-through opacity-60"}`}
           >
@@ -37,12 +37,12 @@ export default function VariantRail({ flavors, sizes }: VariantOptions) {
   return (
     <>
       {flavors.length > 1 && (
-        <VariantRailPanel label="طعم" side="start" viewTransitionName="variant-rail-flavors">
+        <VariantRailPanel label="طعم" selected={flavors.find((option) => option.selected)?.value} side="start" viewTransitionName="variant-rail-flavors">
           <RailOptions options={flavors} />
         </VariantRailPanel>
       )}
       {sizes.length > 1 && (
-        <VariantRailPanel label="وزن / سایز" side="end" viewTransitionName="variant-rail-sizes">
+        <VariantRailPanel label="وزن" selected={sizes.find((option) => option.selected)?.value} side="end" viewTransitionName="variant-rail-sizes">
           <RailOptions options={sizes} />
         </VariantRailPanel>
       )}

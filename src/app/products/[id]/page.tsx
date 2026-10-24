@@ -12,6 +12,7 @@ import ProductCard from "@/components/product/ProductCard";
 import ProductDetailPanel from "@/components/product/ProductDetailPanel";
 import ProductInfo from "@/components/product/ProductInfo";
 import TrustBadges from "@/components/product/TrustBadges";
+import VariantPhotoFrame from "@/components/product/VariantPhotoFrame";
 import VariantPicker from "@/components/product/VariantPicker";
 import VariantRail from "@/components/product/VariantRail";
 import ReviewForm from "@/components/reviews/ReviewForm";
@@ -109,8 +110,8 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
       <div className="mt-6 grid gap-10 lg:grid-cols-2">
         {/* With variant choices the photo goes edge to edge on mobile, so the
             side panels sit against the screen edges. */}
-        <div
-          className={`relative aspect-square bg-white dark:bg-zinc-900 ${
+        <VariantPhotoFrame
+          className={`aspect-square bg-white dark:bg-zinc-900 ${
             hasVariantChoice ? "-mx-6 lg:mx-0" : ""
           }`}
         >
@@ -123,7 +124,9 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
             share={{ [VARIANT_SWITCH]: "variant-photo", default: "none" }}
             default="none"
           >
-            <div className={`absolute inset-y-0 ${hasVariantChoice ? "inset-x-[27%] lg:inset-x-0" : "inset-x-0"}`}>
+            {/* Full size until a mobile variant panel opens; then it shrinks
+                to leave the sides to the panels. */}
+            <div className="absolute inset-0 transition-transform duration-300 ease-out group-data-[open]/photo:scale-[0.46] motion-reduce:transition-none lg:group-data-[open]/photo:scale-100">
               {/* A plain <img> (with the same optimized sources as <Image>,
                   from getImageProps) because <Image> sets onLoad, and React
                   only holds the animation until the new photo is decoded for
@@ -140,7 +143,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
             </span>
           )}
           {hasVariantChoice && <VariantRail flavors={variants.flavors} sizes={variants.sizes} />}
-        </div>
+        </VariantPhotoFrame>
 
         <div>
           {product.brand && (
