@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { Types } from "mongoose";
+import { requireAdmin } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/db";
 import { OrderModel, type Order, type OrderStatus, type PaymentMethod } from "@/models/Order";
 import { ProductModel, type Product } from "@/models/Product";
@@ -32,6 +33,7 @@ function first(value: string | string[] | undefined): string | undefined {
 }
 
 export default async function AdminOrdersPage(props: PageProps<"/admin/orders">) {
+  await requireAdmin();
   const searchParams = await props.searchParams;
   const statusParam = first(searchParams.status);
   const status = isOrderStatus(statusParam) ? statusParam : DEFAULT_STATUS;
