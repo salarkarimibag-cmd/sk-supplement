@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireAdmin } from "@/lib/auth";
 import { getProductsPage } from "@/lib/products";
 import { getAllCategories } from "@/lib/categoryContent";
 import ProductManager from "@/components/admin/ProductManager";
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 const PAGE_SIZE = 10;
 
 export default async function AdminProductsPage(props: PageProps<"/admin/products">) {
+  await requireAdmin();
   const { page: pageParam } = await props.searchParams;
   const requestedPage = Number(Array.isArray(pageParam) ? pageParam[0] : pageParam) || 1;
 

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireAdmin } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/db";
 import { DiscountCodeModel } from "@/models/DiscountCode";
 import DiscountManager from "@/components/admin/DiscountManager";
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 const PAGE_SIZE = 10;
 
 export default async function AdminDiscountsPage(props: PageProps<"/admin/discounts">) {
+  await requireAdmin();
   const { page: pageParam } = await props.searchParams;
   const requestedPage = Number(Array.isArray(pageParam) ? pageParam[0] : pageParam) || 1;
 

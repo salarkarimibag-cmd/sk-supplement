@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { notFound, redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import { connectToDatabase } from "@/lib/db";
@@ -84,4 +85,18 @@ export async function getSessionUser() {
 export async function getSessionAdmin() {
   const user = await getSessionUser();
   return user?.isAdmin ? user : null;
+}
+
+/**
+ * For admin pages: sends a visitor who isn't logged in to the login page and
+ * gives anyone else who isn't an admin a 404. Each admin page must call this
+ * itself, before loading any data: the check in admin/layout.tsx only
+ * decides what the layout shows, and doesn't stop the page from rendering
+ * (see "Layouts and auth checks" in Next.js's authentication guide).
+ */
+export async function requireAdmin() {
+  const user = await getSessionUser();
+  if (!user) redirect("/account/login");
+  if (!user.isAdmin) notFound();
+  return user;
 }
