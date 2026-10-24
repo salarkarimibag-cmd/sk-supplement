@@ -11,6 +11,13 @@ const LAUNCH_MS = 1000;
 // Accelerating curve: the rocket starts slow and leaves fast.
 const LIFT_EASING = "cubic-bezier(0.55, 0, 0.85, 0.55)";
 
+// How long the circle takes to stretch into the rocket (the body's transition below).
+const MORPH_MS = 650;
+
+function wait(ms: number) {
+  return new Promise<void>((resolve) => setTimeout(resolve, ms));
+}
+
 function shouldShowButton() {
   const scrollable = document.documentElement.scrollHeight - window.innerHeight;
   return window.scrollY > MIN_SCROLL && window.scrollY > scrollable / 2;
@@ -95,7 +102,10 @@ export default function ScrollToTop() {
     launchingRef.current = true;
     setLaunching(true);
     try {
-      // 1. The engine shakes.
+      // 1. The circle stretches into a rocket (see the transitions on the body below).
+      await wait(MORPH_MS);
+
+      // 2. The engine shakes.
       await button.animate(
         [
           { transform: "translateX(0)" },
@@ -106,7 +116,7 @@ export default function ScrollToTop() {
         { duration: 90, iterations: 3 },
       ).finished;
 
-      // 2. Lift-off: the button flies off the top of the screen while the page scrolls up.
+      // 3. Lift-off: the button flies off the top of the screen while the page scrolls up.
       const distance = button.getBoundingClientRect().bottom + 20;
       cancelScrollRef.current = scrollToTopOver(LAUNCH_MS);
       const flight = button.animate(
@@ -149,7 +159,7 @@ export default function ScrollToTop() {
       title="بازگشت به بالا"
       inert={!visible}
       onClick={scrollToTop}
-      className={`fixed start-4 z-20 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-sky-600 text-white shadow-lg shadow-black/25 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-sky-500 active:scale-95 lg:start-6 lg:bottom-6 dark:bg-sky-500 dark:hover:bg-sky-400 ${
+      className={`group fixed start-4 z-20 h-11 w-11 cursor-pointer rounded-full text-white transition-all duration-300 ease-out hover:-translate-y-0.5 active:scale-95 lg:start-6 lg:bottom-6 ${
         aboveStickyBar ? "bottom-24" : "bottom-4"
       } ${
         visible || launching
@@ -157,65 +167,81 @@ export default function ScrollToTop() {
           : "pointer-events-none translate-y-4 opacity-0"
       }`}
     >
-      {launching ? (
-        <>
-          {/* Speed streaks under the rocket. */}
-          {[-7, 0, 7].map((offset, index) => (
-            <span
-              key={offset}
-              aria-hidden="true"
-              style={{
-                marginInlineStart: offset,
-                animationDelay: `${index * 60}ms`,
-              }}
-              className="pointer-events-none absolute top-full mt-1 h-6 w-0.5 origin-top animate-[rocket-streak_0.25s_ease-out_infinite_alternate] rounded-full bg-linear-to-b from-sky-500 to-transparent dark:from-white"
-            />
-          ))}
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 32 52"
-            className="h-7 w-4 overflow-visible"
-          >
-            <g className="origin-top animate-[rocket-flame_0.09s_ease-in-out_infinite_alternate] [transform-box:fill-box]">
-              <path d="M12.5 45Q16 64 19.5 45Z" fill="#fb923c" />
-              <path d="M14 45Q16 56 18 45Z" fill="#fde047" />
-            </g>
-            <path
-              d="M8 31 2 44l9-5ZM24 31l6 13-9-5Z"
-              fill="#0284c7"
-              stroke="#075985"
-            />
-            <path
-              d="M16 2c9 9 9 28 6 40H10C7 30 7 11 16 2Z"
-              fill="#fff"
-              stroke="#075985"
-              strokeWidth={1.4}
-            />
-            <circle
-              cx="16"
-              cy="19"
-              r="4.2"
-              fill="#38bdf8"
-              stroke="#075985"
-              strokeWidth={1.4}
-            />
-            <path d="M11 42h10l-1.5 3h-7Z" fill="#475569" />
-          </svg>
-        </>
-      ) : (
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2.2}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="h-5 w-5"
+      {/* The circle is the rocket's body: it stretches and gets a pointed nose
+          (width, height and border-radius transition) while the launch starts.
+          The circle uses 50%, not rounded-full: that is an "infinite" px radius,
+          which can't be interpolated smoothly towards a percentage radius. */}
+      <span
+        aria-hidden="true"
+        className={`absolute inset-0 m-auto overflow-hidden bg-sky-600 shadow-lg shadow-black/25 transition-[width,height,border-radius,background-color] duration-[550ms] ease-[cubic-bezier(0.34,1.35,0.5,1)] dark:bg-sky-500 ${
+          launching
+            ? "h-[58px] w-[26px] [border-radius:50%_50%_6px_6px/90%_90%_6px_6px]"
+            : "h-11 w-11 rounded-[50%] group-hover:bg-sky-500 dark:group-hover:bg-sky-400"
+        }`}
+      >
+        {/* Shading, so the flat circle gets a rounded, lit body once it's a rocket. */}
+        <span
+          className={`absolute inset-0 bg-[linear-gradient(90deg,#0ea5e9,#0284c7_60%,#0369a1)] transition-opacity duration-[400ms] ${
+            launching ? "opacity-100 delay-100" : "opacity-0"
+          }`}
+        />
+      </span>
+
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2.2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`absolute inset-0 m-auto h-5 w-5 transition duration-300 ${
+          launching ? "-rotate-45 scale-[0.3] opacity-0" : ""
+        }`}
+      >
+        <path d="M12 19V5M5 12l7-7 7 7" />
+      </svg>
+
+      {/* Fins, window and flame come out of the body. The box is the rocket's
+          final size (44x58) and sits 7px above the button so it's centred on it. */}
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 44 58"
+        className="pointer-events-none absolute start-0 -top-[7px] h-[58px] w-11 overflow-visible"
+      >
+        <g
+          className={`origin-top [transform-box:fill-box] transition-opacity delay-300 duration-[250ms] ${
+            launching
+              ? "animate-[rocket-flame_0.09s_ease-in-out_infinite_alternate] opacity-100"
+              : "opacity-0"
+          }`}
         >
-          <path d="M12 19V5M5 12l7-7 7 7" />
-        </svg>
-      )}
+          <path d="M17 58Q22 86 27 58Z" fill="#fb923c" />
+          <path d="M19.5 58Q22 74 24.5 58Z" fill="#fff7ed" />
+        </g>
+        <g
+          className={`origin-center [transform-box:fill-box] transition delay-200 duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+            launching ? "scale-100 opacity-100" : "scale-40 opacity-0"
+          }`}
+        >
+          <path d="M9 40 2 56l7-4ZM35 40l7 16-7-4Z" fill="#0369a1" />
+          <circle cx="22" cy="26" r="4.6" fill="#fff" />
+        </g>
+      </svg>
+
+      {/* Speed streaks under the rocket while it flies. */}
+      {launching &&
+        [-7, 0, 7].map((offset, index) => (
+          <span
+            key={offset}
+            aria-hidden="true"
+            style={{
+              marginInlineStart: offset,
+              animationDelay: `${index * 60}ms`,
+            }}
+            className="pointer-events-none absolute top-full mt-9 h-6 w-0.5 origin-top animate-[rocket-streak_0.25s_ease-out_infinite_alternate] rounded-full bg-linear-to-b from-sky-500 to-transparent dark:from-white"
+          />
+        ))}
     </button>
   );
 }
