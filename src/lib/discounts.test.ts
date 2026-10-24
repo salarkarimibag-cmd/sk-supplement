@@ -1,8 +1,9 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   calculateDiscountAmount,
   checkDiscount,
   discountInputSchema,
+  endOfTehranDay,
   formatDiscountValue,
 } from "./discounts";
 import type { DiscountCode } from "@/models/DiscountCode";
@@ -36,6 +37,25 @@ describe("calculateDiscountAmount", () => {
   });
 });
 
+describe("endOfTehranDay", () => {
+  it("is 23:59:59.999 Tehran time of the day the date falls on", () => {
+    // Midnight UTC is 03:30 in Tehran, the same calendar day.
+    expect(endOfTehranDay(new Date("2026-11-01")).toISOString()).toBe("2026-11-01T20:29:59.999Z");
+  });
+
+  it("uses the Tehran day, not the UTC day, near midnight", () => {
+    // 22:00 UTC on Oct 31 is already 01:30 on Nov 1 in Tehran.
+    expect(endOfTehranDay(new Date("2026-10-31T22:00:00Z")).toISOString()).toBe(
+      "2026-11-01T20:29:59.999Z"
+    );
+  });
+
+  it("returns the same instant for the end of the day itself", () => {
+    const end = new Date("2026-11-01T20:29:59.999Z");
+    expect(endOfTehranDay(end).getTime()).toBe(end.getTime());
+  });
+});
+
 describe("checkDiscount", () => {
   it("rejects a null discount (code not found)", () => {
     const result = checkDiscount(null, 100_000);
@@ -47,16 +67,37 @@ describe("checkDiscount", () => {
     expect(result.valid).toBe(false);
   });
 
-  it("rejects an expired discount", () => {
-    const expired = makeDiscount({ expiresAt: new Date(Date.now() - 1000) });
-    const result = checkDiscount(expired, 100_000);
-    expect(result).toEqual({ valid: false, message: "کد تخفیف منقضی شده است." });
-  });
+  describe("expiry date (valid through that whole day in Tehran)", () => {
+    // What the admin's "2026-11-01" is saved as: midnight UTC.
+    const expiresAt = new Date("2026-11-01");
+    const expiring = makeDiscount({ expiresAt });
 
-  it("accepts a discount that expires in the future", () => {
-    const stillValid = makeDiscount({ expiresAt: new Date(Date.now() + 1000 * 60 * 60) });
-    const result = checkDiscount(stillValid, 100_000);
-    expect(result.valid).toBe(true);
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    function checkAt(tehranTime: string) {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date(`${tehranTime}+03:30`));
+      return checkDiscount(expiring, 100_000);
+    }
+
+    it("accepts it before the expiry day", () => {
+      expect(checkAt("2026-10-31T23:00:00").valid).toBe(true);
+    });
+
+    it("accepts it on the expiry day, morning and late evening", () => {
+      // 10:00 is past the stored instant (03:30 Tehran), which used to expire it.
+      expect(checkAt("2026-11-01T10:00:00").valid).toBe(true);
+      expect(checkAt("2026-11-01T23:59:59").valid).toBe(true);
+    });
+
+    it("rejects it from the day after", () => {
+      expect(checkAt("2026-11-02T00:00:00")).toEqual({
+        valid: false,
+        message: "کد تخفیف منقضی شده است.",
+      });
+    });
   });
 
   it("accepts a discount with no expiry date at all", () => {
