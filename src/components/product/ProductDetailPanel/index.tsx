@@ -84,6 +84,7 @@ export default function ProductDetailPanel({ product }: ProductDetailPanelProps)
         name: product.name,
         price: product.price,
         imageUrl: product.imageUrl,
+        stock: product.stock,
       });
     }
     setQuantity(1);
