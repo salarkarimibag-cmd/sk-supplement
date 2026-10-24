@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireAdmin } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/db";
 import { ProductModel } from "@/models/Product";
 import { ReviewModel } from "@/models/Review";
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 const PAGE_SIZE = 10;
 
 export default async function AdminReviewsPage(props: PageProps<"/admin/reviews">) {
+  await requireAdmin();
   const { page: pageParam } = await props.searchParams;
   const requestedPage = Number(Array.isArray(pageParam) ? pageParam[0] : pageParam) || 1;
 

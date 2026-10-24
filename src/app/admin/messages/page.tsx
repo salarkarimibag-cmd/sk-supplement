@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireAdmin } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/db";
 import { ContactMessageModel } from "@/models/ContactMessage";
 import MessageManager from "@/components/admin/MessageManager";
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 const PAGE_SIZE = 10;
 
 export default async function AdminMessagesPage(props: PageProps<"/admin/messages">) {
+  await requireAdmin();
   const { page: pageParam } = await props.searchParams;
   const requestedPage = Number(Array.isArray(pageParam) ? pageParam[0] : pageParam) || 1;
 
