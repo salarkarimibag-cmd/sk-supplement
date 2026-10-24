@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,6 +12,7 @@ import BankCard from "@/components/checkout/BankCard";
 import Collapsible from "@/components/ui/Collapsible";
 import { useCart } from "@/context/CartContext";
 import { cardTransferSchema, type ShopCard } from "@/lib/cardPayment";
+import type { CartCatalogEntry } from "@/lib/cartSync";
 import { SALES_CLOSED_MESSAGE, SALES_OPEN } from "@/lib/sales";
 
 const checkoutSchema = z
@@ -99,7 +100,12 @@ interface AppliedDiscount {
 
 export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }) {
   const router = useRouter();
-  const { items, totalPrice, totalCount, clearCart } = useCart();
+  const { items, totalPrice, totalCount, clearCart, syncPrices } = useCart();
+  // The cart's prices were saved in the browser when each product was added,
+  // so they may be out of date. Until the current ones are loaded, nothing
+  // that depends on the total (paying, the card amount, a discount) is allowed.
+  const [priceStatus, setPriceStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [pricesChanged, setPricesChanged] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [discountCodeInput, setDiscountCodeInput] = useState("");
   const [appliedDiscount, setAppliedDiscount] = useState<AppliedDiscount | null>(null);
@@ -118,6 +124,37 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
   const paymentMethod = useWatch({ control, name: "paymentMethod" });
 
   const finalTotal = totalPrice - (appliedDiscount?.amount ?? 0);
+  const pricesReady = priceStatus === "ready";
+
+  // A string, not the items array, so the effect runs again only when the
+  // products in the cart change, not on every quantity or price update.
+  const productIdsKey = items.map((item) => item.id).join(",");
+
+  useEffect(() => {
+    if (!SALES_OPEN || !productIdsKey) return;
+    // Set by the cleanup, so a response that arrives after the cart changed
+    // again (or the page was left) is ignored.
+    let ignore = false;
+
+    fetch("/api/cart/prices", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productIds: productIdsKey.split(",") }),
+    })
+      .then((response) => (response.ok ? response.json() : Promise.reject()))
+      .then((data: { products: CartCatalogEntry[] }) => {
+        if (ignore) return;
+        if (syncPrices(data.products)) setPricesChanged(true);
+        setPriceStatus("ready");
+      })
+      .catch(() => {
+        if (!ignore) setPriceStatus("error");
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, [productIdsKey, syncPrices]);
 
   async function handleApplyDiscount() {
     if (!discountCodeInput.trim()) return;
@@ -216,6 +253,13 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
       setServerError("خطایی در ثبت سفارش رخ داد.");
     }
   }
+
+  function getSubmitLabel() {
+    if (priceStatus === "loading") return "در حال به‌روزرسانی قیمت‌ها...";
+    if (paymentMethod === "card") return isSubmitting ? "در حال ثبت..." : "ثبت سفارش";
+    return isSubmitting ? "در حال انتقال..." : "پرداخت و تکمیل خرید";
+  }
+  const submitLabel = getSubmitLabel();
 
   // While sales are closed (src/lib/sales.ts) the form isn't shown at all.
   const notice = !SALES_OPEN
@@ -360,8 +404,11 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
               <div className="pt-4">
                 <div className="rounded border border-zinc-200 p-4 text-sm dark:border-zinc-800">
                   <p>
-                    مبلغ <strong>{finalTotal.toLocaleString("fa-IR")} تومان</strong> را به کارت زیر واریز
-                    کنید، سپس کد پیگیری واریز را وارد کنید.
+                    مبلغ{" "}
+                    <strong>
+                      {pricesReady ? `${finalTotal.toLocaleString("fa-IR")} تومان` : "…"}
+                    </strong>{" "}
+                    را به کارت زیر واریز کنید، سپس کد پیگیری واریز را وارد کنید.
                   </p>
                   {/* The card follows the panel with a short delay, rising and
                       scaling into place, so it looks like it slides out of it. */}
@@ -411,20 +458,25 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
           )}
         </div>
 
+        {pricesChanged && (
+          <p className="text-sm text-amber-600 dark:text-amber-500">
+            قیمت برخی کالاها از زمان افزودن به سبد تغییر کرده و مبالغ به‌روز شده‌اند. لطفاً پیش از
+            پرداخت، جمع کل را دوباره بررسی کنید.
+          </p>
+        )}
+        {priceStatus === "error" && (
+          <p className="text-sm text-red-600">
+            دریافت قیمت‌های به‌روز ناموفق بود. لطفاً صفحه را دوباره بارگذاری کنید.
+          </p>
+        )}
         {serverError && <p className="text-sm text-red-600">{serverError}</p>}
 
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || !pricesReady}
           className="cursor-pointer rounded bg-sky-600 py-3.5 text-sm font-bold text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {paymentMethod === "card"
-            ? isSubmitting
-              ? "در حال ثبت..."
-              : "ثبت سفارش"
-            : isSubmitting
-              ? "در حال انتقال..."
-              : "پرداخت و تکمیل خرید"}
+          {submitLabel}
         </button>
       </form>
       </div>
@@ -476,7 +528,8 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
               <button
                 type="button"
                 onClick={handleApplyDiscount}
-                disabled={isApplyingDiscount}
+                // The amount off depends on the subtotal, so it waits for current prices.
+                disabled={isApplyingDiscount || !pricesReady}
                 className="cursor-pointer rounded border border-zinc-300 px-4 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-700"
               >
                 {isApplyingDiscount ? "در حال بررسی..." : "اعمال"}
