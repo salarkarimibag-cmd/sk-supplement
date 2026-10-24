@@ -2,6 +2,11 @@
 
 import { useState } from "react";
 import { CheckCircle2 } from "lucide-react";
+import {
+  CONTACT_MESSAGE_MAX_LENGTH,
+  CONTACT_NAME_MAX_LENGTH,
+  EMAIL_MAX_LENGTH,
+} from "@/lib/publicForms";
 
 const inputClass =
   "w-full rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900";
@@ -58,6 +63,7 @@ export default function ContactForm() {
         type="text"
         required
         placeholder="نام و نام خانوادگی"
+        maxLength={CONTACT_NAME_MAX_LENGTH}
         value={name}
         onChange={(event) => setName(event.target.value)}
         className={inputClass}
@@ -66,6 +72,7 @@ export default function ContactForm() {
         type="email"
         required
         placeholder="ایمیل"
+        maxLength={EMAIL_MAX_LENGTH}
         value={email}
         onChange={(event) => setEmail(event.target.value)}
         className={inputClass}
@@ -74,6 +81,7 @@ export default function ContactForm() {
         required
         placeholder="پیام شما"
         rows={5}
+        maxLength={CONTACT_MESSAGE_MAX_LENGTH}
         value={message}
         onChange={(event) => setMessage(event.target.value)}
         className={inputClass}
