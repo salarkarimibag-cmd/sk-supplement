@@ -5,6 +5,24 @@ export type DiscountCheckResult =
   | { valid: true; code: string; discountAmount: number }
   | { valid: false; message: string };
 
+// Iran Standard Time is UTC+03:30 all year (daylight saving ended in 2022).
+const TEHRAN_OFFSET_MS = 3.5 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * The last millisecond of the Tehran calendar day that `date` falls on.
+ *
+ * The admin picks an expiry *date* ("2026-11-01"), which is saved as
+ * midnight UTC, i.e. 03:30 that morning in Tehran. Comparing against that
+ * instant ended the code early on its last day; the admin means it can be
+ * used all through that day.
+ */
+export function endOfTehranDay(date: Date): Date {
+  const tehranMs = date.getTime() + TEHRAN_OFFSET_MS;
+  const startOfTehranDayMs = Math.floor(tehranMs / DAY_MS) * DAY_MS;
+  return new Date(startOfTehranDayMs + DAY_MS - 1 - TEHRAN_OFFSET_MS);
+}
+
 /**
  * Checks a discount code against a cart subtotal and computes the amount to
  * take off, without touching the database — the caller looks up the
@@ -18,7 +36,8 @@ export function checkDiscount(
     return { valid: false, message: "کد تخفیف نامعتبر است." };
   }
 
-  if (discount.expiresAt && discount.expiresAt.getTime() < Date.now()) {
+  // Valid through the whole expiry day, Tehran time (see endOfTehranDay).
+  if (discount.expiresAt && endOfTehranDay(discount.expiresAt).getTime() < Date.now()) {
     return { valid: false, message: "کد تخفیف منقضی شده است." };
   }
 

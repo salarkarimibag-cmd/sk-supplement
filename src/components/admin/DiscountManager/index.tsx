@@ -170,6 +170,10 @@ export default function DiscountManager({ initialCodes }: { initialCodes: Discou
         />
         <input
           type="date"
+          // A date field can't show a placeholder, so this names it on hover
+          // and for screen readers.
+          title="تاریخ انقضا (اختیاری) — کد تا پایان همین روز معتبر است"
+          aria-label="تاریخ انقضا (اختیاری) — کد تا پایان همین روز معتبر است"
           value={form.expiresAt}
           onChange={(event) => setForm({ ...form, expiresAt: event.target.value })}
           className={inputClass}
