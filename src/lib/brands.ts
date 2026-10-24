@@ -13,6 +13,7 @@ const PERSIAN_BRAND_NAMES: Record<string, string> = {
   MyProtein: "مای‌پروتئین",
   Nutrex: "ناترکس",
   "Optimum Nutrition": "اپتیموم نوتریشن",
+  "Rule 1": "رول وان",
   "Scitec Nutrition": "سایتک نوتریشن",
   "Universal Nutrition": "یونیورسال نوتریشن",
 };
