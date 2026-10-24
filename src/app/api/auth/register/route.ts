@@ -2,6 +2,7 @@ import { z } from "zod";
 import { connectToDatabase } from "@/lib/db";
 import { UserModel } from "@/models/User";
 import { hashPassword, createSessionCookie } from "@/lib/auth";
+import { isDuplicateKeyError } from "@/lib/mongoErrors";
 
 const registerSchema = z.object({
   fullName: z.string().trim().min(1).max(100),
@@ -12,10 +13,6 @@ const registerSchema = z.object({
   // would silently be cut short.
   password: z.string().min(8).max(72),
 });
-
-function isDuplicateKeyError(error: unknown): boolean {
-  return typeof error === "object" && error !== null && "code" in error && error.code === 11000;
-}
 
 export async function POST(request: Request) {
   const parsed = registerSchema.safeParse(await request.json().catch(() => null));

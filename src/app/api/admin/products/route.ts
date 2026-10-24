@@ -1,21 +1,12 @@
 import { connectToDatabase } from "@/lib/db";
 import { ProductModel } from "@/models/Product";
 import { getSessionAdmin } from "@/lib/auth";
+import { isDuplicateKeyError } from "@/lib/mongoErrors";
 import { productDetailsSchema, withoutEmptyDetails } from "@/lib/productDetails";
+import { productCreateSchema, productInputErrorMessage } from "@/lib/productInput";
 import { productGroupSchema } from "@/lib/variants";
 
-interface CreateProductBody {
-  id?: string;
-  name?: string;
-  slug?: string;
-  description?: string;
-  price?: number;
-  categorySlug?: string;
-  imageUrl?: string;
-  stock?: number;
-  flavor?: string;
-  size?: string;
-}
+const DUPLICATE_MESSAGE = "این شناسه یا اسلاگ قبلاً ثبت شده است.";
 
 export async function GET() {
   const admin = await getSessionAdmin();
@@ -34,24 +25,13 @@ export async function POST(request: Request) {
     return Response.json({ message: "دسترسی غیرمجاز." }, { status: 401 });
   }
 
-  const body: CreateProductBody = (await request.json().catch(() => null)) ?? {};
+  const body: unknown = await request.json().catch(() => null);
 
-  if (
-    !body.id ||
-    !body.name ||
-    !body.slug ||
-    !body.price ||
-    body.price <= 0 ||
-    !body.categorySlug ||
-    !body.imageUrl ||
-    body.stock === undefined ||
-    body.stock < 0
-  ) {
-    return Response.json(
-      { message: "شناسه، نام، اسلاگ، قیمت، دسته‌بندی، تصویر و موجودی الزامی هستند." },
-      { status: 400 }
-    );
+  const parsed = productCreateSchema.safeParse(body);
+  if (!parsed.success) {
+    return Response.json({ message: productInputErrorMessage(parsed.error) }, { status: 400 });
   }
+  const input = parsed.data;
 
   const details = productDetailsSchema.safeParse(body);
   if (!details.success) {
@@ -68,25 +48,33 @@ export async function POST(request: Request) {
 
   await connectToDatabase();
 
-  const existing = await ProductModel.findOne({ $or: [{ id: body.id }, { slug: body.slug }] });
+  const existing = await ProductModel.exists({ $or: [{ id: input.id }, { slug: input.slug }] });
   if (existing) {
-    return Response.json({ message: "این شناسه یا اسلاگ قبلاً ثبت شده است." }, { status: 409 });
+    return Response.json({ message: DUPLICATE_MESSAGE }, { status: 409 });
   }
 
-  const product = await ProductModel.create({
-    id: body.id,
-    name: body.name,
-    slug: body.slug,
-    description: body.description ?? "",
-    price: body.price,
-    categorySlug: body.categorySlug,
-    imageUrl: body.imageUrl,
-    stock: body.stock,
-    flavor: body.flavor || undefined,
-    size: body.size || undefined,
-    groupSlug: group.data.groupSlug || undefined,
-    ...withoutEmptyDetails(details.data),
-  });
-
-  return Response.json(product, { status: 201 });
+  try {
+    const product = await ProductModel.create({
+      id: input.id,
+      name: input.name,
+      slug: input.slug,
+      description: input.description ?? "",
+      price: input.price,
+      categorySlug: input.categorySlug,
+      imageUrl: input.imageUrl,
+      stock: input.stock,
+      flavor: input.flavor || undefined,
+      size: input.size || undefined,
+      groupSlug: group.data.groupSlug || undefined,
+      ...withoutEmptyDetails(details.data),
+    });
+    return Response.json(product, { status: 201 });
+  } catch (error) {
+    // Two saves of the same id or slug at once can both pass the check
+    // above; the unique index rejects the second one here.
+    if (isDuplicateKeyError(error)) {
+      return Response.json({ message: DUPLICATE_MESSAGE }, { status: 409 });
+    }
+    throw error;
+  }
 }
