@@ -143,6 +143,17 @@ const rule1ProteinWarnings =
   "حساسیت‌زاها: حاوی شیر و سویا.\nفقط به‌عنوان مکمل غذایی مصرف کنید؛ برای کاهش وزن مصرف نکنید.";
 const rule1ProteinClaims =
   "۲۵ گرم پروتئین در هر وعده؛ ۱۰۰٪ پروتئین آن از وی ایزوله است\nبدون کنسانتره‌ی وی، کریمر و «آمینو اسپایکینگ» (افزودن اسید آمینه‌ی ارزان برای بالا نشان دادن پروتئین)\nپروتئین آن در برنامه‌ی Informed Protein آزمایش و تأیید شده و در Informed Choice برای مواد ممنوعه آزمایش می‌شود";
+// Shared by every R1 Whey Protein flavour (5 lb tubs): facts panels and
+// ingredients from ruleoneproteins.com/products/whey-protein
+// (`WheyProtein-NutritionPanels-*`), claims from the pack front and the
+// product page. The page has no directions, so `usage` stays empty; the
+// notice is the one printed on the pack plus the allergen line.
+const rule1WheyBlend =
+  "ترکیب پروتئین (کنسانتره‌ی پروتئین وی، ایزوله‌ی پروتئین وی، ایزوله‌ی پروتئین وی هیدرولیزه)";
+const rule1WheyWarnings =
+  "حساسیت‌زاها: حاوی شیر و سویا.\nفقط به‌عنوان مکمل غذایی مصرف کنید؛ برای کاهش وزن مصرف نکنید.";
+const rule1WheyClaims =
+  "۲۴ گرم پروتئین در هر وعده؛ ۱۰۰٪ پروتئین آن از منابع وی است\nحدود ۱۱ گرم اسید آمینه‌ی ضروری (EAA) طبیعی در هر وعده\nدارای گواهی Informed Choice؛ به‌طور منظم در آزمایشگاه ضددوپینگ LGC برای مواد ممنوعه آزمایش می‌شود\nپروتئین آن آزمایش و تأیید شده است (Protein Tested & Verified)";
 const rule1MassGainerClaims =
   "۱۲۶۰ کیلوکالری، ۲۵۴ گرم کربوهیدرات و ۴۰ گرم پروتئین تمام‌وی در هر وعده\nنسبت کربوهیدرات به پروتئین ۶ به ۱، با ۱ گرم کراتین مونوهیدرات\nدارای گواهی Informed Choice؛ به‌طور منظم در آزمایشگاه ضددوپینگ LGC برای مواد ممنوعه آزمایش می‌شود\nبه گفته‌ی سازنده: برای افرادی با متابولیسم سریع که به‌سختی وزن می‌گیرند (این ادعا توسط FDA ارزیابی نشده است)";
 
@@ -3285,6 +3296,108 @@ const products: BrandProduct[] = [
     manufacturerClaims: rule1ProteinClaims,
     brand: "Rule 1",
     price: 4500000,
+    categorySlug: "protein",
+  },
+  {
+    id: "r1w",
+    name: "وی پروتئین - R1 Whey Protein",
+    slug: "rule1-whey-protein-chocolate-fudge",
+    groupSlug: "rule1-whey-protein",
+    flavor: "شکلات فاج",
+    size: "۲٫۲۸ کیلوگرم",
+    imageUrl: "/images/products/rule1-whey-protein-chocolate-fudge.webp",
+    // Chocolate Fudge 5 lb: 65 × 35 g ≈ 2.28 kg, as the pack says.
+    description: `وی پروتئین رول وان با طعم شکلات فاج؛ پودر پروتئین وی معمولی از ترکیب کنسانتره، ایزوله و ایزوله‌ی هیدرولیزه‌ی وی. هر وعده (۱ اسکوپ، ۳۵ گرم) ۲۴ گرم پروتئین، ۴ گرم کربوهیدرات، ۲٫۵ گرم چربی و ۱۳۰ کیلوکالری دارد و قوطی ۲٫۲۸ کیلوگرمی ۶۵ وعده است.\nمواد تشکیل‌دهنده: ${rule1WheyBlend}، کاکائو (قلیایی‌شده)، و کمتر از ۲٪: طعم‌دهنده‌های طبیعی و مصنوعی، صمغ سلولز، صمغ زانتان، نمک، سوکرالوز، آسه‌سولفام پتاسیم، لسیتین سویا، لسیتین آفتابگردان.`,
+    servingSize: "۳۵ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۳۰ کیلوکالری" },
+      { label: "چربی", amount: "۲٫۵ گرم" },
+      { label: "چربی اشباع", amount: "۱ گرم" },
+      { label: "چربی ترانس", amount: "۰ گرم" },
+      { label: "کلسترول", amount: "۸۰ میلی‌گرم" },
+      { label: "سدیم", amount: "۱۲۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۴ گرم" },
+      { label: "فیبر", amount: "۱ گرم" },
+      { label: "قندها", amount: "۱ گرم" },
+      { label: "قند افزوده", amount: "۰ گرم" },
+      { label: "پروتئین", amount: "۲۴ گرم" },
+      { label: "ویتامین D", amount: "۰ میکروگرم" },
+      { label: "کلسیم", amount: "۱۷۰ میلی‌گرم" },
+      { label: "آهن", amount: "۱ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۲۵۰ میلی‌گرم" },
+    ],
+    warnings: rule1WheyWarnings,
+    manufacturerClaims: rule1WheyClaims,
+    brand: "Rule 1",
+    price: 3200000,
+    categorySlug: "protein",
+  },
+  {
+    id: "r1wv",
+    name: "وی پروتئین - R1 Whey Protein",
+    slug: "rule1-whey-protein-vanilla-ice-cream",
+    groupSlug: "rule1-whey-protein",
+    flavor: "بستنی وانیلی",
+    size: "۲٫۲۴ کیلوگرم",
+    imageUrl: "/images/products/rule1-whey-protein-vanilla-ice-cream.webp",
+    // Vanilla Ice Cream 5 lb: 68 × 33 g = 2.24 kg, as the pack says.
+    description: `وی پروتئین رول وان با طعم بستنی وانیلی؛ پودر پروتئین وی معمولی از ترکیب کنسانتره، ایزوله و ایزوله‌ی هیدرولیزه‌ی وی. هر وعده (۱ اسکوپ، ۳۳ گرم) ۲۴ گرم پروتئین، ۳ گرم کربوهیدرات، ۲ گرم چربی و ۱۳۰ کیلوکالری دارد و قوطی ۲٫۲۴ کیلوگرمی ۶۸ وعده است.\nمواد تشکیل‌دهنده: ${rule1WheyBlend}، طعم‌دهنده‌های طبیعی و مصنوعی، و کمتر از ۲٪: صمغ سلولز، صمغ زانتان، سوکرالوز، آسه‌سولفام پتاسیم، لسیتین سویا، لسیتین آفتابگردان.`,
+    servingSize: "۳۳ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۳۰ کیلوکالری" },
+      { label: "چربی", amount: "۲ گرم" },
+      { label: "چربی اشباع", amount: "۱ گرم" },
+      { label: "چربی ترانس", amount: "۰ گرم" },
+      { label: "کلسترول", amount: "۸۰ میلی‌گرم" },
+      { label: "سدیم", amount: "۹۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۳ گرم" },
+      { label: "فیبر", amount: "۰ گرم" },
+      { label: "قندها", amount: "۱ گرم" },
+      { label: "قند افزوده", amount: "۰ گرم" },
+      { label: "پروتئین", amount: "۲۴ گرم" },
+      { label: "ویتامین D", amount: "۰ میکروگرم" },
+      { label: "کلسیم", amount: "۱۶۰ میلی‌گرم" },
+      { label: "آهن", amount: "۰ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۱۳۰ میلی‌گرم" },
+    ],
+    warnings: rule1WheyWarnings,
+    manufacturerClaims: rule1WheyClaims,
+    brand: "Rule 1",
+    price: 3200000,
+    categorySlug: "protein",
+  },
+  {
+    id: "r1wc",
+    name: "وی پروتئین - R1 Whey Protein",
+    slug: "rule1-whey-protein-cookies-creme",
+    groupSlug: "rule1-whey-protein",
+    flavor: "کوکی و کرم",
+    size: "۲٫۲۴ کیلوگرم",
+    imageUrl: "/images/products/rule1-whey-protein-cookies-creme.webp",
+    // Cookies & Crème 5 lb: 66 × 34 g = 2.24 kg, as the pack says.
+    description: `وی پروتئین رول وان با طعم کوکی و کرم؛ پودر پروتئین وی معمولی از ترکیب کنسانتره، ایزوله و ایزوله‌ی هیدرولیزه‌ی وی. هر وعده (۱ اسکوپ، ۳۴ گرم) ۲۴ گرم پروتئین، ۴ گرم کربوهیدرات، ۲ گرم چربی و ۱۳۰ کیلوکالری دارد و قوطی ۲٫۲۴ کیلوگرمی ۶۶ وعده است.\nمواد تشکیل‌دهنده: ${rule1WheyBlend}، طعم‌دهنده‌های طبیعی و مصنوعی، تکه‌های کوکی (نشاسته‌ی تاپیوکا، آرد برنج، شکر، کاکائو [قلیایی‌شده]، روغن پالم، نمک، لیکور شکلات، طعم‌دهنده‌ی طبیعی، بی‌کربنات سدیم)، و کمتر از ۲٪: صمغ سلولز، صمغ زانتان، نمک، سوکرالوز، لسیتین سویا، لسیتین آفتابگردان.`,
+    servingSize: "۳۴ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۳۰ کیلوکالری" },
+      { label: "چربی", amount: "۲ گرم" },
+      { label: "چربی اشباع", amount: "۱ گرم" },
+      { label: "چربی ترانس", amount: "۰ گرم" },
+      { label: "کلسترول", amount: "۸۰ میلی‌گرم" },
+      { label: "سدیم", amount: "۱۴۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۴ گرم" },
+      { label: "فیبر", amount: "۰ گرم" },
+      { label: "قندها", amount: "۱ گرم" },
+      { label: "قند افزوده", amount: "۰ گرم" },
+      { label: "پروتئین", amount: "۲۴ گرم" },
+      { label: "ویتامین D", amount: "۰ میکروگرم" },
+      { label: "کلسیم", amount: "۱۶۰ میلی‌گرم" },
+      { label: "آهن", amount: "۰٫۴ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۱۳۰ میلی‌گرم" },
+    ],
+    warnings: rule1WheyWarnings,
+    manufacturerClaims: rule1WheyClaims,
+    brand: "Rule 1",
+    price: 3200000,
     categorySlug: "protein",
   },
   {
