@@ -99,7 +99,7 @@ export default function VariantRailPanel({
         onClick={toggle}
         aria-expanded={open}
         aria-controls={listId}
-        className={`pointer-events-auto flex max-h-full flex-col items-center gap-2 px-2 py-3 text-zinc-900 transition-transform active:scale-95 dark:text-zinc-100 ${
+        className={`pointer-events-auto flex max-h-full flex-col items-center gap-2 px-1.5 py-3 text-zinc-900 transition-transform active:scale-95 dark:text-zinc-100 ${
           side === "start" ? "rounded-s-2xl" : "rounded-e-2xl"
         } ${GLASS}`}
       >
@@ -130,7 +130,7 @@ export default function VariantRailPanel({
       <div
         id={listId}
         inert={!open}
-        className={`pointer-events-auto max-h-full max-w-[28vw] overflow-y-auto overscroll-contain rounded-2xl p-1 transition duration-300 ease-out motion-reduce:transition-none ${GLASS} ${
+        className={`pointer-events-auto max-h-full max-w-[24vw] overflow-y-auto overscroll-contain rounded-2xl p-1 transition duration-300 ease-out motion-reduce:transition-none ${GLASS} ${
           open ? "translate-x-0 opacity-100" : `opacity-0 ${CLOSED_SHIFT[side]}`
         }`}
       >

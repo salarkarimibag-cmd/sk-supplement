@@ -126,7 +126,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
           >
             {/* Full size until a mobile variant panel opens; then it shrinks
                 to leave the sides to the panels. */}
-            <div className="absolute inset-0 transition-transform duration-300 ease-out group-data-[open]/photo:scale-[0.46] motion-reduce:transition-none lg:group-data-[open]/photo:scale-100">
+            <div className="absolute inset-0 transition-transform duration-300 ease-out group-data-[open]/photo:scale-[0.4] motion-reduce:transition-none lg:group-data-[open]/photo:scale-100">
               {/* A plain <img> (with the same optimized sources as <Image>,
                   from getImageProps) because <Image> sets onLoad, and React
                   only holds the animation until the new photo is decoded for
