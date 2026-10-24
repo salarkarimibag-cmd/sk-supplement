@@ -66,7 +66,7 @@ const tiles: Tile[] = [
   },
   {
     href: "/collections/protein",
-    name: "پروتئین",
+    name: "پروتئین‌ها",
     gradient: "from-pink-300 to-rose-600",
     icon: Dumbbell,
     rows: [inCategory("protein")],
