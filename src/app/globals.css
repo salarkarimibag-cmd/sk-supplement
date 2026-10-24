@@ -263,6 +263,27 @@ p.shine {
   }
 }
 
+/* Exhaust flame and speed streaks of the scroll-to-top rocket. */
+@keyframes rocket-flame {
+  from {
+    transform: scale(0.95, 0.8);
+  }
+  to {
+    transform: scale(1.05, 1.25);
+  }
+}
+
+@keyframes rocket-streak {
+  from {
+    opacity: 0.9;
+    transform: scaleY(0.5);
+  }
+  to {
+    opacity: 0.2;
+    transform: scaleY(1.4);
+  }
+}
+
 /*
  * Slide <details> open and closed. `height: auto` can only be animated with
  * interpolate-size (Chromium for now); other browsers skip this block and
