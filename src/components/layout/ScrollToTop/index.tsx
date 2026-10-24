@@ -160,7 +160,7 @@ export default function ScrollToTop() {
       title="بازگشت به بالا"
       inert={!visible}
       onClick={scrollToTop}
-      className={`group fixed start-4 z-20 h-11 w-11 cursor-pointer rounded-full text-white transition-all duration-300 ease-out hover:-translate-y-0.5 active:scale-95 lg:start-6 lg:bottom-6 ${
+      className={`group fixed end-4 z-20 h-11 w-11 cursor-pointer rounded-full text-white transition-all duration-300 ease-out hover:-translate-y-0.5 active:scale-95 lg:end-6 lg:bottom-6 ${
         aboveStickyBar ? "bottom-30" : "bottom-10"
       } ${
         visible || launching
