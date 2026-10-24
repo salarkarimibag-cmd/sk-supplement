@@ -206,6 +206,38 @@ p.shine {
   }
 }
 
+/*
+ * On mobile the flavor and size panels sit on both sides of the photo, so a
+ * photo that sweeps sideways would fly over them. There the photos stay in
+ * place: the old one shrinks away and the new one grows in from the middle.
+ * (1024px is Tailwind's `lg`, where the panels give way to the picker.)
+ */
+@media (max-width: 1023.98px) {
+  ::view-transition-old(.variant-photo) {
+    animation-name: variant-photo-out-in-place;
+  }
+
+  ::view-transition-new(.variant-photo) {
+    animation-name: variant-photo-in-in-place;
+  }
+}
+
+@keyframes variant-photo-out-in-place {
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+    filter: blur(4px);
+  }
+}
+
+@keyframes variant-photo-in-in-place {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+    filter: blur(4px);
+  }
+}
+
 /* Clicks during the animation reach the page instead of the overlay. */
 ::view-transition {
   pointer-events: none;
