@@ -1,5 +1,14 @@
 import Image from "next/image";
-import { Droplets, Dumbbell, Flame, ShoppingBag, Zap, type LucideIcon } from "lucide-react";
+import {
+  Droplets,
+  Dumbbell,
+  FlaskConical,
+  Flame,
+  Pill,
+  ShoppingBag,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
 import GradientOverlay from "@/components/ui/GradientOverlay";
 import ShowcaseTile from "@/components/home/ShowcaseTile";
 import type { CatalogProduct } from "@/data/catalog";
@@ -68,6 +77,20 @@ const tiles: Tile[] = [
     gradient: "from-yellow-400 to-orange-600",
     icon: Zap,
     rows: [inCategory("pre-workout")],
+  },
+  {
+    href: "/collections/creatine",
+    name: "کراتین‌ها و گلوتامین‌ها",
+    gradient: "from-violet-400 to-indigo-700",
+    icon: FlaskConical,
+    rows: [inCategory("creatine")],
+  },
+  {
+    href: "/collections/vitamins",
+    name: "ویتامین‌ها",
+    gradient: "from-teal-300 to-cyan-700",
+    icon: Pill,
+    rows: [inCategory("vitamins")],
   },
 ];
 
@@ -176,7 +199,7 @@ export default function CategoryShowcase({ products }: { products: CatalogProduc
     // would otherwise blend into the page while they're white (or black).
     <div
       dir="ltr"
-      className="grid grid-cols-2 gap-px bg-zinc-200 md:grid-cols-3 md:grid-rows-2 md:h-140 dark:bg-zinc-800"
+      className="grid grid-cols-2 gap-px bg-zinc-200 md:grid-cols-4 md:grid-rows-2 md:h-140 dark:bg-zinc-800"
     >
       {tiles.map((tile) => {
         const rows = tile.rows

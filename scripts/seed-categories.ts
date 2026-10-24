@@ -31,9 +31,9 @@ const categories: Category[] = [
   },
   {
     slug: "creatine",
-    title: "کراتین و عضله‌سازی",
+    title: "کراتین‌ها و گلوتامین‌ها",
     description:
-      "افزایش قدرت، استقامت و حجم عضلانی با محصولات کراتین و عضله‌سازی SK Supplement.",
+      "افزایش قدرت، استقامت و ریکاوری سریع‌تر با کراتین‌ها و گلوتامین‌های SK Supplement.",
   },
   {
     slug: "vitamins",
