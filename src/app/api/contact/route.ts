@@ -1,29 +1,21 @@
 import { connectToDatabase } from "@/lib/db";
 import { ContactMessageModel } from "@/models/ContactMessage";
 import { getClientIp, getOrSetDeviceId, isRateLimited } from "@/lib/rateLimit";
+import { CONTACT_MESSAGE_MAX_LENGTH, contactMessageSchema } from "@/lib/publicForms";
 
-interface ContactBody {
-  name?: string;
-  email?: string;
-  message?: string;
-}
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const RATE_LIMIT_WINDOW_MS = 24 * 60 * 60 * 1000;
 const RATE_LIMIT_MAX = 3;
 
 export async function POST(request: Request) {
-  const body: ContactBody = (await request.json().catch(() => null)) ?? {};
-  const name = body.name?.trim();
-  const email = body.email?.trim().toLowerCase();
-  const message = body.message?.trim();
-
-  if (!name || !email || !message || !EMAIL_PATTERN.test(email)) {
+  const parsed = contactMessageSchema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) {
+    const maxLength = CONTACT_MESSAGE_MAX_LENGTH.toLocaleString("fa-IR");
     return Response.json(
-      { message: "نام، ایمیل معتبر و متن پیام الزامی هستند." },
+      { message: `نام، ایمیل معتبر و متن پیام (حداکثر ${maxLength} کاراکتر) الزامی هستند.` },
       { status: 400 }
     );
   }
+  const { name, email, message } = parsed.data;
 
   const ip = getClientIp(request);
   const deviceId = await getOrSetDeviceId();
