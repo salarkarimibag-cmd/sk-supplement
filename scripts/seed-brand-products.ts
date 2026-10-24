@@ -134,6 +134,15 @@ const rule1MassGainerFacts = [
 const rule1MassGainerUsage =
   "۲ اسکوپ پر (۳۲۵ گرم) را با ۶۰۰ تا ۷۰۰ میلی‌لیتر (۲۰ تا ۲۴ اونس) آب، شیر یا نوشیدنی دلخواه در مخلوط‌کن یا شیکر بزرگ هم بزنید تا یکدست شود. برای اسموتی، با میوه، یک قاشق کره‌ی بادام‌زمینی یا مغزها و یخ مخلوط کنید؛ برای کالری بیشتر، با شیر پرچرب و ۲ اسکوپ بستنی.\nهر زمانی از روز، در کنار وعده‌های غذایی (نه به‌جای آن‌ها) مصرف کنید. برای بهترین نتیجه همراه با رژیم غذایی مغذی و تمرین مقاومتی منظم.";
 const rule1MassGainerWarnings = "حساسیت‌زاها: حاوی شیر و سویا.";
+// Shared by every R1 Protein Whey Isolate flavour (5 lb tubs): directions
+// from ruleoneproteins.com/products/r1-protein-whey-isolate, notice and
+// claims from the pack front.
+const rule1ProteinUsage =
+  "حدود ۱ اسکوپ را با ۱۸۰ تا ۲۴۰ میلی‌لیتر (۶ تا ۸ اونس) آب سرد، شیر یا نوشیدنی دلخواه در شیکر یا لیوان با قاشق هم بزنید. برای تنوع، با میوه مخلوط کنید یا در غلات صبحانه یا ماست بریزید.\nهر زمانی از روز: پیش یا بعد از تمرین، صبح یا بین وعده‌ها.";
+const rule1ProteinWarnings =
+  "حساسیت‌زاها: حاوی شیر و سویا.\nفقط به‌عنوان مکمل غذایی مصرف کنید؛ برای کاهش وزن مصرف نکنید.";
+const rule1ProteinClaims =
+  "۲۵ گرم پروتئین در هر وعده؛ ۱۰۰٪ پروتئین آن از وی ایزوله است\nبدون کنسانتره‌ی وی، کریمر و «آمینو اسپایکینگ» (افزودن اسید آمینه‌ی ارزان برای بالا نشان دادن پروتئین)\nپروتئین آن در برنامه‌ی Informed Protein آزمایش و تأیید شده و در Informed Choice برای مواد ممنوعه آزمایش می‌شود";
 const rule1MassGainerClaims =
   "۱۲۶۰ کیلوکالری، ۲۵۴ گرم کربوهیدرات و ۴۰ گرم پروتئین تمام‌وی در هر وعده\nنسبت کربوهیدرات به پروتئین ۶ به ۱، با ۱ گرم کراتین مونوهیدرات\nدارای گواهی Informed Choice؛ به‌طور منظم در آزمایشگاه ضددوپینگ LGC برای مواد ممنوعه آزمایش می‌شود\nبه گفته‌ی سازنده: برای افرادی با متابولیسم سریع که به‌سختی وزن می‌گیرند (این ادعا توسط FDA ارزیابی نشده است)";
 
@@ -3175,6 +3184,108 @@ const products: BrandProduct[] = [
     brand: "Rule 1",
     price: 1100000,
     categorySlug: "creatine",
+  },
+  {
+    id: "r1p",
+    name: "آر وان پروتئین - وی ایزوله - R1 Protein Whey Isolate",
+    slug: "rule1-r1-protein-chocolate-fudge",
+    groupSlug: "rule1-r1-protein",
+    flavor: "شکلات فاج",
+    size: "۲٫۲۷ کیلوگرم",
+    imageUrl: "/images/products/rule1-r1-protein-chocolate-fudge.webp",
+    // Chocolate Fudge 5 lb: 71 × 32 g ≈ 2.27 kg, as the pack says.
+    description:
+      "آر وان پروتئین رول وان با طعم شکلات فاج؛ ۱۰۰٪ وی ایزوله و وی ایزوله‌ی نیمه‌هیدرولیزه‌ی سریع‌جذب. هر وعده (۱ اسکوپ، ۳۲ گرم) ۲۵ گرم پروتئین، ۳ گرم کربوهیدرات، ۰٫۵ گرم چربی و ۱۲۰ کیلوکالری دارد و قوطی ۲٫۲۷ کیلوگرمی ۷۱ وعده است.\nمواد تشکیل‌دهنده: ترکیب پروتئین (ایزوله‌ی پروتئین وی، ایزوله‌ی پروتئین وی هیدرولیزه)، کاکائو (قلیایی‌شده)، و کمتر از ۲٪: طعم‌دهنده‌های طبیعی و مصنوعی، سوکرالوز، نمک، آسه‌سولفام پتاسیم، لسیتین سویا، لسیتین آفتابگردان.",
+    servingSize: "۳۲ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۲۰ کیلوکالری" },
+      { label: "چربی", amount: "۰٫۵ گرم" },
+      { label: "چربی اشباع", amount: "۰ گرم" },
+      { label: "چربی ترانس", amount: "۰ گرم" },
+      { label: "کلسترول", amount: "۰ میلی‌گرم" },
+      { label: "سدیم", amount: "۶۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۳ گرم" },
+      { label: "فیبر", amount: "۱ گرم" },
+      { label: "قندها", amount: "۰ گرم" },
+      { label: "پروتئین", amount: "۲۵ گرم" },
+      { label: "کلسیم", amount: "۱۲۰ میلی‌گرم" },
+      { label: "آهن", amount: "۱ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۲۸۰ میلی‌گرم" },
+    ],
+    usage: rule1ProteinUsage,
+    warnings: rule1ProteinWarnings,
+    manufacturerClaims: rule1ProteinClaims,
+    brand: "Rule 1",
+    price: 4500000,
+    categorySlug: "protein",
+  },
+  {
+    id: "r1pv",
+    name: "آر وان پروتئین - وی ایزوله - R1 Protein Whey Isolate",
+    slug: "rule1-r1-protein-vanilla-creme",
+    groupSlug: "rule1-r1-protein",
+    flavor: "وانیل کرم",
+    size: "۲٫۲۵ کیلوگرم",
+    imageUrl: "/images/products/rule1-r1-protein-vanilla-creme.webp",
+    // Vanilla Crème 5 lb: 75 × 30 g = 2.25 kg, as the pack says.
+    description:
+      "آر وان پروتئین رول وان با طعم وانیل کرم؛ ۱۰۰٪ وی ایزوله و وی ایزوله‌ی نیمه‌هیدرولیزه‌ی سریع‌جذب. هر وعده (۱ اسکوپ، ۳۰ گرم) ۲۵ گرم پروتئین، ۱ گرم کربوهیدرات، ۰ گرم چربی و ۱۱۰ کیلوکالری دارد و قوطی ۲٫۲۵ کیلوگرمی ۷۵ وعده است.\nمواد تشکیل‌دهنده: ترکیب پروتئین (ایزوله‌ی پروتئین وی، ایزوله‌ی پروتئین وی هیدرولیزه)، طعم‌دهنده‌های طبیعی و مصنوعی، و کمتر از ۲٪: سوکرالوز، آسه‌سولفام پتاسیم، لسیتین سویا، لسیتین آفتابگردان.",
+    servingSize: "۳۰ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۱۰ کیلوکالری" },
+      { label: "چربی", amount: "۰ گرم" },
+      { label: "چربی اشباع", amount: "۰ گرم" },
+      { label: "چربی ترانس", amount: "۰ گرم" },
+      { label: "کلسترول", amount: "۰ میلی‌گرم" },
+      { label: "سدیم", amount: "۴۵ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۱ گرم" },
+      { label: "فیبر", amount: "۰ گرم" },
+      { label: "قندها", amount: "۱ گرم" },
+      { label: "پروتئین", amount: "۲۵ گرم" },
+      { label: "کلسیم", amount: "۱۲۰ میلی‌گرم" },
+      { label: "آهن", amount: "۰ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۱۶۰ میلی‌گرم" },
+    ],
+    usage: rule1ProteinUsage,
+    warnings: rule1ProteinWarnings,
+    manufacturerClaims: rule1ProteinClaims,
+    brand: "Rule 1",
+    price: 4500000,
+    categorySlug: "protein",
+  },
+  {
+    id: "r1pc",
+    name: "آر وان پروتئین - وی ایزوله - R1 Protein Whey Isolate",
+    slug: "rule1-r1-protein-cookies-creme",
+    groupSlug: "rule1-r1-protein",
+    flavor: "کوکی و کرم",
+    size: "۲٫۲۵ کیلوگرم",
+    imageUrl: "/images/products/rule1-r1-protein-cookies-creme.webp",
+    // Cookies & Crème 5 lb: 75 × 30 g = 2.25 kg, as the pack says.
+    description:
+      "آر وان پروتئین رول وان با طعم کوکی و کرم؛ ۱۰۰٪ وی ایزوله و وی ایزوله‌ی نیمه‌هیدرولیزه‌ی سریع‌جذب، با تکه‌های کوکی. هر وعده (۱ اسکوپ، ۳۰ گرم) ۲۵ گرم پروتئین، ۱ گرم کربوهیدرات، ۱ گرم چربی و ۱۱۰ کیلوکالری دارد و قوطی ۲٫۲۵ کیلوگرمی ۷۵ وعده است.\nمواد تشکیل‌دهنده: ترکیب پروتئین (ایزوله‌ی پروتئین وی، ایزوله‌ی پروتئین وی هیدرولیزه)، طعم‌دهنده‌های طبیعی و مصنوعی، و کمتر از ۲٪: تکه‌های کوکی (نشاسته‌ی تاپیوکا، آرد برنج، شکر، کاکائو [قلیایی‌شده]، روغن پالم، نمک، لیکور شکلات، طعم‌دهنده‌ی طبیعی، بی‌کربنات سدیم)، سوکرالوز، آسه‌سولفام پتاسیم، لسیتین سویا، لسیتین آفتابگردان.",
+    servingSize: "۳۰ گرم (۱ اسکوپ)",
+    nutritionFacts: [
+      { label: "انرژی", amount: "۱۱۰ کیلوکالری" },
+      { label: "چربی", amount: "۱ گرم" },
+      { label: "چربی اشباع", amount: "۰ گرم" },
+      { label: "چربی ترانس", amount: "۰ گرم" },
+      { label: "کلسترول", amount: "۱۰ میلی‌گرم" },
+      { label: "سدیم", amount: "۵۰ میلی‌گرم" },
+      { label: "کربوهیدرات", amount: "۱ گرم" },
+      { label: "فیبر", amount: "۰ گرم" },
+      { label: "قندها", amount: "۱ گرم" },
+      { label: "پروتئین", amount: "۲۵ گرم" },
+      { label: "کلسیم", amount: "۱۲۰ میلی‌گرم" },
+      { label: "آهن", amount: "۰٫۳ میلی‌گرم" },
+      { label: "پتاسیم", amount: "۱۵۰ میلی‌گرم" },
+    ],
+    usage: rule1ProteinUsage,
+    warnings: rule1ProteinWarnings,
+    manufacturerClaims: rule1ProteinClaims,
+    brand: "Rule 1",
+    price: 4500000,
+    categorySlug: "protein",
   },
   {
     id: "r1g",
