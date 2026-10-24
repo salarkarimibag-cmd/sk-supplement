@@ -13,6 +13,7 @@ import ProductDetailPanel from "@/components/product/ProductDetailPanel";
 import ProductInfo from "@/components/product/ProductInfo";
 import TrustBadges from "@/components/product/TrustBadges";
 import VariantPicker from "@/components/product/VariantPicker";
+import VariantRail from "@/components/product/VariantRail";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import JsonLd from "@/components/seo/JsonLd";
 import { getSessionUser } from "@/lib/auth";
@@ -132,6 +133,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
               ناموجود
             </span>
           )}
+          {hasVariantChoice && <VariantRail flavors={variants.flavors} sizes={variants.sizes} />}
         </div>
 
         <div>
@@ -146,12 +148,19 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
 
           <p className="mt-4 text-2xl font-bold"><Price amount={product.price} /></p>
 
-          {hasVariantChoice ? (
-            <div className="mt-5">
+          {/* On mobile the choices hang over the photo (VariantRail), so the
+              picker is desktop-only and the badges below show what is chosen. */}
+          {hasVariantChoice && (
+            <div className="mt-5 hidden lg:block">
               <VariantPicker flavors={variants.flavors} sizes={variants.sizes} />
             </div>
-          ) : (product.flavor || product.size) && (
-            <div className="mt-4 flex flex-wrap gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+          )}
+          {(product.flavor || product.size) && (
+            <div
+              className={`mt-4 flex flex-wrap gap-2 text-sm text-zinc-600 dark:text-zinc-400 ${
+                hasVariantChoice ? "lg:hidden" : ""
+              }`}
+            >
               {product.flavor && (
                 <span className="rounded-full border border-zinc-300 px-3 py-1 dark:border-zinc-700">
                   طعم: {product.flavor}
