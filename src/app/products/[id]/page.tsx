@@ -126,7 +126,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
           >
             {/* Full size until the mobile variant rail opens; then it moves
                 away from the rail, which sits on the right edge. */}
-            <div className="absolute inset-0 transition-[inset] duration-300 ease-out group-data-[open]/photo:inset-y-[16%] group-data-[open]/photo:start-[36%] group-data-[open]/photo:end-0 motion-reduce:transition-none lg:group-data-[open]/photo:inset-0">
+            <div className="absolute inset-0 transition-[inset] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-data-[open]/photo:inset-y-[16%] group-data-[open]/photo:start-[36%] group-data-[open]/photo:end-0 motion-reduce:transition-none lg:group-data-[open]/photo:inset-0">
               {/* A plain <img> (with the same optimized sources as <Image>,
                   from getImageProps) because <Image> sets onLoad, and React
                   only holds the animation until the new photo is decoded for
