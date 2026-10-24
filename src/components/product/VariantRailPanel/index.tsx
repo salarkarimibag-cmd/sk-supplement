@@ -79,8 +79,8 @@ export default function VariantRailPanel({
     <div
       ref={rootRef}
       style={{ viewTransitionName }}
-      className={`pointer-events-none absolute inset-y-3 z-10 flex items-center gap-1.5 lg:hidden ${
-        side === "start" ? "start-2" : "end-2 flex-row-reverse"
+      className={`pointer-events-none absolute inset-y-3 z-10 flex items-center gap-1 lg:hidden ${
+        side === "start" ? "start-0" : "end-0 flex-row-reverse"
       }`}
     >
       <button
@@ -88,7 +88,7 @@ export default function VariantRailPanel({
         onClick={toggle}
         aria-expanded={open}
         aria-controls={listId}
-        className={`pointer-events-auto rounded-full px-1.5 py-3 text-xs font-bold text-zinc-900 [writing-mode:vertical-rl] dark:text-zinc-100 ${GLASS}`}
+        className={`pointer-events-auto ${side === "start" ? "rounded-e-xl" : "rounded-s-xl"} px-1.5 py-3 text-xs font-bold text-zinc-900 [writing-mode:vertical-rl] dark:text-zinc-100 ${GLASS}`}
       >
         {label}
       </button>
@@ -97,7 +97,7 @@ export default function VariantRailPanel({
       <div
         id={listId}
         inert={!open}
-        className={`pointer-events-auto max-h-full max-w-[32vw] overflow-y-auto overscroll-contain rounded-2xl p-1 transition duration-300 ease-out motion-reduce:transition-none ${GLASS} ${
+        className={`pointer-events-auto max-h-full max-w-[24vw] overflow-y-auto overscroll-contain rounded-2xl p-1 transition duration-300 ease-out motion-reduce:transition-none ${GLASS} ${
           open ? "translate-x-0 opacity-100" : `opacity-0 ${CLOSED_SHIFT[side]}`
         }`}
       >

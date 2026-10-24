@@ -12,7 +12,7 @@ function RailOptions({ options }: { options: VariantOption[] }) {
             href={`/products/${option.productId}`}
             photo={option.selected ? undefined : photoSources(option.imageUrl)}
             aria-current={option.selected ? "page" : undefined}
-            className={`block rounded-xl px-2.5 py-1.5 text-start text-xs leading-snug transition-colors ${
+            className={`block rounded-xl px-2.5 py-1.5 text-start text-[11px] leading-snug transition-colors ${
               option.selected
                 ? "bg-sky-600 font-bold text-white"
                 : "text-zinc-900 active:bg-black/10 dark:text-zinc-100 dark:active:bg-white/15"
@@ -42,7 +42,7 @@ export default function VariantRail({ flavors, sizes }: VariantOptions) {
         </VariantRailPanel>
       )}
       {sizes.length > 1 && (
-        <VariantRailPanel label="سایز" side="end" viewTransitionName="variant-rail-sizes">
+        <VariantRailPanel label="وزن / سایز" side="end" viewTransitionName="variant-rail-sizes">
           <RailOptions options={sizes} />
         </VariantRailPanel>
       )}

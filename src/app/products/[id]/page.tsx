@@ -107,7 +107,13 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
       </nav>
 
       <div className="mt-6 grid gap-10 lg:grid-cols-2">
-        <div className="relative aspect-square bg-white dark:bg-zinc-900">
+        {/* With variant choices the photo goes edge to edge on mobile, so the
+            side panels sit against the screen edges. */}
+        <div
+          className={`relative aspect-square bg-white dark:bg-zinc-900 ${
+            hasVariantChoice ? "-mx-6 lg:mx-0" : ""
+          }`}
+        >
           {/* On a flavor or size switch the old photo sweeps out and the new
               one sweeps in, like the home hero. The key makes the two photos
               an exit/enter pair; any other navigation shows the photo as is. */}
@@ -117,7 +123,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
             share={{ [VARIANT_SWITCH]: "variant-photo", default: "none" }}
             default="none"
           >
-            <div className="absolute inset-0">
+            <div className={`absolute inset-y-0 ${hasVariantChoice ? "inset-x-[27%] lg:inset-x-0" : "inset-x-0"}`}>
               {/* A plain <img> (with the same optimized sources as <Image>,
                   from getImageProps) because <Image> sets onLoad, and React
                   only holds the animation until the new photo is decoded for
@@ -168,7 +174,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
               )}
               {product.size && (
                 <span className="rounded-full border border-zinc-300 px-3 py-1 dark:border-zinc-700">
-                  سایز: {product.size}
+                  وزن / سایز: {product.size}
                 </span>
               )}
             </div>

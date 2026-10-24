@@ -48,7 +48,7 @@ export default function VariantPicker({ flavors, sizes }: VariantOptions) {
   return (
     <div className="flex flex-col gap-4">
       {flavors.length > 0 && <OptionRow label="طعم" options={flavors} />}
-      {sizes.length > 0 && <OptionRow label="سایز" options={sizes} />}
+      {sizes.length > 0 && <OptionRow label="وزن / سایز" options={sizes} />}
     </div>
   );
 }
