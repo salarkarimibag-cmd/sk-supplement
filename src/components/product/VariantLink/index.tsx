@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type { ComponentProps } from "react";
+import { useState, type ComponentProps } from "react";
 import { VARIANT_SWITCH } from "@/lib/variants";
 
 /** The longest the switch waits for the new photo before going ahead anyway. */
@@ -32,16 +32,23 @@ function loadPhoto({ srcSet, sizes }: { srcSet: string; sizes: string }) {
 interface VariantLinkProps extends Omit<ComponentProps<typeof Link>, "href" | "onNavigate"> {
   href: string;
   photo?: { srcSet: string; sizes: string };
+  /** How long (ms) a click waits before switching, so the pick can be shown first. */
+  holdMs?: number;
+  /** The option already chosen: a click on it goes nowhere. */
+  isCurrent?: boolean;
 }
 
 /**
  * A flavor or size link. The product photo sweeps over to the new variant
  * (a view transition), so the new photo has to be ready by then: it starts
  * loading as soon as the shopper points at or focuses the link, and the
- * click waits for it (at most MAX_WAIT_MS) before switching.
+ * click waits for it (at most MAX_WAIT_MS) before switching. With `holdMs`
+ * the switch also waits at least that long, and the clicked link carries
+ * `data-picked` meanwhile so it can be styled as the chosen one.
  */
-export default function VariantLink({ href, photo, ...props }: VariantLinkProps) {
+export default function VariantLink({ href, photo, holdMs = 0, isCurrent, onClick, ...props }: VariantLinkProps) {
   const router = useRouter();
+  const [picked, setPicked] = useState(false);
 
   function preload() {
     if (photo) loadPhoto(photo);
@@ -57,13 +64,22 @@ export default function VariantLink({ href, photo, ...props }: VariantLinkProps)
       onPointerEnter={preload}
       onFocus={preload}
       onTouchStart={preload}
+      data-picked={picked || undefined}
+      onClick={(event) => {
+        // A second tap while the first pick is still showing does nothing.
+        if (picked || isCurrent) event.preventDefault();
+        onClick?.(event);
+      }}
       // Only called for an in-app navigation, so Ctrl+click still opens a
       // new tab as usual.
       onNavigate={(event) => {
-        if (!photo) return;
+        if (!photo && !holdMs) return;
         event.preventDefault();
+        setPicked(true);
         const timeout = new Promise((resolve) => setTimeout(resolve, MAX_WAIT_MS));
-        Promise.race([loadPhoto(photo), timeout]).then(() =>
+        const photoReady = photo ? Promise.race([loadPhoto(photo), timeout]) : undefined;
+        const held = new Promise((resolve) => setTimeout(resolve, holdMs));
+        Promise.all([photoReady, held]).then(() =>
           router.push(href, { scroll: false, transitionTypes: [VARIANT_SWITCH] })
         );
       }}

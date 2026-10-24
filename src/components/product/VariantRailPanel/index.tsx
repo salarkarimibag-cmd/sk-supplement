@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useReportRailOpen } from "@/components/product/VariantPhotoFrame";
+import { LIST_FADE_MS, PICK_SHOW_MS } from "@/lib/variants";
 
 /** The share of the photo that must be on screen for the rail to open itself. */
 const PHOTO_VISIBLE_RATIO = 0.7;
@@ -73,6 +74,8 @@ export default function VariantRailPanel({ tabs }: { tabs: RailTab[] }) {
   const [still, setStill] = useState(true);
   // Whether the shopper has the list open; it starts closed.
   const [wantOpen, setWantOpen] = useState(false);
+  // Set once an option is picked: the list shows the pick, then fades.
+  const [picking, setPicking] = useState(false);
   const listId = useId();
   const reportOpen = useReportRailOpen();
 
@@ -174,11 +177,22 @@ export default function VariantRailPanel({ tabs }: { tabs: RailTab[] }) {
         id={listId}
         role="tabpanel"
         inert={!open}
-        // Picking an option sends the shopper to that variant; the list fades away.
+        data-picking={picking || undefined}
+        // Picking another option shows it as chosen for a moment, then fades
+        // the list; the link itself waits for that before switching. The
+        // option that is already chosen just closes the list.
         onClick={(event) => {
-          if ((event.target as HTMLElement).closest("a")) setWantOpen(false);
+          const link = (event.target as HTMLElement).closest("a");
+          if (!link) return;
+          if (link.getAttribute("aria-current") === "page") {
+            setWantOpen(false);
+          } else if (!picking) {
+            setPicking(true);
+            setTimeout(() => setWantOpen(false), PICK_SHOW_MS);
+          }
         }}
-        className={`pointer-events-auto max-h-full w-[30vw] overflow-y-auto overscroll-contain rounded-2xl p-1 transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${GLASS} ${
+        style={{ transitionDuration: `${LIST_FADE_MS}ms` }}
+        className={`group/list pointer-events-auto max-h-full w-[30vw] overflow-y-auto overscroll-contain rounded-2xl p-1 transition ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${GLASS} ${
           open ? "translate-x-0 opacity-100" : "opacity-0 ltr:-translate-x-10 rtl:translate-x-10"
         }`}
       >
