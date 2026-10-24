@@ -284,7 +284,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
                 brand={related.brand}
                 rating={related.rating}
                 reviewCount={related.reviewCount}
-                inStock={related.inStock}
+                stock={related.stock}
                 variantLabel={related.variantSummary && formatVariantSummary(related.variantSummary)}
               />
             ))}

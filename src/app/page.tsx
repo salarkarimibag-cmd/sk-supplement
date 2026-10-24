@@ -64,7 +64,7 @@ export default async function Home() {
                 brand={product.brand}
                 rating={product.rating}
                 reviewCount={product.reviewCount}
-                inStock={product.inStock}
+                stock={product.stock}
                 variantLabel={product.variantSummary && formatVariantSummary(product.variantSummary)}
               />
             ))}
@@ -100,7 +100,7 @@ export default async function Home() {
                   brand={product.brand}
                   rating={product.rating}
                   reviewCount={product.reviewCount}
-                  inStock={product.inStock}
+                  stock={product.stock}
                   variantLabel={product.variantSummary && formatVariantSummary(product.variantSummary)}
                 />
               ))}

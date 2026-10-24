@@ -90,7 +90,7 @@ export default async function ProductsPage(props: PageProps<"/products">) {
               price={product.price}
               imageUrl={product.imageUrl}
               brand={product.brand}
-              inStock={product.inStock}
+              stock={product.stock}
               variantLabel={product.variantSummary && formatVariantSummary(product.variantSummary)}
             />
           ))}

@@ -59,8 +59,9 @@ export default function CartPageClient() {
                     <button
                       type="button"
                       aria-label="زیاد کردن تعداد"
+                      disabled={item.stock !== undefined && item.quantity >= item.stock}
                       onClick={() => setQuantity(item.id, item.quantity + 1)}
-                      className="cursor-pointer px-2.5 py-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                      className="cursor-pointer px-2.5 py-1 hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent dark:hover:bg-zinc-800"
                     >
                       +
                     </button>

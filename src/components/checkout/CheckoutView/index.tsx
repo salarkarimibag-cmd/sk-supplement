@@ -100,12 +100,14 @@ interface AppliedDiscount {
 
 export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }) {
   const router = useRouter();
-  const { items, totalPrice, totalCount, clearCart, syncPrices } = useCart();
-  // The cart's prices were saved in the browser when each product was added,
-  // so they may be out of date. Until the current ones are loaded, nothing
-  // that depends on the total (paying, the card amount, a discount) is allowed.
+  const { items, totalPrice, totalCount, clearCart, syncWithCatalog } = useCart();
+  // The cart's prices and stock were saved in the browser when each product
+  // was added, so they may be out of date. Until the current ones are loaded,
+  // nothing that depends on the total (paying, the card amount, a discount)
+  // is allowed.
   const [priceStatus, setPriceStatus] = useState<"loading" | "ready" | "error">("loading");
   const [pricesChanged, setPricesChanged] = useState(false);
+  const [quantitiesChanged, setQuantitiesChanged] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [discountCodeInput, setDiscountCodeInput] = useState("");
   const [appliedDiscount, setAppliedDiscount] = useState<AppliedDiscount | null>(null);
@@ -144,7 +146,9 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
       .then((response) => (response.ok ? response.json() : Promise.reject()))
       .then((data: { products: CartCatalogEntry[] }) => {
         if (ignore) return;
-        if (syncPrices(data.products)) setPricesChanged(true);
+        const changes = syncWithCatalog(data.products);
+        if (changes.pricesChanged) setPricesChanged(true);
+        if (changes.quantitiesChanged) setQuantitiesChanged(true);
         setPriceStatus("ready");
       })
       .catch(() => {
@@ -154,7 +158,7 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
     return () => {
       ignore = true;
     };
-  }, [productIdsKey, syncPrices]);
+  }, [productIdsKey, syncWithCatalog]);
 
   async function handleApplyDiscount() {
     if (!discountCodeInput.trim()) return;
@@ -462,6 +466,12 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
           <p className="text-sm text-amber-600 dark:text-amber-500">
             قیمت برخی کالاها از زمان افزودن به سبد تغییر کرده و مبالغ به‌روز شده‌اند. لطفاً پیش از
             پرداخت، جمع کل را دوباره بررسی کنید.
+          </p>
+        )}
+        {quantitiesChanged && (
+          <p className="text-sm text-amber-600 dark:text-amber-500">
+            موجودی برخی کالاها کمتر از تعداد سبد شما بود؛ تعداد آن‌ها کم شد یا کالای ناموجود از سبد
+            حذف شد. لطفاً سبد را پیش از پرداخت بررسی کنید.
           </p>
         )}
         {priceStatus === "error" && (

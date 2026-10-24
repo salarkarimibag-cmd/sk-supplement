@@ -8,7 +8,8 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from "react";
-import { syncCartItems, type CartCatalogEntry } from "@/lib/cartSync";
+import { syncCartItems, type CartCatalogEntry, type CartSyncResult } from "@/lib/cartSync";
+import { capToStock } from "@/lib/stock";
 
 export interface CartItem {
   id: string;
@@ -16,6 +17,12 @@ export interface CartItem {
   price: number;
   imageUrl: string;
   quantity: number;
+  /**
+   * The product's stock when it was added (or when checkout last refreshed
+   * it); the cart never goes above it. Missing on lines saved before carts
+   * kept it.
+   */
+  stock?: number;
 }
 
 const STORAGE_KEY = "sk-supplement-cart";
@@ -63,15 +70,18 @@ function getServerSnapshot(): CartItem[] {
 }
 
 /**
- * Replaces the saved prices (and names and photos) with the catalog's and
- * drops products it no longer has; returns whether any price changed. At
- * module level, not inside CartProvider, so it's the same function on every
- * render and an effect can depend on it.
+ * Replaces the saved prices, stock, names and photos with the catalog's,
+ * drops products it no longer has (or that sold out) and lowers quantities
+ * to the stock; returns what changed. At module level, not inside
+ * CartProvider, so it's the same function on every render and an effect can
+ * depend on it.
  */
-function syncPrices(catalog: CartCatalogEntry[]): boolean {
-  const { items, pricesChanged } = syncCartItems(getSnapshot(), catalog);
+function syncWithCatalog(
+  catalog: CartCatalogEntry[]
+): Pick<CartSyncResult, "pricesChanged" | "quantitiesChanged"> {
+  const { items, pricesChanged, quantitiesChanged } = syncCartItems(getSnapshot(), catalog);
   writeCart(items);
-  return pricesChanged;
+  return { pricesChanged, quantitiesChanged };
 }
 
 interface CartContextValue {
@@ -83,7 +93,7 @@ interface CartContextValue {
   removeItem: (id: string) => void;
   setQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
-  syncPrices: (catalog: CartCatalogEntry[]) => boolean;
+  syncWithCatalog: typeof syncWithCatalog;
   totalCount: number;
   totalPrice: number;
 }
@@ -94,14 +104,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const items = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const [isOpen, setIsOpen] = useState(false);
 
+  // Adding a product that's already in the cart also refreshes its saved
+  // details (price, stock) from the page it was added on, then adds one
+  // unit, up to the stock.
   function addItem(item: Omit<CartItem, "quantity">) {
+    // Sold out: capping to the stock would leave a line with quantity 0.
+    if (item.stock !== undefined && item.stock < 1) return;
     const current = getSnapshot();
     const existing = current.find((cartItem) => cartItem.id === item.id);
     const next = existing
       ? current.map((cartItem) =>
-          cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity + 1 } : cartItem
+          cartItem.id === item.id
+            ? { ...cartItem, ...item, quantity: capToStock(cartItem.quantity + 1, item.stock) }
+            : cartItem
         )
-      : [...current, { ...item, quantity: 1 }];
+      : [...current, { ...item, quantity: capToStock(1, item.stock) }];
     writeCart(next);
   }
 
@@ -115,7 +132,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return;
     }
     writeCart(
-      getSnapshot().map((cartItem) => (cartItem.id === id ? { ...cartItem, quantity } : cartItem))
+      getSnapshot().map((cartItem) =>
+        cartItem.id === id
+          ? { ...cartItem, quantity: capToStock(quantity, cartItem.stock) }
+          : cartItem
+      )
     );
   }
 
@@ -143,7 +164,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         removeItem,
         setQuantity,
         clearCart,
-        syncPrices,
+        syncWithCatalog,
         totalCount,
         totalPrice,
       }}

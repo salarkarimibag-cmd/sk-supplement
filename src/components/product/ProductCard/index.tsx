@@ -8,6 +8,7 @@ import Price from "@/components/ui/Price";
 import StarRating from "@/components/ui/StarRating";
 import { useCart } from "@/context/CartContext";
 import { COMING_SOON_LABEL, SALES_OPEN } from "@/lib/sales";
+import { remainingToAdd } from "@/lib/stock";
 
 export interface ProductCardProps {
   id: string;
@@ -17,7 +18,8 @@ export interface ProductCardProps {
   brand?: string;
   rating?: number;
   reviewCount?: number;
-  inStock?: boolean;
+  /** Units in stock; the card never adds more than this to the cart. */
+  stock: number;
   /** e.g. "۳ طعم · ۲ سایز" when this card stands for a whole flavor/size group. */
   variantLabel?: string;
 }
@@ -30,11 +32,15 @@ export default function ProductCard({
   brand,
   rating,
   reviewCount,
-  inStock = true,
+  stock,
   variantLabel,
 }: ProductCardProps) {
-  const { addItem } = useCart();
+  const { addItem, items } = useCart();
   const [justAdded, setJustAdded] = useState(false);
+  const inStock = stock > 0;
+  // What's already in the cart counts against the stock, as on the product page.
+  const inCart = items.find((item) => item.id === id)?.quantity ?? 0;
+  const canAdd = remainingToAdd(stock, inCart) > 0;
 
   useEffect(() => {
     if (!justAdded) return;
@@ -43,7 +49,7 @@ export default function ProductCard({
   }, [justAdded]);
 
   function handleAddToCart() {
-    addItem({ id, name, price, imageUrl });
+    addItem({ id, name, price, imageUrl, stock });
     setJustAdded(true);
   }
 
@@ -95,9 +101,11 @@ export default function ProductCard({
         >
           انتخاب گزینه‌ها
         </Link>
-      ) : inStock && SALES_OPEN ? (
+      ) : inStock && SALES_OPEN && (canAdd || justAdded) ? (
         <button
           type="button"
+          // Stays enabled while "افزوده شد" shows, so the button doesn't flicker
+          // when that click used up the last unit; addItem caps it anyway.
           onClick={handleAddToCart}
           className={`mt-3 flex h-11 w-full cursor-pointer items-center justify-center gap-1.5 text-sm font-semibold transition-shadow ${
             justAdded
@@ -117,9 +125,9 @@ export default function ProductCard({
         <button
           type="button"
           disabled
-          className="mt-3 flex h-11 w-full cursor-not-allowed items-center justify-center border border-zinc-300 text-sm font-semibold text-zinc-400 dark:border-zinc-700 dark:text-zinc-500"
+          className="mt-3 flex h-11 w-full cursor-not-allowed items-center justify-center border border-zinc-300 px-2 text-center text-sm leading-tight font-semibold text-zinc-400 dark:border-zinc-700 dark:text-zinc-500"
         >
-          {SALES_OPEN ? "ناموجود" : COMING_SOON_LABEL}
+          {!SALES_OPEN ? COMING_SOON_LABEL : inStock ? "همه‌ی موجودی در سبد شماست" : "ناموجود"}
         </button>
       )}
     </div>
