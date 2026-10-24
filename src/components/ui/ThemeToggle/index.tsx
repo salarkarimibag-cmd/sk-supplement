@@ -4,12 +4,24 @@ import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
+  // Animations stay off until the saved theme has been applied, so the knob
+  // doesn't slide on page load.
+  const [animated, setAnimated] = useState(false);
 
   useEffect(() => {
     function syncTheme() {
       setIsDark(document.documentElement.classList.contains("dark"));
     }
     syncTheme();
+    // Two frames: the synced position must be painted before transitions turn on.
+    let second = 0;
+    const first = requestAnimationFrame(() => {
+      second = requestAnimationFrame(() => setAnimated(true));
+    });
+    return () => {
+      cancelAnimationFrame(first);
+      cancelAnimationFrame(second);
+    };
   }, []);
 
   function toggleTheme() {
@@ -32,12 +44,16 @@ export default function ThemeToggle() {
       aria-label="حالت شب"
       dir="ltr"
       onClick={toggleTheme}
-      className={`relative h-7 w-12 shrink-0 cursor-pointer rounded-full transition-colors duration-300 ${
+      className={`relative h-7 w-12 shrink-0 cursor-pointer rounded-full ${
+        animated ? "transition-colors duration-300" : ""
+      } ${
         isDark ? "bg-sky-500" : "bg-neutral-500"
       }`}
     >
       <span
-        className={`absolute start-0.5 top-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-white text-neutral-800 shadow-md transition-transform duration-300 ${
+        className={`absolute start-0.5 top-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-white text-neutral-800 shadow-md ${
+          animated ? "transition-transform duration-300" : ""
+        } ${
           isDark ? "translate-x-5" : "translate-x-0"
         }`}
       >
@@ -47,7 +63,9 @@ export default function ThemeToggle() {
           fill="none"
           stroke="currentColor"
           strokeWidth={2}
-          className={`absolute h-4 w-4 text-amber-500 transition-all duration-300 ${
+          className={`absolute h-4 w-4 text-amber-500 ${
+            animated ? "transition-all duration-300" : ""
+          } ${
             isDark ? "scale-0 -rotate-90 opacity-0" : "scale-100 rotate-0 opacity-100"
           }`}
         >
@@ -63,7 +81,9 @@ export default function ThemeToggle() {
           fill="none"
           stroke="currentColor"
           strokeWidth={2}
-          className={`absolute h-4 w-4 text-black transition-all duration-300 ${
+          className={`absolute h-4 w-4 text-black ${
+            animated ? "transition-all duration-300" : ""
+          } ${
             isDark ? "scale-100 rotate-0 opacity-100" : "scale-0 rotate-90 opacity-0"
           }`}
         >
