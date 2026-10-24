@@ -54,12 +54,13 @@ export interface RailTab {
 
 /**
  * A glass control on the right edge of the product photo (mobile), like a
- * phone's side control strip: one button per kind of choice, and the list of
- * the active one slides out beside it. The rail only shows while the whole
- * photo is on screen and the page is standing still: it fades away as soon as
- * the shopper scrolls and returns, list open, once the page settles. Tapping
- * the active button closes the list by hand. It must sit inside the
- * VariantPhotoFrame, which it watches and tells when its list is open.
+ * phone's side control strip: one button per kind of choice. The strip only
+ * shows while the whole photo is on screen and the page is standing still; it
+ * fades away as soon as the shopper scrolls and returns once the page
+ * settles. Tapping a button slides out that choice's list beside the strip;
+ * picking an option (or scrolling, or tapping the button again) fades it
+ * away. It must sit inside the VariantPhotoFrame, which it watches and tells
+ * when its list is open.
  */
 export default function VariantRailPanel({ tabs }: { tabs: RailTab[] }) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -70,8 +71,8 @@ export default function VariantRailPanel({ tabs }: { tabs: RailTab[] }) {
   );
   const [photoVisible, setPhotoVisible] = useState(false);
   const [still, setStill] = useState(true);
-  // The shopper's choice for the list; every scroll resets it to open.
-  const [wantOpen, setWantOpen] = useState(true);
+  // Whether the shopper has the list open; it starts closed.
+  const [wantOpen, setWantOpen] = useState(false);
   const listId = useId();
   const reportOpen = useReportRailOpen();
 
@@ -99,7 +100,7 @@ export default function VariantRailPanel({ tabs }: { tabs: RailTab[] }) {
     let idleTimer: ReturnType<typeof setTimeout>;
     function onScroll() {
       setStill(false);
-      setWantOpen(true);
+      setWantOpen(false);
       clearTimeout(idleTimer);
       idleTimer = setTimeout(() => setStill(true), IDLE_MS);
     }
@@ -173,6 +174,10 @@ export default function VariantRailPanel({ tabs }: { tabs: RailTab[] }) {
         id={listId}
         role="tabpanel"
         inert={!open}
+        // Picking an option sends the shopper to that variant; the list fades away.
+        onClick={(event) => {
+          if ((event.target as HTMLElement).closest("a")) setWantOpen(false);
+        }}
         className={`pointer-events-auto max-h-full w-[30vw] overflow-y-auto overscroll-contain rounded-2xl p-1 transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${GLASS} ${
           open ? "translate-x-0 opacity-100" : "opacity-0 ltr:-translate-x-10 rtl:translate-x-10"
         }`}
