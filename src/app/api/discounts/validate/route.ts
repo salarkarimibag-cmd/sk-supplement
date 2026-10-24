@@ -1,6 +1,4 @@
-import { connectToDatabase } from "@/lib/db";
-import { DiscountCodeModel } from "@/models/DiscountCode";
-import { checkDiscount } from "@/lib/discounts";
+import { findAndCheckDiscount } from "@/lib/discountLookup";
 
 interface ValidateBody {
   code?: unknown;
@@ -21,11 +19,7 @@ export async function POST(request: Request) {
     return Response.json({ valid: false, message: "کد تخفیف یا مبلغ نامعتبر است." }, { status: 400 });
   }
 
-  await connectToDatabase();
-
-  const discount = await DiscountCodeModel.findOne({ code: body.code.toUpperCase().trim() });
-
-  const result = checkDiscount(discount, body.subtotal);
+  const { result } = await findAndCheckDiscount(body.code, body.subtotal);
 
   return Response.json(result);
 }
