@@ -12,7 +12,9 @@ import ProductCard from "@/components/product/ProductCard";
 import ProductDetailPanel from "@/components/product/ProductDetailPanel";
 import ProductInfo from "@/components/product/ProductInfo";
 import TrustBadges from "@/components/product/TrustBadges";
+import VariantPhotoFrame from "@/components/product/VariantPhotoFrame";
 import VariantPicker from "@/components/product/VariantPicker";
+import VariantRail from "@/components/product/VariantRail";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import JsonLd from "@/components/seo/JsonLd";
 import { getSessionUser } from "@/lib/auth";
@@ -106,7 +108,13 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
       </nav>
 
       <div className="mt-6 grid gap-10 lg:grid-cols-2">
-        <div className="relative aspect-square bg-white dark:bg-zinc-900">
+        {/* With variant choices the photo goes edge to edge on mobile, so the
+            side panels sit against the screen edges. */}
+        <VariantPhotoFrame
+          className={`aspect-square bg-white dark:bg-zinc-900 ${
+            hasVariantChoice ? "-mx-6 lg:mx-0" : ""
+          }`}
+        >
           {/* On a flavor or size switch the old photo sweeps out and the new
               one sweeps in, like the home hero. The key makes the two photos
               an exit/enter pair; any other navigation shows the photo as is. */}
@@ -116,7 +124,9 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
             share={{ [VARIANT_SWITCH]: "variant-photo", default: "none" }}
             default="none"
           >
-            <div className="absolute inset-0">
+            {/* Full size until the mobile variant rail opens; then it moves
+                away from the rail, which sits on the right edge. */}
+            <div className="absolute inset-0 transition-[inset] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-data-[open]/photo:inset-y-[16%] group-data-[open]/photo:start-[36%] group-data-[open]/photo:end-0 motion-reduce:transition-none lg:group-data-[open]/photo:inset-0">
               {/* A plain <img> (with the same optimized sources as <Image>,
                   from getImageProps) because <Image> sets onLoad, and React
                   only holds the animation until the new photo is decoded for
@@ -132,7 +142,8 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
               ناموجود
             </span>
           )}
-        </div>
+          {hasVariantChoice && <VariantRail flavors={variants.flavors} sizes={variants.sizes} />}
+        </VariantPhotoFrame>
 
         <div>
           {product.brand && (
@@ -146,12 +157,19 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
 
           <p className="mt-4 text-2xl font-bold"><Price amount={product.price} /></p>
 
-          {hasVariantChoice ? (
-            <div className="mt-5">
+          {/* On mobile the choices hang over the photo (VariantRail), so the
+              picker is desktop-only and the badges below show what is chosen. */}
+          {hasVariantChoice && (
+            <div className="mt-5 hidden lg:block">
               <VariantPicker flavors={variants.flavors} sizes={variants.sizes} />
             </div>
-          ) : (product.flavor || product.size) && (
-            <div className="mt-4 flex flex-wrap gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+          )}
+          {(product.flavor || product.size) && (
+            <div
+              className={`mt-4 flex flex-wrap gap-2 text-sm text-zinc-600 dark:text-zinc-400 ${
+                hasVariantChoice ? "lg:hidden" : ""
+              }`}
+            >
               {product.flavor && (
                 <span className="rounded-full border border-zinc-300 px-3 py-1 dark:border-zinc-700">
                   طعم: {product.flavor}
@@ -159,7 +177,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
               )}
               {product.size && (
                 <span className="rounded-full border border-zinc-300 px-3 py-1 dark:border-zinc-700">
-                  سایز: {product.size}
+                  وزن / سایز: {product.size}
                 </span>
               )}
             </div>

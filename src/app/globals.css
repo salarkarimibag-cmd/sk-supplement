@@ -206,6 +206,41 @@ p.shine {
   }
 }
 
+/*
+ * On mobile the flavor and weight rail sits on the right edge of the photo,
+ * so the photos only travel on the left, the side without the rail: the old
+ * one slips out to the left and the new one glides in from there, never
+ * passing over the rail. (1024px is Tailwind's `lg`, where the rail gives way
+ * to the picker and the sweep above applies.)
+ */
+@media (max-width: 1023.98px) {
+  ::view-transition-old(.variant-photo) {
+    animation-name: variant-photo-out-left;
+    animation-duration: 450ms;
+  }
+
+  ::view-transition-new(.variant-photo) {
+    animation-name: variant-photo-in-left;
+    animation-duration: 800ms;
+  }
+}
+
+@keyframes variant-photo-out-left {
+  to {
+    opacity: 0;
+    transform: translateX(-60%) scale(0.85);
+    filter: blur(4px);
+  }
+}
+
+@keyframes variant-photo-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-60%) scale(0.85);
+    filter: blur(4px);
+  }
+}
+
 /* Clicks during the animation reach the page instead of the overlay. */
 ::view-transition {
   pointer-events: none;

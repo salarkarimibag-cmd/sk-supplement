@@ -31,6 +31,12 @@ export interface VariantOptions {
  */
 export const VARIANT_SWITCH = "variant-switch";
 
+/** How long (ms) a pick in the mobile rail stays on screen before its list fades away. */
+export const PICK_SHOW_MS = 250;
+
+/** How long (ms) that fade takes; the switch to the picked variant waits for it. */
+export const LIST_FADE_MS = 400;
+
 /** The `sizes` of a product page's photo, shared with the variant links that preload it. */
 export const PRODUCT_PHOTO_SIZES = "(min-width: 1024px) 50vw, 100vw";
 

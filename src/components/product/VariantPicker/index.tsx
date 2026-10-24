@@ -3,7 +3,7 @@ import VariantLink from "@/components/product/VariantLink";
 import { PRODUCT_PHOTO_SIZES, type VariantOption, type VariantOptions } from "@/lib/variants";
 
 /** The optimized sources of a variant's photo, as its product page will request them. */
-function photoSources(imageUrl: string | undefined) {
+export function photoSources(imageUrl: string | undefined) {
   if (!imageUrl) return undefined;
   const { props } = getImageProps({ src: imageUrl, alt: "", fill: true, sizes: PRODUCT_PHOTO_SIZES });
   return props.srcSet ? { srcSet: props.srcSet, sizes: PRODUCT_PHOTO_SIZES } : undefined;
@@ -48,7 +48,7 @@ export default function VariantPicker({ flavors, sizes }: VariantOptions) {
   return (
     <div className="flex flex-col gap-4">
       {flavors.length > 0 && <OptionRow label="طعم" options={flavors} />}
-      {sizes.length > 0 && <OptionRow label="سایز" options={sizes} />}
+      {sizes.length > 0 && <OptionRow label="وزن / سایز" options={sizes} />}
     </div>
   );
 }
