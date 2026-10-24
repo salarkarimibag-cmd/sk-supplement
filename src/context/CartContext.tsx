@@ -8,6 +8,7 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from "react";
+import { syncCartItems, type CartCatalogEntry } from "@/lib/cartSync";
 
 export interface CartItem {
   id: string;
@@ -61,6 +62,18 @@ function getServerSnapshot(): CartItem[] {
   return EMPTY_CART;
 }
 
+/**
+ * Replaces the saved prices (and names and photos) with the catalog's and
+ * drops products it no longer has; returns whether any price changed. At
+ * module level, not inside CartProvider, so it's the same function on every
+ * render and an effect can depend on it.
+ */
+function syncPrices(catalog: CartCatalogEntry[]): boolean {
+  const { items, pricesChanged } = syncCartItems(getSnapshot(), catalog);
+  writeCart(items);
+  return pricesChanged;
+}
+
 interface CartContextValue {
   items: CartItem[];
   isOpen: boolean;
@@ -70,6 +83,7 @@ interface CartContextValue {
   removeItem: (id: string) => void;
   setQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
+  syncPrices: (catalog: CartCatalogEntry[]) => boolean;
   totalCount: number;
   totalPrice: number;
 }
@@ -129,6 +143,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         removeItem,
         setQuantity,
         clearCart,
+        syncPrices,
         totalCount,
         totalPrice,
       }}
