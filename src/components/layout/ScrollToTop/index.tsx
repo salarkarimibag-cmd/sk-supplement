@@ -149,6 +149,7 @@ export default function ScrollToTop() {
 
   // On a product page phones show a sticky add-to-cart bar (see
   // ProductDetailPanel) at the bottom, so lift the button above it there.
+  // Phones keep it well off the bottom edge: the rocket's flame hangs below it.
   const aboveStickyBar = pathname.startsWith("/products/");
 
   return (
@@ -160,7 +161,7 @@ export default function ScrollToTop() {
       inert={!visible}
       onClick={scrollToTop}
       className={`group fixed start-4 z-20 h-11 w-11 cursor-pointer rounded-full text-white transition-all duration-300 ease-out hover:-translate-y-0.5 active:scale-95 lg:start-6 lg:bottom-6 ${
-        aboveStickyBar ? "bottom-24" : "bottom-4"
+        aboveStickyBar ? "bottom-30" : "bottom-10"
       } ${
         visible || launching
           ? "translate-y-0 opacity-100"
