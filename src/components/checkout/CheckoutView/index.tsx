@@ -504,7 +504,8 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
           )}
           <div className="flex items-center justify-between">
             <span className="text-zinc-600 dark:text-zinc-400">ارسال</span>
-            <span className="text-zinc-500">در مرحله‌ی بعد محاسبه می‌شود</span>
+            {/* Same green as the discount line: both are savings for the buyer. */}
+            <span className="text-emerald-600">رایگان</span>
           </div>
           <div className="mt-2 flex items-center justify-between border-t border-zinc-200 pt-3 text-base font-bold dark:border-zinc-800">
             <span>جمع کل</span>

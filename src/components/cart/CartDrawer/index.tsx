@@ -116,7 +116,7 @@ export default function CartDrawer() {
                 <Price amount={totalPrice} />
               </span>
             </div>
-            <p className="mt-1 text-xs text-zinc-500">مالیات و هزینه‌ی ارسال در تسویه‌حساب محاسبه می‌شود.</p>
+            <p className="mt-1 text-xs text-zinc-500">ارسال به سراسر کشور رایگان است.</p>
 
             {SALES_OPEN ? (
               <Link
