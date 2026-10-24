@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { ProductModel, type Product } from "@/models/Product";
-import { DiscountCodeModel } from "@/models/DiscountCode";
-import { checkDiscount } from "@/lib/discounts";
+import { findAndCheckDiscount } from "@/lib/discountLookup";
 import { priceCart, type PricedLine } from "@/lib/pricing";
 
 // Only what the buyer actually chooses: who they are, where to ship, which
@@ -67,8 +66,7 @@ export async function buildOrderDraft(body: OrderRequest): Promise<BuildOrderDra
   let discountCode: string | undefined;
   let discountAmount = 0;
   if (body.discountCode) {
-    const discount = await DiscountCodeModel.findOne({ code: body.discountCode.toUpperCase() });
-    const result = checkDiscount(discount, priced.subtotal);
+    const { result } = await findAndCheckDiscount(body.discountCode, priced.subtotal);
     if (!result.valid) {
       return { ok: false, message: result.message };
     }
