@@ -5,6 +5,8 @@ import {
   discountInputSchema,
   endOfTehranDay,
   formatDiscountValue,
+  heldOrdersFilter,
+  PENDING_HOLD_MS,
 } from "./discounts";
 import type { DiscountCode } from "@/models/DiscountCode";
 
@@ -106,6 +108,23 @@ describe("checkDiscount", () => {
   });
 });
 
+describe("heldOrdersFilter", () => {
+  it("matches card orders awaiting the admin and recent pending orders with the code", () => {
+    const now = Date.parse("2026-11-01T12:00:00Z");
+    expect(heldOrdersFilter("WELCOME10", now)).toEqual({
+      discountCode: "WELCOME10",
+      $or: [
+        { status: "awaiting_verification" },
+        { status: "pending", createdAt: { $gte: new Date(now - PENDING_HOLD_MS) } },
+      ],
+    });
+  });
+
+  it("holds a pending order for 30 minutes", () => {
+    expect(PENDING_HOLD_MS).toBe(30 * 60 * 1000);
+  });
+});
+
 describe("checkDiscount usage limit", () => {
   it("accepts a code below its usage limit", () => {
     const result = checkDiscount(makeDiscount({ maxUses: 5, usedCount: 4 }), 100_000);
@@ -119,6 +138,20 @@ describe("checkDiscount usage limit", () => {
 
   it("treats a missing limit as unlimited", () => {
     const result = checkDiscount(makeDiscount({ maxUses: null, usedCount: 1_000 }), 100_000);
+    expect(result.valid).toBe(true);
+  });
+
+  it("counts unpaid orders that hold the code against the limit", () => {
+    const discount = makeDiscount({ maxUses: 5, usedCount: 3 });
+    expect(checkDiscount(discount, 100_000, 1).valid).toBe(true);
+    expect(checkDiscount(discount, 100_000, 2)).toEqual({
+      valid: false,
+      message: "ظرفیت استفاده از این کد تخفیف تمام شده است.",
+    });
+  });
+
+  it("ignores held uses for a code without a limit", () => {
+    const result = checkDiscount(makeDiscount({ maxUses: null, usedCount: 0 }), 100_000, 50);
     expect(result.valid).toBe(true);
   });
 });

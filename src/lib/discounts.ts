@@ -27,10 +27,16 @@ export function endOfTehranDay(date: Date): Date {
  * Checks a discount code against a cart subtotal and computes the amount to
  * take off, without touching the database — the caller looks up the
  * DiscountCode document and passes it in.
+ *
+ * `heldUses` is how many orders using the code are placed but not yet paid
+ * (see countHeldUses). They count against `maxUses` too: usedCount only
+ * grows once an order is paid, so without them several buyers checking out
+ * at once could all pass the limit.
  */
 export function checkDiscount(
   discount: DiscountCode | null,
-  subtotal: number
+  subtotal: number,
+  heldUses = 0
 ): DiscountCheckResult {
   if (!discount || !discount.active) {
     return { valid: false, message: "کد تخفیف نامعتبر است." };
@@ -41,13 +47,33 @@ export function checkDiscount(
     return { valid: false, message: "کد تخفیف منقضی شده است." };
   }
 
-  if (discount.maxUses != null && (discount.usedCount ?? 0) >= discount.maxUses) {
+  if (discount.maxUses != null && (discount.usedCount ?? 0) + heldUses >= discount.maxUses) {
     return { valid: false, message: "ظرفیت استفاده از این کد تخفیف تمام شده است." };
   }
 
   const discountAmount = calculateDiscountAmount(discount, subtotal);
 
   return { valid: true, code: discount.code, discountAmount };
+}
+
+/** How long an unpaid ZarinPal order holds its discount code. */
+export const PENDING_HOLD_MS = 30 * 60 * 1000;
+
+/**
+ * The orders that hold a use of `code` without having paid yet: card
+ * transfers waiting for the admin, and ZarinPal orders sent to the gateway in
+ * the last PENDING_HOLD_MS. A buyer who leaves the gateway without paying
+ * never comes back to mark the order failed, so a pending order stops
+ * holding the code after that time instead of blocking it forever.
+ */
+export function heldOrdersFilter(code: string, now: number) {
+  return {
+    discountCode: code,
+    $or: [
+      { status: "awaiting_verification" },
+      { status: "pending", createdAt: { $gte: new Date(now - PENDING_HOLD_MS) } },
+    ],
+  };
 }
 
 /** The raw amount-off calculation: percent of subtotal, or a fixed amount capped at the subtotal. */
