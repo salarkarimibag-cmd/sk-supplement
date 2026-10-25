@@ -1,12 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Menu, User, X } from "lucide-react";
 import type { HeaderUser } from "@/components/layout/Header";
 import ChevronCircle from "@/components/ui/ChevronCircle";
 import Collapsible from "@/components/ui/Collapsible";
+import { useOverlay } from "@/hooks/useOverlay";
 import type { NavLink } from "@/lib/navigation";
+
+// Tailwind's md breakpoint, where the menu button and panel are hidden.
+const DESKTOP_QUERY = "(min-width: 48rem)";
 
 const ITEM_CLASS =
   "px-6 py-4 text-lg transition-colors hover:bg-zinc-100 hover:text-sky-600 dark:hover:bg-zinc-800";
@@ -40,8 +44,28 @@ export default function MobileMenu({
     setIsBrandsOpen(false);
   }
 
+  // The button and the panel together: Tab cycles between them while the
+  // menu is open, so focus can't reach the page hidden behind the panel.
+  const menuRef = useRef<HTMLDivElement>(null);
+  useOverlay(isOpen, close, menuRef);
+
+  // Both are hidden from md up, so a window widened past it (a tablet turned
+  // sideways) closes the menu instead of leaving the page unable to scroll.
+  useEffect(() => {
+    const desktop = window.matchMedia(DESKTOP_QUERY);
+    function handleChange() {
+      if (desktop.matches) {
+        setIsOpen(false);
+        setIsBrandsOpen(false);
+      }
+    }
+    desktop.addEventListener("change", handleChange);
+    return () => desktop.removeEventListener("change", handleChange);
+  }, []);
+
   return (
-    <>
+    // display: contents, so this wrapper doesn't change the header's layout.
+    <div ref={menuRef} className="contents">
       <button
         type="button"
         aria-label={isOpen ? "بستن منو" : "باز کردن منو"}
@@ -123,6 +147,6 @@ export default function MobileMenu({
           </Link>
         </div>
       </div>
-    </>
+    </div>
   );
 }

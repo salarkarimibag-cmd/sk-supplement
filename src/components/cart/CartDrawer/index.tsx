@@ -1,13 +1,19 @@
 "use client";
 
+import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Price from "@/components/ui/Price";
 import { useCart } from "@/context/CartContext";
+import { useOverlay } from "@/hooks/useOverlay";
 import { COMING_SOON_LABEL, SALES_OPEN } from "@/lib/sales";
 
 export default function CartDrawer() {
   const { items, isOpen, closeCart, removeItem, setQuantity, totalPrice } = useCart();
+  const drawerRef = useRef<HTMLDivElement>(null);
+  // Escape closes it, focus stays inside while it's open, the page behind
+  // doesn't scroll.
+  useOverlay(isOpen, closeCart, drawerRef);
 
   return (
     <>
@@ -20,7 +26,10 @@ export default function CartDrawer() {
       />
 
       <div
+        ref={drawerRef}
         role="dialog"
+        // Tells screen readers the page behind is out of reach while it's open.
+        aria-modal="true"
         aria-label="سبد خرید"
         // Closed, the drawer stays mounted off-screen; `inert` keeps its
         // buttons and links out of the Tab order and hides it from screen readers.
