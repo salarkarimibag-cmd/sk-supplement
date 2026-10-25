@@ -27,7 +27,7 @@ interface HeroShowcaseProps {
   reviewCount: number;
   /** The best-selling product to feature under the product photos, if any. */
   bestSeller?: Pick<ListedProduct, "id" | "name" | "price" | "imageUrl">;
-  /** The advertised discount code, or null to show the generic offer text. */
+  /** The advertised discount code, or null to show no offer at all. */
   promotion: HeroPromotion | null;
   /** Products whose photos take turns on the end side of the hero. */
   showcaseProducts: ShowcaseProduct[];
@@ -118,16 +118,18 @@ export default function HeroShowcase({
           black, so it neither covers the man nor the products. */}
       <div className="mx-auto flex max-w-6xl items-center px-6 pt-80 pb-14 sm:pt-96 md:min-h-150 md:py-24">
         <div className="text-start">
-          {/* The seasonal offer, as a small pill above the headline. */}
-          <Link
-            href="/products"
-            style={enterDelay(0)}
-            className={`group mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 py-1.5 ps-1.5 pe-3 text-sm text-zinc-200 backdrop-blur-sm transition hover:border-white/30 hover:bg-white/10 ${ENTER}`}
-          >
-            <span className="rounded-full bg-sky-600 px-2.5 py-0.5 text-xs font-bold text-white">
-              حراج فصل
-            </span>
-            {promotion ? (
+          {/* The current offer, as a small pill above the headline. Only
+              while the code can really be used (see getHeroPromotion): with
+              no active code there is no offer, so nothing is advertised. */}
+          {promotion && (
+            <Link
+              href="/products"
+              style={enterDelay(0)}
+              className={`group mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 py-1.5 ps-1.5 pe-3 text-sm text-zinc-200 backdrop-blur-sm transition hover:border-white/30 hover:bg-white/10 ${ENTER}`}
+            >
+              <span className="rounded-full bg-sky-600 px-2.5 py-0.5 text-xs font-bold text-white">
+                حراج فصل
+              </span>
               <span>
                 {promotion.amount} تخفیف با کد{" "}
                 {/* Latin text inside Persian: keep it left-to-right. */}
@@ -135,14 +137,12 @@ export default function HeroShowcase({
                   {promotion.code}
                 </bdi>
               </span>
-            ) : (
-              "تخفیف ویژه روی مکمل‌ها"
-            )}
-            <ChevronLeft
-              aria-hidden="true"
-              className="h-4 w-4 transition-transform group-hover:-translate-x-0.5"
-            />
-          </Link>
+              <ChevronLeft
+                aria-hidden="true"
+                className="h-4 w-4 transition-transform group-hover:-translate-x-0.5"
+              />
+            </Link>
+          )}
 
           {/* The hero holds the page's only h1, as the old banner did. */}
           <h1
