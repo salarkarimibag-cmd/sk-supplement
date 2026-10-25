@@ -1,4 +1,5 @@
-import { findAndCheckDiscount } from "@/lib/discountLookup";
+import { checkDiscountForVisitor } from "@/lib/discountLookup";
+import { getClientIp, getOrSetDeviceId } from "@/lib/rateLimit";
 
 interface ValidateBody {
   code?: unknown;
@@ -19,7 +20,11 @@ export async function POST(request: Request) {
     return Response.json({ valid: false, message: "کد تخفیف یا مبلغ نامعتبر است." }, { status: 400 });
   }
 
-  const { result } = await findAndCheckDiscount(body.code, body.subtotal);
+  const { result, rateLimited } = await checkDiscountForVisitor(body.code, body.subtotal, {
+    ip: getClientIp(request),
+    deviceId: await getOrSetDeviceId(),
+  });
 
-  return Response.json(result);
+  // CheckoutView shows `message` for any response without `valid: true`.
+  return Response.json(result, { status: rateLimited ? 429 : 200 });
 }
