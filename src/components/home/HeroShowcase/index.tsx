@@ -144,20 +144,24 @@ export default function HeroShowcase({
             />
           </Link>
 
-          {/* The hero holds the page's only h1, as the old banner did. */}
+          {/* The hero holds the page's only h1, as the old banner did. It
+              leads with "مکمل اصل": what shoppers search for, and their
+              biggest worry when buying supplements (fakes). */}
           <h1
             style={enterDelay(1)}
             className={`bg-linear-to-b from-white to-zinc-400 bg-clip-text text-5xl leading-tight font-extrabold tracking-tight text-transparent sm:text-6xl lg:text-7xl ${ENTER}`}
           >
-            قدرت واقعی
+            مکمل اصل،
             <br />
-            رو بساز
+            نتیجه‌ی واقعی
           </h1>
           <p
             style={enterDelay(2)}
-            className={`mt-5 max-w-md text-base leading-relaxed text-zinc-300 sm:text-lg ${ENTER}`}
+            // text-balance evens out the lines, so the last one isn't a single word.
+            className={`mt-5 max-w-md text-base leading-relaxed text-balance text-zinc-300 sm:text-lg ${ENTER}`}
           >
-            مکمل‌های اصل و باکیفیت برای هر مرحله از مسیر تمرینیت؛ از اولین روز باشگاه تا روی سکو.
+            تضمین اصالت کالا، ارسال رایگان به سراسر کشور و مشاوره برای انتخاب درست؛ از اولین روز
+            باشگاه تا روی سکو.
           </p>
           <div style={enterDelay(3)} className={`mt-8 flex flex-wrap items-center gap-4 ${ENTER}`}>
             {/* The one primary action, in the brand's solid blue. */}
