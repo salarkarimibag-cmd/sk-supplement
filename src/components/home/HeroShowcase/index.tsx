@@ -160,8 +160,9 @@ export default function HeroShowcase({
             // text-balance evens out the lines, so the last one isn't a single word.
             className={`mt-5 max-w-md text-base leading-relaxed text-balance text-zinc-300 sm:text-lg ${ENTER}`}
           >
-            تضمین اصالت کالا، ارسال رایگان به سراسر کشور و مشاوره برای انتخاب درست؛ از اولین روز
-            باشگاه تا روی سکو.
+            از اولین روز باشگاه تا روی سکو،{" "}
+            {/* One phrase: don't let the line break between its two words. */}
+            <span className="whitespace-nowrap">کنارت هستیم؛</span> با مشاوره برای انتخاب درست.
           </p>
           <div style={enterDelay(3)} className={`mt-8 flex flex-wrap items-center gap-4 ${ENTER}`}>
             {/* The one primary action, in the brand's solid blue. */}
