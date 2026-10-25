@@ -16,8 +16,9 @@ export interface ProductCardProps {
   price: number;
   imageUrl: string;
   brand?: string;
-  rating?: number;
-  reviewCount?: number;
+  /** Required, so every product list shows the same card (stars appear once it has reviews). */
+  rating: number;
+  reviewCount: number;
   /** Units in stock; the card never adds more than this to the cart. */
   stock: number;
   /** e.g. "۳ طعم · ۲ سایز" when this card stands for a whole flavor/size group. */
@@ -75,15 +76,11 @@ export default function ProductCard({
           <p className="mt-4 text-xs font-semibold text-zinc-500 dark:text-zinc-400">{brand}</p>
         )}
         <h3
-          className={`${brand ? "mt-1" : "mt-4"} line-clamp-2 text-sm font-bold underline-offset-4 transition-colors group-hover:text-sky-600 group-has-[button:hover]/card:underline ${
-            rating !== undefined ? "min-h-10" : ""
-          }`}
+          className={`${brand ? "mt-1" : "mt-4"} line-clamp-2 min-h-10 text-sm font-bold underline-offset-4 transition-colors group-hover:text-sky-600 group-has-[button:hover]/card:underline`}
         >
           {name}
         </h3>
-        {rating !== undefined && reviewCount !== undefined && (
-          <StarRating rating={rating} reviewCount={reviewCount} className="mt-1.5" />
-        )}
+        <StarRating rating={rating} reviewCount={reviewCount} className="mt-1.5" />
         {variantLabel && (
           <p className="mt-1.5 text-xs text-zinc-500 dark:text-zinc-400">{variantLabel}</p>
         )}

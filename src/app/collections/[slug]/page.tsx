@@ -113,6 +113,8 @@ export default async function CollectionPage(props: PageProps<"/collections/[slu
                 price={product.price}
                 imageUrl={product.imageUrl}
                 brand={product.brand}
+                rating={product.rating}
+                reviewCount={product.reviewCount}
                 stock={product.stock}
                 variantLabel={product.variantSummary && formatVariantSummary(product.variantSummary)}
               />

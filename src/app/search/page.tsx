@@ -52,6 +52,8 @@ export default async function SearchPage(props: PageProps<"/search">) {
               price={product.price}
               imageUrl={product.imageUrl}
               brand={product.brand}
+              rating={product.rating}
+              reviewCount={product.reviewCount}
               stock={product.stock}
               variantLabel={product.variantSummary && formatVariantSummary(product.variantSummary)}
             />
