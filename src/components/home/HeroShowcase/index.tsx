@@ -128,7 +128,7 @@ export default function HeroShowcase({
               className={`group mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 py-1.5 ps-1.5 pe-3 text-sm text-zinc-200 backdrop-blur-sm transition hover:border-white/30 hover:bg-white/10 ${ENTER}`}
             >
               <span className="rounded-full bg-sky-600 px-2.5 py-0.5 text-xs font-bold text-white">
-                حراج فصل
+                هدیه‌ی خرید اول
               </span>
               <span>
                 {promotion.amount} تخفیف با کد{" "}
