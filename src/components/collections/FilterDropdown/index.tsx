@@ -56,6 +56,12 @@ export default function FilterDropdown({ label, paramName, options }: FilterDrop
     pushParams(new Set());
   }
 
+  // Nothing to filter by (e.g. a category with no flavors): hide the
+  // dropdown. It stays while something is selected (an old link), so the
+  // shopper can still clear it. This comes after the hooks, which must run
+  // on every render.
+  if (options.length === 0 && selected.size === 0) return null;
+
   return (
     <div ref={containerRef} className="relative">
       <button

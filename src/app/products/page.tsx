@@ -64,11 +64,10 @@ export default async function ProductsPage(props: PageProps<"/products">) {
       <div className="mt-8 flex flex-wrap items-center justify-between gap-4 py-4">
         <div className="flex items-center gap-4">
           <span className="text-sm text-zinc-500">فیلتر:</span>
+          {/* Each dropdown hides itself when it has no options. */}
           <FilterDropdown label="طعم" paramName="flavor" options={flavorOptions} />
           <FilterDropdown label="سایز" paramName="size" options={sizeOptions} />
-          {brandOptions.length > 0 && (
-            <FilterDropdown label="برند" paramName="brand" options={brandOptions} />
-          )}
+          <FilterDropdown label="برند" paramName="brand" options={brandOptions} />
         </div>
 
         <div className="flex items-center gap-4">

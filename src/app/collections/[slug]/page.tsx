@@ -83,13 +83,10 @@ export default async function CollectionPage(props: PageProps<"/collections/[slu
         <div className="flex flex-wrap items-center justify-between gap-4 py-4">
           <div className="flex items-center gap-4">
             <span className="text-sm text-zinc-500">فیلتر:</span>
-            {brandOptions.length > 0 && (
-              <FilterDropdown label="برند" paramName="brand" options={brandOptions} />
-            )}
+            {/* Each dropdown hides itself when it has no options. */}
+            <FilterDropdown label="برند" paramName="brand" options={brandOptions} />
             <FilterDropdown label="طعم" paramName="flavor" options={flavorOptions} />
-            {sizeOptions.length > 0 && (
-              <FilterDropdown label="سایز" paramName="size" options={sizeOptions} />
-            )}
+            <FilterDropdown label="سایز" paramName="size" options={sizeOptions} />
           </div>
 
           <div className="flex items-center gap-4">
