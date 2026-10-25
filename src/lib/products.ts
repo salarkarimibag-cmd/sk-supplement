@@ -7,6 +7,9 @@ import { collapseGroups, type VariantProduct, type VariantSummary } from "@/lib/
 /** A product in a short list (home page, related products), one per flavor/size group. */
 export type ListedProduct = CatalogProduct & { variantSummary?: VariantSummary };
 
+/** What the header search's suggestions show of a product (see /api/products). */
+export type SearchProduct = Pick<CatalogProduct, "id" | "name" | "imageUrl">;
+
 // Short lists fetch this many times their size before collapsing groups, so
 // a few products from one group don't leave the list with gaps.
 const OVERFETCH_FOR_GROUPS = 4;
