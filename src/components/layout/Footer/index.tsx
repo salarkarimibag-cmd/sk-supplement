@@ -8,7 +8,7 @@ export default function Footer() {
   return (
     <footer className="bg-black py-12 text-white">
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-6 sm:grid-cols-2 md:grid-cols-4">
-        <div className="flex flex-col items-center text-center">
+        <div className="flex flex-col items-center text-center sm:col-span-2 md:col-span-1">
           <Image
             src="/images/logo.webp"
             alt="SK Supplement"
@@ -79,7 +79,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div>
+        <div className="sm:col-span-2 md:col-span-1">
           <h3 className="flex items-center gap-1.5 text-base font-bold uppercase">
             <CircleDollarSign className="h-5 w-5 text-sky-500" aria-hidden="true" />
             ضمانت بازگشت کالا
