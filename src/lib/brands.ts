@@ -4,6 +4,7 @@
  * so this is only used where the name is shown to the customer.
  */
 const PERSIAN_BRAND_NAMES: Record<string, string> = {
+  "Applied Nutrition": "اپلاید نوتریشن",
   "BPI Sports": "بی‌پی‌آی اسپورتس",
   BSN: "بی‌اس‌ان",
   Cellucor: "سلوکور",
