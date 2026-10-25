@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { toEnglishDigits } from "@/lib/digits";
 
 export interface ShopCard {
   number: string;
@@ -25,21 +26,8 @@ export function formatCardNumber(number: string): string {
   return number.replace(/(\d{4})(?=\d)/g, "$1 ");
 }
 
-const PERSIAN_ZERO = "۰".charCodeAt(0);
-const ARABIC_ZERO = "٠".charCodeAt(0);
-
-/**
- * Converts Persian (۰-۹) and Arabic-Indic (٠-٩) digits to ASCII 0-9. A
- * Persian keyboard types the former, so without this "۱۲۳۴" would fail a
- * /^\d{4}$/ check even though it's exactly what the buyer meant.
- */
-export function toEnglishDigits(text: string): string {
-  return text.replace(/[۰-۹٠-٩]/g, (digit) => {
-    const code = digit.charCodeAt(0);
-    const zero = code >= PERSIAN_ZERO ? PERSIAN_ZERO : ARABIC_ZERO;
-    return String(code - zero);
-  });
-}
+// Moved to its own module; re-exported so existing imports keep working.
+export { toEnglishDigits };
 
 // Bank receipts call this «کد پیگیری» or «شماره مرجع»; it's digits on most
 // receipts, but some banks include letters, so both are accepted.

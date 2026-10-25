@@ -154,7 +154,9 @@ export default function SearchBar({ onClose, categories }: SearchBarProps) {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               aria-label="جستجو"
-              className="w-full bg-transparent text-sm leading-tight font-bold text-white outline-none"
+              // type="search" makes Chrome/Edge/Safari add their own clear
+              // (×) button; hidden, since the bar has its own beside it.
+              className="w-full bg-transparent text-sm leading-tight font-bold text-white outline-none [&::-webkit-search-cancel-button]:appearance-none"
             />
           </div>
 
