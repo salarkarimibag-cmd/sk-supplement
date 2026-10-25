@@ -3,6 +3,7 @@ import { OrderModel } from "@/models/Order";
 import { requestZarinPalPayment } from "@/lib/zarinpal";
 import { getSessionUser } from "@/lib/auth";
 import { buildOrderDraft, orderRequestSchema } from "@/lib/orderDraft";
+import { getClientIp, getOrSetDeviceId } from "@/lib/rateLimit";
 import { SALES_CLOSED_MESSAGE, SALES_OPEN } from "@/lib/sales";
 import { SITE_URL } from "@/lib/site";
 
@@ -20,9 +21,12 @@ export async function POST(request: Request) {
   await connectToDatabase();
   const sessionUser = await getSessionUser();
 
-  const built = await buildOrderDraft(parsed.data);
+  const built = await buildOrderDraft(parsed.data, {
+    ip: getClientIp(request),
+    deviceId: await getOrSetDeviceId(),
+  });
   if (!built.ok) {
-    return Response.json({ message: built.message }, { status: 400 });
+    return Response.json({ message: built.message }, { status: built.status });
   }
   const { draft } = built;
 

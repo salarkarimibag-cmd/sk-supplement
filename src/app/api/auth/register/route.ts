@@ -3,6 +3,12 @@ import { connectToDatabase } from "@/lib/db";
 import { UserModel } from "@/models/User";
 import { hashPassword, createSessionCookie } from "@/lib/auth";
 import { isDuplicateKeyError } from "@/lib/mongoErrors";
+import { getClientIp, getOrSetDeviceId, isRateLimited } from "@/lib/rateLimit";
+import { RegistrationAttemptModel } from "@/models/RegistrationAttempt";
+
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
+// A household or office sharing one IP can still sign up a few people.
+const RATE_LIMIT_MAX = 5;
 
 const registerSchema = z.object({
   fullName: z.string().trim().min(1).max(100),
@@ -27,7 +33,26 @@ export async function POST(request: Request) {
   }
   const body = parsed.data;
 
+  const ip = getClientIp(request);
+  const deviceId = await getOrSetDeviceId();
+
   await connectToDatabase();
+
+  const limited = await isRateLimited(RegistrationAttemptModel, {
+    ip,
+    deviceId,
+    windowMs: RATE_LIMIT_WINDOW_MS,
+    max: RATE_LIMIT_MAX,
+  });
+  if (limited) {
+    return Response.json(
+      { message: "تعداد ثبت‌نام‌ها زیاد بوده. لطفاً یک ساعت دیگر دوباره تلاش کنید." },
+      { status: 429 }
+    );
+  }
+  // Logged before the email check, so trying many emails to see which have
+  // accounts counts against the limit too.
+  await RegistrationAttemptModel.create({ ip, deviceId });
 
   const existing = await UserModel.findOne({ email: body.email });
   if (existing) {

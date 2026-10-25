@@ -51,9 +51,9 @@ export async function POST(request: Request) {
     );
   }
 
-  const built = await buildOrderDraft(parsed.data);
+  const built = await buildOrderDraft(parsed.data, { ip, deviceId });
   if (!built.ok) {
-    return Response.json({ message: built.message }, { status: 400 });
+    return Response.json({ message: built.message }, { status: built.status });
   }
 
   const sessionUser = await getSessionUser();

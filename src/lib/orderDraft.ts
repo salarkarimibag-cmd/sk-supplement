@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { ProductModel, type Product } from "@/models/Product";
-import { findAndCheckDiscount } from "@/lib/discountLookup";
+import { checkDiscountForVisitor, type Visitor } from "@/lib/discountLookup";
 import { priceCart, type PricedLine } from "@/lib/pricing";
 
 // Only what the buyer actually chooses: who they are, where to ship, which
@@ -44,20 +44,27 @@ export interface OrderDraft {
   discountAmount?: number;
 }
 
-export type BuildOrderDraftResult = { ok: true; draft: OrderDraft } | { ok: false; message: string };
+export type BuildOrderDraftResult =
+  | { ok: true; draft: OrderDraft }
+  // 429 when the visitor has entered too many invalid discount codes.
+  | { ok: false; message: string; status: 400 | 429 };
 
 /**
  * Prices the cart from the database and re-checks the discount code. The
- * caller must already be connected to the database.
+ * caller must already be connected to the database. `visitor` throttles
+ * discount code guessing (see checkDiscountForVisitor).
  */
-export async function buildOrderDraft(body: OrderRequest): Promise<BuildOrderDraftResult> {
+export async function buildOrderDraft(
+  body: OrderRequest,
+  visitor: Visitor
+): Promise<BuildOrderDraftResult> {
   const products = await ProductModel.find({
     id: { $in: body.items.map((item) => item.productId) },
   }).lean<Product[]>();
 
   const priced = priceCart(body.items, products);
   if (!priced.ok) {
-    return { ok: false, message: priced.message };
+    return { ok: false, message: priced.message, status: 400 };
   }
 
   // The code is re-checked here even though checkout already validated it:
@@ -66,9 +73,13 @@ export async function buildOrderDraft(body: OrderRequest): Promise<BuildOrderDra
   let discountCode: string | undefined;
   let discountAmount = 0;
   if (body.discountCode) {
-    const { result } = await findAndCheckDiscount(body.discountCode, priced.subtotal);
+    const { result, rateLimited } = await checkDiscountForVisitor(
+      body.discountCode,
+      priced.subtotal,
+      visitor
+    );
     if (!result.valid) {
-      return { ok: false, message: result.message };
+      return { ok: false, message: result.message, status: rateLimited ? 429 : 400 };
     }
     discountCode = result.code;
     discountAmount = result.discountAmount;
@@ -76,7 +87,7 @@ export async function buildOrderDraft(body: OrderRequest): Promise<BuildOrderDra
 
   const totalPrice = priced.subtotal - discountAmount;
   if (totalPrice <= 0) {
-    return { ok: false, message: "مبلغ نامعتبر است." };
+    return { ok: false, message: "مبلغ نامعتبر است.", status: 400 };
   }
 
   return {
