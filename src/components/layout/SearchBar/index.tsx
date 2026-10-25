@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { NavCategory } from "@/components/layout/Header";
 import type { CatalogProduct } from "@/data/catalog";
+import { findMatch, matchesQuery } from "@/lib/searchText";
 
 const searchablePages = [
   { title: "درباره ما", href: "/pages/about-us" },
@@ -23,7 +24,7 @@ const MAX_RESULTS = 5;
 /** Renders text with the part matching the query dimmed, so the rest reads as the "completion". */
 function dimMatch(text: string, query: string): ReactNode {
   if (!query) return text;
-  const index = text.toLowerCase().indexOf(query.toLowerCase());
+  const index = findMatch(text, query);
   if (index === -1) return text;
   return (
     <>
@@ -75,17 +76,19 @@ export default function SearchBar({ onClose, categories }: SearchBarProps) {
 
   const trimmedQuery = query.trim();
 
+  // Case-insensitive, like the /search page the form submits to, so "whey"
+  // finds the same products here as there.
   const matchedProducts = trimmedQuery
-    ? products.filter((product) => product.name.includes(trimmedQuery)).slice(0, MAX_RESULTS)
+    ? products.filter((product) => matchesQuery(product.name, trimmedQuery)).slice(0, MAX_RESULTS)
     : [];
   const matchedCategories = trimmedQuery
     ? categories
-        .filter((category) => category.title.includes(trimmedQuery))
+        .filter((category) => matchesQuery(category.title, trimmedQuery))
         .slice(0, MAX_RESULTS)
     : [];
   const matchedPages = trimmedQuery
     ? searchablePages
-        .filter((page) => page.title.includes(trimmedQuery))
+        .filter((page) => matchesQuery(page.title, trimmedQuery))
         .slice(0, MAX_RESULTS)
     : [];
 
