@@ -26,18 +26,24 @@ export default function Loading() {
           <Skeleton className="mt-2 h-4 w-full" />
           <Skeleton className="mt-2 h-4 w-2/3" />
 
-          <Skeleton className="mt-8 h-12 w-full" />
-
-          <div className="mt-8 grid grid-cols-3 gap-3">
-            <Skeleton className="h-16" />
-            <Skeleton className="h-16" />
-            <Skeleton className="h-16" />
+          {/* ProductDetailPanel: quantity stepper beside the add-to-cart button. */}
+          <div className="mt-8 flex items-center gap-4">
+            <Skeleton className="h-12 w-32" />
+            <Skeleton className="h-12 flex-1" />
           </div>
 
-          <div className="mt-8 flex flex-col gap-3">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
+          {/* TrustBadges: four claims in two columns under a divider. */}
+          <div className="mt-8 grid gap-3 border-t border-zinc-200 pt-6 sm:grid-cols-2 dark:border-zinc-800">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <Skeleton key={index} className="h-12 w-full" />
+            ))}
+          </div>
+
+          {/* ProductInfo: collapsed accordion rows. */}
+          <div className="mt-8 flex flex-col gap-2">
+            <Skeleton className="h-14 w-full" />
+            <Skeleton className="h-14 w-full" />
+            <Skeleton className="h-14 w-full" />
           </div>
         </div>
       </div>
