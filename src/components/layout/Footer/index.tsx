@@ -32,49 +32,51 @@ export default function Footer() {
           </div>
         </div>
 
-        <div>
-          <h3 className="text-base font-bold uppercase">SK Supplement</h3>
-          <nav className="mt-4 flex flex-col gap-3 text-sm text-zinc-400">
-            <Link href="/account/login" className="hover:text-white">
-              ورود / ثبت‌نام
-            </Link>
-            <Link href="/pages/about-us" className="hover:text-white">
-              درباره ما
-            </Link>
-            <Link href="/pages/contact-us" className="hover:text-white">
-              تماس با ما
-            </Link>
-            <Link href="/blogs" className="hover:text-white">
-              مقالات
-            </Link>
-            <Link href="/pages/faq" className="hover:text-white">
-              سوالات متداول
-            </Link>
-          </nav>
-        </div>
+        <div className="grid grid-cols-2 gap-6 sm:contents">
+          <div>
+            <h3 className="text-base font-bold uppercase">SK Supplement</h3>
+            <nav className="mt-4 flex flex-col gap-3 text-sm text-zinc-400">
+              <Link href="/account/login" className="hover:text-white">
+                ورود / ثبت‌نام
+              </Link>
+              <Link href="/pages/about-us" className="hover:text-white">
+                درباره ما
+              </Link>
+              <Link href="/pages/contact-us" className="hover:text-white">
+                تماس با ما
+              </Link>
+              <Link href="/blogs" className="hover:text-white">
+                مقالات
+              </Link>
+              <Link href="/pages/faq" className="hover:text-white">
+                سوالات متداول
+              </Link>
+            </nav>
+          </div>
 
-        <div>
-          <h3 className="text-base font-bold uppercase">قوانین</h3>
-          <nav className="mt-4 flex flex-col gap-3 text-sm text-zinc-400">
-            <Link href="/pages/terms-of-service" className="hover:text-white">
-              قوانین و مقررات
-            </Link>
-            <Link href="/pages/refund-policy" className="hover:text-white">
-              قوانین بازگشت وجه
-            </Link>
-            <Link href="/pages/authenticity-guarantee" className="hover:text-white">
-              ضمانت اصالت کالا
-            </Link>
-            <Link href="/pages/shipping-policy" className="hover:text-white">
-              قوانین ارسال
-            </Link>
-            <Link href="/pages/privacy-policy" className="hover:text-white">
-              حریم خصوصی
-            </Link>
-            <Link href="/pages/accessibility" className="hover:text-white">
-              دسترس‌پذیری
-            </Link>
-          </nav>
+          <div>
+            <h3 className="text-base font-bold uppercase">قوانین</h3>
+            <nav className="mt-4 flex flex-col gap-3 text-sm text-zinc-400">
+              <Link href="/pages/terms-of-service" className="hover:text-white">
+                قوانین و مقررات
+              </Link>
+              <Link href="/pages/refund-policy" className="hover:text-white">
+                قوانین بازگشت وجه
+              </Link>
+              <Link href="/pages/authenticity-guarantee" className="hover:text-white">
+                ضمانت اصالت کالا
+              </Link>
+              <Link href="/pages/shipping-policy" className="hover:text-white">
+                قوانین ارسال
+              </Link>
+              <Link href="/pages/privacy-policy" className="hover:text-white">
+                حریم خصوصی
+              </Link>
+              <Link href="/pages/accessibility" className="hover:text-white">
+                دسترس‌پذیری
+              </Link>
+            </nav>
+          </div>
         </div>
 
         <div>
