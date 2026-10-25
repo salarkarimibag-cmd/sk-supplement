@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ProductModel, type Product } from "@/models/Product";
+import { contactSchema, shippingAddressSchema } from "@/lib/checkoutFields";
 import { checkDiscountForVisitor, type Visitor } from "@/lib/discountLookup";
 import { priceCart, type PricedLine } from "@/lib/pricing";
 
@@ -8,18 +9,9 @@ import { priceCart, type PricedLine } from "@/lib/pricing";
 // deliberately absent — the server computes them (see priceCart). Shared by
 // every payment method's route, which extend it with their own fields.
 export const orderRequestSchema = z.object({
-  contact: z.object({
-    email: z.email(),
-    mobile: z.string().trim().min(10),
-  }),
-  shippingAddress: z.object({
-    firstName: z.string().trim().min(1),
-    lastName: z.string().trim().min(1),
-    province: z.string().trim().min(1),
-    city: z.string().trim().min(1),
-    address: z.string().trim().min(1),
-    postalCode: z.string().trim().min(1),
-  }),
+  // The same rules the checkout form checks (src/lib/checkoutFields.ts).
+  contact: contactSchema,
+  shippingAddress: shippingAddressSchema,
   items: z
     .array(
       z.object({

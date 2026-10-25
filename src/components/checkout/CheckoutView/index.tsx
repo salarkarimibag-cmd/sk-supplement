@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,19 +12,24 @@ import BankCard from "@/components/checkout/BankCard";
 import Collapsible from "@/components/ui/Collapsible";
 import { useCart } from "@/context/CartContext";
 import { cardTransferSchema, type ShopCard } from "@/lib/cardPayment";
+import {
+  ADDRESS_MAX_LENGTH,
+  NAME_MAX_LENGTH,
+  PLACE_MAX_LENGTH,
+  contactSchema,
+  shippingAddressSchema,
+} from "@/lib/checkoutFields";
+import { EMAIL_MAX_LENGTH } from "@/lib/publicForms";
 import type { CartCatalogEntry } from "@/lib/cartSync";
 import { SALES_CLOSED_MESSAGE, SALES_OPEN } from "@/lib/sales";
 
 const checkoutSchema = z
   .object({
-    email: z.string().min(1, "ایمیل الزامی است.").email("ایمیل نامعتبر است."),
-    firstName: z.string().min(1, "نام الزامی است."),
-    lastName: z.string().min(1, "نام خانوادگی الزامی است."),
-    province: z.string().min(1, "استان الزامی است."),
-    city: z.string().min(1, "شهر الزامی است."),
-    address: z.string().min(1, "آدرس الزامی است."),
-    postalCode: z.string().min(1, "کد پستی الزامی است."),
-    mobile: z.string().min(10, "شماره موبایل نامعتبر است."),
+    // The contact and address rules are the ones the order API checks, so
+    // what passes here passes there (Persian digits in the mobile number and
+    // postal code are converted on the way).
+    ...contactSchema.shape,
+    ...shippingAddressSchema.shape,
     paymentMethod: z.enum(["zarinpal", "card"]),
     trackingCode: z.string(),
     cardLast4: z.string(),
@@ -49,9 +54,43 @@ const checkoutSchema = z
   });
 
 type CheckoutValues = z.infer<typeof checkoutSchema>;
+type TextFieldName = Exclude<keyof CheckoutValues, "paymentMethod">;
 
 const inputClass =
-  "w-full rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 dark:border-zinc-700 dark:bg-zinc-900";
+  "w-full rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 aria-[invalid=true]:border-red-600 dark:border-zinc-700 dark:bg-zinc-900";
+
+/**
+ * A visible label above its input, and the error under it. A placeholder
+ * alone isn't a label: it disappears as soon as the buyer starts typing,
+ * and not every screen reader announces it.
+ */
+function Field({
+  id,
+  label,
+  error,
+  className,
+  children,
+}: {
+  id: string;
+  label: string;
+  error?: string;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className={className}>
+      <label htmlFor={id} className="mb-1.5 block text-sm text-zinc-700 dark:text-zinc-300">
+        {label}
+      </label>
+      {children}
+      {error && (
+        <p id={`${id}-error`} className="mt-1 text-xs text-red-600">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
 
 function paymentOptionClass(selected: boolean) {
   return `flex cursor-pointer items-center gap-2 rounded border px-4 py-3 text-sm font-semibold ${
@@ -124,6 +163,20 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
   });
   // useWatch (not watch()) so React's compiler can track the value safely.
   const paymentMethod = useWatch({ control, name: "paymentMethod" });
+
+  // What every text input needs: its id (for the label), the form binding,
+  // and, while it has an error, aria-invalid plus a link to the error text
+  // so screen readers announce it with the field.
+  function fieldProps(name: TextFieldName) {
+    const hasError = Boolean(errors[name]);
+    return {
+      id: name,
+      ...register(name),
+      "aria-invalid": hasError || undefined,
+      "aria-describedby": hasError ? `${name}-error` : undefined,
+      className: inputClass,
+    };
+  }
 
   const finalTotal = totalPrice - (appliedDiscount?.amount ?? 0);
   const pricesReady = priceStatus === "ready";
@@ -310,70 +363,85 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-10 flex flex-col gap-8">
         <div>
           <h2 className="text-lg font-bold">اطلاعات تماس</h2>
-          <div className="mt-3">
-            <input type="email" placeholder="ایمیل" {...register("email")} className={inputClass} />
-            {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>}
-          </div>
+          {/* autoComplete tells the browser what each field is, so it can
+              fill in the buyer's saved details (and phones suggest them). */}
+          <Field id="email" label="ایمیل" error={errors.email?.message} className="mt-3">
+            <input
+              type="email"
+              autoComplete="email"
+              maxLength={EMAIL_MAX_LENGTH}
+              {...fieldProps("email")}
+            />
+          </Field>
         </div>
 
         <div>
           <h2 className="text-lg font-bold">اطلاعات ارسال</h2>
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <div>
-              <input type="text" placeholder="نام" {...register("firstName")} className={inputClass} />
-              {errors.firstName && (
-                <p className="mt-1 text-xs text-red-600">{errors.firstName.message}</p>
-              )}
-            </div>
-            <div>
+            <Field id="firstName" label="نام" error={errors.firstName?.message}>
               <input
                 type="text"
-                placeholder="نام خانوادگی"
-                {...register("lastName")}
-                className={inputClass}
+                autoComplete="given-name"
+                maxLength={NAME_MAX_LENGTH}
+                {...fieldProps("firstName")}
               />
-              {errors.lastName && (
-                <p className="mt-1 text-xs text-red-600">{errors.lastName.message}</p>
-              )}
-            </div>
-            <div>
-              <input type="text" placeholder="استان" {...register("province")} className={inputClass} />
-              {errors.province && (
-                <p className="mt-1 text-xs text-red-600">{errors.province.message}</p>
-              )}
-            </div>
-            <div>
-              <input type="text" placeholder="شهر" {...register("city")} className={inputClass} />
-              {errors.city && <p className="mt-1 text-xs text-red-600">{errors.city.message}</p>}
-            </div>
-            <div className="col-span-2">
-              <input type="text" placeholder="آدرس" {...register("address")} className={inputClass} />
-              {errors.address && (
-                <p className="mt-1 text-xs text-red-600">{errors.address.message}</p>
-              )}
-            </div>
-            <div>
+            </Field>
+            <Field id="lastName" label="نام خانوادگی" error={errors.lastName?.message}>
               <input
                 type="text"
-                placeholder="کد پستی"
-                {...register("postalCode")}
-                className={inputClass}
+                autoComplete="family-name"
+                maxLength={NAME_MAX_LENGTH}
+                {...fieldProps("lastName")}
               />
-              {errors.postalCode && (
-                <p className="mt-1 text-xs text-red-600">{errors.postalCode.message}</p>
-              )}
-            </div>
-            <div>
+            </Field>
+            <Field id="province" label="استان" error={errors.province?.message}>
+              <input
+                type="text"
+                autoComplete="address-level1"
+                maxLength={PLACE_MAX_LENGTH}
+                {...fieldProps("province")}
+              />
+            </Field>
+            <Field id="city" label="شهر" error={errors.city?.message}>
+              <input
+                type="text"
+                autoComplete="address-level2"
+                maxLength={PLACE_MAX_LENGTH}
+                {...fieldProps("city")}
+              />
+            </Field>
+            <Field
+              id="address"
+              label="آدرس"
+              error={errors.address?.message}
+              className="col-span-2"
+            >
+              <input
+                type="text"
+                autoComplete="street-address"
+                maxLength={ADDRESS_MAX_LENGTH}
+                {...fieldProps("address")}
+              />
+            </Field>
+            <Field id="postalCode" label="کد پستی" error={errors.postalCode?.message}>
+              {/* Text with a numeric keyboard, not type="number", which would
+                  drop a leading zero and add a spinner. */}
+              <input
+                type="text"
+                inputMode="numeric"
+                autoComplete="postal-code"
+                placeholder="۱۰ رقم"
+                {...fieldProps("postalCode")}
+              />
+            </Field>
+            <Field id="mobile" label="شماره موبایل" error={errors.mobile?.message}>
               <input
                 type="tel"
-                placeholder="شماره موبایل"
-                {...register("mobile")}
-                className={inputClass}
+                autoComplete="tel"
+                placeholder="۰۹۱۲۳۴۵۶۷۸۹"
+                {...fieldProps("mobile")}
               />
-              {errors.mobile && (
-                <p className="mt-1 text-xs text-red-600">{errors.mobile.message}</p>
-              )}
-            </div>
+            </Field>
           </div>
         </div>
 
@@ -427,31 +495,33 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
                   </div>
 
                   <div className="mt-4 grid grid-cols-2 gap-3">
-                    <div>
+                    {/* autoComplete="off": these belong to this one transfer,
+                        so the browser shouldn't suggest old values. */}
+                    <Field
+                      id="trackingCode"
+                      label="کد پیگیری واریز"
+                      error={errors.trackingCode?.message}
+                    >
                       <input
                         type="text"
                         inputMode="numeric"
-                        placeholder="کد پیگیری واریز"
-                        {...register("trackingCode")}
-                        className={inputClass}
+                        autoComplete="off"
+                        {...fieldProps("trackingCode")}
                       />
-                      {errors.trackingCode && (
-                        <p className="mt-1 text-xs text-red-600">{errors.trackingCode.message}</p>
-                      )}
-                    </div>
-                    <div>
+                    </Field>
+                    <Field
+                      id="cardLast4"
+                      label="۴ رقم آخر کارت شما"
+                      error={errors.cardLast4?.message}
+                    >
                       <input
                         type="text"
                         inputMode="numeric"
+                        autoComplete="off"
                         maxLength={4}
-                        placeholder="۴ رقم آخر کارت شما"
-                        {...register("cardLast4")}
-                        className={inputClass}
+                        {...fieldProps("cardLast4")}
                       />
-                      {errors.cardLast4 && (
-                        <p className="mt-1 text-xs text-red-600">{errors.cardLast4.message}</p>
-                      )}
-                    </div>
+                    </Field>
                   </div>
                   <p className="mt-3 text-xs text-zinc-500">
                     سفارش پس از تأیید واریز توسط فروشگاه پردازش و ارسال می‌شود.
@@ -520,6 +590,9 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
               value={discountCodeInput}
               onChange={(event) => setDiscountCodeInput(event.target.value)}
               placeholder="کد تخفیف"
+              // The placeholder is the only visible text, so it's also the label.
+              aria-label="کد تخفیف"
+              autoComplete="off"
               disabled={!!appliedDiscount}
               className="flex-1 rounded border border-zinc-300 px-4 py-2.5 text-sm outline-none focus:border-sky-600 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-900"
             />
