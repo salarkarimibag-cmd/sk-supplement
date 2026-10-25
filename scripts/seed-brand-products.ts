@@ -157,6 +157,250 @@ const rule1WheyClaims =
 const rule1MassGainerClaims =
   "۱۲۶۰ کیلوکالری، ۲۵۴ گرم کربوهیدرات و ۴۰ گرم پروتئین تمام‌وی در هر وعده\nنسبت کربوهیدرات به پروتئین ۶ به ۱، با ۱ گرم کراتین مونوهیدرات\nدارای گواهی Informed Choice؛ به‌طور منظم در آزمایشگاه ضددوپینگ LGC برای مواد ممنوعه آزمایش می‌شود\nبه گفته‌ی سازنده: برای افرادی با متابولیسم سریع که به‌سختی وزن می‌گیرند (این ادعا توسط FDA ارزیابی نشده است)";
 
+// Applied Nutrition (appliednutrition.uk, Shopify): directions, cautions,
+// ingredients and facts panels come from each product page's text and
+// "Nutritional Information" image; pack photos are the variants' own images.
+// Flavours and sizes of one product share a groupSlug and these constants.
+const appliedCaution =
+  "پیش از مصرف، اگر زیر ۱۸ سال دارید، باردار هستید یا شیر می‌دهید، یا بیماری یا دارویی (با نسخه یا بدون نسخه) در کار است، با یک متخصص سلامت مشورت کنید.\nجایگزین رژیم غذایی متنوع و شیوه‌ی زندگی سالم نیست.\nدر جای خنک و خشک و دور از دسترس کودکان نگهداری شود.\nاز مقدار توصیه‌شده بیشتر مصرف نکنید.";
+
+const appliedCreatineUsage =
+  "۱ اسکوپ (۵ گرم) را با ۲۵۰ میلی‌لیتر آب یا آبمیوه مخلوط کنید و بنوشید. ۱ تا ۲ بار در روز، ترجیحاً درست پیش از تمرین و پس از آن. پس از ۸ هفته مصرف مداوم، ۱ هفته استراحت کنید و دوباره شروع کنید.\nاسکوپ‌ها تقریبی‌اند؛ ترازو توصیه می‌شود.";
+const appliedCreatinePlainFacts = [
+  { label: "کراتین مونوهیدرات", amount: "۵۰۰۰ میلی‌گرم" },
+  { label: "از این مقدار کراتین", amount: "۴۴۰۰ میلی‌گرم" },
+];
+const appliedCreatinePlainClaims =
+  "۵ گرم کراتین مونوهیدرات میکرونیزه در هر وعده (۴٫۴ گرم کراتین)\n۱۰۰٪ کراتین مونوهیدرات میکرونیزه\nهر بچ تحت برنامه‌ی Informed Sport برای مواد ممنوعه آزمایش می‌شود\nحلال (Halal)\nروی بسته: افزایش عملکرد بدنی در تمرین‌های پرشدت";
+const appliedCreatineFlavouredClaims =
+  "۵ گرم کراتین مونوهیدرات میکرونیزه در هر وعده\nحلال (Halal)\nروی بسته: افزایش عملکرد بدنی در تمرین‌های پرشدت";
+
+const appliedGlutamineUsage =
+  "۱ وعده (۵ گرم) را ۱ تا ۳ بار در روز همراه وعده‌های غذایی مصرف کنید. برای بهترین نتیجه ۱ وعده را پس از تمرین با آب یا آبمیوه بنوشید.";
+const appliedGlutamineWarnings = `${appliedCaution}\nحساسیت‌زاها: ماده‌ی حساسیت‌زای رایجی ندارد؛ در مجموعه‌ای تولید می‌شود که شیر، سویا، تخم‌مرغ، ماهی، کرفس و غلات حاوی گلوتن را هم فرآوری می‌کند.`;
+const appliedGlutamineClaims =
+  "۵ گرم ال-گلوتامین در هر وعده؛ ۱۰۰٪ ال-گلوتامین میکرونیزه\nگلوتامین فراوان‌ترین اسید آمینه‌ی بافت عضله است و اسید آمینه‌ی نیمه‌ضروری به شمار می‌رود\nهر بچ برای مواد ممنوعه آزمایش می‌شود (آزمایش‌شده برای ورزشکاران)\nحلال (Halal)";
+
+// Critical Mass Original 6 kg: 25 servings of 240 g. The facts panel on the
+// site is the Vanilla one ("other flavours may vary").
+const appliedGainerFacts = [
+  { label: "انرژی", amount: "۹۱۷ کیلوکالری (۳۸۸۳ کیلوژول)" },
+  { label: "چربی", amount: "۸٫۴ گرم" },
+  { label: "چربی اشباع", amount: "۶٫۹ گرم" },
+  { label: "کربوهیدرات", amount: "۱۵۳٫۸ گرم" },
+  { label: "قندها", amount: "۸۰٫۸ گرم" },
+  { label: "فیبر", amount: "۲٫۹ گرم" },
+  { label: "پروتئین", amount: "۵۴٫۹ گرم" },
+  { label: "نمک", amount: "۰٫۶۴ گرم" },
+];
+const appliedGainerUsage =
+  "۴ اسکوپ (۲۴۰ گرم) را با ۵۰۰ تا ۱۰۰۰ میلی‌لیتر شیر یا آب در شیکر خوب هم بزنید. روزانه ۱ تا ۳ وعده، بسته به کالری موردنیازتان.\nاسکوپ‌ها تقریبی‌اند؛ ترازو توصیه می‌شود.";
+const appliedGainerWarnings = (allergens: string) =>
+  `حساسیت‌زاها: ${allergens}. در مجموعه‌ای تولید می‌شود که شیر، تخم‌مرغ، سویا، ماهی و غلات حاوی گلوتن را هم فرآوری می‌کند.\nاگر شیر می‌دهید یا بیماری یا دارویی (با نسخه یا بدون نسخه) در کار است، پیش از مصرف با متخصص سلامت مشورت کنید. برای کودکان و زنان باردار توصیه نمی‌شود. زیر ۱۸ سال مصرف نکنید.\nدور از دسترس کودکان خردسال نگهداری شود.`;
+const appliedGainerClaims =
+  "۵۵ گرم پروتئین کاملاً لبنی و بیش از ۹۰۰ کیلوکالری در هر وعده (۲۴۰ گرم)\nاسیدهای آمینه‌ی ضروری (EAA و BCAA) طبیعی و ال-گلوتامین افزوده\nاسیدهای چرب ضروری، CLA و پودر MCT\nحاوی نشاسته‌ی ذرت واکسی\nحلال (Halal)\nبه گفته‌ی سازنده: برای افراد با متابولیسم سریع که به‌سختی وزن می‌گیرند. پروتئین به رشد و حفظ توده‌ی عضلانی کمک می‌کند";
+// Only the cocoa and the natural colours differ between the six flavours.
+const appliedGainerIngredients = (cocoa = "", colourMid = "", colourEnd = "") =>
+  `کنسانتره‌ی پروتئین وی (شیر)، مالتودکسترین، فروکتوز، پودر آب‌پنیر شیرین (شیر)، ${cocoa}پودر MCT، اینولین، طعم‌دهنده‌ی طبیعی، کازئینات کلسیم (شیر)، ضدکلوخه (تری‌کلسیم فسفات)، ایزوله‌ی پروتئین وی (شیر)، نشاسته‌ی ذرت واکسی، آلبومین تخم‌مرغ، ${colourMid}ال-گلوتامین، آنزیم (برومِلین)، پودر روغن بذر کتان، پودر CLA (۶۰٪)${colourEnd}.`;
+const appliedGainerFlavours = [
+  {
+    id: "apm1",
+    slug: "banana",
+    flavor: "موز",
+    ingredients: appliedGainerIngredients("", "", "، رنگ طبیعی (کورکومین)"),
+    allergens: "شیر و تخم‌مرغ",
+  },
+  {
+    id: "apm2",
+    slug: "chocolate",
+    flavor: "شکلات",
+    ingredients: appliedGainerIngredients("پودر کاکائو (سویا)، "),
+    allergens: "شیر، تخم‌مرغ و سویا",
+  },
+  {
+    id: "apm3",
+    slug: "strawberry",
+    flavor: "توت‌فرنگی",
+    ingredients: appliedGainerIngredients("", "رنگ طبیعی (پودر چغندر)، "),
+    allergens: "شیر و تخم‌مرغ",
+  },
+  { id: "apm4", slug: "vanilla", flavor: "وانیل", ingredients: appliedGainerIngredients(), allergens: "شیر و تخم‌مرغ" },
+  {
+    id: "apm5",
+    slug: "cookies-cream",
+    flavor: "کوکی و کرم",
+    ingredients: appliedGainerIngredients(),
+    allergens: "شیر و تخم‌مرغ",
+  },
+  {
+    id: "apm6",
+    slug: "white-choco-hazelnut",
+    flavor: "شکلات سفید و فندق",
+    ingredients: appliedGainerIngredients(),
+    allergens: "شیر و تخم‌مرغ",
+  },
+];
+
+// Amino Fuel 390 g: 30 servings of 13 g, the same facts panel for every flavour.
+const appliedAminoFacts = [
+  { label: "انرژی", amount: "۲ کیلوکالری (۱۰ کیلوژول)" },
+  { label: "چربی", amount: "۰ گرم" },
+  { label: "کربوهیدرات", amount: "۰٫۶ گرم" },
+  { label: "قندها", amount: "۰٫۴ گرم" },
+  { label: "پروتئین", amount: "۰ گرم" },
+  { label: "نمک", amount: "۰٫۲ گرم" },
+  { label: "ال-لوسین (BCAA)", amount: "۳۰۰۰ میلی‌گرم" },
+  { label: "ال-ایزولوسین (BCAA)", amount: "۱۵۰۰ میلی‌گرم" },
+  { label: "ال-والین (BCAA)", amount: "۱۵۰۰ میلی‌گرم" },
+  { label: "ال-لیزین", amount: "۱۰۰۰ میلی‌گرم" },
+  { label: "ال-ترئونین", amount: "۵۰۰ میلی‌گرم" },
+  { label: "ال-هیستیدین", amount: "۵۰۰ میلی‌گرم" },
+  { label: "ال-فنیل‌آلانین", amount: "۳۳۵ میلی‌گرم" },
+  { label: "ال-متیونین", amount: "۱۵۰ میلی‌گرم" },
+  { label: "ال-تریپتوفان", amount: "۴۵ میلی‌گرم" },
+  { label: "ال-گلوتامین", amount: "۲۵۰۰ میلی‌گرم" },
+];
+const appliedAminoUsage =
+  "۱ اسکوپ (۱۳ گرم) را با ۵۰۰ میلی‌لیتر آب مخلوط کنید و خوب تکان دهید. پیش، حین و پس از تمرین، یا هر زمان از روز که به آمینو اسید بیشتری نیاز دارید مصرف کنید.\nاسکوپ‌ها تقریبی‌اند؛ ترازو توصیه می‌شود.";
+const appliedAminoClaims =
+  "۱۱ گرم اسید آمینه در هر وعده: ۹ گرم اسید آمینه‌ی ضروری (EAA) از جمله ۶ گرم BCAA با نسبت ۲:۱:۱ (۳ گرم لوسین، ۱٫۵ گرم ایزولوسین، ۱٫۵ گرم والین)\n۲٫۵ گرم ال-گلوتامین افزوده\nآزمایش‌شده برای ورزشکاران؛ حلال (Halal)";
+// The flavours differ only in their colour (Candy Ice Blast also has the
+// Breathe Easy flavouring).
+const appliedAminoIngredients = (colour: string) =>
+  `ال-لوسین، ال-گلوتامین، ال-ایزولوسین، ال-والین، اسیدی‌کننده (اسید سیتریک)، ال-لیزین، طعم‌دهنده، ال-هیستیدین، ال-ترئونین، ال-فنیل‌آلانین، نمک، ال-متیونین، ضدکلوخه (دی‌اکسید سیلیکون)، شیرین‌کننده (سوکرالوز)، رنگ (${colour})، ال-تریپتوفان.`;
+const appliedAminoFlavours = [
+  { id: "apa1", slug: "cherry-limeade", flavor: "گیلاس و لیمو (چری لایمید)", colour: "قرمز چغندر، کاراملِ ساده" },
+  { id: "apa2", slug: "icy-blue-raz", flavor: "تمشک آبی یخی", colour: "آبی درخشان FCF" },
+  { id: "apa3", slug: "cola-blast", flavor: "کولا (میلیونز)", colour: "کاراملِ ساده" },
+  { id: "apa4", slug: "pineapple", flavor: "آناناس (میلیونز)", colour: "کاروتن‌ها" },
+  { id: "apa5", slug: "raspberry-mojito", flavor: "موهیتو تمشک", colour: "قرمز چغندر" },
+  { id: "apa6", slug: "candy-ice-blast", flavor: "آب‌نبات یخی (کندی آیس بلاست)", colour: "قرمز چغندر" },
+  { id: "apa7", slug: "fruit-burst", flavor: "میوه‌ای (فروت برست)", colour: "قرمز چغندر" },
+  { id: "apa8", slug: "fruit-salad", flavor: "سالاد میوه", colour: "عصاره‌ی کورکومین" },
+];
+
+const appliedProducts: BrandProduct[] = [
+  // Creatine Monohydrate: unflavoured 250 g / 500 g / 1 kg, then three
+  // 250 g flavours. The site has no facts panel or ingredients for the
+  // flavoured tubs, so they only carry what the pack front says.
+  ...[
+    { id: "apc1", slug: "applied-creatine-monohydrate", size: "۲۵۰ گرم", servings: "۵۰", price: 1200000 },
+    { id: "apc2", slug: "applied-creatine-monohydrate-500g", size: "۵۰۰ گرم", servings: "۱۰۰", price: 2000000 },
+    { id: "apc3", slug: "applied-creatine-monohydrate-1kg", size: "۱ کیلوگرم", servings: "۲۰۰", price: 3400000 },
+  ].map(
+    ({ id, slug, size, servings, price }): BrandProduct => ({
+      id,
+      name: "کراتین مونوهیدرات - Creatine Monohydrate",
+      slug,
+      groupSlug: "applied-creatine-monohydrate",
+      flavor: "بدون طعم",
+      size,
+      imageUrl: `/images/products/${slug}.webp`,
+      description: `کراتین مونوهیدرات میکرونیزه‌ی اپلاید نوتریشن، بدون طعم؛ ۱۰۰٪ کراتین مونوهیدرات میکرونیزه که به‌راحتی در آب حل می‌شود. هر وعده (۱ اسکوپ، ۵ گرم) ۴٫۴ گرم کراتین دارد و بسته‌ی ${size} ${servings} وعده است.\nمواد تشکیل‌دهنده: ۱۰۰٪ کراتین مونوهیدرات میکرونیزه.`,
+      servingSize: "۵ گرم (۱ اسکوپ)",
+      nutritionFacts: appliedCreatinePlainFacts,
+      usage: appliedCreatineUsage,
+      warnings: `${appliedCaution}\nحساسیت‌زاها: ماده‌ی حساسیت‌زای رایجی ندارد.`,
+      manufacturerClaims: appliedCreatinePlainClaims,
+      brand: "Applied Nutrition",
+      price,
+      categorySlug: "creatine",
+    })
+  ),
+  ...[
+    { id: "apc4", slug: "applied-creatine-cherry-apple", flavor: "گیلاس و سیب" },
+    { id: "apc5", slug: "applied-creatine-strawberry-raspberry", flavor: "توت‌فرنگی و تمشک" },
+    { id: "apc6", slug: "applied-creatine-icy-blue-raz", flavor: "تمشک آبی یخی" },
+  ].map(
+    ({ id, slug, flavor }): BrandProduct => ({
+      id,
+      name: "کراتین مونوهیدرات - Creatine Monohydrate",
+      slug,
+      groupSlug: "applied-creatine-monohydrate",
+      flavor,
+      size: "۲۵۰ گرم",
+      imageUrl: `/images/products/${slug}.webp`,
+      description: `کراتین مونوهیدرات میکرونیزه‌ی اپلاید نوتریشن با طعم ${flavor}؛ مکمل غذایی پودری کراتین مونوهیدرات با طعم طبیعی و شیرین‌کننده. بسته‌ی ۲۵۰ گرمی ۵۰ وعده (هر وعده ۱ اسکوپ، ۵ گرم) است.`,
+      servingSize: "۵ گرم (۱ اسکوپ)",
+      usage: appliedCreatineUsage,
+      warnings: `${appliedCaution}\nمکمل غذایی دارای شیرین‌کننده.`,
+      manufacturerClaims: appliedCreatineFlavouredClaims,
+      brand: "Applied Nutrition",
+      price: 1300000,
+      categorySlug: "creatine",
+    })
+  ),
+  // L-Glutamine Powder 250 g and 500 g (5 g servings).
+  ...[
+    { id: "apg1", slug: "applied-l-glutamine", size: "۲۵۰ گرم", servings: "۵۰", price: 1100000 },
+    { id: "apg2", slug: "applied-l-glutamine-500g", size: "۵۰۰ گرم", servings: "۱۰۰", price: 1800000 },
+  ].map(
+    ({ id, slug, size, servings, price }): BrandProduct => ({
+      id,
+      name: "ال-گلوتامین - L-Glutamine Powder",
+      slug,
+      groupSlug: "applied-l-glutamine",
+      flavor: "بدون طعم",
+      size,
+      imageUrl: `/images/products/${slug}.webp`,
+      description: `ال-گلوتامین اپلاید نوتریشن؛ پودر ۱۰۰٪ ال-گلوتامین میکرونیزه برای حمایت از ریکاوری و ترمیم عضله و سلامت سیستم ایمنی. هر وعده (۱ اسکوپ، ۵ گرم) ۵ گرم ال-گلوتامین دارد و بسته‌ی ${size} ${servings} وعده است.\nمواد تشکیل‌دهنده: ۱۰۰٪ ال-گلوتامین میکرونیزه.`,
+      servingSize: "۵ گرم (۱ اسکوپ)",
+      nutritionFacts: [{ label: "ال-گلوتامین", amount: "۵۰۰۰ میلی‌گرم" }],
+      usage: appliedGlutamineUsage,
+      warnings: appliedGlutamineWarnings,
+      manufacturerClaims: appliedGlutamineClaims,
+      brand: "Applied Nutrition",
+      price,
+      categorySlug: "creatine",
+    })
+  ),
+  // Critical Mass Original 6 kg in the six flavours the site sells.
+  ...appliedGainerFlavours.map(
+    ({ id, slug, flavor, ingredients, allergens }): BrandProduct => ({
+      id,
+      name: "کریتیکال مس اوریجینال - Critical Mass Original",
+      slug: `applied-critical-mass-${slug}`,
+      groupSlug: "applied-critical-mass-original",
+      flavor,
+      size: "۶ کیلوگرم",
+      imageUrl: `/images/products/applied-critical-mass-${slug}.webp`,
+      description: `گینر پرکالری کریتیکال مس اوریجینال اپلاید نوتریشن با طعم ${flavor}؛ برای افرادی که متابولیسم سریع دارند و به‌سختی وزن می‌گیرند. هر وعده (۴ اسکوپ، ۲۴۰ گرم) حدود ۹۱۷ کیلوکالری و ۵۵ گرم پروتئین لبنی دارد و کیسه‌ی ۶ کیلوگرمی ۲۵ وعده است. جدول ارزش غذایی مربوط به طعم وانیل است و طعم‌های دیگر کمی تفاوت دارند.\nمواد تشکیل‌دهنده: ${ingredients}`,
+      servingSize: "۲۴۰ گرم (۴ اسکوپ)",
+      nutritionFacts: appliedGainerFacts,
+      usage: appliedGainerUsage,
+      warnings: appliedGainerWarnings(allergens),
+      manufacturerClaims: appliedGainerClaims,
+      brand: "Applied Nutrition",
+      price: 5500000,
+      categorySlug: "protein",
+    })
+  ),
+  // Amino Fuel EAA 390 g in all eight flavours.
+  ...appliedAminoFlavours.map(
+    ({ id, slug, flavor, colour }): BrandProduct => ({
+      id,
+      name: "آمینو فیول - Amino Fuel EAA",
+      slug: `applied-amino-fuel-${slug}`,
+      groupSlug: "applied-amino-fuel",
+      flavor,
+      size: "۳۹۰ گرم",
+      imageUrl: `/images/products/applied-amino-fuel-${slug}.webp`,
+      description: `آمینو فیول اپلاید نوتریشن با طعم ${flavor}؛ مکمل اسیدهای آمینه‌ی ضروری (EAA) با ۶ گرم BCAA با نسبت ۲:۱:۱ و ۲٫۵ گرم ال-گلوتامین. هر وعده (۱ اسکوپ، ۱۳ گرم) ۱۱ گرم اسید آمینه دارد و قوطی ۳۹۰ گرمی ۳۰ وعده است.\nمواد تشکیل‌دهنده: ${appliedAminoIngredients(colour)}${slug === "candy-ice-blast" ? " این طعم Breathe Easy™ (طعم‌دهنده) هم دارد." : ""}`,
+      servingSize: "۱۳ گرم (۱ اسکوپ)",
+      nutritionFacts: appliedAminoFacts,
+      usage: appliedAminoUsage,
+      warnings: appliedCaution,
+      manufacturerClaims:
+        slug === "candy-ice-blast"
+          ? `${appliedAminoClaims}\nفرمول Breathe Easy™ برای باز شدن راه‌های هوایی (به گفته‌ی سازنده)`
+          : appliedAminoClaims,
+      brand: "Applied Nutrition",
+      price: 1500000,
+      categorySlug: "aminos",
+    })
+  ),
+];
+
 const products: BrandProduct[] = [
   // Optimum Nutrition
   {
@@ -3488,6 +3732,8 @@ const products: BrandProduct[] = [
     price: 5200000,
     categorySlug: "protein",
   },
+  // Applied Nutrition
+  ...appliedProducts,
 ];
 
 async function main() {
