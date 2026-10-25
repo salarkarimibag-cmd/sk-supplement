@@ -1,7 +1,7 @@
 import { connectToDatabase } from "@/lib/db";
 import { ProductModel, type Product } from "@/models/Product";
 import type { CatalogProduct } from "@/data/catalog";
-import { escapeRegex } from "@/lib/escapeRegex";
+import { searchPattern } from "@/lib/searchText";
 import { collapseGroups, type VariantProduct, type VariantSummary } from "@/lib/variants";
 
 /** A product in a short list (home page, related products), one per flavor/size group. */
@@ -122,8 +122,10 @@ const MAX_SEARCH_LENGTH = 100;
 
 export async function searchProducts(query: string): Promise<CatalogProduct[]> {
   await connectToDatabase();
-  // The query is escaped so it's matched as literal text, not run as a regex.
-  const pattern = escapeRegex(query.trim().slice(0, MAX_SEARCH_LENGTH));
+  // Matched as literal text (escaped, not run as a regex), and found however
+  // it was typed: Arabic ي/ك, a space for a half-space, Persian digits (see
+  // searchPattern), the same way the header search's suggestions match.
+  const pattern = searchPattern(query.slice(0, MAX_SEARCH_LENGTH));
   const products = await ProductModel.find({ name: { $regex: pattern, $options: "i" } }).lean<
     Product[]
   >();
