@@ -354,7 +354,7 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
         <ShoppingBag className="h-5 w-5" />
         {totalCount > 0 && (
           <span className="absolute -top-1 -start-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-[10px] font-bold text-zinc-900">
-            {totalCount}
+            {totalCount.toLocaleString("fa-IR")}
           </span>
         )}
       </Link>
@@ -570,7 +570,7 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
               <div className="relative h-16 w-16 shrink-0 rounded bg-white dark:bg-zinc-800">
                 <Image src={item.imageUrl} alt={item.name} fill sizes="64px" className="object-contain" />
                 <span className="absolute -top-2 -start-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-zinc-900 px-1 text-[10px] font-bold text-white dark:bg-white dark:text-zinc-900">
-                  {item.quantity}
+                  {item.quantity.toLocaleString("fa-IR")}
                 </span>
               </div>
               <div className="flex flex-1 items-center justify-between">
