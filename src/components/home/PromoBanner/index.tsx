@@ -21,17 +21,17 @@ export default function PromoBanner() {
 
       <div className="relative mx-auto flex h-full max-w-6xl items-center px-6">
         <div className="max-w-lg text-start">
-          <h2 className="text-3xl leading-tight font-extrabold text-white sm:text-4xl">
+          <h2 className="text-3xl leading-tight font-extrabold text-balance text-white sm:text-4xl">
             تغذیه ورزشی حرفه‌ای و مکمل‌های باکیفیت
           </h2>
-          <p className="mt-4 text-sm text-zinc-300 sm:text-base">
+          <p className="mt-4 text-base text-zinc-300 sm:text-lg">
             پک‌های ترکیبی با صرفه‌جویی بالا را از دست ندهید!
           </p>
           <Link
             href="/products"
-            className="mt-6 inline-block rounded bg-sky-600 px-8 py-3 text-sm font-bold text-white transition hover:scale-105 hover:bg-sky-500"
+            className="mt-6 inline-block rounded bg-sky-600 px-10 py-4 text-base font-bold text-white transition hover:scale-105 hover:bg-sky-500"
           >
-            خرید کنید
+            مشاهده پک‌های ترکیبی
           </Link>
         </div>
       </div>
