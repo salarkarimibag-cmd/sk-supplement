@@ -20,7 +20,7 @@ function ArticleCard({ article }: { article: BlogPost }) {
           className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
       </div>
-      <h3 className="mt-4 text-xl font-bold text-zinc-900 transition-colors group-hover:text-sky-600 dark:text-zinc-100">
+      <h3 className="mt-4 text-xl font-bold text-balance text-zinc-900 transition-colors group-hover:text-sky-600 dark:text-zinc-100">
         {article.title}
       </h3>
       <p className="mt-1 text-xs font-bold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">

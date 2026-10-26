@@ -76,7 +76,7 @@ export default function ProductCard({
           <p className="mt-4 text-xs font-semibold text-zinc-500 dark:text-zinc-400">{brand}</p>
         )}
         <h3
-          className={`${brand ? "mt-1" : "mt-4"} line-clamp-2 min-h-10 text-sm font-bold underline-offset-4 transition-colors group-hover:text-sky-600 group-has-[button:hover]/card:underline`}
+          className={`${brand ? "mt-1" : "mt-4"} line-clamp-2 min-h-10 text-sm font-bold text-balance underline-offset-4 transition-colors group-hover:text-sky-600 group-has-[button:hover]/card:underline`}
         >
           {name}
         </h3>
