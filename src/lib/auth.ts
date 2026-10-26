@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
@@ -65,8 +66,18 @@ async function getSession(): Promise<{ userId: string; issuedAt?: number } | nul
   }
 }
 
-/** Reads the session cookie (if any) and loads the matching user, without the password hash. */
-export async function getSessionUser() {
+/**
+ * Reads the session cookie (if any) and loads the matching user, without the
+ * password hash.
+ *
+ * Wrapped in React's cache(): the root layout (for the header) and the page
+ * (or requireAdmin) both ask for the user while rendering one request, and
+ * this way the database is queried once and both get the same result. The
+ * memo lasts for that one server render only, so nothing is shared between
+ * requests or users. Route handlers aren't a render, so there every call
+ * still runs.
+ */
+export const getSessionUser = cache(async () => {
   const session = await getSession();
   if (!session) return null;
 
@@ -79,7 +90,7 @@ export async function getSessionUser() {
   // documents, or with the mongoose-lean-virtuals plugin, which isn't
   // installed here), so it has to be added back manually.
   return { ...user, id: String(user._id) };
-}
+});
 
 /** Like getSessionUser(), but returns null unless the session belongs to an admin. */
 export async function getSessionAdmin() {
