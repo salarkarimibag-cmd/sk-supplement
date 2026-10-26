@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { connectToDatabase } from "@/lib/db";
 import { ProductModel, type Product } from "@/models/Product";
 import type { CatalogProduct } from "@/data/catalog";
@@ -114,11 +115,14 @@ export async function getProductGroup(groupSlug: string): Promise<VariantProduct
   return products.map(({ stock, ...product }) => ({ ...product, inStock: stock > 0 }));
 }
 
-export async function getProductById(id: string): Promise<CatalogProduct | null> {
+// Wrapped in React's cache(): the product page asks for its product twice
+// while rendering, in generateMetadata (for the title) and in the page, and
+// this way it's one query. The memo lasts for that one server render only.
+export const getProductById = cache(async (id: string): Promise<CatalogProduct | null> => {
   await connectToDatabase();
   const product = await ProductModel.findOne({ id }).lean<Product | null>();
   return product ? withInStock(product) : null;
-}
+});
 
 /**
  * The names to show for these products on an order, with flavor and size
