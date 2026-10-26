@@ -117,7 +117,7 @@ export default function OrderManager({ initialOrders }: { initialOrders: OrderIt
             {order.items.map((item, index) => (
               <li key={index} className="flex justify-between gap-4">
                 <span>
-                  {item.name} × {item.quantity}
+                  {item.name} × {item.quantity.toLocaleString("fa-IR")}
                 </span>
                 <span className="whitespace-nowrap text-zinc-500">
                   {formatToman(item.unitPrice * item.quantity)}

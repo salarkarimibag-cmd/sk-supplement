@@ -78,7 +78,7 @@ export default async function OrdersPage() {
               {order.items.map((item, index) => (
                 <li key={index} className="flex justify-between text-sm">
                   <span>
-                    {item.name} × {item.quantity}
+                    {item.name} × {item.quantity.toLocaleString("fa-IR")}
                   </span>
                   <span className="text-zinc-500">
                     {(item.unitPrice * item.quantity).toLocaleString("fa-IR")} تومان
