@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { NavCategory } from "@/components/layout/Header";
-import type { CatalogProduct } from "@/data/catalog";
+import type { SearchProduct } from "@/lib/products";
 import { findMatch, matchesQuery } from "@/lib/searchText";
 
 const searchablePages = [
@@ -62,7 +62,7 @@ interface SearchBarProps {
 
 export default function SearchBar({ onClose, categories }: SearchBarProps) {
   const [query, setQuery] = useState("");
-  const [products, setProducts] = useState<CatalogProduct[]>([]);
+  const [products, setProducts] = useState<SearchProduct[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
