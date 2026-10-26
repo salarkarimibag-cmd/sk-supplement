@@ -34,6 +34,8 @@ cp .env.example .env.local
 | `ZARINPAL_MERCHANT_ID` | Your ZarinPal merchant id. Leave empty to see a clear "not configured" error instead of a silent failure. |
 | `ZARINPAL_SANDBOX` | `true` (default) hits ZarinPal's sandbox — safe for testing, no real money moves. Set to `false` once you have a real merchant id to go live. |
 | `NEXT_PUBLIC_SITE_URL` | Used for SEO metadata (sitemap, robots.txt, canonical/Open Graph URLs). Use `http://localhost:3000` in development and `https://sksupplement.shop` in production. |
+| `NEXT_PUBLIC_SALES_OPEN` | `true` opens the shop. Unset, prices show «به زودی» and the cart, checkout and payment APIs are closed. Inlined at build time, so redeploy after changing it. |
+| `RESEND_API_KEY`, `EMAIL_FROM` | [Resend](https://resend.com) credentials for emails such as password reset links. Leave empty in development to print emails to the terminal instead. |
 
 ### 3. Seed the database
 

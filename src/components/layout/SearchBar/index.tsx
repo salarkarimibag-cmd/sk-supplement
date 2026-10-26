@@ -114,7 +114,7 @@ export default function SearchBar({ onClose, categories }: SearchBarProps) {
       document.removeEventListener("mousedown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- set up once on open; Header passes a new onClose every render, which would re-run this and re-focus the input
   }, []);
 
   function handleSubmit(event: React.FormEvent) {

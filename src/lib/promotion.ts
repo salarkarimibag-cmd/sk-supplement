@@ -2,7 +2,7 @@ import { findAndCheckDiscount } from "@/lib/discountLookup";
 import { formatDiscountValue } from "@/lib/discounts";
 
 /** The discount code the home hero advertises. */
-export const HERO_PROMO_CODE = "WELCOME10";
+const HERO_PROMO_CODE = "WELCOME10";
 
 export interface HeroPromotion {
   code: string;
