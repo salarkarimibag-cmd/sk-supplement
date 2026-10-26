@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap");
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -59,7 +58,8 @@ p.shine {
   --shine-color: #000;
   position: relative;
   display: block;
-  font-family: "Archivo", sans-serif;
+  /* Set by next/font in app/page.tsx, the only page with this text. */
+  font-family: var(--font-archivo), sans-serif;
   font-weight: 900;
   font-style: italic;
   text-align: center;

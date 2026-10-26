@@ -1,3 +1,4 @@
+import { Archivo } from "next/font/google";
 import Link from "next/link";
 import ProductCard from "@/components/product/ProductCard";
 import Newsletter from "@/components/home/Newsletter";
@@ -15,6 +16,17 @@ import { formatVariantSummary } from "@/lib/variants";
 
 /** How many products take turns in the hero. */
 const HERO_PRODUCTS = 6;
+
+// Only the "True Strength" line uses it, so only the one face it shows is
+// loaded, self-hosted and only on this page. It sits below the fold, so it
+// isn't preloaded ahead of the hero's images.
+const archivo = Archivo({
+  weight: "900",
+  style: "italic",
+  subsets: ["latin"],
+  preload: false,
+  variable: "--font-archivo",
+});
 
 export default async function Home() {
   const [
@@ -75,7 +87,7 @@ export default async function Home() {
           <CategoryShowcase products={allProducts} />
         </section>
 
-        <p className="shine">True Strength</p>
+        <p className={`shine ${archivo.variable}`}>True Strength</p>
       </div>
 
       <div>
