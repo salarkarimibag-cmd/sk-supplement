@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function PromoBanner() {
   return (
-    <section className="relative h-105 overflow-hidden bg-black sm:h-115">
+    <section className="relative h-120 overflow-hidden bg-black sm:h-115">
       {/* left-0 / right-0 stay physical on purpose: they pair with the
           bg-linear-to-r fade, whose direction is always physical. */}
       <div className="absolute inset-y-0 left-0 w-full sm:w-1/2">
@@ -19,7 +19,7 @@ export default function PromoBanner() {
 
       <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent sm:hidden" />
 
-      <div className="relative mx-auto flex h-full max-w-6xl items-center px-6">
+      <div className="relative mx-auto flex h-full max-w-6xl items-end px-6 pb-8 sm:items-center sm:pb-0">
         <div className="max-w-lg text-start">
           <h2 className="text-3xl leading-tight font-extrabold text-balance text-white sm:text-4xl">
             تغذیه ورزشی حرفه‌ای و مکمل‌های باکیفیت
