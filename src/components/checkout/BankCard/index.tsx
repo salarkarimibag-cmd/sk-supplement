@@ -48,7 +48,8 @@ export default function BankCard({ card }: { card: ShopCard }) {
       // 1.586 is the aspect ratio of a standard ISO/IEC 7810 ID-1 bank card.
       className="relative mx-auto flex aspect-[1.586] w-full max-w-sm flex-col justify-between overflow-hidden rounded-2xl bg-linear-to-br from-sky-500 via-sky-700 to-indigo-900 p-4 text-white shadow-lg sm:p-5"
     >
-      {/* Soft highlights give the flat gradient some depth. */}
+      {/* Soft highlights give the flat gradient some depth. Physical sides
+          on purpose: they follow the bg-linear-to-br light, not the text. */}
       <div aria-hidden="true" className="pointer-events-none absolute -top-16 -right-10 h-48 w-48 rounded-full bg-white/10" />
       <div aria-hidden="true" className="pointer-events-none absolute -bottom-20 -left-12 h-56 w-56 rounded-full bg-white/10" />
 

@@ -66,7 +66,7 @@ export default function PreWorkoutInfoSection() {
       </p>
 
       <h2 className="mt-12 text-2xl font-extrabold">فواید مصرف پیش‌تمرین</h2>
-      <ul className="mt-6 flex list-disc flex-col gap-4 pr-5">
+      <ul className="mt-6 flex list-disc flex-col gap-4 ps-5">
         {benefits.map((benefit) => (
           <li key={benefit.title}>
             <span className="font-bold">{benefit.title}:</span>{" "}

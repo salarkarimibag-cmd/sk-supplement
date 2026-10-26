@@ -34,6 +34,9 @@ export default function CartDrawer() {
         // Closed, the drawer stays mounted off-screen; `inert` keeps its
         // buttons and links out of the Tab order and hides it from screen readers.
         inert={!isOpen}
+        // right-0 (not start-0) on purpose: it must match translate-x-full,
+        // which always slides it out to the right; Tailwind has no logical
+        // translate.
         className={`fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col overflow-hidden transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0 shadow-2xl" : "translate-x-full"
         }`}
