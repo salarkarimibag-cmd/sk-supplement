@@ -1,6 +1,7 @@
 import { connectToDatabase } from "@/lib/db";
 import { ProductModel, type Product } from "@/models/Product";
 import type { CatalogProduct } from "@/data/catalog";
+import { formatProductName } from "@/lib/orderEmail";
 import { searchPattern } from "@/lib/searchText";
 import { collapseGroups, type VariantProduct, type VariantSummary } from "@/lib/variants";
 
@@ -117,6 +118,21 @@ export async function getProductById(id: string): Promise<CatalogProduct | null>
   await connectToDatabase();
   const product = await ProductModel.findOne({ id }).lean<Product | null>();
   return product ? withInStock(product) : null;
+}
+
+/**
+ * The names to show for these products on an order, with flavor and size
+ * («Whey (شکلاتی، ۲kg)», as in the order emails), from one query for all of
+ * them instead of one per order line. A deleted product is missing from the
+ * map, so callers choose its fallback.
+ */
+export async function getProductNames(productIds: string[]): Promise<Map<string, string>> {
+  await connectToDatabase();
+  const products = await ProductModel.find(
+    { id: { $in: [...new Set(productIds)] } },
+    { _id: 0, id: 1, name: 1, flavor: 1, size: 1 }
+  ).lean<Pick<Product, "id" | "name" | "flavor" | "size">[]>();
+  return new Map(products.map((product) => [product.id, formatProductName(product)]));
 }
 
 // Long enough for any real product name; anything longer is cut, so a huge

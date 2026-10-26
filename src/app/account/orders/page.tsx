@@ -5,7 +5,7 @@ import type { Types } from "mongoose";
 import { getSessionUser } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/db";
 import { OrderModel, type Order, type OrderStatus } from "@/models/Order";
-import { getProductById } from "@/lib/products";
+import { getProductNames } from "@/lib/products";
 import { ORDER_STATUS_LABELS } from "@/lib/orderStatus";
 
 export const metadata: Metadata = {
@@ -34,17 +34,17 @@ export default async function OrdersPage() {
     .sort({ createdAt: -1 })
     .lean<(Order & { _id: Types.ObjectId })[]>();
 
-  const ordersWithItems = await Promise.all(
-    orders.map(async (order) => {
-      const items = await Promise.all(
-        order.items.map(async (item) => ({
-          ...item,
-          product: await getProductById(item.productId),
-        }))
-      );
-      return { ...order, items };
-    })
+  // One query for every product in these orders, instead of one per line.
+  const productNames = await getProductNames(
+    orders.flatMap((order) => order.items.map((item) => item.productId))
   );
+  const ordersWithItems = orders.map((order) => ({
+    ...order,
+    items: order.items.map((item) => ({
+      ...item,
+      name: productNames.get(item.productId) ?? "محصول حذف‌شده",
+    })),
+  }));
 
   return (
     <div className="mx-auto w-full max-w-4xl px-6 py-12">
@@ -78,7 +78,7 @@ export default async function OrdersPage() {
               {order.items.map((item, index) => (
                 <li key={index} className="flex justify-between text-sm">
                   <span>
-                    {item.product?.name ?? "محصول حذف‌شده"} × {item.quantity}
+                    {item.name} × {item.quantity}
                   </span>
                   <span className="text-zinc-500">
                     {(item.unitPrice * item.quantity).toLocaleString("fa-IR")} تومان

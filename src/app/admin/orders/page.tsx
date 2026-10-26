@@ -4,7 +4,7 @@ import type { Types } from "mongoose";
 import { requireAdmin } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/db";
 import { OrderModel, type Order, type OrderStatus, type PaymentMethod } from "@/models/Order";
-import { ProductModel, type Product } from "@/models/Product";
+import { getProductNames } from "@/lib/products";
 import { ORDER_STATUS_LABELS, isOrderStatus } from "@/lib/orderStatus";
 import OrderManager from "@/components/admin/OrderManager";
 import Pagination from "@/components/ui/Pagination";
@@ -55,11 +55,9 @@ export default async function AdminOrdersPage(props: PageProps<"/admin/orders">)
     .lean<(Order & { _id: Types.ObjectId })[]>();
 
   // One query for every product on this page, instead of one per order item.
-  const productIds = [...new Set(orders.flatMap((order) => order.items.map((item) => item.productId)))];
-  const products = await ProductModel.find({ id: { $in: productIds } }, { id: 1, name: 1 }).lean<
-    Pick<Product, "id" | "name">[]
-  >();
-  const productNames = new Map(products.map((product) => [product.id, product.name]));
+  const productNames = await getProductNames(
+    orders.flatMap((order) => order.items.map((item) => item.productId))
+  );
 
   const initialOrders = orders.map((order) => ({
     id: String(order._id),
