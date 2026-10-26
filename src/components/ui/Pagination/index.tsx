@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getPaginationItems } from "@/lib/pagination";
 
 interface PaginationProps {
   currentPage: number;
@@ -11,22 +12,28 @@ export default function Pagination({ currentPage, totalPages, hrefForPage }: Pag
 
   return (
     <nav aria-label="صفحه‌بندی" dir="ltr" className="mt-12">
-      <ul className="flex list-none items-center justify-center gap-3">
-        {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-          <li key={page}>
-            {page === currentPage ? (
+      {/* At most 7 items plus the arrow (see getPaginationItems), sized to fit
+          a 360px phone; flex-wrap is a fallback for anything narrower. */}
+      <ul className="flex list-none flex-wrap items-center justify-center gap-0.5 sm:gap-3">
+        {getPaginationItems(currentPage, totalPages).map((item, index) => (
+          <li key={item === "ellipsis" ? `ellipsis-${index}` : item}>
+            {item === "ellipsis" ? (
+              <span aria-hidden="true" className="flex h-10 w-5 items-center justify-center text-zinc-400 sm:h-11">
+                …
+              </span>
+            ) : item === currentPage ? (
               <span
                 aria-current="page"
-                className="flex h-11 w-11 cursor-not-allowed items-center justify-center text-lg font-semibold text-zinc-900 underline underline-offset-4 hover:font-normal hover:text-sky-600 dark:text-zinc-100"
+                className="flex h-10 w-9 cursor-not-allowed items-center justify-center text-lg font-semibold text-zinc-900 underline underline-offset-4 hover:font-normal hover:text-sky-600 sm:h-11 sm:w-11 dark:text-zinc-100"
               >
-                {page.toLocaleString("fa-IR")}
+                {item.toLocaleString("fa-IR")}
               </span>
             ) : (
               <Link
-                href={hrefForPage(page)}
-                className="flex h-11 w-11 items-center justify-center text-lg text-zinc-500 hover:text-sky-600 hover:underline hover:underline-offset-4"
+                href={hrefForPage(item)}
+                className="flex h-10 w-9 items-center justify-center text-lg text-zinc-500 hover:text-sky-600 hover:underline hover:underline-offset-4 sm:h-11 sm:w-11"
               >
-                {page.toLocaleString("fa-IR")}
+                {item.toLocaleString("fa-IR")}
               </Link>
             )}
           </li>
@@ -37,7 +44,7 @@ export default function Pagination({ currentPage, totalPages, hrefForPage }: Pag
             <Link
               href={hrefForPage(currentPage + 1)}
               aria-label="صفحه بعد"
-              className="flex h-11 w-11 items-center justify-center text-zinc-500 hover:text-sky-600"
+              className="flex h-10 w-9 items-center justify-center text-zinc-500 hover:text-sky-600 sm:h-11 sm:w-11"
             >
               <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
                 <path
