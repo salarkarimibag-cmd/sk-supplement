@@ -113,7 +113,7 @@ export default function ProteinInfoSection() {
         {proteinFaqs.map((faq, index) => (
           <div key={faq.question}>
             <p className="font-bold">
-              {index + 1}) {faq.question}
+              {(index + 1).toLocaleString("fa-IR")}) {faq.question}
             </p>
             <p className="mt-1.5 leading-7 text-zinc-600 dark:text-zinc-400">{faq.answer}</p>
           </div>

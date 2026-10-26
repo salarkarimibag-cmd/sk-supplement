@@ -55,7 +55,7 @@ export default function CartPageClient() {
                     >
                       −
                     </button>
-                    <span className="min-w-8 px-1 text-center text-sm">{item.quantity}</span>
+                    <span className="min-w-8 px-1 text-center text-sm">{item.quantity.toLocaleString("fa-IR")}</span>
                     <button
                       type="button"
                       aria-label="زیاد کردن تعداد"
