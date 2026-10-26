@@ -31,6 +31,7 @@ export default function SubscriberManager({
 
   return (
     <div className="mt-8 overflow-x-auto">
+      {/* text-right, not text-start: start is the default, so th cells would center and dir="ltr" cells would go left. */}
       <table className="w-full text-right text-sm">
         <thead>
           <tr className="border-b border-zinc-200 text-zinc-500 dark:border-zinc-800">

@@ -84,7 +84,11 @@ function NavDropdown({ section }: { section: NavSection }) {
       </button>
 
       {/* pt-2 (not mt-2) leaves the gap under the button inside the
-          dropdown's box, so the mouse never "leaves" while crossing it. */}
+          dropdown's box, so the mouse never "leaves" while crossing it.
+          right-0 stays physical on purpose: logical insets follow the
+          element's own dir="rtl", so end-0 would put it on the left, and
+          origin-top-right (it grows from the button's corner) has no
+          logical form. */}
       <div
         id={dropdownId}
         dir="rtl"

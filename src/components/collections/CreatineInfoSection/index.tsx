@@ -75,7 +75,7 @@ export default function CreatineInfoSection() {
       </div>
 
       <h2 className="mt-12 text-2xl font-extrabold">انواع مکمل‌های کراتین</h2>
-      <ul className="mt-6 flex list-disc flex-col gap-4 pr-5">
+      <ul className="mt-6 flex list-disc flex-col gap-4 ps-5">
         {creatineTypes.map((type) => (
           <li key={type.title}>
             <span className="font-bold">{type.title}</span>

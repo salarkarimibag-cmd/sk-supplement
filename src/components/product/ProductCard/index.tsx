@@ -67,7 +67,7 @@ export default function ProductCard({
             className="object-contain"
           />
           {!inStock && (
-            <span className="absolute bottom-3 right-3 rounded-full bg-zinc-900 px-3 py-1 text-xs font-bold text-white dark:bg-white dark:text-zinc-900">
+            <span className="absolute bottom-3 start-3 rounded-full bg-zinc-900 px-3 py-1 text-xs font-bold text-white dark:bg-white dark:text-zinc-900">
               ناموجود
             </span>
           )}

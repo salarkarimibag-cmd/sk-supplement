@@ -349,11 +349,11 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
       <Link
         href="/cart"
         aria-label="سبد خرید"
-        className="absolute top-6 left-6 flex h-11 w-11 items-center justify-center rounded-full bg-sky-600 text-white shadow-sm transition hover:bg-sky-500"
+        className="absolute top-6 end-6 flex h-11 w-11 items-center justify-center rounded-full bg-sky-600 text-white shadow-sm transition hover:bg-sky-500"
       >
         <ShoppingBag className="h-5 w-5" />
         {totalCount > 0 && (
-          <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-[10px] font-bold text-zinc-900">
+          <span className="absolute -top-1 -start-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-[10px] font-bold text-zinc-900">
             {totalCount}
           </span>
         )}
@@ -569,7 +569,7 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
             <li key={item.id} className="flex gap-4">
               <div className="relative h-16 w-16 shrink-0 rounded bg-white dark:bg-zinc-800">
                 <Image src={item.imageUrl} alt={item.name} fill sizes="64px" className="object-contain" />
-                <span className="absolute -top-2 -right-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-zinc-900 px-1 text-[10px] font-bold text-white dark:bg-white dark:text-zinc-900">
+                <span className="absolute -top-2 -start-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-zinc-900 px-1 text-[10px] font-bold text-white dark:bg-white dark:text-zinc-900">
                   {item.quantity}
                 </span>
               </div>

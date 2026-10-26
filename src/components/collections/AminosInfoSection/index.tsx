@@ -71,7 +71,7 @@ export default function AminosInfoSection() {
       </div>
 
       <h2 className="mt-12 text-2xl font-extrabold">انواع مکمل‌های آمینو اسیدی</h2>
-      <ul className="mt-6 flex list-disc flex-col gap-4 pr-5">
+      <ul className="mt-6 flex list-disc flex-col gap-4 ps-5">
         {aminoTypes.map((type) => (
           <li key={type.title}>
             <span className="font-bold">{type.title}</span>

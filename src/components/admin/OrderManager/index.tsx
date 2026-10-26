@@ -90,6 +90,9 @@ export default function OrderManager({ initialOrders }: { initialOrders: OrderIt
 
           <dl className="mt-3 grid gap-x-4 gap-y-1 sm:grid-cols-[auto_1fr]">
             <dt className="text-zinc-500">تماس</dt>
+            {/* Left-to-right so the phone and email read correctly, but
+                right-aligned like the rest of the RTL list: text-start
+                would follow the ltr and put it on the left. */}
             <dd dir="ltr" className="text-right">
               {order.mobile} · {order.email}
             </dd>

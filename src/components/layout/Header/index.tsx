@@ -59,7 +59,7 @@ export default function Header({
                   user={user}
                 />
 
-                <Link href="/" className="-ml-2 flex items-center md:ml-0">
+                <Link href="/" className="-ms-2 flex items-center md:ms-0">
                   <Image
                     src="/images/logo.webp"
                     alt="SK Supplement"
@@ -119,7 +119,7 @@ export default function Header({
                     />
                   </svg>
                   {user && (
-                    <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-sky-500" />
+                    <span className="absolute -top-0.5 -end-0.5 h-2 w-2 rounded-full bg-sky-500" />
                   )}
                 </Link>
 
@@ -148,7 +148,7 @@ export default function Header({
                     <path d="M357.765,81.621c0-12.668-10.305-22.973-22.97-22.973h-157.57c-12.672,0-22.976,10.305-22.976,22.973v73.486 h-30.101v298.245h263.709V155.107h-30.09V81.621z M197.418,101.818h117.177v53.289H197.418V101.818z" />
                   </svg>
                   {totalCount > 0 && (
-                    <span className="absolute -right-1 -bottom-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-white px-1 text-[10px] font-bold text-zinc-900">
+                    <span className="absolute -end-1 -bottom-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-white px-1 text-[10px] font-bold text-zinc-900">
                       {totalCount.toLocaleString("fa-IR")}
                     </span>
                   )}
