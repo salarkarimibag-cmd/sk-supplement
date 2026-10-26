@@ -32,7 +32,7 @@ export default async function BlogsPage() {
                   className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 />
               </div>
-              <h2 className="mt-4 text-xl font-bold text-zinc-900 transition-colors group-hover:text-sky-600 dark:text-zinc-100">
+              <h2 className="mt-4 text-xl font-bold text-balance text-zinc-900 transition-colors group-hover:text-sky-600 dark:text-zinc-100">
                 {post.title}
               </h2>
               <p className="mt-1 text-xs font-bold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
