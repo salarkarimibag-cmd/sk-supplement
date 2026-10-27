@@ -48,13 +48,32 @@ function writeCart(items: CartItem[]) {
   } catch {
     // Storage can be unavailable (private browsing, blocked site data, etc.) — ignore.
   }
+  notifyListeners();
+}
+
+function notifyListeners() {
   for (const listener of listeners) listener();
 }
 
+/**
+ * Another tab changed the saved cart: drop this tab's copy so the next read
+ * picks up the new one. Without this, a stale tab would overwrite the other
+ * tab's changes the next time it wrote. (The event never fires in the tab
+ * that wrote.)
+ */
+function handleStorage(event: StorageEvent) {
+  // key is null when the other tab cleared all of localStorage.
+  if (event.key !== STORAGE_KEY && event.key !== null) return;
+  cachedItems = undefined;
+  notifyListeners();
+}
+
 function subscribe(listener: () => void) {
+  if (listeners.length === 0) window.addEventListener("storage", handleStorage);
   listeners.push(listener);
   return () => {
     listeners = listeners.filter((current) => current !== listener);
+    if (listeners.length === 0) window.removeEventListener("storage", handleStorage);
   };
 }
 
