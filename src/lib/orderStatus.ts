@@ -28,7 +28,7 @@ const ADMIN_TRANSITIONS: Record<PaymentMethod, Partial<Record<OrderStatus, Order
   card: { ...AFTER_PAYMENT, awaiting_verification: ["paid", "failed"] },
 };
 
-export const ORDER_STATUSES = Object.keys(ORDER_STATUS_LABELS) as OrderStatus[];
+const ORDER_STATUSES = Object.keys(ORDER_STATUS_LABELS) as OrderStatus[];
 
 /**
  * The statuses an order can be in after onOrderPaid ran and before any

@@ -17,8 +17,7 @@ export default function PaymentResult({ success, message, refId, failureTitle }:
 
   useEffect(() => {
     if (success) clearCart();
-    // Only run once, right after the payment result is known.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only run once, right after the payment result is known
   }, [success]);
 
   return (
