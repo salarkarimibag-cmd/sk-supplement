@@ -1,4 +1,5 @@
 import type { Product } from "@/models/Product";
+import { MAX_PER_ORDER } from "@/lib/stock";
 
 export interface CartLine {
   productId: string;
@@ -41,6 +42,12 @@ export function priceCart(
     }
     if (line.quantity > product.stock) {
       return { ok: false, message: `موجودی «${product.name}» کافی نیست.` };
+    }
+    if (line.quantity > MAX_PER_ORDER) {
+      return {
+        ok: false,
+        message: `از هر محصول حداکثر ${MAX_PER_ORDER.toLocaleString("fa-IR")} عدد در هر سفارش می‌توان خرید.`,
+      };
     }
     items.push({ productId: product.id, quantity: line.quantity, unitPrice: product.price });
   }

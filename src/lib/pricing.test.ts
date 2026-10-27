@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { priceCart } from "./pricing";
+import { MAX_PER_ORDER } from "./stock";
 
 const products = [
   { id: "whey", name: "Whey", price: 100_000, stock: 5 },
@@ -45,5 +46,14 @@ describe("priceCart", () => {
   it("rejects a quantity larger than the stock", () => {
     const result = priceCart([{ productId: "creatine", quantity: 2 }], products);
     expect(result).toEqual({ ok: false, message: "موجودی «Creatine» کافی نیست." });
+  });
+
+  it("rejects more than MAX_PER_ORDER of one product, even when stock allows it", () => {
+    const plenty = [{ id: "whey", name: "Whey", price: 100_000, stock: 50 }];
+    expect(priceCart([{ productId: "whey", quantity: MAX_PER_ORDER }], plenty).ok).toBe(true);
+    expect(priceCart([{ productId: "whey", quantity: MAX_PER_ORDER + 1 }], plenty)).toEqual({
+      ok: false,
+      message: "از هر محصول حداکثر ۱۰ عدد در هر سفارش می‌توان خرید.",
+    });
   });
 });
