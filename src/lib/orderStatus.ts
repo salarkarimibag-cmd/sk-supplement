@@ -36,6 +36,17 @@ const ORDER_STATUSES = Object.keys(ORDER_STATUS_LABELS) as OrderStatus[];
  */
 export const SOLD_ORDER_STATUSES: OrderStatus[] = ["paid", "shipped"];
 
+/**
+ * The stockReserved value for an order moving to `status`, written in the
+ * same update as the status so the two never disagree: a failed or
+ * cancelled order has given its items back, a paid or shipped one keeps
+ * them. (An order only becomes pending or awaiting verification when it's
+ * placed, with its reservation.)
+ */
+export function holdsStock(status: OrderStatus): boolean {
+  return status !== "failed" && status !== "cancelled";
+}
+
 export function allowedAdminTransitions(
   from: OrderStatus,
   paymentMethod: PaymentMethod

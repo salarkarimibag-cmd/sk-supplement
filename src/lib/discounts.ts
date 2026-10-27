@@ -56,7 +56,7 @@ export function checkDiscount(
   return { valid: true, code: discount.code, discountAmount };
 }
 
-/** How long an unpaid ZarinPal order holds its discount code. */
+/** How long an unpaid ZarinPal order holds its discount code and its reserved stock. */
 export const PENDING_HOLD_MS = 30 * 60 * 1000;
 
 /**

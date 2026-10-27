@@ -3,6 +3,7 @@ import { ProductModel, type Product } from "@/models/Product";
 import { contactSchema, shippingAddressSchema } from "@/lib/checkoutFields";
 import { checkDiscountForVisitor, type Visitor } from "@/lib/discountLookup";
 import { priceCart, type PricedLine } from "@/lib/pricing";
+import { reserveStock } from "@/lib/products";
 
 // Only what the buyer actually chooses: who they are, where to ship, which
 // products and how many. Prices, the discount amount and the total are
@@ -92,5 +93,29 @@ export async function buildOrderDraft(
       discountCode,
       discountAmount: discountCode ? discountAmount : undefined,
     },
+  };
+}
+
+/**
+ * Takes the draft's items out of stock for the order about to be saved (see
+ * reserveStock). priceCart already checked the stock, but only by reading
+ * it: this is the step that decides, atomically, who gets the last unit.
+ * If the order then isn't saved, the caller must give the stock back with
+ * releaseStock.
+ */
+export async function reserveDraftStock(
+  draft: OrderDraft
+): Promise<{ ok: true } | { ok: false; message: string; status: 409 }> {
+  const shortProductId = await reserveStock(draft.items);
+  if (shortProductId === null) return { ok: true };
+  const product = await ProductModel.findOne({ id: shortProductId }, { name: 1 }).lean<
+    Pick<Product, "name">
+  >();
+  return {
+    ok: false,
+    message: product
+      ? `موجودی «${product.name}» کافی نیست.`
+      : "یکی از محصولات سبد خرید دیگر موجود نیست.",
+    status: 409,
   };
 }

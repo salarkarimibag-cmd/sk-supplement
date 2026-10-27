@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getImageProps } from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { after } from "next/server";
 import { ViewTransition } from "react";
 import Pagination from "@/components/ui/Pagination";
 import Price from "@/components/ui/Price";
@@ -19,6 +20,7 @@ import ReviewForm from "@/components/reviews/ReviewForm";
 import JsonLd from "@/components/seo/JsonLd";
 import { getSessionUser } from "@/lib/auth";
 import { getCategoryContent } from "@/lib/categoryContent";
+import { releaseExpiredReservations } from "@/lib/orderLifecycle";
 import { getProductById, getProductGroup, getRelatedProducts } from "@/lib/products";
 import { getProductReviewsPage } from "@/lib/reviews";
 import { SALES_OPEN } from "@/lib/sales";
@@ -47,6 +49,11 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
   const product = await getProductById(id);
 
   if (!product) notFound();
+
+  // A unit held by a payment abandoned at the gateway would otherwise keep
+  // showing as sold out until someone checks out. After the response, so
+  // the page isn't kept waiting; the next visit sees the freed stock.
+  if (SALES_OPEN) after(releaseExpiredReservations);
 
   const requestedReviewsPage =
     Number(Array.isArray(reviewsPageParam) ? reviewsPageParam[0] : reviewsPageParam) || 1;

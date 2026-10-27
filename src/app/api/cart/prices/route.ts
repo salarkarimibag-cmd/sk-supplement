@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { connectToDatabase } from "@/lib/db";
 import type { CartCatalogEntry } from "@/lib/cartSync";
+import { releaseExpiredReservations } from "@/lib/orderLifecycle";
 import { ProductModel } from "@/models/Product";
 
 // z.string() items, so a JSON object such as {"$ne": null} is rejected here
@@ -11,8 +12,8 @@ const cartPricesSchema = z.object({
 
 // The current name, price, photo and stock of the products in a cart, so
 // checkout can replace what the browser saved with what the order will
-// actually be charged and allowed (see syncCartItems). Read-only; the order
-// routes still price and stock-check every order themselves.
+// actually be charged and allowed (see syncCartItems). The order routes
+// still price and stock-check every order themselves.
 export async function POST(request: Request) {
   const parsed = cartPricesSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
@@ -20,6 +21,9 @@ export async function POST(request: Request) {
   }
 
   await connectToDatabase();
+  // Stock held by payments abandoned at the gateway is free again, so a
+  // buyer isn't told a product sold out when it didn't.
+  await releaseExpiredReservations();
   const products = await ProductModel.find(
     { id: { $in: parsed.data.productIds } },
     { _id: 0, id: 1, name: 1, price: 1, imageUrl: 1, stock: 1 }

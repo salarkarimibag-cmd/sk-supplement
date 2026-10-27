@@ -158,19 +158,28 @@ export async function searchProducts(query: string): Promise<CatalogProduct[]> {
 type StockLine = { productId: string; quantity: number };
 
 /**
- * Adds `direction * quantity` to each product's stock, and the opposite to
- * its sales count, in one round trip. `$inc` is applied by MongoDB itself,
- * so two orders changing the same product at the same moment can't
- * overwrite each other's change the way a read-then-write in JS could.
+ * Adds `perUnit.stock * quantity` to each product's stock and
+ * `perUnit.salesCount * quantity` to its sales count, in one round trip.
+ * `$inc` is applied by MongoDB itself, so two orders changing the same
+ * product at the same moment can't overwrite each other's change the way a
+ * read-then-write in JS could.
  */
-async function adjustStock(items: StockLine[], direction: 1 | -1): Promise<void> {
+async function adjustStock(
+  items: StockLine[],
+  perUnit: { stock: -1 | 0 | 1; salesCount: -1 | 0 | 1 }
+): Promise<void> {
+  // bulkWrite rejects an empty list.
+  if (items.length === 0) return;
   await connectToDatabase();
   await ProductModel.bulkWrite(
     items.map((item) => ({
       updateOne: {
         filter: { id: item.productId },
         update: {
-          $inc: { stock: direction * item.quantity, salesCount: -direction * item.quantity },
+          $inc: {
+            stock: perUnit.stock * item.quantity,
+            salesCount: perUnit.salesCount * item.quantity,
+          },
         },
       },
     }))
@@ -178,17 +187,53 @@ async function adjustStock(items: StockLine[], direction: 1 | -1): Promise<void>
 }
 
 /**
- * Takes a paid order's quantities out of stock and counts them as sold.
+ * Takes a new order's quantities out of stock, but only while every product
+ * still has enough: each line is one conditional update (stock ≥ quantity),
+ * so when two buyers ask for the last unit at once, MongoDB lets exactly one
+ * of them have it. If a line falls short, the lines already taken are put
+ * back. Returns the id of the product that fell short, or null when all were
+ * reserved. Not counted as sold until the order is paid (see recordSale).
+ */
+export async function reserveStock(items: StockLine[]): Promise<string | null> {
+  await connectToDatabase();
+  const reserved: StockLine[] = [];
+  for (const item of items) {
+    const result = await ProductModel.updateOne(
+      { id: item.productId, stock: { $gte: item.quantity } },
+      { $inc: { stock: -item.quantity } }
+    );
+    if (result.modifiedCount !== 1) {
+      await releaseStock(reserved);
+      return item.productId;
+    }
+    reserved.push(item);
+  }
+  return null;
+}
+
+/** Gives back stock reserved by an order that was never paid. */
+export function releaseStock(items: StockLine[]): Promise<void> {
+  return adjustStock(items, { stock: 1, salesCount: 0 });
+}
+
+/** Counts a paid order's reserved quantities as sold; their stock was already taken. */
+export function recordSale(items: StockLine[]): Promise<void> {
+  return adjustStock(items, { stock: 0, salesCount: 1 });
+}
+
+/**
+ * Takes a paid order's quantities out of stock and counts them as sold, for
+ * an order that had no reservation (see onOrderPaid).
  *
  * It's deliberately unconditional: by the time this runs the buyer has
  * already paid, so the sale stands even if stock ran out meanwhile. Stock
  * then goes negative, which shows the admin which products were oversold.
  */
 export function decrementStock(items: StockLine[]): Promise<void> {
-  return adjustStock(items, -1);
+  return adjustStock(items, { stock: -1, salesCount: 1 });
 }
 
 /** Puts a cancelled order's quantities back in stock and takes them off the sales count. */
 export function restoreStock(items: StockLine[]): Promise<void> {
-  return adjustStock(items, 1);
+  return adjustStock(items, { stock: 1, salesCount: -1 });
 }

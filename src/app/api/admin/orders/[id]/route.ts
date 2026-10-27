@@ -3,8 +3,8 @@ import { after } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { OrderModel, type PaymentMethod } from "@/models/Order";
 import { getSessionAdmin } from "@/lib/auth";
-import { adminSourcesFor, isOrderStatus } from "@/lib/orderStatus";
-import { onOrderCancelled, onOrderPaid } from "@/lib/orderLifecycle";
+import { adminSourcesFor, holdsStock, isOrderStatus } from "@/lib/orderStatus";
+import { onOrderCancelled, onOrderFailed, onOrderPaid } from "@/lib/orderLifecycle";
 import { emailKindForAdminStatus } from "@/lib/orderEmail";
 import { sendOrderEmail } from "@/lib/orderNotifications";
 
@@ -45,10 +45,11 @@ export async function PATCH(
   // The update only applies if the order is currently in a status that may
   // move to `status`. Checking and writing in one query keeps two admins
   // clicking at once from both succeeding. The document *before* the update
-  // is returned, so the side effects below can see which status it left.
+  // is returned, so the side effects below can see which status it left and
+  // whether it held reserved stock.
   const before = await OrderModel.findOneAndUpdate(
     { _id: id, status: { $in: adminSourcesFor(status, paymentMethod) } },
-    { status },
+    { status, stockReserved: holdsStock(status) },
     { returnDocument: "before" }
   );
 
@@ -65,6 +66,9 @@ export async function PATCH(
     // A confirmed card-to-card transfer is this order's moment of payment,
     // the same as a verified ZarinPal callback.
     await onOrderPaid(before);
+  } else if (status === "failed") {
+    // A rejected card transfer gives back the stock its order reserved.
+    await onOrderFailed(before);
   } else if (status === "cancelled" && before.status === "paid") {
     // Checked against the previous status, not just the target: only an
     // order that was paid ever had its stock taken, so only that is undone.
