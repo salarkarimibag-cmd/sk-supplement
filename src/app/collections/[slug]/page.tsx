@@ -14,6 +14,7 @@ import VitaminsInfoSection from "@/components/collections/VitaminsInfoSection";
 import { getCategoryContent } from "@/lib/categoryContent";
 import { getProductsByCategory } from "@/lib/products";
 import { countByAttribute, filterProducts, sortProducts, toParamArray } from "@/lib/catalogFilters";
+import { pageMetadata } from "@/lib/seo";
 import { pickShowcaseProducts } from "@/lib/showcase";
 import { collapseGroups, formatVariantSummary } from "@/lib/variants";
 
@@ -35,7 +36,9 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug } = await props.params;
   const info = await getCategoryContent(slug);
-  return { title: info?.title ?? "دسته‌بندی یافت نشد" };
+  if (!info) return { title: "دسته‌بندی یافت نشد" };
+  // Filtered and sorted views (?brand=…, ?sort=…) count as this page.
+  return pageMetadata({ title: info.title, description: info.description, path: `/collections/${slug}` });
 }
 
 export default async function CollectionPage(props: PageProps<"/collections/[slug]">) {

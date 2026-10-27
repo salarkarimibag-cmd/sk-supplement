@@ -24,6 +24,7 @@ import { releaseExpiredReservations } from "@/lib/orderLifecycle";
 import { getProductById, getProductGroup, getRelatedProducts } from "@/lib/products";
 import { getProductReviewsPage } from "@/lib/reviews";
 import { SALES_OPEN } from "@/lib/sales";
+import { pageMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import { buildBreadcrumbJsonLd, buildProductJsonLd } from "@/lib/structuredData";
 import {
@@ -40,7 +41,14 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { id } = await props.params;
   const product = await getProductById(id);
-  return { title: product?.name ?? "محصول یافت نشد" };
+  if (!product) return { title: "محصول یافت نشد" };
+  // Its own photo in link previews, and ?reviews=N pages count as this page.
+  return pageMetadata({
+    title: product.name,
+    description: product.description,
+    path: `/products/${product.id}`,
+    image: product.imageUrl,
+  });
 }
 
 export default async function ProductPage(props: PageProps<"/products/[id]">) {
