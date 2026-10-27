@@ -3,7 +3,9 @@ import { connectToDatabase } from "@/lib/db";
 import { OrderModel } from "@/models/Order";
 import { sendAdminOrderEmail, sendOrderEmail } from "@/lib/orderNotifications";
 import { getSessionUser } from "@/lib/auth";
-import { buildOrderDraft, orderRequestSchema } from "@/lib/orderDraft";
+import { buildOrderDraft, orderRequestSchema, reserveDraftStock } from "@/lib/orderDraft";
+import { releaseExpiredReservations } from "@/lib/orderLifecycle";
+import { releaseStock } from "@/lib/products";
 import { cardTransferSchema, getShopCard } from "@/lib/cardPayment";
 import { getClientIp, getOrSetDeviceId, isRateLimited } from "@/lib/rateLimit";
 import { SALES_CLOSED_MESSAGE, SALES_OPEN } from "@/lib/sales";
@@ -51,6 +53,9 @@ export async function POST(request: Request) {
     );
   }
 
+  // So stock held by abandoned ZarinPal payments is free again before it's checked.
+  await releaseExpiredReservations();
+
   const built = await buildOrderDraft(parsed.data, { ip, deviceId });
   if (!built.ok) {
     return Response.json({ message: built.message }, { status: built.status });
@@ -58,15 +63,30 @@ export async function POST(request: Request) {
 
   const sessionUser = await getSessionUser();
 
-  const order = await OrderModel.create({
-    ...built.draft,
-    userId: sessionUser?.id,
-    paymentMethod: "card",
-    status: "awaiting_verification",
-    cardTransfer: parsed.data.cardTransfer,
-    ip,
-    deviceId,
-  });
+  // Held until the admin confirms the transfer (the stock is then sold) or
+  // rejects it (given back), however long that takes.
+  const reserved = await reserveDraftStock(built.draft);
+  if (!reserved.ok) {
+    return Response.json({ message: reserved.message }, { status: reserved.status });
+  }
+
+  let order;
+  try {
+    order = await OrderModel.create({
+      ...built.draft,
+      userId: sessionUser?.id,
+      paymentMethod: "card",
+      status: "awaiting_verification",
+      cardTransfer: parsed.data.cardTransfer,
+      ip,
+      deviceId,
+      stockReserved: true,
+    });
+  } catch (error) {
+    // Nothing else knows about the reservation until the order is saved.
+    await releaseStock(built.draft.items);
+    throw error;
+  }
 
   after(() => sendOrderEmail(order, "received"));
   after(() => sendAdminOrderEmail(order, "card_received"));

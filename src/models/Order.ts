@@ -80,6 +80,12 @@ const OrderSchema = new Schema(
     // ZarinPal's ref_id, set only after a successful verification.
     paymentRefId: { type: Number, required: false },
     cardTransfer: { type: CardTransferSchema, required: false },
+    // Whether this order's items are currently out of stock on its account:
+    // set when it's placed (see reserveStock) and kept once it's paid; false
+    // once it fails, is cancelled or, for an abandoned ZarinPal payment, its
+    // hold runs out (see releaseExpiredReservations). Orders placed before
+    // reservations existed don't have it: their stock was taken when paid.
+    stockReserved: { type: Boolean, required: false },
     // Card orders cost nothing to submit, so they're rate-limited per
     // visitor like the other public forms (see src/lib/rateLimit.ts).
     ip: { type: String, required: false },

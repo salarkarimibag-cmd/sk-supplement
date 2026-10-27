@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { adminSourcesFor, allowedAdminTransitions, isOrderStatus } from "./orderStatus";
+import { adminSourcesFor, allowedAdminTransitions, holdsStock, isOrderStatus } from "./orderStatus";
 
 describe("allowedAdminTransitions", () => {
   it("lets a paid order be shipped or cancelled, whatever the payment method", () => {
@@ -42,5 +42,17 @@ describe("isOrderStatus", () => {
     expect(isOrderStatus("refunded")).toBe(false);
     expect(isOrderStatus("toString")).toBe(false);
     expect(isOrderStatus(42)).toBe(false);
+  });
+});
+
+describe("holdsStock", () => {
+  it("keeps the stock of a paid or shipped order", () => {
+    expect(holdsStock("paid")).toBe(true);
+    expect(holdsStock("shipped")).toBe(true);
+  });
+
+  it("gives the stock back once an order fails or is cancelled", () => {
+    expect(holdsStock("failed")).toBe(false);
+    expect(holdsStock("cancelled")).toBe(false);
   });
 });
