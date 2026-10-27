@@ -7,6 +7,7 @@ import { CartProvider } from "@/context/CartContext";
 import { getSessionUser } from "@/lib/auth";
 import { getAllCategories } from "@/lib/categoryContent";
 import { getAllBrands } from "@/lib/products";
+import { DEFAULT_SHARE_IMAGE, SHARED_OPEN_GRAPH } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -33,20 +34,19 @@ export const metadata: Metadata = {
     template: "%s | SK Supplement",
   },
   description: siteDescription,
+  // Pages that set their own (see pageMetadata) replace these whole objects.
   openGraph: {
+    ...SHARED_OPEN_GRAPH,
     title: siteTitle,
     description: siteDescription,
     url: SITE_URL,
-    siteName: "SK Supplement",
-    images: ["/images/promo-banner.webp"],
-    locale: "fa_IR",
-    type: "website",
+    images: [DEFAULT_SHARE_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: siteTitle,
     description: siteDescription,
-    images: ["/images/promo-banner.webp"],
+    images: [DEFAULT_SHARE_IMAGE],
   },
 };
 

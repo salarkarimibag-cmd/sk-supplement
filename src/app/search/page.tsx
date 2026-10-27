@@ -4,7 +4,12 @@ import Pagination from "@/components/ui/Pagination";
 import { searchProducts } from "@/lib/products";
 import { collapseGroups, formatVariantSummary } from "@/lib/variants";
 
-export const metadata: Metadata = { title: "نتایج جستجو" };
+// Every query is its own URL with near-duplicate content, so results pages
+// stay out of search engines; `follow` still lets them reach the products.
+export const metadata: Metadata = {
+  title: "نتایج جستجو",
+  robots: { index: false, follow: true },
+};
 
 const PAGE_SIZE = 12;
 
