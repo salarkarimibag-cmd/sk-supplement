@@ -86,8 +86,9 @@ const OrderSchema = new Schema(
     // hold runs out (see releaseExpiredReservations). Orders placed before
     // reservations existed don't have it: their stock was taken when paid.
     stockReserved: { type: Boolean, required: false },
-    // Card orders cost nothing to submit, so they're rate-limited per
-    // visitor like the other public forms (see src/lib/rateLimit.ts).
+    // Placing an order reserves stock, so both payment routes rate-limit it
+    // per visitor like the other public forms (see src/lib/rateLimit.ts).
+    // ZarinPal orders placed before that limit existed have neither.
     ip: { type: String, required: false },
     deviceId: { type: String, required: false },
   },

@@ -42,16 +42,18 @@ interface RateLimitOptions {
   deviceId: string;
   windowMs: number;
   max: number;
+  /** Only records also matching this count, when a collection holds more than one kind. */
+  where?: Record<string, unknown>;
 }
 
 export async function isRateLimited(
   model: RateLimitableModel,
-  { ip, deviceId, windowMs, max }: RateLimitOptions
+  { ip, deviceId, windowMs, max, where }: RateLimitOptions
 ): Promise<boolean> {
   const windowStart = new Date(Date.now() - windowMs);
   const [recentByIp, recentByDevice] = await Promise.all([
-    model.countDocuments({ ip, createdAt: { $gte: windowStart } }),
-    model.countDocuments({ deviceId, createdAt: { $gte: windowStart } }),
+    model.countDocuments({ ...where, ip, createdAt: { $gte: windowStart } }),
+    model.countDocuments({ ...where, deviceId, createdAt: { $gte: windowStart } }),
   ]);
   return recentByIp >= max || recentByDevice >= max;
 }

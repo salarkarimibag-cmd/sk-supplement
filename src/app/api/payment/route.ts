@@ -5,9 +5,12 @@ import { getSessionUser } from "@/lib/auth";
 import { buildOrderDraft, orderRequestSchema, reserveDraftStock } from "@/lib/orderDraft";
 import { releaseExpiredReservations } from "@/lib/orderLifecycle";
 import { releaseStock } from "@/lib/products";
-import { getClientIp, getOrSetDeviceId } from "@/lib/rateLimit";
+import { getClientIp, getOrSetDeviceId, isRateLimited } from "@/lib/rateLimit";
 import { SALES_CLOSED_MESSAGE, SALES_OPEN } from "@/lib/sales";
 import { SITE_URL } from "@/lib/site";
+
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
+const RATE_LIMIT_MAX = 10;
 
 export async function POST(request: Request) {
   // The UI hides checkout too, but a request can be sent without the UI.
@@ -20,16 +23,35 @@ export async function POST(request: Request) {
     return Response.json({ message: "اطلاعات سفارش ناقص یا نامعتبر است." }, { status: 400 });
   }
 
+  const ip = getClientIp(request);
+  const deviceId = await getOrSetDeviceId();
+
   await connectToDatabase();
+
+  // Each attempt reserves stock for up to PENDING_HOLD_MS and calls the
+  // gateway, so a script sending many could hold the shop's stock. The
+  // limit is per hour and looser than card-to-card's: real buyers retry
+  // when a bank declines or the gateway page times out.
+  const limited = await isRateLimited(OrderModel, {
+    ip,
+    deviceId,
+    windowMs: RATE_LIMIT_WINDOW_MS,
+    max: RATE_LIMIT_MAX,
+    where: { paymentMethod: "zarinpal" },
+  });
+  if (limited) {
+    return Response.json(
+      { message: "تعداد تلاش‌های پرداخت شما زیاد بوده. لطفاً کمی بعد دوباره تلاش کنید." },
+      { status: 429 }
+    );
+  }
+
   const sessionUser = await getSessionUser();
 
   // So stock held by abandoned payments is free again before it's checked.
   await releaseExpiredReservations();
 
-  const built = await buildOrderDraft(parsed.data, {
-    ip: getClientIp(request),
-    deviceId: await getOrSetDeviceId(),
-  });
+  const built = await buildOrderDraft(parsed.data, { ip, deviceId });
   if (!built.ok) {
     return Response.json({ message: built.message }, { status: built.status });
   }
@@ -73,6 +95,8 @@ export async function POST(request: Request) {
       status: "pending",
       paymentAuthority: result.authority,
       stockReserved: true,
+      ip,
+      deviceId,
     });
     orderSaved = true;
 

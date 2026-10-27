@@ -38,13 +38,16 @@ export async function POST(request: Request) {
 
   await connectToDatabase();
 
-  // Unlike ZarinPal, submitting a card order costs nothing, so a script
-  // could flood the admin's verification queue with fake ones.
+  // Submitting a card order costs nothing, so a script could flood the
+  // admin's verification queue with fake ones (and hold their stock). Only
+  // card orders count: a buyer whose gateway attempts failed can still pay
+  // by card.
   const limited = await isRateLimited(OrderModel, {
     ip,
     deviceId,
     windowMs: RATE_LIMIT_WINDOW_MS,
     max: RATE_LIMIT_MAX,
+    where: { paymentMethod: "card" },
   });
   if (limited) {
     return Response.json(
