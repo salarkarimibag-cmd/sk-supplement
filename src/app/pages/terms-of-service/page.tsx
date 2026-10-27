@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { ScrollText, User, BadgePercent, ClipboardList, Copyright, ShieldAlert, RefreshCw } from "lucide-react";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "قوانین و مقررات",
   description: "قوانین و مقررات استفاده از فروشگاه SK Supplement.",
-};
+  path: "/pages/terms-of-service",
+});
 
 const sections = [
   {

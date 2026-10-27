@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { Mail, Phone, MapPin } from "lucide-react";
 import ContactForm from "@/components/contact/ContactForm";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "تماس با ما",
   description: "راه‌های ارتباط با تیم پشتیبانی SK Supplement.",
-};
+  path: "/pages/contact-us",
+});
 
 const contactInfo = [
   { icon: Mail, title: "ایمیل", value: "salarkarimi.bag@gmail.com", dir: undefined },

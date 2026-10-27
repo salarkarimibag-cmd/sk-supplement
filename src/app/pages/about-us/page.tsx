@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Dumbbell, Target, Sparkles } from "lucide-react";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "درباره ما",
   description: "معرفی SK Supplement، فروشگاه آنلاین مکمل‌های ورزشی.",
-};
+  path: "/pages/about-us",
+});
 
 const whyUs = [
   "مجموعه‌ای متنوع از پروتئین‌ها، پیش‌تمرین‌ها، آمینو اسیدها، ویتامین‌ها و مکمل‌های سلامت.",

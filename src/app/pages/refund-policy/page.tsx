@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Undo2, Clock, ShieldCheck, Truck, Wallet } from "lucide-react";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "قوانین بازگشت وجه",
   description: "قوانین و شرایط بازگشت وجه در فروشگاه SK Supplement.",
-};
+  path: "/pages/refund-policy",
+});
 
 const sections = [
   {

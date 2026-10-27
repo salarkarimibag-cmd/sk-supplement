@@ -30,6 +30,16 @@ export function toMetaDescription(text: string): string {
   return `${(lastSpace > 0 ? cut.slice(0, lastSpace) : cut).replace(/[،,؛;:.\s]+$/, "")}…`;
 }
 
+/**
+ * The canonical path of one page of a paginated list: `?page=N` is kept for
+ * page 2 onward, since each page lists different items (Google asks for a
+ * canonical per page, not one pointing at page 1); filters and sort are not.
+ */
+export function paginatedPath(path: string, pageParam: string | string[] | undefined): string {
+  const page = Number(Array.isArray(pageParam) ? pageParam[0] : pageParam);
+  return Number.isInteger(page) && page > 1 ? `${path}?page=${page}` : path;
+}
+
 interface PageMetadataInput {
   title: string;
   description: string;
@@ -37,6 +47,8 @@ interface PageMetadataInput {
   path: string;
   /** Path or URL of the link-preview image; the site banner when omitted. */
   image?: string;
+  /** For a blog post: shared as an article, with when and by whom it was published. */
+  article?: { publishedAt: Date; author: string };
 }
 
 /**
@@ -51,19 +63,23 @@ export function pageMetadata({
   description,
   path,
   image = DEFAULT_SHARE_IMAGE,
+  article,
 }: PageMetadataInput): Metadata {
   const metaDescription = toMetaDescription(description);
+  const page = { title, description: metaDescription, url: path, images: [image] };
   return {
     title,
     description: metaDescription,
     alternates: { canonical: path },
-    openGraph: {
-      ...SHARED_OPEN_GRAPH,
-      title,
-      description: metaDescription,
-      url: path,
-      images: [image],
-    },
+    openGraph: article
+      ? {
+          ...SHARED_OPEN_GRAPH,
+          ...page,
+          type: "article",
+          publishedTime: article.publishedAt.toISOString(),
+          authors: [article.author],
+        }
+      : { ...SHARED_OPEN_GRAPH, ...page },
     twitter: {
       card: "summary_large_image",
       title,

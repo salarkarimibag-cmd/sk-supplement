@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { CircleHelp } from "lucide-react";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "سوالات متداول",
   description: "پاسخ سوالات متداول درباره‌ی خرید، ارسال و محصولات SK Supplement.",
-};
+  path: "/pages/faq",
+});
 
 const faqs = [
   {
