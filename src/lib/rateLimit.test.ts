@@ -2,14 +2,18 @@ import { describe, expect, it } from "vitest";
 import { getClientIp, isRateLimited } from "./rateLimit";
 
 // A stand-in for a Mongoose model: counts its records matching the filter's
-// ip or deviceId, created at or after the filter's createdAt.$gte.
-function fakeModel(records: { ip: string; deviceId: string; createdAt: Date }[]) {
+// ip or deviceId (and paymentMethod, when given), created at or after the
+// filter's createdAt.$gte.
+function fakeModel(
+  records: { ip: string; deviceId: string; createdAt: Date; paymentMethod?: string }[]
+) {
   return {
     async countDocuments(filter: Record<string, unknown>) {
       const since = (filter.createdAt as { $gte: Date }).$gte;
       return records.filter(
         (record) =>
           record.createdAt >= since &&
+          (!("paymentMethod" in filter) || record.paymentMethod === filter.paymentMethod) &&
           (("ip" in filter && record.ip === filter.ip) ||
             ("deviceId" in filter && record.deviceId === filter.deviceId))
       ).length;
@@ -44,6 +48,20 @@ describe("isRateLimited", () => {
       { ip: "1.1.1.1", deviceId: "device-a", createdAt: old },
     ]);
     expect(await isRateLimited(model, options)).toBe(false);
+  });
+
+  it("counts only the records matching `where`", async () => {
+    const model = fakeModel([
+      { ...recent("1.1.1.1", "device-a"), paymentMethod: "zarinpal" },
+      { ...recent("1.1.1.1", "device-a"), paymentMethod: "zarinpal" },
+      { ...recent("1.1.1.1", "device-a"), paymentMethod: "card" },
+    ]);
+    expect(await isRateLimited(model, { ...options, where: { paymentMethod: "card" } })).toBe(
+      false
+    );
+    expect(
+      await isRateLimited(model, { ...options, where: { paymentMethod: "zarinpal" } })
+    ).toBe(true);
   });
 });
 
