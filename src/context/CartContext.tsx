@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { syncCartItems, type CartCatalogEntry, type CartSyncResult } from "@/lib/cartSync";
-import { capToStock } from "@/lib/stock";
+import { capQuantity } from "@/lib/stock";
 
 export interface CartItem {
   id: string;
@@ -125,7 +125,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   // Adding a product that's already in the cart also refreshes its saved
   // details (price, stock) from the page it was added on, then adds one
-  // unit, up to the stock.
+  // unit, up to the stock and MAX_PER_ORDER (see capQuantity).
   function addItem(item: Omit<CartItem, "quantity">) {
     // Sold out: capping to the stock would leave a line with quantity 0.
     if (item.stock !== undefined && item.stock < 1) return;
@@ -134,10 +134,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const next = existing
       ? current.map((cartItem) =>
           cartItem.id === item.id
-            ? { ...cartItem, ...item, quantity: capToStock(cartItem.quantity + 1, item.stock) }
+            ? { ...cartItem, ...item, quantity: capQuantity(cartItem.quantity + 1, item.stock) }
             : cartItem
         )
-      : [...current, { ...item, quantity: capToStock(1, item.stock) }];
+      : [...current, { ...item, quantity: capQuantity(1, item.stock) }];
     writeCart(next);
   }
 
@@ -153,7 +153,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     writeCart(
       getSnapshot().map((cartItem) =>
         cartItem.id === id
-          ? { ...cartItem, quantity: capToStock(quantity, cartItem.stock) }
+          ? { ...cartItem, quantity: capQuantity(quantity, cartItem.stock) }
           : cartItem
       )
     );

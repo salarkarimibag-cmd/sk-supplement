@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Price from "@/components/ui/Price";
 import { useCart, type CartItem } from "@/context/CartContext";
+import { orderLimit } from "@/lib/stock";
 
 // The drawer is narrower than the cart page, so its rows are a little tighter.
 const VARIANTS = {
@@ -58,7 +59,7 @@ export default function CartLine({ item, variant }: CartLineProps) {
             <button
               type="button"
               aria-label="زیاد کردن تعداد"
-              disabled={item.stock !== undefined && item.quantity >= item.stock}
+              disabled={item.quantity >= orderLimit(item.stock)}
               onClick={() => setQuantity(item.id, item.quantity + 1)}
               className="cursor-pointer px-2.5 py-1 hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent dark:hover:bg-zinc-800"
             >

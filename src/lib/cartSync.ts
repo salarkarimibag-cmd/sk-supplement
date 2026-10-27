@@ -1,5 +1,5 @@
 import type { CartItem } from "@/context/CartContext";
-import { capToStock } from "@/lib/stock";
+import { capQuantity } from "@/lib/stock";
 
 /** A product as the catalog has it now: what a cart line shows and charges. */
 export interface CartCatalogEntry {
@@ -14,7 +14,7 @@ export interface CartSyncResult {
   items: CartItem[];
   /** A price is different from the one saved in the cart. */
   pricesChanged: boolean;
-  /** A line was removed (deleted or sold out) or cut down to what's in stock. */
+  /** A line was removed (deleted or sold out) or cut down to what one order may have (see orderLimit). */
   quantitiesChanged: boolean;
 }
 
@@ -39,7 +39,7 @@ export function syncCartItems(items: CartItem[], catalog: CartCatalogEntry[]): C
       continue;
     }
     if (product.price !== item.price) pricesChanged = true;
-    const quantity = capToStock(item.quantity, product.stock);
+    const quantity = capQuantity(item.quantity, product.stock);
     if (quantity !== item.quantity) quantitiesChanged = true;
     synced.push({
       ...item,

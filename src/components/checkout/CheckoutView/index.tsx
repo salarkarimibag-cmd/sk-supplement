@@ -22,6 +22,7 @@ import {
 import { EMAIL_MAX_LENGTH } from "@/lib/publicForms";
 import type { CartCatalogEntry } from "@/lib/cartSync";
 import { SALES_CLOSED_MESSAGE, SALES_OPEN } from "@/lib/sales";
+import { MAX_PER_ORDER } from "@/lib/stock";
 
 const checkoutSchema = z
   .object({
@@ -540,8 +541,9 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
         )}
         {quantitiesChanged && (
           <p className="text-sm text-amber-600 dark:text-amber-500">
-            موجودی برخی کالاها کمتر از تعداد سبد شما بود؛ تعداد آن‌ها کم شد یا کالای ناموجود از سبد
-            حذف شد. لطفاً سبد را پیش از پرداخت بررسی کنید.
+            تعداد برخی کالاها بیشتر از موجودی (یا حداکثر {MAX_PER_ORDER.toLocaleString("fa-IR")} عدد
+            در هر سفارش) بود؛ تعداد آن‌ها کم شد یا کالای ناموجود از سبد حذف شد. لطفاً سبد را پیش از
+            پرداخت بررسی کنید.
           </p>
         )}
         {priceStatus === "error" && (

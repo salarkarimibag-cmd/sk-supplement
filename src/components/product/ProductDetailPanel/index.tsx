@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Check } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { COMING_SOON_LABEL, SALES_OPEN } from "@/lib/sales";
-import { LOW_STOCK_THRESHOLD, remainingToAdd } from "@/lib/stock";
+import { LOW_STOCK_THRESHOLD, MAX_PER_ORDER, remainingToAdd } from "@/lib/stock";
 
 interface ProductDetailPanelProps {
   product: {
@@ -104,6 +104,9 @@ export default function ProductDetailPanel({ product }: ProductDetailPanelProps)
     </>
   ) : canAdd ? (
     "افزودن به سبد"
+  ) : product.stock > MAX_PER_ORDER ? (
+    // The cart holds the most one order may have, not the whole stock.
+    `حداکثر ${MAX_PER_ORDER.toLocaleString("fa-IR")} عدد در سبد شماست`
   ) : (
     "همه‌ی موجودی در سبد شماست"
   );
