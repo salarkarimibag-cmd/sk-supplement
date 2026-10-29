@@ -9,6 +9,15 @@ const fetchMock = vi.fn();
 beforeAll(() => vi.stubGlobal("fetch", fetchMock));
 afterEach(() => fetchMock.mockReset());
 
+// Failures are logged for the developer; kept out of the test output, and checked.
+const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+afterEach(() => consoleError.mockClear());
+
+/** Whether a buyer-facing message leaks anything technical. */
+function looksTechnical(message: string) {
+  return /[A-Za-z_]{3,}|\.env/.test(message);
+}
+
 function jsonResponse(body: unknown) {
   return { json: async () => body };
 }
@@ -38,6 +47,15 @@ describe("requestZarinPalPayment", () => {
     const result = await requestZarinPalPayment(requestParams);
     expect(!result.ok && result.message).toContain("ارتباط با درگاه زرین‌پال برقرار نشد");
   });
+
+  it("shows the buyer a Persian message, not ZarinPal's English error, and logs the error", async () => {
+    fetchMock.mockResolvedValue(
+      jsonResponse({ data: [], errors: { code: -9, message: "The input params invalid, validator error." } })
+    );
+    const result = await requestZarinPalPayment(requestParams);
+    expect(result).toEqual({ ok: false, message: "درخواست پرداخت زرین‌پال ناموفق بود. لطفاً دوباره تلاش کنید." });
+    expect(String(consoleError.mock.calls[0])).toContain("The input params invalid");
+  });
 });
 
 describe("verifyZarinPalPayment", () => {
@@ -52,9 +70,34 @@ describe("verifyZarinPalPayment", () => {
     expect(result).toMatchObject({ ok: false, retryable: true });
   });
 
-  it("marks ZarinPal's own rejection as final", async () => {
+  it("marks ZarinPal's own rejection as final, in Persian, and logs ZarinPal's error", async () => {
     fetchMock.mockResolvedValue(jsonResponse({ data: {}, errors: { message: "Session is not valid" } }));
     const result = await verifyZarinPalPayment(verifyParams);
-    expect(result).toEqual({ ok: false, retryable: false, message: "Session is not valid" });
+    expect(result).toMatchObject({ ok: false, retryable: false });
+    expect(!result.ok && looksTechnical(result.message)).toBe(false);
+    expect(String(consoleError.mock.calls[0])).toContain("Session is not valid");
+  });
+});
+
+describe("without ZARINPAL_MERCHANT_ID", async () => {
+  // A fresh copy of the module, loaded while the setting is missing.
+  vi.resetModules();
+  const merchantId = process.env.ZARINPAL_MERCHANT_ID;
+  delete process.env.ZARINPAL_MERCHANT_ID;
+  const unconfigured = await import("./zarinpal");
+  process.env.ZARINPAL_MERCHANT_ID = merchantId;
+
+  it("tells the buyer payment is unavailable, never which setting is missing", async () => {
+    const result = await unconfigured.requestZarinPalPayment(requestParams);
+    expect(result.ok).toBe(false);
+    expect(!result.ok && looksTechnical(result.message)).toBe(false);
+    expect(String(consoleError.mock.calls[0])).toContain("ZARINPAL_MERCHANT_ID");
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("keeps verification retryable, in plain Persian", async () => {
+    const result = await unconfigured.verifyZarinPalPayment(verifyParams);
+    expect(result).toMatchObject({ ok: false, retryable: true });
+    expect(!result.ok && looksTechnical(result.message)).toBe(false);
   });
 });
