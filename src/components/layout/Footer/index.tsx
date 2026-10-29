@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CircleDollarSign } from "lucide-react";
-import { InstagramIcon, LinkedinIcon, XIcon, YoutubeIcon } from "@/components/ui/SocialIcons";
+import { InstagramIcon, LinkedinIcon, XIcon } from "@/components/ui/SocialIcons";
 import EmailSignupForm from "@/components/ui/EmailSignupForm";
 
 export default function Footer() {
@@ -19,9 +19,6 @@ export default function Footer() {
           <div className="mt-5 flex gap-5">
             <Link href="#" aria-label="ایکس" className="hover:text-sky-500">
               <XIcon className="h-6 w-6" />
-            </Link>
-            <Link href="#" aria-label="یوتیوب" className="hover:text-sky-500">
-              <YoutubeIcon className="h-6 w-6" />
             </Link>
             <Link href="#" aria-label="لینکدین" className="hover:text-sky-500">
               <LinkedinIcon className="h-6 w-6" />
