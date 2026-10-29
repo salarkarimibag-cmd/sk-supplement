@@ -3734,6 +3734,31 @@ const products: BrandProduct[] = [
   },
   // Applied Nutrition
   ...appliedProducts,
+  // Zoomad Labs: label and directions from zoomadlabs.com (pack photo and the
+  // "Uso del producto" image). The unflavoured tub's panel is only partly
+  // legible, so the table has just what the pack and the site both state.
+  {
+    id: "zl1",
+    name: "کراتین وان رای - ONE RAW Creatine",
+    slug: "zoomad-labs-one-raw-creatine",
+    flavor: "بدون طعم",
+    size: "۳۰۰ گرم",
+    imageUrl: "/images/products/zoomad-one-raw-creatine.webp",
+    // 100 servings × 3 g = 300 g, as the pack says.
+    description:
+      "کراتین وان رای زومات لب؛ کراتین مونوهیدرات خالص و بدون طعم با درجه‌ی ریزدانگی Ultrapure 200 Mesh (اندازه‌ی ذرات ۰٫۰۷۵ میلی‌متر). هر وعده (۱ اسکوپ، ۳ گرم) ۳ گرم کراتین مونوهیدرات دارد و قوطی ۳۰۰ گرمی ۱۰۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات (۱۰۰٪). ممکن است حاوی ردپایی از غلات حاوی گلوتن، تخم‌مرغ، شیر، ماهی، بادام‌زمینی و سویا باشد.",
+    servingSize: "۳ گرم (۱ اسکوپ)",
+    nutritionFacts: [{ label: "کراتین مونوهیدرات", amount: "۳ گرم" }],
+    usage:
+      "۳ گرم (۱ اسکوپ) را با حدود ۱۵۰ میلی‌لیتر نوشیدنی، ترجیحاً سرشار از کربوهیدرات (گلوکز یا دکستروز)، مخلوط کنید، خوب تکان دهید و روزی یک بار پیش از تمرین مصرف کنید.",
+    warnings:
+      "مکمل‌های غذایی نباید جایگزین رژیم غذایی متنوع و متعادل و سبک زندگی سالم شوند.\nاز مقدار مصرف روزانه‌ی توصیه‌شده بیشتر مصرف نکنید.\nدور از دسترس کودکان خردسال، در ظرف دربسته و در جای خنک و خشک نگهداری شود.",
+    manufacturerClaims:
+      "۳ گرم کراتین مونوهیدرات در هر وعده\nبه گفته‌ی سازنده: کراتین عملکرد بدنی را در تمرین‌های کوتاه و پرشدتِ پشت‌سرهم بهبود می‌دهد (این اثر با مصرف روزانه‌ی ۳ گرم حاصل می‌شود)\nمناسب گیاه‌خواران",
+    brand: "Zoomad Labs",
+    price: 900000,
+    categorySlug: "creatine",
+  },
 ];
 
 async function main() {
