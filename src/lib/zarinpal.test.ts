@@ -2,7 +2,7 @@ import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 // zarinpal.ts reads the merchant id when it loads, so it's set before the import.
 process.env.ZARINPAL_MERCHANT_ID = "test-merchant";
-const { requestZarinPalPayment, verifyZarinPalPayment } = await import("./zarinpal");
+const { inquireZarinPalPayment, requestZarinPalPayment, verifyZarinPalPayment } = await import("./zarinpal");
 
 // A stand-in for the global fetch, so no request ever leaves the machine.
 const fetchMock = vi.fn();
@@ -99,5 +99,36 @@ describe("without ZARINPAL_MERCHANT_ID", async () => {
     const result = await unconfigured.verifyZarinPalPayment(verifyParams);
     expect(result).toMatchObject({ ok: false, retryable: true });
     expect(!result.ok && looksTechnical(result.message)).toBe(false);
+  });
+});
+
+describe("inquireZarinPalPayment", () => {
+  it.each([
+    ["PAID", "paid"],
+    ["VERIFIED", "paid"],
+    ["FAILED", "failed"],
+    ["REVERSED", "failed"],
+    ["IN_BANK", "in_bank"],
+  ])("reads ZarinPal status %s as %s", async (status, expected) => {
+    fetchMock.mockResolvedValue(jsonResponse({ data: { code: 100, status }, errors: [] }));
+    await expect(inquireZarinPalPayment("A1")).resolves.toBe(expected);
+  });
+
+  it("asks about the given authority", async () => {
+    fetchMock.mockResolvedValue(jsonResponse({ data: { code: 100, status: "PAID" } }));
+    await inquireZarinPalPayment("A1");
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({ merchant_id: "test-merchant", authority: "A1" });
+    expect(fetchMock.mock.calls[0][0]).toContain("/pg/v4/payment/inquiry.json");
+  });
+
+  it("is unknown, and logged, when ZarinPal rejects the question", async () => {
+    fetchMock.mockResolvedValue(jsonResponse({ message: "Invalid authority", errors: { authority: ["-54"] } }));
+    await expect(inquireZarinPalPayment("A1")).resolves.toBe("unknown");
+    expect(String(consoleError.mock.calls[0])).toContain("-54");
+  });
+
+  it("is unknown when ZarinPal can't be reached", async () => {
+    fetchMock.mockRejectedValue(new TypeError("fetch failed"));
+    await expect(inquireZarinPalPayment("A1")).resolves.toBe("unknown");
   });
 });

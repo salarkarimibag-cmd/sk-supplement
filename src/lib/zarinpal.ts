@@ -5,6 +5,7 @@ const IS_SANDBOX = process.env.ZARINPAL_SANDBOX !== "false";
 const BASE_URL = IS_SANDBOX ? "https://sandbox.zarinpal.com" : "https://payment.zarinpal.com";
 const REQUEST_URL = `${BASE_URL}/pg/v4/payment/request.json`;
 const VERIFY_URL = `${BASE_URL}/pg/v4/payment/verify.json`;
+const INQUIRY_URL = `${BASE_URL}/pg/v4/payment/inquiry.json`;
 
 function startPayUrl(authority: string): string {
   return `${BASE_URL}/pg/StartPay/${authority}`;
@@ -44,7 +45,7 @@ function logMissingMerchantId() {
   );
 }
 
-function logGatewayError(step: "request" | "verify", json: GatewayResponse) {
+function logGatewayError(step: "request" | "verify" | "inquiry", json: GatewayResponse) {
   console.error(`ZarinPal ${step} was declined:`, JSON.stringify(json.errors ?? json.data ?? json));
 }
 
@@ -55,7 +56,7 @@ function logGatewayError(step: "request" | "verify", json: GatewayResponse) {
  * "no", which comes back as JSON with an error code.
  */
 interface GatewayResponse {
-  data?: { authority?: string; code?: number; ref_id?: number };
+  data?: { authority?: string; code?: number; ref_id?: number; status?: string };
   errors?: { code?: number; message?: string };
 }
 
@@ -158,4 +159,37 @@ export async function verifyZarinPalPayment(
 
   logGatewayError("verify", json);
   return { ok: false, retryable: false, message: VERIFY_FAILED_MESSAGE };
+}
+
+/**
+ * What ZarinPal knows about a payment whose buyer never came back to the
+ * callback page (closed the tab, lost the connection): "paid" (verified or
+ * not yet), "failed" (never paid, or paid and reversed), "in_bank" (not
+ * paid yet: the buyer may still be paying, or left the gateway without
+ * cancelling) or "unknown" (ZarinPal couldn't be asked). It only reports:
+ * ZarinPal's docs forbid treating it as a verification, so a "paid" answer
+ * must still go through verifyZarinPalPayment before the order counts as paid.
+ */
+export type PaymentInquiry = "paid" | "failed" | "in_bank" | "unknown";
+
+export async function inquireZarinPalPayment(authority: string): Promise<PaymentInquiry> {
+  if (!MERCHANT_ID) {
+    logMissingMerchantId();
+    return "unknown";
+  }
+
+  const json = await postToGateway(INQUIRY_URL, { merchant_id: MERCHANT_ID, authority });
+  switch (json?.data?.status) {
+    case "PAID":
+    case "VERIFIED":
+      return "paid";
+    case "FAILED":
+    case "REVERSED":
+      return "failed";
+    case "IN_BANK":
+      return "in_bank";
+  }
+
+  if (json) logGatewayError("inquiry", json);
+  return "unknown";
 }

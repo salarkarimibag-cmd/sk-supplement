@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
-import { after } from "next/server";
 import type { Types } from "mongoose";
 import PaymentResult from "@/components/checkout/PaymentResult";
 import { connectToDatabase } from "@/lib/db";
 import { OrderModel, type Order } from "@/models/Order";
 import { verifyZarinPalPayment } from "@/lib/zarinpal";
-import { onOrderFailed, onOrderPaid } from "@/lib/orderLifecycle";
-import { holdsStock } from "@/lib/orderStatus";
-import { sendAdminOrderEmail, sendOrderEmail } from "@/lib/orderNotifications";
+import { markZarinPalOrderFailed, markZarinPalOrderPaid } from "@/lib/zarinpalOrders";
 
 export const metadata: Metadata = {
   title: "نتیجه پرداخت",
@@ -51,27 +48,10 @@ export default async function CheckoutCallbackPage(
     );
   }
 
-  // Every update below filters on `status: "pending"` too, so an order can
-  // only leave the pending state once, even if two requests race here. It
-  // returns the order as it was just before, or null if another request got
-  // there first; only the winner runs the side effects.
-  const pendingOrder = { paymentAuthority: authority, status: "pending" };
-  const settle = (update: { status: "paid" | "failed"; paymentRefId?: number }) =>
-    OrderModel.findOneAndUpdate(
-      pendingOrder,
-      { ...update, stockReserved: holdsStock(update.status) },
-      { returnDocument: "before" }
-    ).lean<Order & { _id: Types.ObjectId }>();
-
-  async function markFailed() {
-    const before = await settle({ status: "failed" });
-    if (before) await onOrderFailed(before);
-  }
-
   // ZarinPal sends Status=OK only when the user completed payment; anything
   // else (NOK, or a missing value) means it was cancelled.
   if (status !== "OK") {
-    await markFailed();
+    await markZarinPalOrderFailed(authority);
     return <PaymentResult success={false} message="پرداخت لغو شد." />;
   }
 
@@ -90,24 +70,14 @@ export default async function CheckoutCallbackPage(
         />
       );
     }
-    await markFailed();
+    await markZarinPalOrderFailed(authority);
     return <PaymentResult success={false} message={result.message} />;
   }
 
-  const before = await settle({ status: "paid", paymentRefId: result.refId });
-
-  // Only the request that actually moved the order to "paid" records stock
-  // and discount usage, so a refresh or a second concurrent callback can't
-  // count it twice.
-  if (before) {
-    // `before` is from just before the update, so its stockReserved is
-    // current (an expired hold may have been released since `order` was
-    // read); the new ref id is added here.
-    await onOrderPaid(before);
-    const paidOrder = { ...before, paymentRefId: result.refId };
-    after(() => sendOrderEmail(paidOrder, "paid"));
-    after(() => sendAdminOrderEmail(paidOrder, "paid"));
-  }
+  // Only one request can move the order out of pending (see
+  // zarinpalOrders.ts), so a refresh, a second concurrent callback or the
+  // admin's reconcile can't record the sale twice.
+  await markZarinPalOrderPaid(authority, result.refId);
 
   return <PaymentResult success={true} refId={result.refId} />;
 }
