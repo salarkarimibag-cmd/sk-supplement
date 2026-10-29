@@ -69,7 +69,8 @@ export async function buildOrderDraft(
     const { result, rateLimited } = await checkDiscountForVisitor(
       body.discountCode,
       priced.subtotal,
-      visitor
+      visitor,
+      body.contact
     );
     if (!result.valid) {
       return { ok: false, message: result.message, status: rateLimited ? 429 : 400 };

@@ -1,5 +1,11 @@
 import { connectToDatabase } from "@/lib/db";
-import { checkDiscount, heldOrdersFilter, type DiscountCheckResult } from "@/lib/discounts";
+import {
+  checkDiscount,
+  heldOrdersFilter,
+  previousOrdersFilter,
+  type Customer,
+  type DiscountCheckResult,
+} from "@/lib/discounts";
 import { isRateLimited } from "@/lib/rateLimit";
 import { DiscountCodeModel, type DiscountCode } from "@/models/DiscountCode";
 import { DiscountCodeAttemptModel } from "@/models/DiscountCodeAttempt";
@@ -22,10 +28,15 @@ const TOO_MANY_CODES_MESSAGE =
  * already hold it against its usage limit (see heldOrdersFilter). Every
  * place that decides whether a code can be used goes through here, so the
  * code box at checkout, placing the order and the home hero all agree.
+ *
+ * `customer` is checked against a firstOrderOnly code. Without it (the
+ * buyer hasn't filled in the contact form yet) such a code is accepted for
+ * now; placing the order always passes it, so that's where it's enforced.
  */
 export async function findAndCheckDiscount(
   code: string,
-  subtotal: number
+  subtotal: number,
+  customer?: Customer
 ): Promise<{ discount: DiscountCode | null; result: DiscountCheckResult }> {
   await connectToDatabase();
   const discount = await DiscountCodeModel.findOne({
@@ -38,7 +49,12 @@ export async function findAndCheckDiscount(
       ? await OrderModel.countDocuments(heldOrdersFilter(discount.code, Date.now()))
       : 0;
 
-  return { discount, result: checkDiscount(discount, subtotal, heldUses) };
+  const isReturningCustomer =
+    discount?.firstOrderOnly && customer
+      ? (await OrderModel.exists(previousOrdersFilter(customer))) !== null
+      : false;
+
+  return { discount, result: checkDiscount(discount, subtotal, heldUses, isReturningCustomer) };
 }
 
 /**
@@ -52,7 +68,8 @@ export async function findAndCheckDiscount(
 export async function checkDiscountForVisitor(
   code: string,
   subtotal: number,
-  visitor: Visitor
+  visitor: Visitor,
+  customer?: Customer
 ): Promise<{ result: DiscountCheckResult; rateLimited: boolean }> {
   await connectToDatabase();
 
@@ -65,7 +82,7 @@ export async function checkDiscountForVisitor(
     return { result: { valid: false, message: TOO_MANY_CODES_MESSAGE }, rateLimited: true };
   }
 
-  const { result } = await findAndCheckDiscount(code, subtotal);
+  const { result } = await findAndCheckDiscount(code, subtotal, customer);
   if (!result.valid) await DiscountCodeAttemptModel.create(visitor);
   return { result, rateLimited: false };
 }

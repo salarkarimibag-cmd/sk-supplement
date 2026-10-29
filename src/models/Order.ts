@@ -112,6 +112,10 @@ OrderSchema.index(
   { discountCode: 1, status: 1 },
   { partialFilterExpression: { discountCode: { $exists: true } } }
 );
+// Whether a buyer has bought before, for first-order-only discount codes
+// (previousOrdersFilter): one index per side of its $or.
+OrderSchema.index({ "contact.email": 1 });
+OrderSchema.index({ "contact.mobile": 1 });
 addRateLimitIndexes(OrderSchema);
 
 // Avoids Mongoose's "Cannot overwrite model" error when this module is

@@ -11,6 +11,8 @@ interface DiscountCodeItem {
   expiresAt: string | null;
   maxUses: number | null;
   usedCount: number;
+  minSubtotal: number | null;
+  firstOrderOnly: boolean;
 }
 
 interface FormState {
@@ -20,6 +22,8 @@ interface FormState {
   active: boolean;
   expiresAt: string;
   maxUses: string;
+  minSubtotal: string;
+  firstOrderOnly: boolean;
 }
 
 const emptyForm: FormState = {
@@ -29,6 +33,8 @@ const emptyForm: FormState = {
   active: true,
   expiresAt: "",
   maxUses: "",
+  minSubtotal: "",
+  firstOrderOnly: false,
 };
 
 const inputClass =
@@ -50,6 +56,8 @@ export default function DiscountManager({ initialCodes }: { initialCodes: Discou
       active: item.active,
       expiresAt: item.expiresAt ? item.expiresAt.slice(0, 10) : "",
       maxUses: item.maxUses ? String(item.maxUses) : "",
+      minSubtotal: item.minSubtotal ? String(item.minSubtotal) : "",
+      firstOrderOnly: item.firstOrderOnly,
     });
     setError(null);
   }
@@ -80,6 +88,8 @@ export default function DiscountManager({ initialCodes }: { initialCodes: Discou
       active: form.active,
       expiresAt: form.expiresAt || null,
       maxUses: form.maxUses ? Number(form.maxUses) : null,
+      minSubtotal: form.minSubtotal ? Number(form.minSubtotal) : null,
+      firstOrderOnly: form.firstOrderOnly,
     };
 
     try {
@@ -107,6 +117,8 @@ export default function DiscountManager({ initialCodes }: { initialCodes: Discou
         expiresAt: data.expiresAt ?? null,
         maxUses: data.maxUses ?? null,
         usedCount: data.usedCount ?? 0,
+        minSubtotal: data.minSubtotal ?? null,
+        firstOrderOnly: data.firstOrderOnly ?? false,
       };
 
       setCodes((current) =>
@@ -188,6 +200,15 @@ export default function DiscountManager({ initialCodes }: { initialCodes: Discou
           className={`col-span-2 ${inputClass}`}
         />
 
+        <input
+          type="number"
+          min={1}
+          placeholder="حداقل مبلغ خرید، تومان (خالی = بدون حداقل)"
+          value={form.minSubtotal}
+          onChange={(event) => setForm({ ...form, minSubtotal: event.target.value })}
+          className={`col-span-2 ${inputClass}`}
+        />
+
         <label className="col-span-2 flex items-center gap-2 text-sm sm:col-span-1">
           <input
             type="checkbox"
@@ -195,6 +216,15 @@ export default function DiscountManager({ initialCodes }: { initialCodes: Discou
             onChange={(event) => setForm({ ...form, active: event.target.checked })}
           />
           فعال
+        </label>
+
+        <label className="col-span-2 flex items-center gap-2 text-sm sm:col-span-3">
+          <input
+            type="checkbox"
+            checked={form.firstOrderOnly}
+            onChange={(event) => setForm({ ...form, firstOrderOnly: event.target.checked })}
+          />
+          فقط برای اولین خرید (با همان ایمیل یا موبایل قبلاً خرید نکرده باشد)
         </label>
 
         <div className="col-span-2 flex gap-2 sm:justify-end">
@@ -230,13 +260,14 @@ export default function DiscountManager({ initialCodes }: { initialCodes: Discou
               <th className="py-2 font-medium">وضعیت</th>
               <th className="py-2 font-medium">انقضا</th>
               <th className="py-2 font-medium">استفاده</th>
+              <th className="py-2 font-medium">شرط</th>
               <th className="py-2 font-medium">عملیات</th>
             </tr>
           </thead>
           <tbody>
             {codes.length === 0 && (
               <tr>
-                <td colSpan={7} className="py-6 text-center text-zinc-500">
+                <td colSpan={8} className="py-6 text-center text-zinc-500">
                   هیچ کد تخفیفی ثبت نشده است.
                 </td>
               </tr>
@@ -261,6 +292,14 @@ export default function DiscountManager({ initialCodes }: { initialCodes: Discou
                 <td className="py-2 whitespace-nowrap">
                   {item.usedCount.toLocaleString("fa-IR")}
                   {item.maxUses ? ` از ${item.maxUses.toLocaleString("fa-IR")}` : " (نامحدود)"}
+                </td>
+                <td className="py-2">
+                  {[
+                    item.firstOrderOnly ? "فقط اولین خرید" : "",
+                    item.minSubtotal ? `خرید از ${item.minSubtotal.toLocaleString("fa-IR")} تومان` : "",
+                  ]
+                    .filter(Boolean)
+                    .join("، ") || "—"}
                 </td>
                 <td className="py-2">
                   <div className="flex gap-3">

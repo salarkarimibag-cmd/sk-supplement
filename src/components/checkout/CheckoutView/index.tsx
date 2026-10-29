@@ -156,6 +156,7 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
   const {
     register,
     handleSubmit,
+    getValues,
     control,
     formState: { errors, isSubmitting },
   } = useForm<CheckoutValues>({
@@ -223,7 +224,12 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
       const response = await fetch("/api/discounts/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: discountCodeInput, subtotal: totalPrice }),
+        body: JSON.stringify({
+          code: discountCodeInput,
+          subtotal: totalPrice,
+          // Lets a first-purchase-only code be checked now, if they're filled in.
+          contact: { email: getValues("email"), mobile: getValues("mobile") },
+        }),
       });
       const data = await response.json();
 
