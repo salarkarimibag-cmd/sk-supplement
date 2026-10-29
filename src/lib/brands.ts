@@ -17,6 +17,7 @@ const PERSIAN_BRAND_NAMES: Record<string, string> = {
   "Rule 1": "رول وان",
   "Scitec Nutrition": "سایتک نوتریشن",
   "Universal Nutrition": "یونیورسال نوتریشن",
+  "Zoomad Labs": "زومات لب",
 };
 
 /** The brand's Persian name, or the English one for a brand not in the list yet. */
