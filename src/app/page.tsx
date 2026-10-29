@@ -28,6 +28,12 @@ const archivo = Archivo({
   variable: "--font-archivo",
 });
 
+// Prerendered like the other pages without request-time data, but rebuilt
+// every minute (seconds) rather than hourly: its stock, best sellers and
+// hero offer move with every order. Checkout re-checks stock and prices, so
+// a minute-old card can't sell what isn't there.
+export const revalidate = 60;
+
 export default async function Home() {
   const [
     latestProducts,

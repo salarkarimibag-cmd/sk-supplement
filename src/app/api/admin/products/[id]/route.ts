@@ -6,6 +6,7 @@ import { toSetAndUnset } from "@/lib/mongoUpdate";
 import { productDetailsSchema, withoutEmptyDetails } from "@/lib/productDetails";
 import { productInputErrorMessage, productUpdateSchema } from "@/lib/productInput";
 import { productGroupSchema } from "@/lib/variants";
+import { revalidateCatalog } from "@/lib/revalidate";
 
 export async function PATCH(
   request: Request,
@@ -67,6 +68,7 @@ export async function PATCH(
     return Response.json({ message: "محصول پیدا نشد." }, { status: 404 });
   }
 
+  revalidateCatalog();
   return Response.json(product);
 }
 
@@ -88,5 +90,6 @@ export async function DELETE(
     return Response.json({ message: "محصول پیدا نشد." }, { status: 404 });
   }
 
+  revalidateCatalog();
   return Response.json({ ok: true });
 }

@@ -2,25 +2,25 @@
 
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import Header, { type HeaderUser, type NavCategory } from "@/components/layout/Header";
+import Header, { type NavCategory } from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ScrollToTop from "@/components/layout/ScrollToTop";
+import { useSessionUser } from "@/hooks/useSessionUser";
 
 // Distraction-free checkout: hide the site header/footer there so the
 // customer isn't tempted to navigate away mid-purchase.
 export default function SiteChrome({
   children,
-  user,
   categories,
   brands,
 }: {
   children: ReactNode;
-  user: HeaderUser | null;
   categories: NavCategory[];
   brands: string[];
 }) {
   const pathname = usePathname();
   const isCheckout = pathname.startsWith("/checkout");
+  const user = useSessionUser();
 
   return (
     <>

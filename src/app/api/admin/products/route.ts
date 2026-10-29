@@ -5,6 +5,7 @@ import { isDuplicateKeyError } from "@/lib/mongoErrors";
 import { productDetailsSchema, withoutEmptyDetails } from "@/lib/productDetails";
 import { productCreateSchema, productInputErrorMessage } from "@/lib/productInput";
 import { productGroupSchema } from "@/lib/variants";
+import { revalidateCatalog } from "@/lib/revalidate";
 
 const DUPLICATE_MESSAGE = "این شناسه یا اسلاگ قبلاً ثبت شده است.";
 
@@ -68,6 +69,7 @@ export async function POST(request: Request) {
       groupSlug: group.data.groupSlug || undefined,
       ...withoutEmptyDetails(details.data),
     });
+    revalidateCatalog();
     return Response.json(product, { status: 201 });
   } catch (error) {
     // Two saves of the same id or slug at once can both pass the check

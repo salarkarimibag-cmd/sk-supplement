@@ -2,6 +2,7 @@ import { connectToDatabase } from "@/lib/db";
 import { DiscountCodeModel } from "@/models/DiscountCode";
 import { getSessionAdmin } from "@/lib/auth";
 import { discountInputSchema } from "@/lib/discounts";
+import { revalidateHome } from "@/lib/revalidate";
 
 export async function GET() {
   const admin = await getSessionAdmin();
@@ -40,5 +41,6 @@ export async function POST(request: Request) {
     maxUses: input.maxUses ?? undefined,
   });
 
+  revalidateHome();
   return Response.json(discount, { status: 201 });
 }
