@@ -12,10 +12,6 @@ export type ListedProduct = CatalogProduct & { variantSummary?: VariantSummary }
 /** What the header search's suggestions show of a product (see /api/products). */
 export type SearchProduct = Pick<CatalogProduct, "id" | "name" | "imageUrl">;
 
-// Short lists fetch this many times their size before collapsing groups, so
-// a few products from one group don't leave the list with gaps.
-const OVERFETCH_FOR_GROUPS = 4;
-
 function withInStock(product: Product): CatalogProduct {
   // .lean() skips schema defaults, so products saved before salesCount
   // existed come back without it until they're backfilled.
@@ -35,49 +31,79 @@ export async function getAllBrands(): Promise<string[]> {
   return brands.filter(Boolean).sort((a, b) => a.localeCompare(b, "fa"));
 }
 
+type ProductSort = Record<string, 1 | -1>;
+
+/**
+ * The first `limit` cards of a sorted list of products, one per flavor/size
+ * group, as collapseGroups would show them for the whole list.
+ *
+ * MongoDB does the grouping, so the list is never short however many
+ * variants the top groups have: it sorts the matching products, keeps each
+ * group's first one (an ungrouped product is a group of its own), and puts
+ * those back in order. Then every member of the chosen groups is read, so
+ * a card's flavor and size counts cover the whole group, not just the
+ * members that happened to be near the top.
+ */
+async function firstCards(
+  filter: Record<string, unknown>,
+  sort: ProductSort,
+  limit: number
+): Promise<ListedProduct[]> {
+  await connectToDatabase();
+  const leaders = await ProductModel.aggregate<{ first: Product }>([
+    { $match: filter },
+    { $sort: sort },
+    { $group: { _id: { $ifNull: ["$groupSlug", "$id"] }, first: { $first: "$$ROOT" } } },
+    // $group doesn't keep the order, so sort again by the leaders' fields.
+    { $sort: Object.fromEntries(Object.entries(sort).map(([field, dir]) => [`first.${field}`, dir])) },
+    { $limit: limit },
+  ]);
+  const cards = leaders.map(({ first }) => first);
+
+  const groupSlugs = cards.flatMap((product) => (product.groupSlug ? [product.groupSlug] : []));
+  const otherMembers = groupSlugs.length
+    ? await ProductModel.find({
+        groupSlug: { $in: groupSlugs },
+        id: { $nin: cards.map((product) => product.id) },
+      }).lean<Product[]>()
+    : [];
+
+  // Leaders first, so each stays its group's card; the rest only add to the counts.
+  return collapseGroups([...cards, ...otherMembers].map(withInStock));
+}
+
 // A MongoDB ObjectId starts with its creation time, so sorting by `_id`
 // descending lists the newest products first without a `createdAt` field.
-export async function getLatestProducts(limit: number): Promise<ListedProduct[]> {
-  await connectToDatabase();
-  const products = await ProductModel.find()
-    .sort({ _id: -1 })
-    .limit(limit * OVERFETCH_FOR_GROUPS)
-    .lean<Product[]>();
-  return collapseGroups(products.map(withInStock)).slice(0, limit);
+export function getLatestProducts(limit: number): Promise<ListedProduct[]> {
+  return firstCards({}, { _id: -1 }, limit);
 }
 
 // Ties (including products that haven't sold yet) fall back to newest first.
-const bySalesThenNewest = { salesCount: -1, _id: -1 } as const;
+const bySalesThenNewest: ProductSort = { salesCount: -1, _id: -1 };
 
 /** Only products that have actually sold; empty until the first paid order. */
-export async function getBestSellers(limit: number): Promise<ListedProduct[]> {
-  await connectToDatabase();
-  const products = await ProductModel.find({ salesCount: { $gt: 0 } })
-    .sort(bySalesThenNewest)
-    .limit(limit * OVERFETCH_FOR_GROUPS)
-    .lean<Product[]>();
-  return collapseGroups(products.map(withInStock)).slice(0, limit);
+export function getBestSellers(limit: number): Promise<ListedProduct[]> {
+  return firstCards({ salesCount: { $gt: 0 } }, bySalesThenNewest, limit);
 }
 
 /**
  * Other products from the same category, leaving out the product's own
  * flavor/size group — those are already offered by its variant picker.
  */
-export async function getRelatedProducts(
+export function getRelatedProducts(
   product: Pick<Product, "id" | "categorySlug" | "groupSlug">,
   limit: number
 ): Promise<ListedProduct[]> {
-  await connectToDatabase();
-  const products = await ProductModel.find({
-    categorySlug: product.categorySlug,
-    id: { $ne: product.id },
-    // $ne also matches products that have no groupSlug at all.
-    ...(product.groupSlug ? { groupSlug: { $ne: product.groupSlug } } : {}),
-  })
-    .sort(bySalesThenNewest)
-    .limit(limit * OVERFETCH_FOR_GROUPS)
-    .lean<Product[]>();
-  return collapseGroups(products.map(withInStock)).slice(0, limit);
+  return firstCards(
+    {
+      categorySlug: product.categorySlug,
+      id: { $ne: product.id },
+      // $ne also matches products that have no groupSlug at all.
+      ...(product.groupSlug ? { groupSlug: { $ne: product.groupSlug } } : {}),
+    },
+    bySalesThenNewest,
+    limit
+  );
 }
 
 export async function getProductsPage(
