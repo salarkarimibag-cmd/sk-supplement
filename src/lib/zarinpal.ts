@@ -30,6 +30,24 @@ const GATEWAY_TIMEOUT_MS = 15_000;
 const UNREACHABLE_MESSAGE =
   "ارتباط با درگاه زرین‌پال برقرار نشد. لطفاً چند لحظه‌ی دیگر دوباره تلاش کنید.";
 
+// Buyers see these plain messages; what went wrong technically (a missing
+// setting, ZarinPal's own English error text) goes to the server log, where
+// the developer can see it and the buyer can't.
+const UNAVAILABLE_MESSAGE = "پرداخت آنلاین موقتاً در دسترس نیست. لطفاً کمی بعد دوباره تلاش کنید.";
+const REQUEST_FAILED_MESSAGE = "درخواست پرداخت زرین‌پال ناموفق بود. لطفاً دوباره تلاش کنید.";
+const VERIFY_FAILED_MESSAGE =
+  "پرداخت تأیید نشد. اگر مبلغی از حساب شما کسر شده، با پشتیبانی تماس بگیرید.";
+
+function logMissingMerchantId() {
+  console.error(
+    "ZARINPAL_MERCHANT_ID is not set: add it to .env.local locally, or to the project's environment variables on Vercel."
+  );
+}
+
+function logGatewayError(step: "request" | "verify", json: GatewayResponse) {
+  console.error(`ZarinPal ${step} was declined:`, JSON.stringify(json.errors ?? json.data ?? json));
+}
+
 /**
  * POSTs to ZarinPal and returns the parsed JSON, or null when the gateway
  * couldn't be reached or didn't answer with JSON (timeout, DNS/network
@@ -38,7 +56,7 @@ const UNREACHABLE_MESSAGE =
  */
 interface GatewayResponse {
   data?: { authority?: string; code?: number; ref_id?: number };
-  errors?: { message?: string };
+  errors?: { code?: number; message?: string };
 }
 
 async function postToGateway(url: string, body: object): Promise<GatewayResponse | null> {
@@ -63,10 +81,8 @@ export async function requestZarinPalPayment(
   params: RequestPaymentParams
 ): Promise<RequestPaymentResult> {
   if (!MERCHANT_ID) {
-    return {
-      ok: false,
-      message: "ZARINPAL_MERCHANT_ID تنظیم نشده است. آن را در فایل .env.local مقداردهی کنید.",
-    };
+    logMissingMerchantId();
+    return { ok: false, message: UNAVAILABLE_MESSAGE };
   }
 
   const json = await postToGateway(REQUEST_URL, {
@@ -84,7 +100,8 @@ export async function requestZarinPalPayment(
   const code: number | undefined = json?.data?.code;
 
   if (!authority || code !== 100) {
-    return { ok: false, message: json?.errors?.message ?? "درخواست پرداخت زرین‌پال ناموفق بود." };
+    logGatewayError("request", json);
+    return { ok: false, message: REQUEST_FAILED_MESSAGE };
   }
 
   return { ok: true, authority, paymentUrl: startPayUrl(authority) };
@@ -106,7 +123,15 @@ export async function verifyZarinPalPayment(
   params: VerifyPaymentParams
 ): Promise<VerifyPaymentResult> {
   if (!MERCHANT_ID) {
-    return { ok: false, retryable: true, message: "ZARINPAL_MERCHANT_ID تنظیم نشده است." };
+    // Retryable: the buyer may have paid, and once the setting is restored a
+    // reload of the callback page can still verify it.
+    logMissingMerchantId();
+    return {
+      ok: false,
+      retryable: true,
+      message:
+        "تأیید پرداخت موقتاً ممکن نیست. اگر مبلغ از حساب شما کسر شده، کمی بعد این صفحه را دوباره بارگذاری کنید.",
+    };
   }
 
   const json = await postToGateway(VERIFY_URL, {
@@ -131,5 +156,6 @@ export async function verifyZarinPalPayment(
     return { ok: true, refId };
   }
 
-  return { ok: false, retryable: false, message: json?.errors?.message ?? "تایید پرداخت ناموفق بود." };
+  logGatewayError("verify", json);
+  return { ok: false, retryable: false, message: VERIFY_FAILED_MESSAGE };
 }
