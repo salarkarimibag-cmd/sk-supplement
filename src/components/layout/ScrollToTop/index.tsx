@@ -6,6 +6,11 @@ import { useEffect, useRef, useState } from "react";
 // Show the button once the visitor is past the middle of the page, but never on
 // the first few hundred pixels (a short page would otherwise show it at once).
 const MIN_SCROLL = 300;
+// Tailwind's xl: from here the content leaves room beside it for the button
+// (measured: at 1024px it still covers product cards, at 1280px nothing).
+const WIDE_SCREEN = "(min-width: 80rem)";
+// How far the page must move before it counts as scrolling up or down.
+const DIRECTION_SLOP_PX = 10;
 // The rocket's flight and the page's scroll take the same time, so they arrive together.
 const LAUNCH_MS = 1000;
 // Accelerating curve: the rocket starts slow and leaves fast.
@@ -63,10 +68,28 @@ export default function ScrollToTop() {
   const [launching, setLaunching] = useState(false);
 
   useEffect(() => {
+    // Phones have no margin beside the content, so while the visitor reads
+    // down the page the button would sit on text and product cards. There it
+    // only shows while they scroll back up, which is when they want it.
+    const wide = window.matchMedia(WIDE_SCREEN);
+    let lastY = window.scrollY;
     function update() {
-      setVisible(shouldShowButton());
+      const y = window.scrollY;
+      if (wide.matches) {
+        setVisible(shouldShowButton());
+      } else if (Math.abs(y - lastY) >= DIRECTION_SLOP_PX) {
+        setVisible(y < lastY && shouldShowButton());
+      } else {
+        // A finger's jitter or the browser bar resizing isn't a change of direction.
+        return;
+      }
+      lastY = y;
     }
-    update();
+    // On a new page no direction is known yet: hidden on phones.
+    function reset() {
+      setVisible(wide.matches && shouldShowButton());
+    }
+    reset();
     // Passive: the handler never calls preventDefault, so scrolling isn't blocked.
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
