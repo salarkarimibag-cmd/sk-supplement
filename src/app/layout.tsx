@@ -4,7 +4,6 @@ import SiteChrome from "@/components/layout/SiteChrome";
 import CartDrawer from "@/components/cart/CartDrawer";
 import SiteAnalytics from "@/components/layout/SiteAnalytics";
 import { CartProvider } from "@/context/CartContext";
-import { getSessionUser } from "@/lib/auth";
 import { getAllCategories } from "@/lib/categoryContent";
 import { getAllBrands } from "@/lib/products";
 import { DEFAULT_SHARE_IMAGE, SHARED_OPEN_GRAPH } from "@/lib/seo";
@@ -65,16 +64,18 @@ const themeInitScript = `
   })();
 `;
 
+// Nothing here reads the request (the logged-in user comes to the header
+// from the browser, see useSessionUser), so pages without request-time data
+// of their own are prerendered and served from the CDN. Their menu and
+// content are rebuilt at most this often (seconds), or at once after an
+// admin change (src/lib/revalidate.ts).
+export const revalidate = 3600;
+
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const [sessionUser, allCategories, brands] = await Promise.all([
-    getSessionUser(),
-    getAllCategories(),
-    getAllBrands(),
-  ]);
-  // getSessionUser()/getAllCategories() also carry Mongoose-specific fields
-  // (e.g. `_id` as an ObjectId, which has a toJSON method) that React can't
-  // pass across the server/client boundary, so only plain fields go through.
-  const user = sessionUser ? { id: sessionUser.id, fullName: sessionUser.fullName } : null;
+  const [allCategories, brands] = await Promise.all([getAllCategories(), getAllBrands()]);
+  // getAllCategories() also carries Mongoose-specific fields (e.g. `_id` as
+  // an ObjectId, which has a toJSON method) that React can't pass across the
+  // server/client boundary, so only plain fields go through.
   const categories = allCategories.map((category) => ({
     slug: category.slug,
     title: category.title,
@@ -92,7 +93,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="flex min-h-full flex-col">
         <CartProvider>
-          <SiteChrome user={user} categories={categories} brands={brands}>
+          <SiteChrome categories={categories} brands={brands}>
             {children}
           </SiteChrome>
           <CartDrawer />

@@ -3,6 +3,7 @@ import { connectToDatabase } from "@/lib/db";
 import { DiscountCodeModel, type DiscountCode } from "@/models/DiscountCode";
 import { getSessionAdmin } from "@/lib/auth";
 import { discountInputSchema } from "@/lib/discounts";
+import { revalidateHome } from "@/lib/revalidate";
 
 export async function PATCH(
   request: Request,
@@ -69,6 +70,7 @@ export async function PATCH(
     { returnDocument: "after" }
   );
 
+  revalidateHome();
   return Response.json(discount);
 }
 
@@ -93,5 +95,6 @@ export async function DELETE(
     return Response.json({ message: "کد تخفیف پیدا نشد." }, { status: 404 });
   }
 
+  revalidateHome();
   return Response.json({ ok: true });
 }
