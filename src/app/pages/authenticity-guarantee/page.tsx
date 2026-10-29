@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BadgeCheck, MessageCircle, PackageCheck, Wallet } from "lucide-react";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "ضمانت اصالت کالا",
   description: "ضمانت اصالت محصولات فروشگاه SK Supplement و بازگشت کامل وجه برای کالای غیراصل.",
-};
+  path: "/pages/authenticity-guarantee",
+});
 
 // Same layout as the refund policy page. The refund timing matches that page,
 // so keep the two in sync if either changes.

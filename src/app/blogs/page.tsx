@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { getAllBlogPosts } from "@/lib/blogContent";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "مقالات",
   description: "آخرین مقالات آموزشی SK Supplement درباره‌ی تغذیه و مکمل‌های ورزشی.",
-};
+  path: "/blogs",
+});
 
 export default async function BlogsPage() {
   const posts = await getAllBlogPosts();

@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { ShieldCheck, Database, Settings2, Share2, UserCheck } from "lucide-react";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "حریم خصوصی",
   description: "سیاست حریم خصوصی و نحوه‌ی استفاده از اطلاعات کاربران در SK Supplement.",
-};
+  path: "/pages/privacy-policy",
+});
 
 const sections = [
   {

@@ -3,11 +3,16 @@ import Testimonials from "@/components/home/Testimonials";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import Pagination from "@/components/ui/Pagination";
 import { getApprovedReviewsPage } from "@/lib/reviews";
+import { pageMetadata, paginatedPath } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "نظرات مشتریان",
-  description: "نظرات مشتریان SK Supplement درباره‌ی محصولات و خدمات فروشگاه.",
-};
+export async function generateMetadata(props: PageProps<"/reviews">): Promise<Metadata> {
+  const { page } = await props.searchParams;
+  return pageMetadata({
+    title: "نظرات مشتریان",
+    description: "نظرات مشتریان SK Supplement درباره‌ی محصولات و خدمات فروشگاه.",
+    path: paginatedPath("/reviews", page),
+  });
+}
 
 export default async function ReviewsPage(props: PageProps<"/reviews">) {
   const { page: pageParam } = await props.searchParams;

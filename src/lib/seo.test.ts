@@ -1,5 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_SHARE_IMAGE, pageMetadata, toMetaDescription } from "./seo";
+import { DEFAULT_SHARE_IMAGE, pageMetadata, paginatedPath, toMetaDescription } from "./seo";
+
+describe("paginatedPath", () => {
+  it("is the bare path for page 1, a missing page or nonsense", () => {
+    for (const page of [undefined, "1", "0", "-3", "abc", "2.5", ""]) {
+      expect(paginatedPath("/products", page)).toBe("/products");
+    }
+  });
+
+  it("keeps ?page=N from page 2 on, each page being its own list", () => {
+    expect(paginatedPath("/products", "2")).toBe("/products?page=2");
+    expect(paginatedPath("/reviews", ["3", "9"])).toBe("/reviews?page=3");
+  });
+});
 
 describe("toMetaDescription", () => {
   it("keeps a short text, with its whitespace collapsed", () => {
@@ -49,5 +62,24 @@ describe("pageMetadata", () => {
     const { image, ...withoutImage } = product;
     void image;
     expect(pageMetadata(withoutImage).openGraph).toMatchObject({ images: [DEFAULT_SHARE_IMAGE] });
+  });
+
+  it("is a website by default", () => {
+    expect(pageMetadata(product).openGraph).toMatchObject({ type: "website" });
+  });
+
+  it("shares a blog post as an article, with its date and author", () => {
+    const metadata = pageMetadata({
+      ...product,
+      path: "/blogs/creatine",
+      article: { publishedAt: new Date("2026-10-01T08:00:00Z"), author: "تیم SK" },
+    });
+    expect(metadata.openGraph).toMatchObject({
+      type: "article",
+      publishedTime: "2026-10-01T08:00:00.000Z",
+      authors: ["تیم SK"],
+      siteName: "SK Supplement",
+      url: "/blogs/creatine",
+    });
   });
 });

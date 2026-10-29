@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Truck, Clock, BadgePercent, MapPinned } from "lucide-react";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "قوانین ارسال",
   description: "قوانین و زمان‌بندی ارسال سفارش‌ها در SK Supplement.",
-};
+  path: "/pages/shipping-policy",
+});
 
 const sections = [
   {

@@ -5,9 +5,19 @@ import SortSelect from "@/components/collections/SortSelect";
 import Pagination from "@/components/ui/Pagination";
 import { getAllProducts } from "@/lib/products";
 import { countByAttribute, filterProducts, sortProducts, toParamArray } from "@/lib/catalogFilters";
+import { pageMetadata, paginatedPath } from "@/lib/seo";
 import { collapseGroups, formatVariantSummary } from "@/lib/variants";
 
-export const metadata: Metadata = { title: "همه محصولات" };
+// Filtered and sorted views (?brand=…, ?sort=…) count as their page.
+export async function generateMetadata(props: PageProps<"/products">): Promise<Metadata> {
+  const { page } = await props.searchParams;
+  return pageMetadata({
+    title: "همه محصولات",
+    description:
+      "همه‌ی مکمل‌های ورزشی SK Supplement در یک جا: پروتئین، کراتین، آمینو، پیش‌تمرین، چربی‌سوز و ویتامین، از برندهای معتبر با ضمانت اصالت کالا.",
+    path: paginatedPath("/products", page),
+  });
+}
 
 const PAGE_SIZE = 12;
 

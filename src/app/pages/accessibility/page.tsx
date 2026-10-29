@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Accessibility, Eye, RefreshCw, MessageCircle } from "lucide-react";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "دسترس‌پذیری",
   description: "اطلاعات دسترس‌پذیری فروشگاه SK Supplement.",
-};
+  path: "/pages/accessibility",
+});
 
 const features = [
   "حالت تیره و روشن برای راحتی چشم در شرایط نوری مختلف.",

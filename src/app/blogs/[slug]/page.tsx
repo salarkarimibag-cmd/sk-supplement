@@ -5,13 +5,21 @@ import { FileDown, Lock } from "lucide-react";
 import { notFound } from "next/navigation";
 import { getBlogPostBySlug } from "@/lib/blogContent";
 import { getSessionUser } from "@/lib/auth";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata(
   props: PageProps<"/blogs/[slug]">
 ): Promise<Metadata> {
   const { slug } = await props.params;
   const post = await getBlogPostBySlug(slug);
-  return { title: post?.title ?? "مقاله یافت نشد", description: post?.excerpt };
+  if (!post) return { title: "مقاله یافت نشد" };
+  return pageMetadata({
+    title: post.title,
+    description: post.excerpt,
+    path: `/blogs/${post.slug}`,
+    image: post.coverImage,
+    article: { publishedAt: post.publishedAt, author: post.author },
+  });
 }
 
 export default async function BlogPostPage(props: PageProps<"/blogs/[slug]">) {
