@@ -10,10 +10,10 @@ export function InstagramIcon({ className }: IconProps) {
   );
 }
 
-export function FacebookIcon({ className }: IconProps) {
+export function LinkedinIcon({ className }: IconProps) {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" className={className}>
-      <path d="M13.5 21v-7.5h2.5l.4-3H13.5V8.5c0-.87.24-1.46 1.5-1.46H16.5V4.36c-.26-.03-1.15-.11-2.19-.11-2.17 0-3.66 1.32-3.66 3.75V10.5H8.13v3h2.52V21h2.85z" />
+      <path d="M5.34 7.43a2.06 2.06 0 01-2.07-2.07 2.06 2.06 0 112.07 2.07zM7.12 20.45H3.56V9h3.56v11.45zM20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28z" />
     </svg>
   );
 }
