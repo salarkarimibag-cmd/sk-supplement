@@ -32,11 +32,15 @@ export function endOfTehranDay(date: Date): Date {
  * (see countHeldUses). They count against `maxUses` too: usedCount only
  * grows once an order is paid, so without them several buyers checking out
  * at once could all pass the limit.
+ *
+ * `isReturningCustomer` is whether the buyer has bought before (see
+ * previousOrdersFilter); it only matters for a firstOrderOnly code.
  */
 export function checkDiscount(
   discount: DiscountCode | null,
   subtotal: number,
-  heldUses = 0
+  heldUses = 0,
+  isReturningCustomer = false
 ): DiscountCheckResult {
   if (!discount || !discount.active) {
     return { valid: false, message: "کد تخفیف نامعتبر است." };
@@ -49,6 +53,17 @@ export function checkDiscount(
 
   if (discount.maxUses != null && (discount.usedCount ?? 0) + heldUses >= discount.maxUses) {
     return { valid: false, message: "ظرفیت استفاده از این کد تخفیف تمام شده است." };
+  }
+
+  if (discount.minSubtotal != null && subtotal < discount.minSubtotal) {
+    return {
+      valid: false,
+      message: `این کد برای خریدهای ${discount.minSubtotal.toLocaleString("fa-IR")} تومان به بالاست.`,
+    };
+  }
+
+  if (discount.firstOrderOnly && isReturningCustomer) {
+    return { valid: false, message: "این کد فقط برای اولین خرید است." };
   }
 
   const discountAmount = calculateDiscountAmount(discount, subtotal);
@@ -73,6 +88,26 @@ export function heldOrdersFilter(code: string, now: number) {
       { status: "awaiting_verification" },
       { status: "pending", createdAt: { $gte: new Date(now - PENDING_HOLD_MS) } },
     ],
+  };
+}
+
+/** Who is buying, as the checkout form identifies them. */
+export interface Customer {
+  email: string;
+  mobile: string;
+}
+
+/**
+ * The orders that make a buyer a returning customer, for firstOrderOnly
+ * codes: any earlier purchase under the same email or the same mobile (so a
+ * new email alone doesn't make someone new), paid or a card transfer sent.
+ * Unpaid ZarinPal orders don't count, so a buyer who left the gateway can
+ * try again with the code; nor do failed or cancelled ones.
+ */
+export function previousOrdersFilter(customer: Customer) {
+  return {
+    $or: [{ "contact.email": customer.email }, { "contact.mobile": customer.mobile }],
+    status: { $in: ["awaiting_verification", "paid", "shipped"] },
   };
 }
 
@@ -110,10 +145,24 @@ export const discountInputSchema = z
     // "YYYY-MM-DD" from the date input, or null for no expiry.
     expiresAt: z.iso.date("تاریخ انقضا نامعتبر است.").nullable(),
     maxUses: z.number().int().positive("حداکثر استفاده باید بیشتر از صفر باشد.").nullable(),
+    // Defaults, so an edit that doesn't mention them reads as "no condition".
+    minSubtotal: z
+      .number()
+      .int("حداقل مبلغ خرید باید عدد صحیح باشد.")
+      .positive("حداقل مبلغ خرید باید بیشتر از صفر باشد.")
+      .nullable()
+      .default(null),
+    firstOrderOnly: z.boolean().default(false),
   })
   .refine((input) => input.type !== "percent" || input.value <= 99, {
     message: "تخفیف درصدی باید بین ۱ تا ۹۹ درصد باشد.",
     path: ["value"],
-  });
+  })
+  // A fixed amount at least as large as the minimum could make a qualifying
+  // cart free, which ZarinPal can't charge.
+  .refine(
+    (input) => input.type !== "fixed" || input.minSubtotal == null || input.minSubtotal > input.value,
+    { message: "حداقل مبلغ خرید باید از مبلغ تخفیف بیشتر باشد.", path: ["minSubtotal"] }
+  );
 
 export type DiscountInput = z.infer<typeof discountInputSchema>;

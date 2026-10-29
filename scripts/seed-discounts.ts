@@ -7,8 +7,8 @@ import { connectToDatabase } from "../src/lib/db";
 import { DiscountCodeModel } from "../src/models/DiscountCode";
 
 const discountCodes = [
-  { code: "WELCOME10", type: "percent", value: 10, active: true },
-  { code: "SK50000", type: "fixed", value: 50000, active: true },
+  { code: "WELCOME10", type: "percent", value: 10, active: true, firstOrderOnly: true },
+  { code: "SK50000", type: "fixed", value: 50000, active: true, minSubtotal: 500000 },
 ];
 
 async function main() {

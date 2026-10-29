@@ -39,6 +39,7 @@ export async function POST(request: Request) {
     ...input,
     expiresAt: input.expiresAt ?? undefined,
     maxUses: input.maxUses ?? undefined,
+    minSubtotal: input.minSubtotal ?? undefined,
   });
 
   revalidateHome();

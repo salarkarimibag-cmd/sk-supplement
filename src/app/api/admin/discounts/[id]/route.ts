@@ -37,13 +37,15 @@ export async function PATCH(
     active: existing.active,
     expiresAt: existing.expiresAt ? existing.expiresAt.toISOString().slice(0, 10) : null,
     maxUses: existing.maxUses ?? null,
+    minSubtotal: existing.minSubtotal ?? null,
+    firstOrderOnly: existing.firstOrderOnly ?? false,
     ...body,
   });
   if (!parsed.success) {
     const message = parsed.error.issues[0]?.message ?? "اطلاعات کد تخفیف نامعتبر است.";
     return Response.json({ message }, { status: 400 });
   }
-  const { expiresAt, maxUses, ...fields } = parsed.data;
+  const { expiresAt, maxUses, minSubtotal, ...fields } = parsed.data;
 
   if (fields.code !== existing.code) {
     const taken = await DiscountCodeModel.exists({ code: fields.code, _id: { $ne: id } });
@@ -56,6 +58,7 @@ export async function PATCH(
   const unset: Record<string, ""> = {};
   if (expiresAt === null) unset.expiresAt = "";
   if (maxUses === null) unset.maxUses = "";
+  if (minSubtotal === null) unset.minSubtotal = "";
 
   const discount = await DiscountCodeModel.findByIdAndUpdate(
     id,
@@ -64,6 +67,7 @@ export async function PATCH(
         ...fields,
         ...(expiresAt !== null && { expiresAt }),
         ...(maxUses !== null && { maxUses }),
+        ...(minSubtotal !== null && { minSubtotal }),
       },
       ...(Object.keys(unset).length > 0 && { $unset: unset }),
     },

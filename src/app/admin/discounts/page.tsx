@@ -38,6 +38,8 @@ export default async function AdminDiscountsPage(props: PageProps<"/admin/discou
     expiresAt: code.expiresAt ? code.expiresAt.toISOString() : null,
     maxUses: code.maxUses ?? null,
     usedCount: code.usedCount ?? 0,
+    minSubtotal: code.minSubtotal ?? null,
+    firstOrderOnly: code.firstOrderOnly ?? false,
   }));
 
   function hrefForPage(page: number) {

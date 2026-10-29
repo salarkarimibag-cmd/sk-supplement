@@ -12,6 +12,11 @@ const DiscountCodeSchema = new Schema(
     // Paid orders that used this code so far, counted when an order becomes
     // paid (not when it's created), so abandoned checkouts don't use it up.
     usedCount: { type: Number, required: true, default: 0 },
+    // The smallest cart subtotal (Toman) the code applies to; absent means any.
+    minSubtotal: { type: Number, required: false, min: 1 },
+    // Only for a buyer's first purchase (see previousOrdersFilter). Codes
+    // saved before this existed don't have it, which reads as false.
+    firstOrderOnly: { type: Boolean, required: false },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );

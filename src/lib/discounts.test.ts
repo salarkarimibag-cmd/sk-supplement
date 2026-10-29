@@ -7,6 +7,7 @@ import {
   formatDiscountValue,
   heldOrdersFilter,
   PENDING_HOLD_MS,
+  previousOrdersFilter,
 } from "./discounts";
 import type { DiscountCode } from "@/models/DiscountCode";
 
@@ -156,6 +157,51 @@ describe("checkDiscount usage limit", () => {
   });
 });
 
+describe("checkDiscount minimum subtotal", () => {
+  const discount = makeDiscount({ type: "fixed", value: 50_000, minSubtotal: 500_000 });
+
+  it("accepts a cart at or above the minimum", () => {
+    expect(checkDiscount(discount, 500_000)).toEqual({ valid: true, code: "TEST10", discountAmount: 50_000 });
+  });
+
+  it("rejects a smaller cart, naming the minimum in Persian digits", () => {
+    expect(checkDiscount(discount, 499_999)).toEqual({
+      valid: false,
+      message: "این کد برای خریدهای ۵۰۰٬۰۰۰ تومان به بالاست.",
+    });
+  });
+
+  it("has no minimum when none is set", () => {
+    expect(checkDiscount(makeDiscount({ minSubtotal: null }), 1_000).valid).toBe(true);
+  });
+});
+
+describe("checkDiscount first order only", () => {
+  it("rejects a returning customer", () => {
+    expect(checkDiscount(makeDiscount({ firstOrderOnly: true }), 100_000, 0, true)).toEqual({
+      valid: false,
+      message: "این کد فقط برای اولین خرید است.",
+    });
+  });
+
+  it("accepts a new customer", () => {
+    expect(checkDiscount(makeDiscount({ firstOrderOnly: true }), 100_000, 0, false).valid).toBe(true);
+  });
+
+  it("lets a returning customer use an ordinary code", () => {
+    expect(checkDiscount(makeDiscount(), 100_000, 0, true).valid).toBe(true);
+  });
+});
+
+describe("previousOrdersFilter", () => {
+  it("matches the same email or mobile, on orders actually bought", () => {
+    expect(previousOrdersFilter({ email: "a@b.com", mobile: "09120000000" })).toEqual({
+      $or: [{ "contact.email": "a@b.com" }, { "contact.mobile": "09120000000" }],
+      status: { $in: ["awaiting_verification", "paid", "shipped"] },
+    });
+  });
+});
+
 describe("calculateDiscountAmount safety cap", () => {
   it("never takes off more than the subtotal, even for a percent over 100", () => {
     expect(calculateDiscountAmount({ type: "percent", value: 150 }, 100_000)).toBe(100_000);
@@ -201,6 +247,22 @@ describe("discountInputSchema", () => {
     expect(discountInputSchema.safeParse({ ...valid, expiresAt: "2026-12-31" }).success).toBe(true);
     expect(discountInputSchema.safeParse({ ...valid, expiresAt: "tomorrow" }).success).toBe(false);
     expect(discountInputSchema.safeParse({ ...valid, maxUses: 0 }).success).toBe(false);
+  });
+
+  it("defaults to no minimum and not first-order-only", () => {
+    expect(discountInputSchema.parse(valid)).toMatchObject({ minSubtotal: null, firstOrderOnly: false });
+  });
+
+  it("validates the minimum subtotal", () => {
+    expect(discountInputSchema.safeParse({ ...valid, minSubtotal: 500_000 }).success).toBe(true);
+    expect(discountInputSchema.safeParse({ ...valid, minSubtotal: 0 }).success).toBe(false);
+    expect(discountInputSchema.safeParse({ ...valid, minSubtotal: 1.5 }).success).toBe(false);
+  });
+
+  it("requires a fixed amount's minimum to be above the amount, so no cart becomes free", () => {
+    const fixed = { ...valid, type: "fixed", value: 50_000 };
+    expect(discountInputSchema.safeParse({ ...fixed, minSubtotal: 50_000 }).success).toBe(false);
+    expect(discountInputSchema.safeParse({ ...fixed, minSubtotal: 50_001 }).success).toBe(true);
   });
 });
 
