@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { addRateLimitIndexes } from "@/models/rateLimitIndexes";
 
 /**
  * A discount code entered that wasn't valid, kept briefly so the routes that
@@ -22,6 +23,8 @@ const DiscountCodeAttemptSchema = new Schema<DiscountCodeAttempt>(
 // Only the last few minutes matter for throttling, so MongoDB deletes each
 // attempt a day after it was made instead of letting the collection grow.
 DiscountCodeAttemptSchema.index({ createdAt: 1 }, { expireAfterSeconds: 24 * 60 * 60 });
+
+addRateLimitIndexes(DiscountCodeAttemptSchema);
 
 // Avoids Mongoose's "Cannot overwrite model" error when this module is
 // re-evaluated on every hot reload in dev.

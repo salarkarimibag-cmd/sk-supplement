@@ -1,4 +1,5 @@
 import mongoose, { Schema, type InferSchemaType } from "mongoose";
+import { addRateLimitIndexes } from "@/models/rateLimitIndexes";
 
 export type OrderStatus =
   | "pending"
@@ -96,6 +97,22 @@ const OrderSchema = new Schema(
 );
 
 export type Order = InferSchemaType<typeof OrderSchema> & { id: string };
+
+// One per kind of lookup, each matching its query: equality fields first,
+// then the field sorted or ranged on.
+// A customer's own orders, newest first (/account/orders), and whether
+// they bought a product (canReview).
+OrderSchema.index({ userId: 1, createdAt: -1 });
+// The admin's orders per status, newest first, and the counts per status;
+// also pending ZarinPal orders past their hold (releaseExpiredReservations).
+OrderSchema.index({ status: 1, createdAt: -1 });
+// Unpaid orders holding a discount code (heldOrdersFilter). Partial: most
+// orders have no code, and only those with one are ever looked up by it.
+OrderSchema.index(
+  { discountCode: 1, status: 1 },
+  { partialFilterExpression: { discountCode: { $exists: true } } }
+);
+addRateLimitIndexes(OrderSchema);
 
 // Avoids Mongoose's "Cannot overwrite model" error when this module is
 // re-evaluated on every hot reload in dev.

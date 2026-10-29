@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { addRateLimitIndexes } from "@/models/rateLimitIndexes";
 
 export interface ContactMessage {
   name: string;
@@ -19,6 +20,8 @@ const ContactMessageSchema = new Schema<ContactMessage>(
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );
+
+addRateLimitIndexes(ContactMessageSchema);
 
 // Avoids Mongoose's "Cannot overwrite model" error when this module is
 // re-evaluated on every hot reload in dev.
