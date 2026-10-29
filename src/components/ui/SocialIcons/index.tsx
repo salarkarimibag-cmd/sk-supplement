@@ -18,14 +18,6 @@ export function LinkedinIcon({ className }: IconProps) {
   );
 }
 
-export function YoutubeIcon({ className }: IconProps) {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" className={className}>
-      <path d="M21.58 7.2a2.77 2.77 0 00-1.95-1.96C17.9 4.75 12 4.75 12 4.75s-5.9 0-7.63.49A2.77 2.77 0 002.42 7.2 29 29 0 002 12a29 29 0 00.42 4.8 2.77 2.77 0 001.95 1.96c1.73.49 7.63.49 7.63.49s5.9 0 7.63-.49a2.77 2.77 0 001.95-1.96A29 29 0 0022 12a29 29 0 00-.42-4.8zM10 15V9l5.2 3-5.2 3z" />
-    </svg>
-  );
-}
-
 export function XIcon({ className }: IconProps) {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" className={className}>
