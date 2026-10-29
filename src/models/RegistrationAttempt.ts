@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { addRateLimitIndexes } from "@/models/rateLimitIndexes";
 
 /**
  * One sign-up attempt, kept briefly so /api/auth/register can be
@@ -24,6 +25,8 @@ const RegistrationAttemptSchema = new Schema<RegistrationAttempt>(
 // Only the last hour matters for throttling, so MongoDB deletes each attempt
 // a day after it was made instead of letting the collection grow.
 RegistrationAttemptSchema.index({ createdAt: 1 }, { expireAfterSeconds: 24 * 60 * 60 });
+
+addRateLimitIndexes(RegistrationAttemptSchema);
 
 // Avoids Mongoose's "Cannot overwrite model" error when this module is
 // re-evaluated on every hot reload in dev.

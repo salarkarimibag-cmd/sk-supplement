@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { addRateLimitIndexes } from "@/models/rateLimitIndexes";
 
 export interface Review {
   /** The product's `id` for a product review; absent for a review of the store. */
@@ -49,6 +50,8 @@ ReviewSchema.index(
   { createdAt: 1 },
   { expireAfterSeconds: 30 * 24 * 60 * 60, partialFilterExpression: { approved: false } }
 );
+
+addRateLimitIndexes(ReviewSchema);
 
 // Avoids Mongoose's "Cannot overwrite model" error when this module is
 // re-evaluated on every hot reload in dev.
