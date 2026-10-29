@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CircleDollarSign } from "lucide-react";
-import { FacebookIcon, InstagramIcon, XIcon, YoutubeIcon } from "@/components/ui/SocialIcons";
+import { InstagramIcon, LinkedinIcon, XIcon, YoutubeIcon } from "@/components/ui/SocialIcons";
 import EmailSignupForm from "@/components/ui/EmailSignupForm";
 
 export default function Footer() {
@@ -23,8 +23,8 @@ export default function Footer() {
             <Link href="#" aria-label="یوتیوب" className="hover:text-sky-500">
               <YoutubeIcon className="h-6 w-6" />
             </Link>
-            <Link href="#" aria-label="فیسبوک" className="hover:text-sky-500">
-              <FacebookIcon className="h-6 w-6" />
+            <Link href="#" aria-label="لینکدین" className="hover:text-sky-500">
+              <LinkedinIcon className="h-6 w-6" />
             </Link>
             <Link href="#" aria-label="اینستاگرام" className="hover:text-sky-500">
               <InstagramIcon className="h-6 w-6" />
