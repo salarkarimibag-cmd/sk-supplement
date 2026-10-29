@@ -3,6 +3,7 @@ import {
   buildVariantOptions,
   collapseGroups,
   formatVariantSummary,
+  hasSizeChoice,
   productGroupSchema,
   type VariantProduct,
 } from "./variants";
@@ -23,6 +24,14 @@ describe("buildVariantOptions", () => {
       ["۲ کیلو", true],
       ["۵ کیلو", false],
     ]);
+  });
+
+  it("lists only the current size, not as a choice, when the size follows from the flavor", () => {
+    const choc = { id: "g1", flavor: "شکلات", size: "۲٫۰۲ کیلوگرم", inStock: true };
+    const vanilla = { id: "g2", flavor: "وانیل", size: "۲٫۲۸ کیلوگرم", inStock: true };
+    const { flavors, sizes } = buildVariantOptions(choc, [choc, vanilla]);
+    expect(flavors).toHaveLength(2);
+    expect(sizes.map((o) => [o.value, o.selected])).toEqual([["۲٫۰۲ کیلوگرم", true]]);
   });
 
   it("gives each option the photo of the product it links to", () => {
@@ -102,6 +111,38 @@ describe("collapseGroups", () => {
 
   it("only summarizes the members present in the list it gets (after filtering)", () => {
     expect(collapseGroups([whey2])[0].variantSummary).toBeUndefined();
+  });
+
+  it("doesn't count sizes that only follow from the flavor", () => {
+    const tubs = [
+      { id: "g1", groupSlug: "gold", flavor: "شکلات", size: "۲٫۰۲ کیلوگرم" },
+      { id: "g2", groupSlug: "gold", flavor: "وانیل", size: "۲٫۲۸ کیلوگرم" },
+      { id: "g3", groupSlug: "gold", flavor: "موز", size: "۲٫۰۴ کیلوگرم" },
+    ];
+    expect(collapseGroups(tubs)[0].variantSummary).toEqual({ flavorCount: 3, sizeCount: 1 });
+  });
+});
+
+describe("hasSizeChoice", () => {
+  it("is true when some flavor comes in more than one size", () => {
+    expect(hasSizeChoice(group)).toBe(true);
+  });
+
+  it("is true for an unflavored product in several sizes", () => {
+    expect(hasSizeChoice([{ size: "۹۰ قرص" }, { size: "۱۸۰ قرص" }])).toBe(true);
+  });
+
+  it("is false when each flavor has a single pack, however their weights differ", () => {
+    expect(
+      hasSizeChoice([
+        { flavor: "شکلات", size: "۲٫۰۲ کیلوگرم" },
+        { flavor: "وانیل", size: "۲٫۲۸ کیلوگرم" },
+      ])
+    ).toBe(false);
+  });
+
+  it("is false without sizes", () => {
+    expect(hasSizeChoice([{ flavor: "شکلات" }, { flavor: "وانیل" }])).toBe(false);
   });
 });
 
