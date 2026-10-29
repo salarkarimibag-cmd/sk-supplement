@@ -7,6 +7,7 @@ import { OrderModel, type Order, type OrderStatus, type PaymentMethod } from "@/
 import { getProductNames } from "@/lib/products";
 import { ORDER_STATUS_LABELS, isOrderStatus } from "@/lib/orderStatus";
 import OrderManager from "@/components/admin/OrderManager";
+import ReconcileButton from "@/components/admin/ReconcileButton";
 import Pagination from "@/components/ui/Pagination";
 
 export const metadata: Metadata = {
@@ -117,7 +118,10 @@ export default async function AdminOrdersPage(props: PageProps<"/admin/orders">)
         ))}
       </nav>
 
-      <OrderManager key={`${status}-${currentPage}`} initialOrders={initialOrders} />
+      {status === "pending" && <ReconcileButton />}
+      {/* The count is in the key so the list starts over when it changes
+          under it, as after a reconcile (its own changes it applies itself). */}
+      <OrderManager key={`${status}-${currentPage}-${totalCount}`} initialOrders={initialOrders} />
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
