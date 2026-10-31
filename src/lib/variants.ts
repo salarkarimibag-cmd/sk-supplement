@@ -74,10 +74,32 @@ function optionsFor(axis: Axis, current: VariantProduct, group: VariantProduct[]
  * `group` should include the current product.
  */
 export function buildVariantOptions(current: VariantProduct, group: VariantProduct[]): VariantOptions {
+  const sizes = optionsFor("size", current, group);
   return {
     flavors: optionsFor("flavor", current, group),
-    sizes: optionsFor("size", current, group),
+    // Without a real size choice only the current size is listed, which the
+    // picker shows as plain text rather than as buttons.
+    sizes: hasSizeChoice(group) ? sizes : sizes.filter((option) => option.selected),
   };
+}
+
+/**
+ * Whether shoppers choose a size on its own: only when some flavor comes in
+ * more than one size. Otherwise every flavor has a single pack whose weight
+ * merely differs by flavor (Gold Standard's tubs run from 2.02 to 2.28 kg),
+ * so the size follows from the flavor, and offering it as a choice would
+ * only be a second flavor picker under another name.
+ */
+export function hasSizeChoice(group: Pick<VariantProduct, "flavor" | "size">[]): boolean {
+  const sizesByFlavor = new Map<string, Set<string>>();
+  for (const product of group) {
+    if (!product.size) continue;
+    const flavor = product.flavor ?? "";
+    const sizes = sizesByFlavor.get(flavor) ?? new Set<string>();
+    sizes.add(product.size);
+    sizesByFlavor.set(flavor, sizes);
+  }
+  return [...sizesByFlavor.values()].some((sizes) => sizes.size > 1);
 }
 
 export interface VariantSummary {
@@ -124,7 +146,10 @@ export function collapseGroups<T extends Groupable>(products: T[]): (T & { varia
             ...product,
             variantSummary: {
               flavorCount: countDistinct(group.map((member) => member.flavor)),
-              sizeCount: countDistinct(group.map((member) => member.size)),
+              // Only sizes a shopper actually picks from count (see hasSizeChoice).
+              sizeCount: hasSizeChoice(group)
+                ? countDistinct(group.map((member) => member.size))
+                : Math.min(1, countDistinct(group.map((member) => member.size))),
             },
           }
         : product
