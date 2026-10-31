@@ -259,6 +259,21 @@ export function decrementStock(items: StockLine[]): Promise<void> {
   return adjustStock(items, { stock: -1, salesCount: 1 });
 }
 
+/**
+ * The names of those products whose stock has gone below zero: more units
+ * were paid for than exist, because a late payment took stock that had
+ * already been sold on (see onOrderPaid).
+ */
+export async function findOversold(productIds: string[]): Promise<string[]> {
+  await connectToDatabase();
+  const oversold = await ProductModel.find(
+    { id: { $in: productIds }, stock: { $lt: 0 } },
+    { id: 1 }
+  ).lean<{ id: string }[]>();
+  if (oversold.length === 0) return [];
+  return [...(await getProductNames(oversold.map((product) => product.id))).values()];
+}
+
 /** Puts a cancelled order's quantities back in stock and takes them off the sales count. */
 export function restoreStock(items: StockLine[]): Promise<void> {
   return adjustStock(items, { stock: 1, salesCount: -1 });

@@ -183,6 +183,8 @@ export interface AdminOrderEmailInput extends Omit<OrderEmailInput, "kind" | "ha
   contact: { email: string; mobile: string };
   /** What the buyer reported for a card-to-card order, to match against the bank. */
   cardTransfer?: { trackingCode: string; cardLast4: string };
+  /** Products this order left short: it was paid after its stock was sold on. */
+  oversold?: string[];
 }
 
 const ADMIN_CONTENT: Record<AdminOrderEmailKind, { subject: string; body: string }> = {
@@ -198,6 +200,12 @@ const ADMIN_CONTENT: Record<AdminOrderEmailKind, { subject: string; body: string
 
 export function buildAdminOrderEmail(input: AdminOrderEmailInput) {
   const content = ADMIN_CONTENT[input.kind];
+  const oversold = input.oversold ?? [];
+  const subject = oversold.length > 0 ? `موجودی کافی نیست: ${content.subject}` : content.subject;
+  const shortage =
+    oversold.length > 0
+      ? `هشدار: این سفارش بعد از پایان مهلت رزرو پرداخت شد و موجودی این محصولات کافی نیست: ${oversold.join("، ")}. مبلغ از مشتری کسر شده است؛ کالا را تهیه کنید یا با مشتری تماس بگیرید و مبلغ را برگردانید.`
+      : "";
   const orderNumber = formatOrderNumber(input.orderId);
   const adminUrl = `${input.siteUrl}/admin/orders`;
 
@@ -218,6 +226,7 @@ export function buildAdminOrderEmail(input: AdminOrderEmailInput) {
   const address = formatAddress(input.address);
 
   const text = [
+    ...(shortage ? [shortage, ""] : []),
     content.body,
     "",
     ...details,
@@ -231,7 +240,8 @@ export function buildAdminOrderEmail(input: AdminOrderEmailInput) {
 
   // Every detail here comes from the buyer's checkout form, so all of it is escaped.
   const html = `<div dir="rtl" style="${EMAIL_WRAPPER_STYLE}">
-<h2 style="margin:0 0 12px">${content.subject}</h2>
+<h2 style="margin:0 0 12px">${subject}</h2>
+${shortage ? `<p style="color:#b91c1c;font-weight:bold">${escapeHtml(shortage)}</p>` : ""}
 <p>${content.body}</p>
 <p style="color:#52525b">${details.map((line) => escapeHtml(line)).join("<br>")}</p>
 ${itemsTableHtml(input)}
@@ -239,5 +249,5 @@ ${itemsTableHtml(input)}
 ${buttonHtml(adminUrl, "مشاهده در پنل مدیریت")}
 </div>`;
 
-  return { subject: `${content.subject} | شماره ${orderNumber}`, text, html };
+  return { subject: `${subject} | شماره ${orderNumber}`, text, html };
 }

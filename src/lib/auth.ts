@@ -70,9 +70,9 @@ async function getSession(): Promise<{ userId: string; issuedAt?: number } | nul
  * Reads the session cookie (if any) and loads the matching user, without the
  * password hash.
  *
- * Wrapped in React's cache(): the root layout (for the header) and the page
- * (or requireAdmin) both ask for the user while rendering one request, and
- * this way the database is queried once and both get the same result. The
+ * Wrapped in React's cache(): when several parts of a page (a layout and
+ * requireAdmin, say) ask for the user while rendering one request, the
+ * database is queried once and they all get the same result. The
  * memo lasts for that one server render only, so nothing is shared between
  * requests or users. Route handlers aren't a render, so there every call
  * still runs.

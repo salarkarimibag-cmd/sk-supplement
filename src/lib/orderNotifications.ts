@@ -78,7 +78,8 @@ export async function sendOrderEmail(order: NotifiableOrder, kind: OrderEmailKin
  */
 export async function sendAdminOrderEmail(
   order: NotifiableOrder,
-  kind: AdminOrderEmailKind
+  kind: AdminOrderEmailKind,
+  oversold: string[] = []
 ): Promise<void> {
   try {
     const base = await loadEmailBase(order);
@@ -90,6 +91,7 @@ export async function sendAdminOrderEmail(
       kind,
       contact: order.contact,
       cardTransfer: order.cardTransfer ?? undefined,
+      oversold,
     });
     await Promise.all(admins.map((admin) => sendEmail({ to: admin.email, ...email })));
   } catch (error) {
