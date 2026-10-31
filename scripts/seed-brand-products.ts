@@ -401,6 +401,19 @@ const appliedProducts: BrandProduct[] = [
   ),
 ];
 
+// Shared by every Platinum 100% Creatine flavour (muscletech.com/products/
+// platinum-100-creatine, "How To Use"); the page's "unflavored" note is left out.
+const mtPlatinumCreatineUsage =
+  "فاز بارگیری (روز ۱ تا ۳): ۱ وعده (۱ اسکوپ) را با ۲۴۰ میلی‌لیتر آب مخلوط کنید و ۴ بار در روز مصرف کنید.\nفاز نگهداری (از روز ۴ به بعد): ۱ وعده (۱ اسکوپ) را با ۲۴۰ میلی‌لیتر آب مخلوط کنید و ۱ تا ۲ بار در روز مصرف کنید.\nدر طول مصرف، آب کافی بنوشید.";
+// Shared by both Platinum 100% EAA+ flavours (muscletech.com/products/
+// platinum-100-eaa, "How To Use").
+const mtPlatinumEaaUsage =
+  "۱ وعده (۱ اسکوپ) را با ۳۰۰ میلی‌لیتر آب سرد در شیکر مخلوط کنید و ۱ تا ۲ بار در روز بنوشید. برای بهترین نتیجه، بعد از تمرین مصرف کنید.\nمی‌توانید آن را به‌عنوان نوشیدنی روزانه هم مصرف کنید.";
+// Shared by every R1 Whey Protein flavour (ruleoneproteins.com/products/
+// whey-protein, "When & How to Use It").
+const rule1WheyUsage =
+  "حدود ۱ اسکوپ را با ۱۸۰ تا ۲۴۰ میلی‌لیتر آب سرد، شیر یا نوشیدنی دلخواه در شیکر یا لیوان با قاشق مخلوط کنید. بهترین زمان مصرف بعد از تمرین است، ولی صبح، بعدازظهر یا بین وعده‌ها هم برای رسیدن به پروتئین روزانه مناسب است.\nبرای تنوع می‌توانید آن را با میوه یا کره‌ی بادام‌زمینی در مخلوط‌کن اسموتی کنید، یا با غلات صبحانه و ماست بخورید.";
+
 const products: BrandProduct[] = [
   // Optimum Nutrition
   {
@@ -1173,6 +1186,8 @@ const products: BrandProduct[] = [
       "حساسیت‌زاها: حاوی شیر و سویا.\nفقط به‌عنوان مکمل غذایی مصرف شود؛ برای کاهش وزن استفاده نشود.",
     manufacturerClaims:
       "۲۵ گرم پروتئین در هر وعده\n۱۰۰٪ پروتئین آن از ایزوله‌ی وی است\nپروتئین وی هیدرولیزه برای جذب سریع\nبدون قند افزوده\nبه‌راحتی در آب، شیر یا جایگزین شیر حل می‌شود\nهضم آسان\nتست‌شده برای مواد ممنوعه (Banned Substance Tested)",
+    // Directions from the US label (NIH DSLD 302405, same flavour, 32 g sachet).
+    usage: "۱ وعده را به ۱۵۰ تا ۱۸۰ میلی‌لیتر آب، شیر یا نوشیدنی دلخواه اضافه کنید و خوب هم بزنید. قبل از تمرین، تا ۳۰ دقیقه بعد از تمرین، یا هر زمان که به نوشیدنی پرپروتئین نیاز دارید مصرف کنید.",
     brand: "Dymatize",
     price: 1290000,
     categorySlug: "protein",
@@ -1242,6 +1257,8 @@ const products: BrandProduct[] = [
     nutritionFacts: [{ label: "کراتین مونوهیدرات (Creapure®)", amount: "۵ گرم" }],
     manufacturerClaims:
       "ساخته‌شده با ۱۰۰٪ کرپیور (Creapure®)\nبدون پرکننده و افزودنی\nتست‌شده برای مواد ممنوعه (Banned Substance Tested)\nبه گفته‌ی سازنده، همراه با ورزش و تمرین قدرتی منظم به عضله‌سازی، افزایش قدرت و تمرین‌های پرشدت کمک می‌کند (این ادعا توسط FDA ارزیابی نشده است)\nبدون طعم و آسان‌حل",
+    // Directions from the US label (NIH DSLD 302361, this 300 g tub).
+    usage: "روزانه ۲ قاشق چای‌خوری را به آب سرد یا نوشیدنی دلخواه اضافه کنید. می‌توانید آن را تنها یا همراه شیک و نوشیدنی‌های دیگر مصرف کنید.\nدر زمان تمرین و مصرف این محصول، مایعات کافی بنوشید.",
     brand: "Dymatize",
     price: 850000,
     categorySlug: "creatine",
@@ -1274,6 +1291,9 @@ const products: BrandProduct[] = [
     warnings: "حاوی کافئین (۱۵۰ میلی‌گرم در هر وعده).",
     manufacturerClaims:
       "کافئین کمتر و بدون قند، برای انرژی پایدار\n۵ گرم ترکیب اسید آمینه که به گفته‌ی سازنده به تمرکز ذهنی کمک می‌کند (این ادعا توسط FDA ارزیابی نشده است)\nبه گفته‌ی سازنده: عملکرد بهتر، انرژی پایدار و ریکاوری سریع‌تر",
+    // Directions as retailers (Vitacost, Walmart) quote the pack: Dymatize's
+    // site has none and DSLD has no record. Check against a real tub.
+    usage: "۱ اسکوپ را به ۲۴۰ میلی‌لیتر آب اضافه کنید و ۱۵ تا ۳۰ دقیقه قبل از فعالیت بدنی بنوشید.",
     brand: "Dymatize",
     price: 1250000,
     categorySlug: "pre-workout",
@@ -1298,6 +1318,8 @@ const products: BrandProduct[] = [
     ],
     manufacturerClaims:
       "بهترین طعم در کلاس خود\nساخت آمریکا، از سال ۱۹۹۵\nمیکروفیلتراسیون سرد برتر\nکیفیت بالا و بسیار خالص",
+    // Directions from the US label (NIH DSLD 182890, Double Rich Chocolate, 2019, 1 kg tub; same scoop-based dose).
+    usage: "قبل از مصرف، ظرف را تکان دهید. ۱ اسکوپ را با ۱۸۰ میلی‌لیتر آب سرد یا شیر بدون چربی در لیوان یا شیکر مخلوط کنید. بین وعده‌های اصلی و قبل و بعد از تمرین مصرف کنید.",
     brand: "MuscleTech",
     price: 2250000,
     categorySlug: "protein",
@@ -1493,6 +1515,8 @@ const products: BrandProduct[] = [
     // the photos, so they're left out until a clearer label is available.
     manufacturerClaims:
       "عضله‌سازی و افزایش قدرت\n۴٫۴۷ برابر عضله‌ی بدون چربی بیشتر\n۳۰۰۰ میلی‌گرم پپتید کراتین ثبت‌اختراع‌شده و ۳۰۰۰ میلی‌گرم کراتین مونوهیدرات در هر وعده\nحمایت از عملکرد شناختی\n(جزئیات و مبنای این ادعاها روی بخشی از بسته است که در عکس‌ها نبود)",
+    // Directions from muscletech.com/products/creatine-peptide-447 (How To Use).
+    usage: "۱ وعده (۱ اسکوپ) را روزانه با ۱۸۰ میلی‌لیتر آب، قهوه یا نوشیدنی دلخواه مخلوط کنید. برای بهترین نتیجه و حداکثر اشباع عضله، ۲ وعده (۲ اسکوپ) در روز مصرف کنید.\nاین پودر بدون طعم را می‌توانید مستقیم به شیک پروتئین روزانه‌تان اضافه کنید. در طول مصرف، آب کافی بنوشید.",
     brand: "MuscleTech",
     price: 1350000,
     categorySlug: "creatine",
@@ -1612,6 +1636,8 @@ const products: BrandProduct[] = [
       "برای افراد زیر ۱۸ سال مناسب نیست. در دوران بارداری و شیردهی مصرف نکنید. اگر سابقه‌ی سکته‌ی قلبی دارید، مصرف نکنید. استنشاق پودر ممکن است واکنش التهابی راه‌های هوایی را در افراد مبتلا به آسم تشدید کند. یک وعده از این محصول حداکثر به اندازه‌ی ۲ فنجان قهوه کافئین دارد (۱۹۰ میلی‌گرم در هر اسکوپ). افراد حساس به کافئین ممکن است علائمی مانند بی‌قراری، عصبی بودن، لرزش، اضطراب، افزایش ضربان قلب یا اختلال خواب را تجربه کنند. با منابع دیگر کافئین یا محرک‌ها ترکیب نکنید. بعضی افراد ممکن است به‌خاطر دوز بالای بتا-آلانین احساس گزگز بی‌خطری داشته باشند. در صورت داشتن بیماری یا قبل از شروع هر رژیم غذایی یا برنامه‌ی ورزشی با پزشک مشورت کنید. دور از دسترس کودکان نگه دارید. در محل خنک و خشک (۱۶ تا ۲۷ درجه‌ی سانتی‌گراد) نگهداری کنید و اگر بسته‌بندی دستکاری شده بود، مصرف نکنید.\nحساسیت‌زاها: در مجموعه‌ای تولید می‌شود که شیر، تخم‌مرغ، گندم، سویا، کنجد، بادام‌زمینی، آجیل درختی، ماهی و صدف را هم فرآوری می‌کند.\nاین بیانیه‌ها توسط سازمان غذا و داروی آمریکا (FDA) ارزیابی نشده‌اند و این محصول برای تشخیص، درمان یا پیشگیری از هیچ بیماری‌ای نیست.",
     manufacturerClaims:
       "انرژی و عملکرد انفجاری\nترکیبات کلیدی با پشتوانه‌ی تحقیقات\nافزایش قدرت و عضله‌ی بدون چربی",
+    // Directions from muscletech.com/products/vaporx5 (How To Use).
+    usage: "برای سنجش تحمل بدن، ۱ وعده (۱ اسکوپ) را با ۲۴۰ میلی‌لیتر آب سرد مخلوط کنید و حدود ۳۰ دقیقه قبل از تمرین بنوشید. بعد از سنجش تحمل، می‌توانید مقدار را به ۲ اسکوپ در ۴۸۰ میلی‌لیتر آب قبل از تمرین برسانید.\nدر ۲۴ ساعت بیشتر از ۲ اسکوپ مصرف نکنید. در طول مصرف، آب کافی بنوشید.",
     brand: "MuscleTech",
     price: 1390000,
     categorySlug: "pre-workout",
@@ -1633,6 +1659,7 @@ const products: BrandProduct[] = [
     ],
     manufacturerClaims:
       "افزایش ۴۰٪ قدرت\nاسیدهای آمینه‌ی ضروری + الکترولیت‌ها\nترکیبات تست‌شده در دانشگاه\n(جزئیات و مبنای این ادعاها روی بخشی از بسته است که در عکس‌ها نبود)",
+    usage: mtPlatinumEaaUsage,
     brand: "MuscleTech",
     price: 1290000,
     categorySlug: "aminos",
@@ -1654,6 +1681,7 @@ const products: BrandProduct[] = [
     ],
     manufacturerClaims:
       "افزایش ۴۰٪ قدرت\nاسیدهای آمینه‌ی ضروری + الکترولیت‌ها\nترکیبات تست‌شده در دانشگاه\n(جزئیات و مبنای این ادعاها روی بخشی از بسته است که در عکس‌ها نبود)",
+    usage: mtPlatinumEaaUsage,
     brand: "MuscleTech",
     price: 1290000,
     categorySlug: "aminos",
@@ -1700,6 +1728,7 @@ const products: BrandProduct[] = [
       "افزایش ۶ پوند (حدود ۲٫۷ کیلوگرم) عضله در ۶ هفته\nمیکرونیزه و بسیار خالص\nحجم، قدرت و ریکاوری",
     servingSize: "۵ گرم",
     nutritionFacts: [{ label: "کراتین مونوهیدرات", amount: "۵ گرم" }],
+    usage: mtPlatinumCreatineUsage,
     brand: "MuscleTech",
     price: 890000,
     categorySlug: "creatine",
@@ -1717,6 +1746,7 @@ const products: BrandProduct[] = [
       "افزایش ۶ پوند (حدود ۲٫۷ کیلوگرم) عضله در ۶ هفته\nمیکرونیزه و بسیار خالص\nحجم، قدرت و ریکاوری",
     servingSize: "۵ گرم",
     nutritionFacts: [{ label: "کراتین مونوهیدرات", amount: "۵ گرم" }],
+    usage: mtPlatinumCreatineUsage,
     brand: "MuscleTech",
     price: 890000,
     categorySlug: "creatine",
@@ -1734,6 +1764,7 @@ const products: BrandProduct[] = [
       "افزایش ۶ پوند (حدود ۲٫۷ کیلوگرم) عضله در ۶ هفته\nمیکرونیزه و بسیار خالص\nحجم، قدرت و ریکاوری",
     servingSize: "۵ گرم",
     nutritionFacts: [{ label: "کراتین مونوهیدرات", amount: "۵ گرم" }],
+    usage: mtPlatinumCreatineUsage,
     brand: "MuscleTech",
     price: 890000,
     categorySlug: "creatine",
@@ -1751,6 +1782,7 @@ const products: BrandProduct[] = [
       "افزایش ۶ پوند (حدود ۲٫۷ کیلوگرم) عضله در ۶ هفته\nمیکرونیزه و بسیار خالص\nحجم، قدرت و ریکاوری",
     servingSize: "۵ گرم",
     nutritionFacts: [{ label: "کراتین مونوهیدرات", amount: "۵ گرم" }],
+    usage: mtPlatinumCreatineUsage,
     brand: "MuscleTech",
     price: 890000,
     categorySlug: "creatine",
@@ -2193,6 +2225,8 @@ const products: BrandProduct[] = [
     nutritionFacts: [{ label: "کراتین مونوهیدرات میکرونیزه", amount: "۵ گرم" }],
     manufacturerClaims:
       "۵ گرم کراتین مونوهیدرات میکرونیزه در هر وعده\nبدون قند، بدون رنگ مصنوعی و بدون چربی\nبه گفته‌ی سازنده، همراه با تمرین مقاومتی به عضله‌ی بدون چربی و افزایش قدرت کمک می‌کند و از حافظه پشتیبانی می‌کند (این ادعاها توسط FDA ارزیابی نشده است)",
+    // Directions from the US label (NIH DSLD 62513, this 360 g tub).
+    usage: "۱ وعده (۱ اسکوپ) را با ۲۴۰ تا ۳۰۰ میلی‌لیتر آب سرد یا نوشیدنی دلخواه مخلوط کنید و قبل، حین یا بعد از تمرین بنوشید. در روزهای بدون تمرین، ۱ اسکوپ صبح مصرف کنید.\nفاز بارگیری: اگر در حال حاضر کراتین مصرف نمی‌کنید، برای بهترین نتیجه در ۵ تا ۷ روز اول ۴ بار در روز ۱ اسکوپ مصرف کنید.",
     brand: "Cellucor",
     price: 850000,
     categorySlug: "creatine",
@@ -2207,7 +2241,9 @@ const products: BrandProduct[] = [
     // super-thermo: 60 ÷ 2 = 30 servings; 20 mg cayenne × 5% = the 1 mg
     // capsaicinoids on the pack front. Replaces the SuperHD placeholder,
     // whose label (like Super Shred's) has yohimbe; SuperHD also has
-    // rauwolfia. The site gives no directions or warnings.
+    // rauwolfia. No directions: the site's text (1 capsule per serving, "boost
+    // of energy") contradicts this panel (2 capsules) and looks copied from
+    // a stimulant product, so `usage` waits for a real label.
     description:
       "سوپر ترمو سلوکور؛ چربی‌سوز بدون محرک (بدون کافئین) برای کالری‌سوزی، متابولیسم و کنترل اشتها. هر وعده (۲ کپسول) ۵۰۰ میلی‌گرم پپتید DNF-10®، ۴۰۰ میلی‌گرم بربرین، ۱۰۰ میلی‌گرم ۵-HTP و ۲۰ میلی‌گرم عصاره‌ی فلفل قرمز دارد و قوطی ۶۰ کپسولی ۳۰ وعده است.\nسایر مواد: کپسول گیاهی (هیپروملوز)، میکروکریستالین سلولز، استئارات منیزیم، دی‌اکسید سیلیکون.",
     servingSize: "۲ کپسول",
@@ -2828,6 +2864,8 @@ const products: BrandProduct[] = [
       "حاوی کافئین (۲۰۰ میلی‌گرم در کپسول قرمز هر پک).\nحاوی ژلاتین گاوی.\nدر مجموعه‌ای تولید می‌شود که شیر، سویا، تخم‌مرغ، بادام‌زمینی، آجیل درختی، ماهی، صدف، گندم و کنجد را هم فرآوری می‌کند.",
     manufacturerClaims:
       "اولین پیش‌تمرین کپسولی (به گفته‌ی سازنده)\nپمپ و حجم سلولی بیشتر، بهبود گردش خون با تقویت‌کننده‌های نیتریک اکساید، و محرک‌ها و نوتروپیک‌ها برای انرژی و تمرکز\nکپسول محرک جدا، تا بتوانید بدون کافئین هم مصرف کنید\n(این ادعاها توسط FDA ارزیابی نشده است)",
+    // Directions from the US label (NIH DSLD 246152, 30 packs).
+    usage: "به‌عنوان مکمل پایه‌ی پیش‌تمرین، ۱ پک را ۳۰ تا ۴۵ دقیقه قبل از تمرین، ترجیحاً با معده‌ی خالی مصرف کنید. چون هر پک دوز کامل روزانه‌ی کراتین را دارد، برای بهترین نتیجه هر روز مصرف کنید.\nدر روزهای بدون تمرین، پک را حدود همان ساعت همیشگی مصرف کنید. در روزهای استراحت یا اگر شب تمرین می‌کنید، می‌توانید کپسول قرمز (محرک) را کنار بگذارید.",
     brand: "Universal Nutrition",
     price: 1390000,
     categorySlug: "pre-workout",
@@ -2856,6 +2894,8 @@ const products: BrandProduct[] = [
       "فقط به‌عنوان مکمل غذایی مصرف شود؛ برای کاهش وزن استفاده نشود. این محصول غذای کم‌کالری نیست.",
     manufacturerClaims:
       "پروتئین وی سرشار از ایزوله، باکیفیت و آسان‌هضم\n۲۵ گرم پروتئین در هر وعده\nبدون قند افزوده\nبه گفته‌ی سازنده، به ترمیم بافت عضله و کاهش کوفتگی بعد از تمرین کمک می‌کند (این ادعا توسط FDA ارزیابی نشده است)",
+    // Directions from the US label (NIH DSLD 321641, chocolate, 5 lb tub; same scoop-based dose).
+    usage: "۱ اسکوپ را با ۱۲۰ تا ۱۸۰ میلی‌لیتر شیر بدون چربی یا نوشیدنی دلخواه مخلوط کنید. برای بهترین نتیجه از مخلوط‌کن یا شیکر استفاده کنید. در روزهای تمرین، ۲ وعده یا بیشتر بعد از تمرین یا هر زمان که به پروتئین بیشتری نیاز دارید مصرف کنید.\nبرای طعم غلیظ‌تر، کمی مایع کمتر بریزید.",
     brand: "Universal Nutrition",
     price: 1950000,
     categorySlug: "protein",
@@ -2983,6 +3023,8 @@ const products: BrandProduct[] = [
       "حساسیت‌زاها: حاوی شیر و سویا.\nدر مجموعه‌ای تولید می‌شود که شیر، سویا، گندم، تخم‌مرغ، صدف، آجیل درختی، بادام‌زمینی و کنجد را هم فرآوری می‌کند.",
     manufacturerClaims:
       "۱۰۰٪ پروتئین ایزوله‌ی خالص\n۲۵ گرم پروتئین، ۱ گرم کربوهیدرات و ۱ گرم چربی در هر اسکوپ\nبه گفته‌ی سازنده، جذب سریع و ریکاوری سریع عضله (این ادعا توسط FDA ارزیابی نشده است)",
+    // Directions from the US label (NIH DSLD 326516, Iso HD).
+    usage: "۱ اسکوپ را با ۱۸۰ تا ۲۴۰ میلی‌لیتر آب سرد مخلوط کنید و بلافاصله بعد از تمرین یا فعالیت سنگین بنوشید. در طول روز هم می‌توانید برای کمک به ریکاوری و عضله‌سازی مصرف کنید.",
     brand: "BPI Sports",
     price: 2250000,
     categorySlug: "protein",
@@ -3004,6 +3046,8 @@ const products: BrandProduct[] = [
     nutritionFacts: [{ label: "کراتین مونوهیدرات", amount: "۵ گرم" }],
     manufacturerClaims:
       "۱۰۰٪ کراتین میکرونیزه‌ی خالص\nبدون رنگ مصنوعی\nبه گفته‌ی سازنده: قدرت بیشتر، رشد و ریکاوری عضله و عملکرد ورزشی بهتر (این ادعاها توسط FDA ارزیابی نشده است)",
+    // Directions from the US label (NIH DSLD 326521, this 600 g tub).
+    usage: "فقط در روزهای تمرین مصرف کنید. ۱ وعده (۱ اسکوپ) را در ۲۴۰ میلی‌لیتر آب مخلوط کنید و قبل، حین یا بعد از تمرین بنوشید.\nاز مقدار توصیه‌شده بیشتر مصرف نکنید.",
     brand: "BPI Sports",
     price: 950000,
     categorySlug: "creatine",
@@ -3019,8 +3063,7 @@ const products: BrandProduct[] = [
     // Pack photo and Supplement Facts panel image from BPI's US site
     // (bpisports.com/products/bulk-muscle-xl-…, 13 lb bag): 48 × 124 g =
     // 5952 g. The panel's "Calories from Fat: 5" doesn't fit 2.5 g of fat
-    // (≈ 22 kcal), so that row is left out. The site gives no directions or
-    // warnings.
+    // (≈ 22 kcal), so that row is left out. The site gives no warnings.
     description:
       "بالک ماسل ایکس‌ال بی‌پی‌آی با طعم شکلات؛ گینر پیشرفته برای افزایش وزن و حجم. هر وعده (۱۲۴ گرم) ۴۹۷ کیلوکالری، ۲۵ گرم پروتئین و ۸۸ گرم کربوهیدرات دارد و کیسه‌ی ۵٫۹۵ کیلوگرمی (۱۳ پوند) حدود ۴۸ وعده است. ساخت آمریکا.\nمواد تشکیل‌دهنده: مالتودکسترین، کنسانتره‌ی پروتئین وی، طعم‌دهنده‌های طبیعی و مصنوعی، کاکائوی رد راست، صمغ سلولز، سوکرالوز و آسه‌سولفام پتاسیم.",
     servingSize: "۱۲۴ گرم (۲ اسکوپ)",
@@ -3042,6 +3085,9 @@ const products: BrandProduct[] = [
       "حساسیت‌زاها: حاوی شیر و سویا.\nدر مجموعه‌ای تولید می‌شود که تخم‌مرغ، آجیل درختی و گندم را هم فرآوری می‌کند.",
     manufacturerClaims:
       "گینر پیشرفته برای افزایش وزن و حجم\n۲۵ گرم پروتئین و ۸۸ گرم کربوهیدرات در هر وعده\nساخت آمریکا",
+    // Directions from BPI's page for this bag; DSLD's 5.7 lb bag has a
+    // different serving (3 scoops, 215 g), so it wasn't used.
+    usage: "۱ وعده (۲ اسکوپ) را در ۴۸۰ میلی‌لیتر آب مخلوط کنید و بعد از تمرین یا به‌جای یک وعده‌ی غذایی مصرف کنید.",
     brand: "BPI Sports",
     price: 4950000,
     categorySlug: "protein",
@@ -3058,7 +3104,7 @@ const products: BrandProduct[] = [
     // cla-plus-carnitine (Snow Cone, 50 servings, 12.34 oz / 350 g). The
     // label says 50 × 7.4 g, which would be 370 g, so the serving count is
     // left out. Chosen over RoxyLean, whose label has yohimbe and rauwolfia.
-    // The site gives no directions or warnings.
+    // The site gives no warnings.
     description:
       "سی‌ال‌ای + کارنیتین بی‌پی‌آی با طعم اسنو کون؛ پودر چربی‌سوز بدون محرک (بدون کافئین) و بدون قند با اسیدهای چرب امگا ۶ و CLA (اسید لینولئیک مزدوج) و ترکیب سه نوع کارنیتین. هر اسکوپ (۷٫۴ گرم) ۲٫۵ گرم ترکیب امگا ۶ و CLA، ۲ گرم ترکیب کارنیتین و ۱۰۰۰ واحد ویتامین D3 دارد.\nترکیب امگا ۶ و CLA: پودر روغن نارگیل، پودر روغن آووکادو، پودر روغن گلرنگ (منبع CLA). ترکیب کارنیتین: کارنیتین بتائین بدون آب، ال-کارنیتین تارترات، گلیسین پروپیونیل ال-کارنیتین HCl.\nسایر مواد: مالتودکسترین، سیلیس، اسید سیتریک، طعم‌دهنده‌های طبیعی و مصنوعی، سوکرالوز، اسید مالیک، آسه‌سولفام پتاسیم، کلرید سدیم.",
     servingSize: "۷٫۴ گرم (۱ اسکوپ)",
@@ -3071,6 +3117,8 @@ const products: BrandProduct[] = [
     ],
     manufacturerClaims:
       "بدون محرک (بدون کافئین) و بدون قند، بدون رنگ مصنوعی\n۲٫۵ گرم امگا ۶ و CLA، ۲ گرم کارنیتین و ۱۰۰۰ واحد ویتامین D3 در هر اسکوپ\nبه گفته‌ی سازنده: کمک به کاهش چربی بدن و حفظ عضله‌ی بدون چربی، و تبدیل چربی به انرژی (این ادعاها توسط FDA ارزیابی نشده است)",
+    // Directions from the Instructions on BPI's product page.
+    usage: "صبح ۱ وعده (۱ اسکوپ) و عصر ۱ وعده (۱ اسکوپ) مصرف کنید؛ هر بار در ۱۸۰ تا ۲۴۰ میلی‌لیتر آب مخلوط کنید.",
     brand: "BPI Sports",
     price: 1250000,
     categorySlug: "fat-burner",
@@ -3161,6 +3209,8 @@ const products: BrandProduct[] = [
     warnings: "حساسیت‌زاها: حاوی شیر و سویا.",
     manufacturerClaims:
       "۲۵ گرم پروتئین، ۱۲٫۲ گرم EAA و ۵٫۴ گرم BCAA در هر وعده\nایزوله‌ی وی فوق‌خالص با فیلتراسیون سرد\nبه گفته‌ی سازنده: خلوص، ریکاوری و جذب بهتر (این ادعاها توسط FDA ارزیابی نشده است)",
+    // Directions from the US label (NIH DSLD 300230, chocolate, 868 g tub; same scoop-based dose).
+    usage: "۱ اسکوپ را با ۱۸۰ میلی‌لیتر آب سرد، شیر بدون چربی یا نوشیدنی دلخواه در شیکر، لیوان یا مخلوط‌کن خوب مخلوط کنید.\nآقایانی که برای قدرت یا فرم بدن وزنه می‌زنند: ۲ اسکوپ در ۱۸۰ تا ۳۶۰ میلی‌لیتر مایع.\nبانوان و رژیم سلامت عمومی: ۱ اسکوپ در ۱۸۰ میلی‌لیتر مایع.\nبهترین نتیجه در کنار رژیمی متعادل با غذای کامل و منابع دیگر پروتئین به دست می‌آید.",
     brand: "Evogen",
     price: 2150000,
     categorySlug: "protein",
@@ -3184,6 +3234,8 @@ const products: BrandProduct[] = [
       "فقط برای بزرگسالان سالم ۱۸ سال به بالا. در دوران بارداری یا شیردهی مصرف نکنید.\nاگر داروی تجویزی یا بدون نسخه مصرف می‌کنید یا بیماری دارید، پیش از مصرف با پزشک مشورت کنید.\nدر صورت بروز هر واکنش نامطلوب، فوراً مصرف را قطع و با پزشک تماس بگیرید.\nدو هفته پیش از جراحی مصرف را قطع کنید.\nاگر پلمب ایمنی شکسته یا موجود نیست استفاده نکنید. در جای خنک و خشک و دور از دسترس کودکان نگهداری شود.\nحساسیت‌زا ندارد؛ در مجموعه‌ای تولید می‌شود که شیر، ماهی، سخت‌پوستان، آجیل درختی، گندم، بادام‌زمینی، سویا و تخم‌مرغ را هم فرآوری می‌کند.",
     manufacturerClaims:
       "کراتین مونوهیدرات میکرونیزه با گواهی NSF Certified for Sport\nبه گفته‌ی سازنده: افزایش قدرت و توان، حجم عضله و پشتیبانی از عملکرد شناختی (این ادعاها توسط FDA ارزیابی نشده است)",
+    // Directions from the Suggested Use on Evogen's product page.
+    usage: "۱ اسکوپ را با ۲۴۰ تا ۳۶۰ میلی‌لیتر آب یا نوشیدنی دلخواه مخلوط کنید. قبل یا بعد از تمرین، یا هر زمان از روز مصرف کنید تا سطح کراتین عضله حفظ شود.\nبرای بهترین نتیجه، به‌طور منظم و در کنار برنامه‌ی تمرینی و تغذیه‌ی متعادل مصرف کنید.",
     brand: "Evogen",
     price: 850000,
     categorySlug: "creatine",
@@ -3221,6 +3273,8 @@ const products: BrandProduct[] = [
     warnings: "حساسیت‌زاها: حاوی شیر و سویا. حاوی جو دوسر و روغن نارگیل.",
     manufacturerClaims:
       "۱۲۲۰ کالری و ۵۰ گرم پروتئین در هر وعده\n۲۲ گرم EAA، ۱۰ گرم BCAA و ۵ گرم لوسین در هر وعده\nپروتئین ممتاز و کربوهیدرات تمیز، بدون افزایش ناگهانی قند خون (به گفته‌ی سازنده)\nبرای حجم عضله و افزایش وزن",
+    // Directions from the US label (NIH DSLD 300235, this 12 lb bag).
+    usage: "۵ اسکوپ را به ۶۰۰ تا ۹۶۰ میلی‌لیتر آب سرد یا شیر در شیکر اضافه کنید، در آن را محکم ببندید و تکان دهید تا کاملاً مخلوط شود.\nبا مخلوط‌کن می‌توانید میوه‌ی تازه یا یخ‌زده، کره‌ی بادام‌زمینی، آجیل و دانه‌ها را هم اضافه کنید. بهترین نتیجه در کنار رژیم متعادل و برنامه‌ی تمرینی منظم به دست می‌آید.",
     brand: "Evogen",
     price: 5250000,
     categorySlug: "protein",
@@ -3572,6 +3626,7 @@ const products: BrandProduct[] = [
     ],
     warnings: rule1WheyWarnings,
     manufacturerClaims: rule1WheyClaims,
+    usage: rule1WheyUsage,
     brand: "Rule 1",
     price: 3200000,
     categorySlug: "protein",
@@ -3606,6 +3661,7 @@ const products: BrandProduct[] = [
     ],
     warnings: rule1WheyWarnings,
     manufacturerClaims: rule1WheyClaims,
+    usage: rule1WheyUsage,
     brand: "Rule 1",
     price: 3200000,
     categorySlug: "protein",
@@ -3640,6 +3696,7 @@ const products: BrandProduct[] = [
     ],
     warnings: rule1WheyWarnings,
     manufacturerClaims: rule1WheyClaims,
+    usage: rule1WheyUsage,
     brand: "Rule 1",
     price: 3200000,
     categorySlug: "protein",
