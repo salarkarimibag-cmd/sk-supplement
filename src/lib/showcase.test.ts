@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { PLACEHOLDER_IMAGE, pickShowcaseProducts, shuffle } from "./showcase";
+import {
+  PLACEHOLDER_IMAGE,
+  pickBlurb,
+  pickShowcaseProducts,
+  shuffle,
+  splitProductName,
+} from "./showcase";
 import type { CatalogProduct } from "@/data/catalog";
 
 function makeProduct(overrides: Partial<CatalogProduct> = {}): CatalogProduct {
@@ -81,5 +87,88 @@ describe("pickShowcaseProducts", () => {
   it("stops at the limit", () => {
     const products = ["a", "b", "c"].map((id) => makeProduct({ id, brand: id }));
     expect(pickShowcaseProducts(products, () => true, 2)).toHaveLength(2);
+  });
+
+  it("gives each picked product its short text", () => {
+    const products = [makeProduct({ id: "a", brand: "A", manufacturerClaims: "۲۵ گرم پروتئین" })];
+    expect(pickShowcaseProducts(products, () => true, 1)[0].blurb).toEqual({
+      lines: ["۲۵ گرم پروتئین"],
+      fromMaker: true,
+    });
+  });
+});
+
+describe("pickBlurb", () => {
+  it("shows the maker's first three short claims, marked as the maker's", () => {
+    expect(
+      pickBlurb({
+        manufacturerClaims: "\n  ۲۵ گرم پروتئین  \nبدون قند\nبا ویتامین\nبدون طعم",
+        description: "توضیح فروشگاه.",
+      })
+    ).toEqual({ lines: ["۲۵ گرم پروتئین", "بدون قند", "با ویتامین"], fromMaker: true });
+  });
+
+  it("skips legal small print and claims that are too long", () => {
+    expect(
+      pickBlurb({
+        manufacturerClaims: `این ادعا توسط FDA ارزیابی نشده است\n${"کلمه ".repeat(30)}\n۵ گرم کراتین`,
+        description: "",
+      })
+    ).toEqual({ lines: ["۵ گرم کراتین"], fromMaker: true });
+  });
+
+  it("falls back to the first sentence of the description", () => {
+    expect(pickBlurb({ description: "پروتئین وی خالص. مناسب بعد از تمرین." })).toEqual({
+      lines: ["پروتئین وی خالص"],
+      fromMaker: false,
+    });
+  });
+
+  it("falls back to the description when every claim is skipped", () => {
+    expect(
+      pickBlurb({ manufacturerClaims: "ادعای سلامت مورد تأیید اتحادیه‌ی اروپا", description: "توضیح." })
+    ).toEqual({ lines: ["توضیح"], fromMaker: false });
+  });
+
+  it("doesn't cut a sentence at a decimal point", () => {
+    expect(pickBlurb({ description: "هر اسکوپ ۲.۵ گرم کراتین دارد." })?.lines).toEqual([
+      "هر اسکوپ ۲.۵ گرم کراتین دارد",
+    ]);
+  });
+
+  it("shortens a long description at a word boundary", () => {
+    const line = pickBlurb({ description: "کلمه ".repeat(60) })!.lines[0];
+    expect(line.endsWith("…")).toBe(true);
+    expect(line.length).toBeLessThanOrEqual(111);
+  });
+
+  it("returns nothing when there is no text", () => {
+    expect(pickBlurb({ description: "  " })).toBeUndefined();
+  });
+});
+
+describe("splitProductName", () => {
+  it("splits the Persian title from the English name", () => {
+    expect(splitProductName("مولتی ویتامین آقایان - Opti-Men")).toEqual({
+      title: "مولتی ویتامین آقایان",
+      subtitle: "Opti-Men",
+    });
+  });
+
+  it("drops the invisible direction mark before the English name", () => {
+    const lrm = String.fromCharCode(0x200e);
+    expect(splitProductName(`کراتین مونوهیدرات - ${lrm}100% Creatine Monohydrate`)).toEqual({
+      title: "کراتین مونوهیدرات",
+      subtitle: "100% Creatine Monohydrate",
+    });
+  });
+
+  it("splits only at the first separator", () => {
+    expect(splitProductName("الف - B - C")).toEqual({ title: "الف", subtitle: "B - C" });
+  });
+
+  it("returns a name without a separator whole", () => {
+    expect(splitProductName("Opti-Men")).toEqual({ title: "Opti-Men" });
+    expect(splitProductName("الف - ")).toEqual({ title: "الف - " });
   });
 });

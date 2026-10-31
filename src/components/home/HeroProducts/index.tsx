@@ -1,9 +1,10 @@
 "use client";
 
+import { Check } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import type { ShowcaseProduct } from "@/lib/showcase";
+import { splitProductName, type ShowcaseProduct } from "@/lib/showcase";
 
 /** How long each product stays on show, in milliseconds. */
 const SLIDE_MS = 4000;
@@ -79,7 +80,10 @@ export default function HeroProducts({ products }: { products: ShowcaseProduct[]
   // Nothing to show: no products, or none of their photos worked out.
   if (products.length === 0 || (isSettled && ready.length === 0)) return null;
 
+  const activeId = current === -1 ? null : ready[current].id;
+
   return (
+    <>
     <div className="relative aspect-square w-full">
       {/* A soft brand-blue glow behind the product, breathing slowly. */}
       <div className="absolute inset-[22%] animate-[hero-glow_6s_ease-in-out_infinite] rounded-full bg-sky-500/25 blur-3xl" />
@@ -134,5 +138,52 @@ export default function HeroProducts({ products }: { products: ShowcaseProduct[]
         })}
       </div>
     </div>
+
+    {/* The short text of the product on show. All of them share one grid cell,
+        so the block is as tall as the longest and nothing below it jumps when
+        the product changes; they cross-fade like the photos, the new text
+        arriving a moment after its photo. */}
+    <div className="mt-1 grid text-center">
+      {products.map(
+        (product) => {
+          if (!product.blurb) return null;
+          const { title, subtitle } = splitProductName(product.name);
+          return (
+            <div
+              key={product.id}
+              aria-hidden={product.id !== activeId}
+              className={`col-start-1 row-start-1 transition-opacity duration-700 motion-reduce:transition-none ${
+                product.id === activeId ? "opacity-100 delay-300" : "opacity-0"
+              }`}
+            >
+              <p className="text-base font-extrabold text-white sm:text-lg">{title}</p>
+              {subtitle && (
+                // The English name on its own line, left-to-right, so it
+                // never gets mixed into the Persian title's direction.
+                <p dir="ltr" className="text-xs font-semibold tracking-wide text-zinc-400 sm:text-sm">
+                  {subtitle}
+                </p>
+              )}
+              {product.blurb.fromMaker && (
+                <p className="mt-1 text-xs font-semibold text-sky-400 sm:text-sm">
+                  ویژگی‌ها به گفته‌ی سازنده
+                </p>
+              )}
+              <ul className="mt-2 space-y-1.5 text-start text-sm leading-relaxed font-medium text-zinc-100 sm:text-base">
+                {product.blurb.lines.map((line) => (
+                  <li key={line} className="flex items-start gap-2">
+                    {product.blurb?.fromMaker && (
+                      <Check aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-sky-400" />
+                    )}
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        }
+      )}
+    </div>
+    </>
   );
 }
