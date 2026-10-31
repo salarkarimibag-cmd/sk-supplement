@@ -4,13 +4,16 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ReconcileResult } from "@/lib/zarinpalOrders";
 
-function summarize({ paid, failed, unknown }: ReconcileResult): string {
+function summarize({ paid, failed, unknown, oversold }: ReconcileResult): string {
   const parts = [
     paid ? `${paid.toLocaleString("fa-IR")} پرداخت تأیید شد` : "",
     failed ? `${failed.toLocaleString("fa-IR")} سفارش ناموفق شد` : "",
     unknown ? `${unknown.toLocaleString("fa-IR")} سفارش هنوز نامشخص است` : "",
   ].filter(Boolean);
-  return parts.length > 0 ? `${parts.join(" · ")}.` : "سفارش معلقی برای بررسی نبود.";
+  const summary = parts.length > 0 ? `${parts.join(" · ")}.` : "سفارش معلقی برای بررسی نبود.";
+  return oversold.length > 0
+    ? `${summary} هشدار: موجودی این محصولات کافی نیست: ${oversold.join("، ")}. مبلغ از مشتری کسر شده است؛ کالا را تهیه کنید یا مبلغ را برگردانید.`
+    : summary;
 }
 
 /**

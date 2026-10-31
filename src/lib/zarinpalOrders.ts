@@ -32,23 +32,30 @@ export async function markZarinPalOrderFailed(authority: string): Promise<void> 
 /**
  * Marks a pending ZarinPal order paid, once ZarinPal has verified it:
  * records the sale and the discount use, and emails the buyer and the admin.
+ * Returns the names of any products the payment left short (see onOrderPaid).
  */
-export async function markZarinPalOrderPaid(authority: string, refId: number): Promise<void> {
+export async function markZarinPalOrderPaid(authority: string, refId: number): Promise<string[]> {
   const before = await settle(authority, { status: "paid", paymentRefId: refId });
   // Only the request that actually moved the order to "paid" records stock
   // and discount usage, so a refresh or a second concurrent request can't
   // count it twice.
-  if (!before) return;
+  if (!before) return [];
   // `before` is from just before the update, so its stockReserved is
   // current (an expired hold may have been released since the order was
   // first read); the new ref id is added here.
-  await onOrderPaid(before);
+  const oversold = await onOrderPaid(before);
   const paidOrder = { ...before, paymentRefId: refId };
   after(() => sendOrderEmail(paidOrder, "paid"));
-  after(() => sendAdminOrderEmail(paidOrder, "paid"));
+  after(() => sendAdminOrderEmail(paidOrder, "paid", oversold));
+  return oversold;
 }
 
-export type ReconcileResult = Record<"paid" | "failed" | "unknown", number>;
+type ReconcileOutcome = "paid" | "failed" | "unknown";
+
+export type ReconcileResult = Record<ReconcileOutcome, number> & {
+  /** Products that orders paid in this run left short (see onOrderPaid). */
+  oversold: string[];
+};
 
 // How many orders one reconcile asks ZarinPal about, newest first, and how
 // many of those questions are in flight at once (kind to ZarinPal, and
@@ -63,23 +70,24 @@ const ABANDONED_AFTER_MS = 24 * 60 * 60 * 1000;
 
 type ReconcilableOrder = Pick<StoredOrder, "paymentAuthority" | "totalPrice" | "createdAt">;
 
-async function reconcileOne(order: ReconcilableOrder): Promise<keyof ReconcileResult> {
+async function reconcileOne(
+  order: ReconcilableOrder
+): Promise<{ outcome: ReconcileOutcome; oversold?: string[] }> {
   const authority = order.paymentAuthority as string;
   const inquiry = await inquireZarinPalPayment(authority);
   const abandoned =
     inquiry === "in_bank" && new Date(order.createdAt).getTime() < Date.now() - ABANDONED_AFTER_MS;
   if (inquiry === "failed" || abandoned) {
     await markZarinPalOrderFailed(authority);
-    return "failed";
+    return { outcome: "failed" };
   }
-  if (inquiry !== "paid") return "unknown";
+  if (inquiry !== "paid") return { outcome: "unknown" };
 
   // "Paid" by the inquiry: the money has left the buyer's account, but only
   // the verify call settles it with ZarinPal (and checks the amount).
   const verified = await verifyZarinPalPayment({ amountToman: order.totalPrice, authority });
-  if (!verified.ok) return "unknown";
-  await markZarinPalOrderPaid(authority, verified.refId);
-  return "paid";
+  if (!verified.ok) return { outcome: "unknown" };
+  return { outcome: "paid", oversold: await markZarinPalOrderPaid(authority, verified.refId) };
 }
 
 /**
@@ -102,10 +110,13 @@ export async function reconcileZarinPalOrders(): Promise<ReconcileResult> {
     .limit(RECONCILE_LIMIT)
     .lean<ReconcilableOrder[]>();
 
-  const result: ReconcileResult = { paid: 0, failed: 0, unknown: 0 };
+  const result: ReconcileResult = { paid: 0, failed: 0, unknown: 0, oversold: [] };
   for (let i = 0; i < orders.length; i += RECONCILE_PARALLEL) {
-    const outcomes = await Promise.all(orders.slice(i, i + RECONCILE_PARALLEL).map(reconcileOne));
-    for (const outcome of outcomes) result[outcome]++;
+    const settled = await Promise.all(orders.slice(i, i + RECONCILE_PARALLEL).map(reconcileOne));
+    for (const { outcome, oversold = [] } of settled) {
+      result[outcome]++;
+      result.oversold.push(...oversold);
+    }
   }
-  return result;
+  return { ...result, oversold: [...new Set(result.oversold)] };
 }

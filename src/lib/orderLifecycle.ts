@@ -2,7 +2,13 @@ import { connectToDatabase } from "@/lib/db";
 import { PENDING_HOLD_MS } from "@/lib/discounts";
 import { DiscountCodeModel } from "@/models/DiscountCode";
 import { OrderModel } from "@/models/Order";
-import { decrementStock, recordSale, releaseStock, restoreStock } from "@/lib/products";
+import {
+  decrementStock,
+  findOversold,
+  recordSale,
+  releaseStock,
+  restoreStock,
+} from "@/lib/products";
 
 interface OrderEffects {
   items: { productId: string; quantity: number }[];
@@ -20,8 +26,11 @@ interface OrderEffects {
 /**
  * An order was paid, through the ZarinPal callback or an admin confirming a
  * card-to-card transfer: count its items as sold and count the code.
+ * Returns the names of any products this left short, for the admin: a
+ * payment that finished after its hold ran out can find the last unit
+ * already sold to someone else, and the money has been taken either way.
  */
-export async function onOrderPaid(order: OrderEffects): Promise<void> {
+export async function onOrderPaid(order: OrderEffects): Promise<string[]> {
   await Promise.all([
     // A reserved order's stock was taken when it was placed. One without a
     // reservation (placed before reservations existed, or a ZarinPal
@@ -32,6 +41,9 @@ export async function onOrderPaid(order: OrderEffects): Promise<void> {
       ? DiscountCodeModel.updateOne({ code: order.discountCode }, { $inc: { usedCount: 1 } })
       : null,
   ]);
+  // A reservation's units were set aside for this order, so only a late
+  // payment can come up short.
+  return order.stockReserved ? [] : findOversold(order.items.map((item) => item.productId));
 }
 
 /**

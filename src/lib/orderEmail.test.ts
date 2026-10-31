@@ -119,6 +119,20 @@ describe("buildAdminOrderEmail", () => {
     cardTransfer: { trackingCode: "TRK7788", cardLast4: "4321" },
   };
 
+  it("warns in the subject and body when a late payment left a product short", () => {
+    const email = buildAdminOrderEmail({ ...cardOrder, kind: "paid", oversold: ["وی <طلایی>", "کراتین"] });
+    expect(email.subject).toContain("موجودی کافی نیست");
+    expect(email.text).toContain("وی <طلایی>، کراتین");
+    expect(email.html).toContain("وی &lt;طلایی&gt;، کراتین");
+  });
+
+  it("says nothing about stock when nothing is short", () => {
+    const email = buildAdminOrderEmail({ ...cardOrder, kind: "paid", oversold: [] });
+    expect(email.subject).not.toContain("موجودی");
+    expect(email.text).not.toContain("هشدار");
+    expect(email.html).not.toContain("هشدار");
+  });
+
   it("gives the admin what's needed to check a card transfer", () => {
     const email = buildAdminOrderEmail(cardOrder);
     expect(email.subject).toContain("CD1B9185");
