@@ -32,6 +32,12 @@ export interface Product {
   /** What the maker claims on the pack, one per line; shown in its own labelled box. */
   manufacturerClaims?: string;
   /**
+   * On a combo pack: the ids of the products in it, one of each. The pack is
+   * sold as a product of its own, with its own price and stock; these only
+   * say what to list and what it would cost bought separately (src/lib/packs.ts).
+   */
+  packProductIds?: string[];
+  /**
    * When the product last changed (an edit, its stock or its rating), kept
    * by Mongoose's timestamps option. Products saved before it existed don't
    * have it; the sitemap then falls back to when the document was created
@@ -72,6 +78,7 @@ const ProductSchema = new Schema<Product>(
     usage: { type: String, required: false },
     warnings: { type: String, required: false },
     manufacturerClaims: { type: String, required: false },
+    packProductIds: { type: [String], default: undefined },
   },
   // updatedAt only: a createdAt would add nothing the document's _id doesn't
   // already say. Mongoose applies it to updateOne, findOneAndUpdate and

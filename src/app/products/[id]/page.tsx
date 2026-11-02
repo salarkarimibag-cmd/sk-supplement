@@ -7,6 +7,8 @@ import { ViewTransition } from "react";
 import Price from "@/components/ui/Price";
 import StarRating from "@/components/ui/StarRating";
 import ManufacturerClaims from "@/components/product/ManufacturerClaims";
+import PackContents from "@/components/product/PackContents";
+import PackSavingsNote from "@/components/product/PackSavingsNote";
 import ProductCard from "@/components/product/ProductCard";
 import ProductDetailPanel from "@/components/product/ProductDetailPanel";
 import ProductInfo from "@/components/product/ProductInfo";
@@ -20,7 +22,13 @@ import ReviewLoginHint from "@/components/reviews/ReviewLoginHint";
 import JsonLd from "@/components/seo/JsonLd";
 import { getCategoryContent } from "@/lib/categoryContent";
 import { releaseExpiredReservations } from "@/lib/orderLifecycle";
-import { getProductById, getProductGroup, getRelatedProducts } from "@/lib/products";
+import { packSavings } from "@/lib/packs";
+import {
+  getPackProducts,
+  getProductById,
+  getProductGroup,
+  getRelatedProducts,
+} from "@/lib/products";
 import { getProductReviewsPage, PRODUCT_REVIEWS_PAGE_SIZE } from "@/lib/reviews";
 import { SALES_OPEN } from "@/lib/sales";
 import { pageMetadata } from "@/lib/seo";
@@ -72,11 +80,13 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
   // waits for it; the next rebuild shows the freed stock.
   if (SALES_OPEN) after(releaseExpiredReservations);
 
-  const [category, relatedProducts, firstReviewsPage, group] = await Promise.all([
+  const packProductIds = product.packProductIds ?? [];
+  const [category, relatedProducts, firstReviewsPage, group, packProducts] = await Promise.all([
     getCategoryContent(product.categorySlug),
     getRelatedProducts(product, 4),
     getProductReviewsPage(product.id, 1, PRODUCT_REVIEWS_PAGE_SIZE),
     product.groupSlug ? getProductGroup(product.groupSlug) : [],
+    getPackProducts(packProductIds),
   ]);
 
   const { props: photo } = getImageProps({
@@ -170,6 +180,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
           <StarRating rating={product.rating} reviewCount={product.reviewCount} className="mt-3" />
 
           <p className="mt-4 text-2xl font-bold"><Price amount={product.price} /></p>
+          <PackSavingsNote savings={packSavings(product, packProducts)} className="mt-2" />
 
           {/* On mobile the choices hang over the photo (VariantRail), so the
               picker is desktop-only and the badges below show what is chosen. */}
@@ -201,6 +212,15 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
             {product.description ||
               `${product.name} یکی از محصولات ${category ? `دسته‌ی ${category.title}` : "SK Supplement"} است که کیفیت و اثربخشی آن مورد تایید مشتریان است.`}
           </p>
+
+          {packProductIds.length > 0 && (
+            <section aria-labelledby="pack-contents-heading" className="mt-6">
+              <h2 id="pack-contents-heading" className="mb-3 font-bold">
+                محتویات این پک
+              </h2>
+              <PackContents productIds={packProductIds} products={packProducts} />
+            </section>
+          )}
 
           {product.manufacturerClaims && (
             <div className="mt-6">

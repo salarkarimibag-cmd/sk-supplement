@@ -141,6 +141,19 @@ export async function getProductGroup(groupSlug: string): Promise<VariantProduct
   return products.map(({ stock, ...product }) => ({ ...product, inStock: stock > 0 }));
 }
 
+/** What a combo pack shows of each product in it. */
+export type PackProduct = Pick<Product, "id" | "name" | "price" | "flavor" | "size">;
+
+/** The products of some combo packs, from one query; a deleted one is left out. */
+export async function getPackProducts(productIds: string[]): Promise<PackProduct[]> {
+  if (productIds.length === 0) return [];
+  await connectToDatabase();
+  return ProductModel.find(
+    { id: { $in: [...new Set(productIds)] } },
+    { _id: 0, id: 1, name: 1, price: 1, flavor: 1, size: 1 }
+  ).lean<PackProduct[]>();
+}
+
 // Wrapped in React's cache(): the product page asks for its product twice
 // while rendering, in generateMetadata (for the title) and in the page, and
 // this way it's one query. The memo lasts for that one server render only.
