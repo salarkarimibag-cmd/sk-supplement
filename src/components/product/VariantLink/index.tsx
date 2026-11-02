@@ -58,6 +58,9 @@ export default function VariantLink({ href, photo, holdMs = 0, isCurrent, onClic
     <Link
       {...props}
       href={href}
+      // The whole page, not just up to its loading.tsx: the photo only sweeps
+      // when the new page is ready at once, without showing the skeleton first.
+      prefetch
       // Switching flavor or size shouldn't jump back to the top of the page.
       scroll={false}
       transitionTypes={[VARIANT_SWITCH]}
