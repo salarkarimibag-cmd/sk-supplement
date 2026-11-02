@@ -13,6 +13,11 @@ export function revalidateCatalog(): void {
   revalidatePath("/", "layout");
 }
 
+/** A review of this product changed: its rating and reviews on its page. */
+export function revalidateProduct(productId: string): void {
+  revalidatePath(`/products/${productId}`);
+}
+
 /** A discount code or review changed: the home page's hero offer and testimonials. */
 export function revalidateHome(): void {
   revalidatePath("/");

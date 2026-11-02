@@ -4,10 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { after } from "next/server";
 import { ViewTransition } from "react";
-import Pagination from "@/components/ui/Pagination";
 import Price from "@/components/ui/Price";
 import StarRating from "@/components/ui/StarRating";
-import Testimonials from "@/components/home/Testimonials";
 import ManufacturerClaims from "@/components/product/ManufacturerClaims";
 import ProductCard from "@/components/product/ProductCard";
 import ProductDetailPanel from "@/components/product/ProductDetailPanel";
@@ -16,13 +14,14 @@ import TrustBadges from "@/components/product/TrustBadges";
 import VariantPhotoFrame from "@/components/product/VariantPhotoFrame";
 import VariantPicker from "@/components/product/VariantPicker";
 import VariantRail from "@/components/product/VariantRail";
+import ProductReviewList from "@/components/reviews/ProductReviewList";
 import ReviewForm from "@/components/reviews/ReviewForm";
+import ReviewLoginHint from "@/components/reviews/ReviewLoginHint";
 import JsonLd from "@/components/seo/JsonLd";
-import { getSessionUser } from "@/lib/auth";
 import { getCategoryContent } from "@/lib/categoryContent";
 import { releaseExpiredReservations } from "@/lib/orderLifecycle";
 import { getProductById, getProductGroup, getRelatedProducts } from "@/lib/products";
-import { getProductReviewsPage } from "@/lib/reviews";
+import { getProductReviewsPage, PRODUCT_REVIEWS_PAGE_SIZE } from "@/lib/reviews";
 import { SALES_OPEN } from "@/lib/sales";
 import { pageMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
@@ -34,7 +33,16 @@ import {
   VARIANT_SWITCH,
 } from "@/lib/variants";
 
-const REVIEWS_PAGE_SIZE = 6;
+// Prerendered on a product's first visit and then served from the CDN, rebuilt
+// at most this often (seconds), or at once after an admin change
+// (src/lib/revalidate.ts). A shopper can see stock up to a minute old; the
+// server checks stock again before an order is placed.
+export const revalidate = 60;
+
+// Empty: no product is built during deploys, each is built on its first visit.
+export function generateStaticParams() {
+  return [];
+}
 
 export async function generateMetadata(
   props: PageProps<"/products/[id]">
@@ -42,7 +50,8 @@ export async function generateMetadata(
   const { id } = await props.params;
   const product = await getProductById(id);
   if (!product) return { title: "محصول یافت نشد" };
-  // Its own photo in link previews, and ?reviews=N pages count as this page.
+  // Its own photo in link previews, and ?reviews=N pages count as this page
+  // (the canonical URL leaves the query out).
   return pageMetadata({
     title: product.name,
     description: product.description,
@@ -53,32 +62,22 @@ export async function generateMetadata(
 
 export default async function ProductPage(props: PageProps<"/products/[id]">) {
   const { id } = await props.params;
-  const { reviews: reviewsPageParam } = await props.searchParams;
   const product = await getProductById(id);
 
   if (!product) notFound();
 
   // A unit held by a payment abandoned at the gateway would otherwise keep
-  // showing as sold out until someone checks out. After the response, so
-  // the page isn't kept waiting; the next visit sees the freed stock.
+  // showing as sold out until someone checks out. Runs whenever the page is
+  // rebuilt (it's cached, so not on every visit), after the rebuild so nobody
+  // waits for it; the next rebuild shows the freed stock.
   if (SALES_OPEN) after(releaseExpiredReservations);
 
-  const requestedReviewsPage =
-    Number(Array.isArray(reviewsPageParam) ? reviewsPageParam[0] : reviewsPageParam) || 1;
-
-  const [category, relatedProducts, reviewsPage, user, group] = await Promise.all([
+  const [category, relatedProducts, firstReviewsPage, group] = await Promise.all([
     getCategoryContent(product.categorySlug),
     getRelatedProducts(product, 4),
-    getProductReviewsPage(product.id, requestedReviewsPage, REVIEWS_PAGE_SIZE),
-    getSessionUser(),
+    getProductReviewsPage(product.id, 1, PRODUCT_REVIEWS_PAGE_SIZE),
     product.groupSlug ? getProductGroup(product.groupSlug) : [],
   ]);
-
-  // The #reviews anchor brings the shopper back to the reviews after the page loads.
-  const productPath = `/products/${product.id}`;
-  function reviewsHref(page: number) {
-    return page === 1 ? `${productPath}#reviews` : `${productPath}?reviews=${page}#reviews`;
-  }
 
   const { props: photo } = getImageProps({
     src: product.imageUrl,
@@ -98,7 +97,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
   const breadcrumb = [
     { name: "خانه", path: "/" },
     ...(category ? [{ name: category.title, path: `/collections/${product.categorySlug}` }] : []),
-    { name: product.name, path: productPath },
+    { name: product.name, path: `/products/${product.id}` },
   ];
 
   return (
@@ -252,14 +251,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
               reviewCount={product.reviewCount}
               className="mt-3 justify-center"
             />
-            <div className="mt-10">
-              <Testimonials reviews={reviewsPage.reviews} />
-            </div>
-            <Pagination
-              currentPage={reviewsPage.currentPage}
-              totalPages={reviewsPage.totalPages}
-              hrefForPage={reviewsHref}
-            />
+            <ProductReviewList productId={product.id} firstPage={firstReviewsPage} />
           </>
         ) : (
           <p className="mt-3 text-center text-sm text-zinc-500 dark:text-zinc-400">
@@ -267,18 +259,7 @@ export default async function ProductPage(props: PageProps<"/products/[id]">) {
           </p>
         )}
 
-        {!user && (
-          <p className="mx-auto mt-10 max-w-xl text-center text-sm text-zinc-500 dark:text-zinc-400">
-            این محصول را خریده‌اید؟{" "}
-            <Link
-              href={`/account/login?next=${encodeURIComponent(`/products/${product.id}`)}`}
-              className="font-semibold text-sky-600 hover:underline"
-            >
-              وارد حسابتان شوید
-            </Link>{" "}
-            تا نظرتان با برچسب «خریدار این محصول» نمایش داده شود.
-          </p>
-        )}
+        <ReviewLoginHint productId={product.id} />
 
         <ReviewForm productId={product.id} />
       </section>

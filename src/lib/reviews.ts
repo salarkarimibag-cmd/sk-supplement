@@ -73,6 +73,14 @@ export async function getHomepageReviews(): Promise<{
 
 const REVIEWS_PAGE_SIZE = 12;
 
+export const PRODUCT_REVIEWS_PAGE_SIZE = 6;
+
+export interface ProductReviewsPage {
+  reviews: PublicReview[];
+  currentPage: number;
+  totalPages: number;
+}
+
 export async function getApprovedReviewsPage(
   page: number
 ): Promise<{ reviews: PublicReview[]; currentPage: number; totalPages: number }> {
@@ -104,7 +112,7 @@ export async function getProductReviewsPage(
   productId: string,
   page: number,
   pageSize: number
-): Promise<{ reviews: PublicReview[]; currentPage: number; totalPages: number }> {
+): Promise<ProductReviewsPage> {
   await connectToDatabase();
 
   const filter = { productId, approved: true };
