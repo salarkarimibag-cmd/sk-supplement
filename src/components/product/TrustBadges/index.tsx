@@ -18,8 +18,8 @@ export const trustBadges = [
   },
   {
     icon: RotateCcw,
-    title: "۷ روز مهلت بازگشت",
-    detail: "برای کالای معیوب یا ارسال اشتباه",
+    title: "۷ روز کاری مهلت بازگشت",
+    detail: "برای کالای باز نشده، معیوب یا اشتباه",
     href: "/pages/refund-policy",
   },
   {
