@@ -5,6 +5,7 @@
  */
 const PERSIAN_BRAND_NAMES: Record<string, string> = {
   "Applied Nutrition": "اپلاید نوتریشن",
+  "Body Attack": "بادی اتک",
   "BPI Sports": "بی‌پی‌آی اسپورتس",
   BSN: "بی‌اس‌ان",
   Cellucor: "سلوکور",
