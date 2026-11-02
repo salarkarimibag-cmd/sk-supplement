@@ -3,7 +3,7 @@ import { connectToDatabase } from "@/lib/db";
 import { ReviewModel } from "@/models/Review";
 import { getSessionAdmin } from "@/lib/auth";
 import { refreshProductRating } from "@/lib/reviews";
-import { revalidateHome } from "@/lib/revalidate";
+import { revalidateHome, revalidateProduct } from "@/lib/revalidate";
 
 interface UpdateReviewBody {
   approved?: boolean;
@@ -41,7 +41,10 @@ export async function PATCH(
   }
 
   // Only approved reviews count toward a product's rating.
-  if (review.productId) await refreshProductRating(review.productId);
+  if (review.productId) {
+    await refreshProductRating(review.productId);
+    revalidateProduct(review.productId);
+  }
 
   revalidateHome();
   return Response.json(review);
@@ -69,7 +72,10 @@ export async function DELETE(
   }
 
   // A pending review never counted, so only an approved one changes the rating.
-  if (review.productId && review.approved) await refreshProductRating(review.productId);
+  if (review.productId && review.approved) {
+    await refreshProductRating(review.productId);
+    revalidateProduct(review.productId);
+  }
 
   revalidateHome();
   return Response.json({ ok: true });

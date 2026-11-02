@@ -4,7 +4,7 @@ import { ReviewModel } from "@/models/Review";
 import { getClientIp, getOrSetDeviceId, isRateLimited } from "@/lib/rateLimit";
 import { getSessionUser } from "@/lib/auth";
 import { containsBannedWord } from "@/lib/bannedWords";
-import { hasPurchased } from "@/lib/reviews";
+import { getProductReviewsPage, hasPurchased, PRODUCT_REVIEWS_PAGE_SIZE } from "@/lib/reviews";
 
 interface ReviewBody {
   /** Set when the review is about a product; omitted for a review of the store. */
@@ -16,6 +16,20 @@ interface ReviewBody {
 
 const RATE_LIMIT_WINDOW_MS = 24 * 60 * 60 * 1000;
 const RATE_LIMIT_MAX = 3;
+
+// One page of a product's approved reviews, for the product page after the
+// first (see ProductReviewList).
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const productId = searchParams.get("productId");
+  if (!productId) {
+    return Response.json({ message: "محصول نامعتبر است." }, { status: 400 });
+  }
+
+  // trunc: a fractional page would make the database reject the skip.
+  const page = Math.trunc(Number(searchParams.get("page"))) || 1;
+  return Response.json(await getProductReviewsPage(productId, page, PRODUCT_REVIEWS_PAGE_SIZE));
+}
 
 export async function POST(request: Request) {
   const body: ReviewBody = (await request.json().catch(() => null)) ?? {};
