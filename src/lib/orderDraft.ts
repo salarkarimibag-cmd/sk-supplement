@@ -2,7 +2,7 @@ import { z } from "zod";
 import { ProductModel, type Product } from "@/models/Product";
 import { acceptedTermsSchema, contactSchema, shippingAddressSchema } from "@/lib/checkoutFields";
 import { checkDiscountForVisitor, type Visitor } from "@/lib/discountLookup";
-import { priceCart, type PricedLine } from "@/lib/pricing";
+import { discountableSubtotal, priceCart, type PricedLine } from "@/lib/pricing";
 import { reserveStock, withPackStock } from "@/lib/products";
 
 // Only what the buyer actually chooses: who they are, where to ship, which
@@ -69,7 +69,7 @@ export async function buildOrderDraft(
   if (body.discountCode) {
     const { result, rateLimited } = await checkDiscountForVisitor(
       body.discountCode,
-      priced.subtotal,
+      discountableSubtotal(body.items, products),
       visitor,
       body.contact
     );

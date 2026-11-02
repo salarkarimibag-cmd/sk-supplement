@@ -65,3 +65,20 @@ export function priceCart(
   const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
   return { ok: true, items, subtotal };
 }
+
+/**
+ * The part of a cart a discount code applies to, priced from the catalog like
+ * priceCart: everything but combo packs, which are already discounted. Its
+ * minimum purchase is checked against this too, so a pack can't reach it.
+ */
+export function discountableSubtotal(
+  lines: CartLine[],
+  products: Pick<Product, "id" | "price" | "packProductIds">[]
+): number {
+  const productsById = new Map(products.map((product) => [product.id, product]));
+  return lines.reduce((sum, line) => {
+    const product = productsById.get(line.productId);
+    if (!product || product.packProductIds?.length) return sum;
+    return sum + product.price * line.quantity;
+  }, 0);
+}

@@ -22,6 +22,7 @@ const CODE_GUESS_WINDOW_MS = 15 * 60 * 1000;
 const MAX_INVALID_CODES = 10;
 const TOO_MANY_CODES_MESSAGE =
   "کدهای تخفیف نامعتبرِ زیادی وارد شده. لطفاً ۱۵ دقیقه‌ی دیگر دوباره تلاش کنید.";
+const PACKS_ONLY_MESSAGE = "کد تخفیف روی پک‌های ترکیبی اعمال نمی‌شود.";
 
 /**
  * Looks up a discount code and checks it, counting the unpaid orders that
@@ -64,6 +65,10 @@ export async function findAndCheckDiscount(
  * `rateLimited: true` (the route answers 429) without the code being looked
  * up at all. Every route that accepts a code from a visitor must use this,
  * or the guessing would simply move to the one that doesn't.
+ *
+ * `subtotal` is the part of the cart a code applies to (see
+ * discountableSubtotal). When nothing is, the code isn't looked up, so that
+ * answer says nothing about it and doesn't count as a guess.
  */
 export async function checkDiscountForVisitor(
   code: string,
@@ -71,6 +76,10 @@ export async function checkDiscountForVisitor(
   visitor: Visitor,
   customer?: Customer
 ): Promise<{ result: DiscountCheckResult; rateLimited: boolean }> {
+  if (subtotal <= 0) {
+    return { result: { valid: false, message: PACKS_ONLY_MESSAGE }, rateLimited: false };
+  }
+
   await connectToDatabase();
 
   const limited = await isRateLimited(DiscountCodeAttemptModel, {

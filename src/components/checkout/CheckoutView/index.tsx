@@ -138,6 +138,8 @@ function CheckoutLogo() {
 interface AppliedDiscount {
   code: string;
   amount: number;
+  /** The cart has combo packs, which the code didn't apply to. */
+  packsExcluded: boolean;
 }
 
 export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }) {
@@ -228,7 +230,7 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           code: discountCodeInput,
-          subtotal: totalPrice,
+          items: items.map((item) => ({ productId: item.id, quantity: item.quantity })),
           // Lets a first-purchase-only code be checked now, if they're filled in.
           contact: { email: getValues("email"), mobile: getValues("mobile") },
         }),
@@ -241,7 +243,11 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
         return;
       }
 
-      setAppliedDiscount({ code: data.code, amount: data.discountAmount });
+      setAppliedDiscount({
+        code: data.code,
+        amount: data.discountAmount,
+        packsExcluded: data.packsExcluded,
+      });
     } catch {
       setDiscountError("خطایی در اعمال کد تخفیف رخ داد.");
     } finally {
@@ -678,6 +684,7 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
           {appliedDiscount && (
             <p className="mt-2 text-xs text-emerald-600">
               کد «{appliedDiscount.code}» اعمال شد.
+              {appliedDiscount.packsExcluded && " پک‌های ترکیبی شامل این تخفیف نمی‌شوند."}
             </p>
           )}
         </div>
