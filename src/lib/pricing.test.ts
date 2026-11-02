@@ -8,6 +8,14 @@ const products = [
 ];
 
 describe("priceCart", () => {
+  it("saves what a combo pack contains on its line", () => {
+    const pack = { id: "pack", name: "Pack", price: 120_000, stock: 2, packProductIds: ["whey"] };
+    const result = priceCart([{ productId: "pack", quantity: 1 }], [pack]);
+    expect(result.ok && result.items).toEqual([
+      { productId: "pack", quantity: 1, unitPrice: 120_000, packProductIds: ["whey"] },
+    ]);
+  });
+
   it("prices every line from the catalog and sums the subtotal", () => {
     const result = priceCart(
       [

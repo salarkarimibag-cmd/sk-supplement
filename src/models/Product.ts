@@ -32,9 +32,10 @@ export interface Product {
   /** What the maker claims on the pack, one per line; shown in its own labelled box. */
   manufacturerClaims?: string;
   /**
-   * On a combo pack: the ids of the products in it, one of each. The pack is
-   * sold as a product of its own, with its own price and stock; these only
-   * say what to list and what it would cost bought separately (src/lib/packs.ts).
+   * On a combo pack: the ids of the products in it, one of each. The pack has
+   * its own price, and `stock` is only the most packs to sell: it also can't
+   * outrun the products inside (see packStock), and selling one takes one of
+   * each of them out of stock (see expandStockLines).
    */
   packProductIds?: string[];
   /**

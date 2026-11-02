@@ -21,7 +21,18 @@ async function main() {
   const sold = await OrderModel.aggregate<{ _id: string; units: number }>([
     { $match: { status: { $in: SOLD_ORDER_STATUSES } } },
     { $unwind: "$items" },
-    { $group: { _id: "$items.productId", units: { $sum: "$items.quantity" } } },
+    // A combo pack's line also counts as a sale of each product inside it,
+    // as expandStockLines does for the live count.
+    {
+      $project: {
+        quantity: "$items.quantity",
+        productIds: {
+          $concatArrays: [["$items.productId"], { $ifNull: ["$items.packProductIds", []] }],
+        },
+      },
+    },
+    { $unwind: "$productIds" },
+    { $group: { _id: "$productIds", units: { $sum: "$quantity" } } },
   ]);
   const unitsByProduct = new Map(sold.map((row) => [row._id, row.units]));
 

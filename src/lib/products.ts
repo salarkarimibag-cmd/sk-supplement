@@ -3,7 +3,9 @@ import { connectToDatabase } from "@/lib/db";
 import { ProductModel, type Product } from "@/models/Product";
 import type { CatalogProduct } from "@/data/catalog";
 import { formatProductName } from "@/lib/orderEmail";
+import { packStock } from "@/lib/packs";
 import { searchPattern } from "@/lib/searchText";
+import { expandStockLines, type StockLine } from "@/lib/stock";
 import { collapseGroups, type VariantProduct, type VariantSummary } from "@/lib/variants";
 
 /** A product in a short list (home page, related products), one per flavor/size group. */
@@ -18,10 +20,31 @@ function withInStock(product: Product): CatalogProduct {
   return { ...product, salesCount: product.salesCount ?? 0, inStock: product.stock > 0 };
 }
 
+/**
+ * Replaces each combo pack's stock with how many can really be sold (see
+ * packStock), so everything that reads it from here, on the pages and at
+ * checkout, treats a pack short of a product as short itself. Only costs a
+ * query when `products` has a pack in it.
+ */
+export async function withPackStock<T extends Pick<Product, "stock" | "packProductIds">>(
+  products: T[]
+): Promise<T[]> {
+  const ids = products.flatMap((product) => product.packProductIds ?? []);
+  if (ids.length === 0) return products;
+  const contents = await ProductModel.find(
+    { id: { $in: [...new Set(ids)] } },
+    { _id: 0, id: 1, stock: 1 }
+  ).lean<Pick<Product, "id" | "stock">[]>();
+  return products.map((product) => ({ ...product, stock: packStock(product, contents) }));
+}
+
+async function toCatalog(products: Product[]): Promise<CatalogProduct[]> {
+  return (await withPackStock(products)).map(withInStock);
+}
+
 export async function getAllProducts(): Promise<CatalogProduct[]> {
   await connectToDatabase();
-  const products = await ProductModel.find().lean<Product[]>();
-  return products.map(withInStock);
+  return toCatalog(await ProductModel.find().lean<Product[]>());
 }
 
 /** Every brand that at least one product has, alphabetically, for the site menu. */
@@ -69,7 +92,7 @@ async function firstCards(
     : [];
 
   // Leaders first, so each stays its group's card; the rest only add to the counts.
-  return collapseGroups([...cards, ...otherMembers].map(withInStock));
+  return collapseGroups(await toCatalog([...cards, ...otherMembers]));
 }
 
 // A MongoDB ObjectId starts with its creation time, so sorting by `_id`
@@ -106,6 +129,11 @@ export function getRelatedProducts(
   );
 }
 
+/**
+ * A page of the admin's product list. Stock stays as saved, not as packStock
+ * works it out: this is what the admin edits, and saving the worked-out number
+ * would overwrite a pack's own limit.
+ */
 export async function getProductsPage(
   page: number,
   pageSize: number
@@ -127,8 +155,7 @@ export async function getProductsPage(
 
 export async function getProductsByCategory(categorySlug: string): Promise<CatalogProduct[]> {
   await connectToDatabase();
-  const products = await ProductModel.find({ categorySlug }).lean<Product[]>();
-  return products.map(withInStock);
+  return toCatalog(await ProductModel.find({ categorySlug }).lean<Product[]>());
 }
 
 /** Every product in a flavor/size group, the given one included. */
@@ -160,7 +187,7 @@ export async function getPackProducts(productIds: string[]): Promise<PackProduct
 export const getProductById = cache(async (id: string): Promise<CatalogProduct | null> => {
   await connectToDatabase();
   const product = await ProductModel.findOne({ id }).lean<Product | null>();
-  return product ? withInStock(product) : null;
+  return product ? (await toCatalog([product]))[0] : null;
 });
 
 /**
@@ -191,17 +218,17 @@ export async function searchProducts(query: string): Promise<CatalogProduct[]> {
   const products = await ProductModel.find({ name: { $regex: pattern, $options: "i" } }).lean<
     Product[]
   >();
-  return products.map(withInStock);
+  return toCatalog(products);
 }
-
-type StockLine = { productId: string; quantity: number };
 
 /**
  * Adds `perUnit.stock * quantity` to each product's stock and
  * `perUnit.salesCount * quantity` to its sales count, in one round trip.
  * `$inc` is applied by MongoDB itself, so two orders changing the same
  * product at the same moment can't overwrite each other's change the way a
- * read-then-write in JS could.
+ * read-then-write in JS could. A combo pack's line also moves the products
+ * inside it (see expandStockLines), here and in reserveStock, the two places
+ * every stock change goes through.
  */
 async function adjustStock(
   items: StockLine[],
@@ -211,7 +238,7 @@ async function adjustStock(
   if (items.length === 0) return;
   await connectToDatabase();
   await ProductModel.bulkWrite(
-    items.map((item) => ({
+    expandStockLines(items).map((item) => ({
       updateOne: {
         filter: { id: item.productId },
         update: {
@@ -236,7 +263,7 @@ async function adjustStock(
 export async function reserveStock(items: StockLine[]): Promise<string | null> {
   await connectToDatabase();
   const reserved: StockLine[] = [];
-  for (const item of items) {
+  for (const item of expandStockLines(items)) {
     const result = await ProductModel.updateOne(
       { id: item.productId, stock: { $gte: item.quantity } },
       { $inc: { stock: -item.quantity } }

@@ -17,7 +17,7 @@ interface OrderItem {
   mobile: string;
   address: string;
   postalCode: string;
-  items: { name: string; quantity: number; unitPrice: number }[];
+  items: { name: string; quantity: number; unitPrice: number; packContents: string[] }[];
   discountCode: string | null;
   discountAmount: number;
   totalPrice: number;
@@ -116,9 +116,17 @@ export default function OrderManager({ initialOrders }: { initialOrders: OrderIt
           <ul className="mt-3 flex flex-col gap-1 border-t border-zinc-100 pt-3 dark:border-zinc-900">
             {order.items.map((item, index) => (
               <li key={index} className="flex justify-between gap-4">
-                <span>
+                <div>
                   {item.name} × {item.quantity.toLocaleString("fa-IR")}
-                </span>
+                  {/* What to put in the box, as it was when the order was placed. */}
+                  {item.packContents.length > 0 && (
+                    <ul className="mt-1 list-inside list-disc text-xs text-zinc-500">
+                      {item.packContents.map((name) => (
+                        <li key={name}>{name}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
                 <span className="whitespace-nowrap text-zinc-500">
                   {formatToman(item.unitPrice * item.quantity)}
                 </span>

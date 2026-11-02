@@ -10,6 +10,11 @@ export interface PricedLine {
   productId: string;
   quantity: number;
   unitPrice: number;
+  /**
+   * What a combo pack contains at the moment it's ordered, saved on the order:
+   * what to ship and which stock to move, whatever happens to the pack later.
+   */
+  packProductIds?: string[];
 }
 
 export type PriceCartResult =
@@ -24,7 +29,7 @@ export type PriceCartResult =
  */
 export function priceCart(
   lines: CartLine[],
-  products: Pick<Product, "id" | "name" | "price" | "stock">[]
+  products: Pick<Product, "id" | "name" | "price" | "stock" | "packProductIds">[]
 ): PriceCartResult {
   const productsById = new Map(products.map((product) => [product.id, product]));
   const items: PricedLine[] = [];
@@ -49,7 +54,12 @@ export function priceCart(
         message: `از هر محصول حداکثر ${MAX_PER_ORDER.toLocaleString("fa-IR")} عدد در هر سفارش می‌توان خرید.`,
       };
     }
-    items.push({ productId: product.id, quantity: line.quantity, unitPrice: product.price });
+    items.push({
+      productId: product.id,
+      quantity: line.quantity,
+      unitPrice: product.price,
+      ...(product.packProductIds?.length ? { packProductIds: product.packProductIds } : {}),
+    });
   }
 
   const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);

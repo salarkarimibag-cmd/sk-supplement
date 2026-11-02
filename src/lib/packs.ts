@@ -30,6 +30,23 @@ export function parsePackProductIds(text: string): string[] {
   ];
 }
 
+/**
+ * How many of a product can be sold: its own stock, and for a combo pack no
+ * more than the scarcest product inside it, or none if one of them was
+ * deleted. Oversold products have negative stock, which counts as none.
+ */
+export function packStock(
+  pack: { stock: number; packProductIds?: string[] },
+  products: { id: string; stock: number }[]
+): number {
+  const ids = pack.packProductIds ?? [];
+  const stockById = new Map(products.map((product) => [product.id, product.stock]));
+  return ids.reduce(
+    (lowest, id) => Math.max(0, Math.min(lowest, stockById.get(id) ?? 0)),
+    pack.stock
+  );
+}
+
 export interface PackSavings {
   /** What the pack's products cost bought separately, in Toman. */
   fullPrice: number;

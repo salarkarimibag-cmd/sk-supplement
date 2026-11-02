@@ -2,7 +2,8 @@ import { z } from "zod";
 import { connectToDatabase } from "@/lib/db";
 import type { CartCatalogEntry } from "@/lib/cartSync";
 import { releaseExpiredReservations } from "@/lib/orderLifecycle";
-import { ProductModel } from "@/models/Product";
+import { withPackStock } from "@/lib/products";
+import { ProductModel, type Product } from "@/models/Product";
 
 // z.string() items, so a JSON object such as {"$ne": null} is rejected here
 // instead of reaching the query as an operator. Same 50-line limit as an order.
@@ -26,8 +27,8 @@ export async function POST(request: Request) {
   await releaseExpiredReservations();
   const products = await ProductModel.find(
     { id: { $in: parsed.data.productIds } },
-    { _id: 0, id: 1, name: 1, price: 1, imageUrl: 1, stock: 1 }
-  ).lean<CartCatalogEntry[]>();
+    { _id: 0, id: 1, name: 1, price: 1, imageUrl: 1, stock: 1, packProductIds: 1 }
+  ).lean<(CartCatalogEntry & Pick<Product, "packProductIds">)[]>();
 
-  return Response.json({ products });
+  return Response.json({ products: await withPackStock(products) });
 }

@@ -16,6 +16,9 @@ const OrderItemSchema = new Schema(
     productId: { type: String, required: true },
     quantity: { type: Number, required: true },
     unitPrice: { type: Number, required: true },
+    // Only on a combo pack's line; undefined keeps it off every other line
+    // (see PricedLine).
+    packProductIds: { type: [String], default: undefined },
   },
   { _id: false }
 );
