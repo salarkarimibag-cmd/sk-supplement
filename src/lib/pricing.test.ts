@@ -1,11 +1,36 @@
 import { describe, expect, it } from "vitest";
-import { priceCart } from "./pricing";
+import { discountableSubtotal, priceCart } from "./pricing";
 import { MAX_PER_ORDER } from "./stock";
 
 const products = [
   { id: "whey", name: "Whey", price: 100_000, stock: 5 },
   { id: "creatine", name: "Creatine", price: 40_000, stock: 1 },
 ];
+
+describe("discountableSubtotal", () => {
+  const catalog = [...products, { id: "pack", price: 120_000, packProductIds: ["whey"] }];
+
+  it("adds up ordinary products, by quantity", () => {
+    const lines = [
+      { productId: "whey", quantity: 2 },
+      { productId: "creatine", quantity: 1 },
+    ];
+    expect(discountableSubtotal(lines, catalog)).toBe(240_000);
+  });
+
+  it("leaves combo packs out", () => {
+    const lines = [
+      { productId: "pack", quantity: 3 },
+      { productId: "whey", quantity: 1 },
+    ];
+    expect(discountableSubtotal(lines, catalog)).toBe(100_000);
+  });
+
+  it("is zero for a cart of only packs, or of products that are gone", () => {
+    expect(discountableSubtotal([{ productId: "pack", quantity: 1 }], catalog)).toBe(0);
+    expect(discountableSubtotal([{ productId: "deleted", quantity: 1 }], catalog)).toBe(0);
+  });
+});
 
 describe("priceCart", () => {
   it("saves what a combo pack contains on its line", () => {
