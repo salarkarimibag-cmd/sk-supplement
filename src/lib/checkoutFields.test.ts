@@ -1,10 +1,26 @@
 import { describe, expect, it } from "vitest";
 import {
+  acceptedTermsSchema,
   contactSchema,
   normalizeMobile,
   normalizePostalCode,
   shippingAddressSchema,
 } from "./checkoutFields";
+
+describe("acceptedTermsSchema", () => {
+  it("passes only when the box was ticked", () => {
+    expect(acceptedTermsSchema.safeParse(true).success).toBe(true);
+    for (const value of [false, undefined, null, "true", 1]) {
+      expect(acceptedTermsSchema.safeParse(value).success).toBe(false);
+    }
+  });
+
+  it("explains itself in Persian", () => {
+    expect(acceptedTermsSchema.safeParse(false).error?.issues[0].message).toBe(
+      "برای ثبت سفارش باید قوانین را بپذیرید."
+    );
+  });
+});
 
 const address = {
   firstName: "علی",
