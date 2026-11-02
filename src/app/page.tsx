@@ -130,6 +130,9 @@ export default async function Home() {
           <h2 className="mb-10 text-center text-3xl font-extrabold tracking-tight uppercase sm:text-4xl">
             نظرات مشتریان
           </h2>
+          {reviews.length === 0 && (
+            <p className="text-center text-zinc-600 dark:text-zinc-400">هنوز نظری ثبت نشده است.</p>
+          )}
           <Testimonials reviews={reviews} />
 
           {reviewsCount > reviews.length && (

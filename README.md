@@ -46,7 +46,6 @@ npm run seed:brand-products # products
 npm run seed:categories   # category content (title, description, banner)
 npm run seed:blogs        # blog posts
 npm run seed:discounts    # discount codes (WELCOME10, SK50000)
-npm run seed:reviews      # a few sample (already-approved) customer reviews
 ```
 
 ### 4. Create an admin account
@@ -81,7 +80,6 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run seed:categories` | Seed category content |
 | `npm run seed:blogs` | Seed blog posts |
 | `npm run seed:discounts` | Seed discount codes |
-| `npm run seed:reviews` | Seed sample approved customer reviews |
 | `npm run set-admin -- <email>` | Promote a registered user to admin |
 
 ## Testing
