@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSessionUser } from "@/lib/auth";
+import DeleteAccountSection from "@/components/account/DeleteAccountSection";
 import LogoutButton from "@/components/account/LogoutButton";
 
 export const metadata: Metadata = {
@@ -41,6 +42,8 @@ export default async function ProfilePage() {
         </Link>
         <LogoutButton />
       </div>
+
+      {!user.isAdmin && <DeleteAccountSection />}
     </div>
   );
 }
