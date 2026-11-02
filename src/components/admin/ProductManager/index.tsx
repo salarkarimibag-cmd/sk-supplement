@@ -339,7 +339,7 @@ export default function ProductManager({
           type="text"
           dir="ltr"
           placeholder="محتویات پک ترکیبی (اختیاری، شناسه‌ی محصولات، مثلاً on1, on2)"
-          title="فقط برای پک‌ها: محصولات داخل پک، با ویرگول جدا شده. موجودی پک جدا از موجودی این محصولات است."
+          title="فقط برای پک‌ها: محصولات داخل پک، با ویرگول جدا شده. فروش پک از موجودی این محصولات کم می‌کند و با تمام شدن هر کدام پک ناموجود می‌شود. موجودی خود پک فقط سقف تعداد فروش آن است."
           value={form.packProductIds}
           onChange={(event) => setForm({ ...form, packProductIds: event.target.value })}
           className={`col-span-2 sm:col-span-4 text-end placeholder:text-end ${inputClass}`}

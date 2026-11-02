@@ -57,8 +57,12 @@ export default async function AdminOrdersPage(props: PageProps<"/admin/orders">)
 
   // One query for every product on this page, instead of one per order item.
   const productNames = await getProductNames(
-    orders.flatMap((order) => order.items.map((item) => item.productId))
+    orders.flatMap((order) =>
+      order.items.flatMap((item) => [item.productId, ...(item.packProductIds ?? [])])
+    )
   );
+  const nameOf = (productId: string) =>
+    productNames.get(productId) ?? `محصول حذف‌شده (${productId})`;
 
   const initialOrders = orders.map((order) => ({
     id: String(order._id),
@@ -70,9 +74,10 @@ export default async function AdminOrdersPage(props: PageProps<"/admin/orders">)
     address: `${order.shippingAddress.province}، ${order.shippingAddress.city}، ${order.shippingAddress.address}`,
     postalCode: order.shippingAddress.postalCode,
     items: order.items.map((item) => ({
-      name: productNames.get(item.productId) ?? `محصول حذف‌شده (${item.productId})`,
+      name: nameOf(item.productId),
       quantity: item.quantity,
       unitPrice: item.unitPrice,
+      packContents: (item.packProductIds ?? []).map(nameOf),
     })),
     discountCode: order.discountCode ?? null,
     discountAmount: order.discountAmount ?? 0,

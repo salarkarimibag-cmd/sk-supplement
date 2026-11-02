@@ -9,9 +9,10 @@ import {
   releaseStock,
   restoreStock,
 } from "@/lib/products";
+import { expandStockLines, type StockLine } from "@/lib/stock";
 
 interface OrderEffects {
-  items: { productId: string; quantity: number }[];
+  items: StockLine[];
   discountCode?: string | null;
   stockReserved?: boolean | null;
 }
@@ -43,7 +44,9 @@ export async function onOrderPaid(order: OrderEffects): Promise<string[]> {
   ]);
   // A reservation's units were set aside for this order, so only a late
   // payment can come up short.
-  return order.stockReserved ? [] : findOversold(order.items.map((item) => item.productId));
+  return order.stockReserved
+    ? []
+    : findOversold(expandStockLines(order.items).map((item) => item.productId));
 }
 
 /**

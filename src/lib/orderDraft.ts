@@ -3,7 +3,7 @@ import { ProductModel, type Product } from "@/models/Product";
 import { acceptedTermsSchema, contactSchema, shippingAddressSchema } from "@/lib/checkoutFields";
 import { checkDiscountForVisitor, type Visitor } from "@/lib/discountLookup";
 import { priceCart, type PricedLine } from "@/lib/pricing";
-import { reserveStock } from "@/lib/products";
+import { reserveStock, withPackStock } from "@/lib/products";
 
 // Only what the buyer actually chooses: who they are, where to ship, which
 // products and how many. Prices, the discount amount and the total are
@@ -56,7 +56,7 @@ export async function buildOrderDraft(
     id: { $in: body.items.map((item) => item.productId) },
   }).lean<Product[]>();
 
-  const priced = priceCart(body.items, products);
+  const priced = priceCart(body.items, await withPackStock(products));
   if (!priced.ok) {
     return { ok: false, message: priced.message, status: 400 };
   }

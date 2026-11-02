@@ -9,6 +9,30 @@ export const LOW_STOCK_THRESHOLD = 5;
  */
 export const MAX_PER_ORDER = 10;
 
+/** A cart or order line, as far as stock is concerned. */
+export interface StockLine {
+  productId: string;
+  quantity: number;
+  /** On a combo pack: what the line contains, as saved on the order. */
+  packProductIds?: string[] | null;
+}
+
+/**
+ * The units a set of lines really moves: each line's own product, plus one of
+ * each product inside a pack per pack, added up per product. Works from the
+ * ids saved on the line, not the pack as it is now, so cancelling an old order
+ * gives back exactly what it took even if the pack has changed since.
+ */
+export function expandStockLines(lines: StockLine[]): { productId: string; quantity: number }[] {
+  const units = new Map<string, number>();
+  for (const { productId, quantity, packProductIds } of lines) {
+    for (const id of [productId, ...(packProductIds ?? [])]) {
+      units.set(id, (units.get(id) ?? 0) + quantity);
+    }
+  }
+  return [...units].map(([productId, quantity]) => ({ productId, quantity }));
+}
+
 /**
  * How many units of a product one order may have: its stock, up to
  * MAX_PER_ORDER. `stock` is undefined for cart lines saved before the cart

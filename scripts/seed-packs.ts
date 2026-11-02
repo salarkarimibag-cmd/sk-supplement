@@ -2,9 +2,9 @@
 // by `slug` and `id`.
 //
 // A pack is an ordinary product, so the cart, checkout and orders treat it
-// like any other, with its own price and its own stock. Selling one doesn't
-// touch the stock of the products inside, so an admin sets its stock to how
-// many are really set aside for packs.
+// like any other, with its own price. Its stock is only a limit on how many to
+// sell: selling one also takes one of each product inside out of stock, and it
+// sells out when any of them does (see packStock and expandStockLines).
 process.loadEnvFile(".env.local");
 
 import { connectToDatabase } from "../src/lib/db";

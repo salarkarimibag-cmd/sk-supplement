@@ -1,5 +1,33 @@
 import { describe, expect, it } from "vitest";
-import { packContentsSchema, packSavings, parsePackProductIds } from "@/lib/packs";
+import { packContentsSchema, packSavings, packStock, parsePackProductIds } from "@/lib/packs";
+
+describe("packStock", () => {
+  const products = [
+    { id: "whey", stock: 7 },
+    { id: "creatine", stock: 3 },
+    { id: "gone", stock: 0 },
+    { id: "oversold", stock: -2 },
+  ];
+
+  it("stops at the scarcest product inside", () => {
+    expect(packStock({ stock: 10, packProductIds: ["whey", "creatine"] }, products)).toBe(3);
+  });
+
+  it("stops at the pack's own stock when that's lower", () => {
+    expect(packStock({ stock: 2, packProductIds: ["whey", "creatine"] }, products)).toBe(2);
+  });
+
+  it("has none when a product inside has run out, was deleted or is oversold", () => {
+    expect(packStock({ stock: 10, packProductIds: ["whey", "gone"] }, products)).toBe(0);
+    expect(packStock({ stock: 10, packProductIds: ["whey", "deleted"] }, products)).toBe(0);
+    expect(packStock({ stock: 10, packProductIds: ["oversold", "whey"] }, products)).toBe(0);
+  });
+
+  it("leaves a product that isn't a pack alone", () => {
+    expect(packStock({ stock: 4 }, products)).toBe(4);
+    expect(packStock({ stock: 4, packProductIds: [] }, products)).toBe(4);
+  });
+});
 
 describe("packSavings", () => {
   const products = [

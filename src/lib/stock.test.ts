@@ -1,5 +1,47 @@
 import { describe, expect, it } from "vitest";
-import { capQuantity, MAX_PER_ORDER, orderLimit, remainingToAdd } from "./stock";
+import {
+  capQuantity,
+  expandStockLines,
+  MAX_PER_ORDER,
+  orderLimit,
+  remainingToAdd,
+} from "./stock";
+
+describe("expandStockLines", () => {
+  it("leaves ordinary lines as they are", () => {
+    expect(
+      expandStockLines([
+        { productId: "whey", quantity: 2 },
+        { productId: "bcaa", quantity: 1, packProductIds: null },
+      ])
+    ).toEqual([
+      { productId: "whey", quantity: 2 },
+      { productId: "bcaa", quantity: 1 },
+    ]);
+  });
+
+  it("moves a pack and one of each product inside it, per pack", () => {
+    expect(
+      expandStockLines([{ productId: "pack", quantity: 2, packProductIds: ["whey", "creatine"] }])
+    ).toEqual([
+      { productId: "pack", quantity: 2 },
+      { productId: "whey", quantity: 2 },
+      { productId: "creatine", quantity: 2 },
+    ]);
+  });
+
+  it("adds up a product that's both in a pack and bought on its own", () => {
+    expect(
+      expandStockLines([
+        { productId: "pack", quantity: 1, packProductIds: ["whey"] },
+        { productId: "whey", quantity: 3 },
+      ])
+    ).toEqual([
+      { productId: "pack", quantity: 1 },
+      { productId: "whey", quantity: 4 },
+    ]);
+  });
+});
 
 describe("orderLimit", () => {
   it("is the stock when it's below MAX_PER_ORDER", () => {
