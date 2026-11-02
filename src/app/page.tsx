@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Archivo } from "next/font/google";
 import Link from "next/link";
 import ProductCard from "@/components/product/ProductCard";
@@ -8,11 +9,21 @@ import CategoryShowcase from "@/components/home/CategoryShowcase";
 import Testimonials from "@/components/home/Testimonials";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import LatestArticles from "@/components/home/LatestArticles";
+import JsonLd from "@/components/seo/JsonLd";
 import { getAllProducts, getBestSellers, getLatestProducts } from "@/lib/products";
 import { getHeroPromotion } from "@/lib/promotion";
 import { getHomepageReviews } from "@/lib/reviews";
 import { pickShowcaseProducts } from "@/lib/showcase";
+import { SITE_URL } from "@/lib/site";
+import { buildStoreJsonLd, buildWebSiteJsonLd } from "@/lib/structuredData";
 import { formatVariantSummary } from "@/lib/variants";
+
+// Here and not in the root layout: every page would inherit it there, telling
+// search engines the whole site is a copy of the home page. The title and
+// description come from the layout.
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 /** How many products take turns in the hero. */
 const HERO_PRODUCTS = 6;
@@ -51,6 +62,9 @@ export default async function Home() {
 
   return (
     <div className="flex w-full flex-col gap-12 pb-12">
+      <JsonLd data={buildStoreJsonLd(SITE_URL)} />
+      <JsonLd data={buildWebSiteJsonLd(SITE_URL)} />
+
       <HeroShowcase
         averageRating={averageRating}
         reviewCount={reviewsCount}

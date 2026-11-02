@@ -1,3 +1,5 @@
+import { SITE_NAME } from "@/lib/seo";
+
 // JSON-LD (https://schema.org) describing pages to search engines, so
 // Google can show a product's price, stock and rating right in the results.
 // Test the output with https://search.google.com/test/rich-results.
@@ -112,6 +114,27 @@ export function buildBreadcrumbJsonLd(items: BreadcrumbItem[], siteUrl: string) 
       name: item.name,
       item: absoluteUrl(siteUrl, item.path),
     })),
+  };
+}
+
+/** The shop itself, so search engines can tie its name to its logo. */
+export function buildStoreJsonLd(siteUrl: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "OnlineStore",
+    name: SITE_NAME,
+    url: absoluteUrl(siteUrl, "/"),
+    logo: absoluteUrl(siteUrl, "/images/logo.webp"),
+  };
+}
+
+/** The site's name, which Google reads from the home page for its results. */
+export function buildWebSiteJsonLd(siteUrl: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE_NAME,
+    url: absoluteUrl(siteUrl, "/"),
   };
 }
 

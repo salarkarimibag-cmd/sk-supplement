@@ -21,7 +21,8 @@ const geistMono = Geist_Mono({
 });
 
 const siteTitle = "SK Supplement | فروشگاه آنلاین مکمل‌های ورزشی";
-const siteDescription = "فروشگاه آنلاین مکمل‌های ورزشی";
+const siteDescription =
+  "فروشگاه آنلاین مکمل‌های ورزشی اصل از برندهای معتبر: پروتئین، کراتین، آمینو، پیش‌تمرین، چربی‌سوز و ویتامین، با ضمانت اصالت کالا و ارسال رایگان به سراسر کشور.";
 
 export const metadata: Metadata = {
   // Lets Next.js resolve relative openGraph/twitter image paths (and other
