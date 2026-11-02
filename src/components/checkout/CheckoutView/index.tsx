@@ -16,6 +16,7 @@ import {
   ADDRESS_MAX_LENGTH,
   NAME_MAX_LENGTH,
   PLACE_MAX_LENGTH,
+  acceptedTermsSchema,
   contactSchema,
   shippingAddressSchema,
 } from "@/lib/checkoutFields";
@@ -34,6 +35,7 @@ const checkoutSchema = z
     paymentMethod: z.enum(["zarinpal", "card"]),
     trackingCode: z.string(),
     cardLast4: z.string(),
+    acceptedTerms: acceptedTermsSchema,
   })
   // The transfer fields only matter for card-to-card. They're checked with
   // the same schema the server uses, so the two can't drift apart; only the
@@ -55,7 +57,7 @@ const checkoutSchema = z
   });
 
 type CheckoutValues = z.infer<typeof checkoutSchema>;
-type TextFieldName = Exclude<keyof CheckoutValues, "paymentMethod">;
+type TextFieldName = Exclude<keyof CheckoutValues, "paymentMethod" | "acceptedTerms">;
 
 const inputClass =
   "w-full rounded border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-sky-600 aria-[invalid=true]:border-red-600 dark:border-zinc-700 dark:bg-zinc-900";
@@ -254,6 +256,7 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
     // itself, so only product ids, quantities and the code are sent.
     const order = {
       discountCode: appliedDiscount?.code,
+      acceptedTerms: values.acceptedTerms,
       contact: { email: values.email, mobile: values.mobile },
       shippingAddress: {
         firstName: values.firstName,
@@ -558,6 +561,50 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
           </p>
         )}
         {serverError && <p className="text-sm text-red-600">{serverError}</p>}
+
+        <div>
+          <label className="flex cursor-pointer items-start gap-3 text-sm text-zinc-700 dark:text-zinc-300">
+            <input
+              type="checkbox"
+              {...register("acceptedTerms")}
+              aria-invalid={Boolean(errors.acceptedTerms) || undefined}
+              aria-describedby={errors.acceptedTerms ? "acceptedTerms-error" : undefined}
+              className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-sky-600"
+            />
+            {/* New tabs, so reading a policy doesn't lose the filled-in form. */}
+            <span>
+              <Link
+                href="/pages/terms-of-service"
+                target="_blank"
+                className="text-sky-600 hover:underline dark:text-sky-400"
+              >
+                قوانین و مقررات
+              </Link>
+              ،{" "}
+              <Link
+                href="/pages/refund-policy"
+                target="_blank"
+                className="text-sky-600 hover:underline dark:text-sky-400"
+              >
+                قوانین بازگشت وجه
+              </Link>{" "}
+              و{" "}
+              <Link
+                href="/pages/privacy-policy"
+                target="_blank"
+                className="text-sky-600 hover:underline dark:text-sky-400"
+              >
+                حریم خصوصی
+              </Link>{" "}
+              را خوانده‌ام و می‌پذیرم.
+            </span>
+          </label>
+          {errors.acceptedTerms && (
+            <p id="acceptedTerms-error" className="mt-1 text-xs text-red-600">
+              {errors.acceptedTerms.message}
+            </p>
+          )}
+        </div>
 
         <button
           type="submit"

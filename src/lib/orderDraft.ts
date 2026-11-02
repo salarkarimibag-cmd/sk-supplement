@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { ProductModel, type Product } from "@/models/Product";
-import { contactSchema, shippingAddressSchema } from "@/lib/checkoutFields";
+import { acceptedTermsSchema, contactSchema, shippingAddressSchema } from "@/lib/checkoutFields";
 import { checkDiscountForVisitor, type Visitor } from "@/lib/discountLookup";
 import { priceCart, type PricedLine } from "@/lib/pricing";
 import { reserveStock } from "@/lib/products";
@@ -13,6 +13,7 @@ export const orderRequestSchema = z.object({
   // The same rules the checkout form checks (src/lib/checkoutFields.ts).
   contact: contactSchema,
   shippingAddress: shippingAddressSchema,
+  acceptedTerms: acceptedTermsSchema,
   items: z
     .array(
       z.object({

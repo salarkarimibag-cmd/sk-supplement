@@ -66,3 +66,6 @@ export const shippingAddressSchema = z.object({
     .transform(normalizePostalCode)
     .pipe(z.string().regex(/^\d{10}$/, "کد پستی باید ۱۰ رقم باشد.")),
 });
+
+// Only true passes: an order needs the buyer's agreement to the shop's terms.
+export const acceptedTermsSchema = z.literal(true, "برای ثبت سفارش باید قوانین را بپذیرید.");
