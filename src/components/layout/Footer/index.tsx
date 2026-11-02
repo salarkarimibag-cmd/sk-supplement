@@ -82,7 +82,7 @@ export default function Footer() {
             ضمانت بازگشت کالا
           </h3>
           <p className="mt-4 text-sm text-zinc-400">
-            کالا معیوب یا اشتباه به دستتان رسید؟ تا ۷ روز پس از تحویل درخواست بازگشت ثبت کنید.{" "}
+            پشیمان شدید یا کالا معیوب یا اشتباه رسید؟ تا ۷ روز کاری پس از تحویل درخواست بازگشت ثبت کنید.{" "}
             <Link href="/pages/refund-policy" className="text-sky-500 hover:underline">
               قوانین بازگشت وجه.
             </Link>
