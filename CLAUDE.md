@@ -44,6 +44,7 @@ Set in `.env.local` (locally) and in Vercel. Never commit their values.
 - `NEXT_PUBLIC_SITE_URL` — public site URL (`src/lib/site.ts`)
 - `RESEND_API_KEY`, `EMAIL_FROM` — Resend email sending (`src/lib/email.ts`); unset, development prints emails to the terminal instead
 - `CRON_SECRET` — Vercel sends it to the daily `/api/cron/reconcile` run (schedule in `vercel.json`); unset, that route refuses every request
+- `ALERT_EMAIL` — where server errors are emailed, at most once an hour per error (`src/instrumentation.ts`); unset, nothing is sent
 - `NEXT_PUBLIC_SALES_OPEN` — `"true"` opens the shop; unset, prices show «به زودی» and cart/checkout/payment APIs are closed (`src/lib/sales.ts`). Inlined at build time, so redeploy after changing it
 
 ## Architecture
