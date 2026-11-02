@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { buildBreadcrumbJsonLd, buildProductJsonLd, serializeJsonLd } from "./structuredData";
+import {
+  buildBreadcrumbJsonLd,
+  buildProductJsonLd,
+  buildStoreJsonLd,
+  buildWebSiteJsonLd,
+  serializeJsonLd,
+} from "./structuredData";
 
 const siteUrl = "https://example.com";
 const product = {
@@ -107,6 +113,29 @@ describe("buildBreadcrumbJsonLd", () => {
         item: "https://example.com/collections/protein",
       },
     ]);
+  });
+});
+
+describe("buildStoreJsonLd", () => {
+  it("names the shop, with absolute urls", () => {
+    expect(buildStoreJsonLd(siteUrl)).toEqual({
+      "@context": "https://schema.org",
+      "@type": "OnlineStore",
+      name: "SK Supplement",
+      url: "https://example.com/",
+      logo: "https://example.com/images/logo.webp",
+    });
+  });
+});
+
+describe("buildWebSiteJsonLd", () => {
+  it("gives the site's name and home page", () => {
+    expect(buildWebSiteJsonLd(siteUrl)).toEqual({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "SK Supplement",
+      url: "https://example.com/",
+    });
   });
 });
 
