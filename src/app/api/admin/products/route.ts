@@ -2,6 +2,7 @@ import { connectToDatabase } from "@/lib/db";
 import { ProductModel } from "@/models/Product";
 import { getSessionAdmin } from "@/lib/auth";
 import { isDuplicateKeyError } from "@/lib/mongoErrors";
+import { packContentsSchema } from "@/lib/packs";
 import { productDetailsSchema, withoutEmptyDetails } from "@/lib/productDetails";
 import { productCreateSchema, productInputErrorMessage } from "@/lib/productInput";
 import { productGroupSchema } from "@/lib/variants";
@@ -47,6 +48,11 @@ export async function POST(request: Request) {
     );
   }
 
+  const pack = packContentsSchema.safeParse(body);
+  if (!pack.success) {
+    return Response.json({ message: "شناسه‌های محتویات پک نامعتبر است." }, { status: 400 });
+  }
+
   await connectToDatabase();
 
   const existing = await ProductModel.exists({ $or: [{ id: input.id }, { slug: input.slug }] });
@@ -67,6 +73,7 @@ export async function POST(request: Request) {
       flavor: input.flavor || undefined,
       size: input.size || undefined,
       groupSlug: group.data.groupSlug || undefined,
+      packProductIds: pack.data.packProductIds?.length ? pack.data.packProductIds : undefined,
       ...withoutEmptyDetails(details.data),
     });
     revalidateCatalog();

@@ -40,6 +40,7 @@ export default async function AdminProductsPage(props: PageProps<"/admin/product
     usage: product.usage ?? "",
     warnings: product.warnings ?? "",
     manufacturerClaims: product.manufacturerClaims ?? "",
+    packProductIds: product.packProductIds ?? [],
   }));
 
   const categoryOptions = categories.map((category) => ({

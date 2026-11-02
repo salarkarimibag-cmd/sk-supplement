@@ -3,6 +3,7 @@ import { ProductModel } from "@/models/Product";
 import { getSessionAdmin } from "@/lib/auth";
 import { isDuplicateKeyError } from "@/lib/mongoErrors";
 import { toSetAndUnset } from "@/lib/mongoUpdate";
+import { packContentsSchema } from "@/lib/packs";
 import { productDetailsSchema, withoutEmptyDetails } from "@/lib/productDetails";
 import { productInputErrorMessage, productUpdateSchema } from "@/lib/productInput";
 import { productGroupSchema } from "@/lib/variants";
@@ -38,6 +39,11 @@ export async function PATCH(
     );
   }
 
+  const pack = packContentsSchema.safeParse(body);
+  if (!pack.success) {
+    return Response.json({ message: "شناسه‌های محتویات پک نامعتبر است." }, { status: 400 });
+  }
+
   await connectToDatabase();
 
   // Only the fields that were sent are in parsed.data, so the others keep
@@ -47,11 +53,15 @@ export async function PATCH(
   if (flavor !== undefined) update.flavor = flavor || undefined;
   if (size !== undefined) update.size = size || undefined;
   if (group.data.groupSlug !== undefined) update.groupSlug = group.data.groupSlug || undefined;
+  const { packProductIds } = pack.data;
+  if (packProductIds !== undefined) {
+    update.packProductIds = packProductIds.length > 0 ? packProductIds : undefined;
+  }
   Object.assign(update, withoutEmptyDetails(details.data));
 
   let product;
   try {
-    // Cleared optional fields (flavor, size, group, label details) are undefined here
+    // Cleared optional fields (flavor, size, group, pack, label details) are undefined here
     // and must be removed explicitly, or Mongoose would keep the old values.
     product = await ProductModel.findOneAndUpdate({ id }, toSetAndUnset(update), {
       returnDocument: "after",

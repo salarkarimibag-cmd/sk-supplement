@@ -6,6 +6,7 @@ import {
   parseNutritionFacts,
   type NutritionFact,
 } from "@/lib/productDetails";
+import { parsePackProductIds } from "@/lib/packs";
 
 interface ProductItem {
   id: string;
@@ -25,6 +26,7 @@ interface ProductItem {
   usage: string;
   warnings: string;
   manufacturerClaims: string;
+  packProductIds: string[];
 }
 
 interface CategoryOption {
@@ -51,6 +53,8 @@ interface FormState {
   usage: string;
   warnings: string;
   manufacturerClaims: string;
+  /** Product ids separated by commas; see parsePackProductIds. */
+  packProductIds: string;
 }
 
 function emptyForm(defaultCategorySlug: string): FormState {
@@ -72,6 +76,7 @@ function emptyForm(defaultCategorySlug: string): FormState {
     usage: "",
     warnings: "",
     manufacturerClaims: "",
+    packProductIds: "",
   };
 }
 
@@ -112,6 +117,7 @@ export default function ProductManager({
       usage: item.usage,
       warnings: item.warnings,
       manufacturerClaims: item.manufacturerClaims,
+      packProductIds: item.packProductIds.join(", "),
     });
     setError(null);
   }
@@ -168,6 +174,7 @@ export default function ProductManager({
       usage: form.usage.trim(),
       warnings: form.warnings.trim(),
       manufacturerClaims: form.manufacturerClaims.trim(),
+      packProductIds: parsePackProductIds(form.packProductIds),
     };
 
     try {
@@ -204,6 +211,7 @@ export default function ProductManager({
         usage: data.usage ?? "",
         warnings: data.warnings ?? "",
         manufacturerClaims: data.manufacturerClaims ?? "",
+        packProductIds: data.packProductIds ?? [],
       };
 
       setProducts((current) =>
@@ -325,6 +333,15 @@ export default function ProductManager({
           title="محصولاتی که گروه یکسان دارند، طعم‌ها و سایزهای یک محصول حساب می‌شوند."
           value={form.groupSlug}
           onChange={(event) => setForm({ ...form, groupSlug: event.target.value })}
+          className={`col-span-2 sm:col-span-4 text-end placeholder:text-end ${inputClass}`}
+        />
+        <input
+          type="text"
+          dir="ltr"
+          placeholder="محتویات پک ترکیبی (اختیاری، شناسه‌ی محصولات، مثلاً on1, on2)"
+          title="فقط برای پک‌ها: محصولات داخل پک، با ویرگول جدا شده. موجودی پک جدا از موجودی این محصولات است."
+          value={form.packProductIds}
+          onChange={(event) => setForm({ ...form, packProductIds: event.target.value })}
           className={`col-span-2 sm:col-span-4 text-end placeholder:text-end ${inputClass}`}
         />
 
