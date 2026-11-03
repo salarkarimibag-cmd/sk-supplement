@@ -53,7 +53,9 @@ function logGatewayError(step: "request" | "verify" | "inquiry", json: GatewayRe
  * POSTs to ZarinPal and returns the parsed JSON, or null when the gateway
  * couldn't be reached or didn't answer with JSON (timeout, DNS/network
  * failure, an HTML error page). That's different from ZarinPal answering
- * "no", which comes back as JSON with an error code.
+ * "no", which comes back as JSON with an error code. Both kinds of null are
+ * logged, since the buyer only sees "try again" and the log is the one
+ * place that says which it was.
  */
 interface GatewayResponse {
   data?: { authority?: string; code?: number; ref_id?: number; status?: string };
@@ -61,15 +63,27 @@ interface GatewayResponse {
 }
 
 async function postToGateway(url: string, body: object): Promise<GatewayResponse | null> {
+  let response: Response;
   try {
-    const response = await fetch(url, {
+    response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(GATEWAY_TIMEOUT_MS),
     });
+  } catch (error) {
+    console.error(`ZarinPal could not be reached (${url}):`, error instanceof Error ? error.message : error);
+    return null;
+  }
+
+  try {
     return await response.json();
   } catch {
+    const redirect = response.redirected ? `, redirected to ${response.url}` : "";
+    console.error(
+      `ZarinPal answered ${url} without JSON: status ${response.status}, ` +
+        `${response.headers.get("content-type") ?? "no content type"}${redirect}`
+    );
     return null;
   }
 }
