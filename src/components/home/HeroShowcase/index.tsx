@@ -79,9 +79,11 @@ export default function HeroShowcase({
       <div className="absolute inset-0 -z-10 hidden bg-linear-to-l from-black/90 via-black/50 to-black/20 md:block" />
       <div className="absolute inset-x-0 bottom-0 -z-10 hidden h-1/3 bg-linear-to-t from-black/80 to-transparent md:block" />
 
-      {/* The product photos hug the end (left, in RTL) edge of the screen: the
-          top corner on phones, the vertical middle on wider screens. */}
-      <div className="absolute inset-e-0 top-2 w-56 sm:w-72 md:top-1/2 md:w-[32%] md:max-w-md md:-translate-y-1/2">
+      {/* The product photos hug the end (left, in RTL) edge of the screen. On
+          phones they are part of the normal flow, in the top corner, so the
+          text below always starts after them however tall their text is; from
+          md up they float over the photo, in the vertical middle. */}
+      <div className="relative ms-auto w-56 px-2 pt-2 sm:w-72 md:absolute md:inset-e-0 md:top-1/2 md:w-[32%] md:max-w-md md:-translate-y-1/2 md:p-0">
         <HeroProducts products={showcaseProducts} />
 
         {bestSeller && (
@@ -114,9 +116,9 @@ export default function HeroShowcase({
         )}
       </div>
 
-      {/* On phones the text starts low on the photo, where it has faded to
-          black, so it neither covers the man nor the products. */}
-      <div className="mx-auto flex max-w-6xl items-center px-6 pt-80 pb-14 sm:pt-96 md:min-h-150 md:py-24">
+      {/* On phones the text follows the products in the flow, where the photo
+          has faded to black, so it never covers the man or the products. */}
+      <div className="mx-auto flex max-w-6xl items-center px-6 pt-8 pb-14 md:min-h-150 md:py-24">
         <div className="text-start">
           {/* The current offer, as a small pill above the headline. Only
               while the code can really be used (see getHeroPromotion): with
