@@ -37,6 +37,7 @@ cp .env.example .env.local
 | `NEXT_PUBLIC_SALES_OPEN` | `true` opens the shop. Unset, prices show «به زودی» and the cart, checkout and payment APIs are closed. Inlined at build time, so redeploy after changing it. |
 | `RESEND_API_KEY`, `EMAIL_FROM` | [Resend](https://resend.com) credentials for emails such as password reset links. Leave empty in development to print emails to the terminal instead. |
 | `CRON_SECRET` | Lets Vercel run the daily ZarinPal reconcile (`vercel.json`). A random string of at least 16 characters, generated like `SESSION_SECRET`. Production only; without it the route refuses every request. |
+| `ALERT_EMAIL` | Where server errors are emailed, at most once an hour per error. Production only, as it needs `RESEND_API_KEY`; unset, nothing is sent. |
 
 ### 3. Seed the database
 
