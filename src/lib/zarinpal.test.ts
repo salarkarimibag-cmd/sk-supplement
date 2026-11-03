@@ -42,10 +42,16 @@ describe("requestZarinPalPayment", () => {
     expect(!result.ok && result.message).toContain("ارتباط با درگاه زرین‌پال برقرار نشد");
   });
 
-  it("treats a non-JSON answer (e.g. an HTML error page) as unreachable", async () => {
-    fetchMock.mockResolvedValue({ json: async () => JSON.parse("<html>") });
+  it("treats a non-JSON answer (e.g. an HTML error page) as unreachable, and logs what came back", async () => {
+    fetchMock.mockResolvedValue(
+      new Response("<html>", { status: 502, headers: { "Content-Type": "text/html" } })
+    );
     const result = await requestZarinPalPayment(requestParams);
     expect(!result.ok && result.message).toContain("ارتباط با درگاه زرین‌پال برقرار نشد");
+    const logged = String(consoleError.mock.calls[0]);
+    expect(logged).toContain("status 502");
+    expect(logged).toContain("text/html");
+    expect(logged).toContain("/pg/v4/payment/request.json");
   });
 
   it("shows the buyer a Persian message, not ZarinPal's English error, and logs the error", async () => {
@@ -127,8 +133,17 @@ describe("inquireZarinPalPayment", () => {
     expect(String(consoleError.mock.calls[0])).toContain("-54");
   });
 
-  it("is unknown when ZarinPal can't be reached", async () => {
+  it("is unknown, and logged, when ZarinPal can't be reached", async () => {
     fetchMock.mockRejectedValue(new TypeError("fetch failed"));
     await expect(inquireZarinPalPayment("A1")).resolves.toBe("unknown");
+    const logged = String(consoleError.mock.calls[0]);
+    expect(logged).toContain("could not be reached");
+    expect(logged).toContain("fetch failed");
+  });
+
+  it("never logs the merchant id", async () => {
+    fetchMock.mockResolvedValue(new Response("<html>", { status: 200 }));
+    await inquireZarinPalPayment("A1");
+    expect(String(consoleError.mock.calls)).not.toContain("test-merchant");
   });
 });
