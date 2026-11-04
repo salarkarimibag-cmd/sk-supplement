@@ -83,6 +83,8 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run seed:blogs` | Seed blog posts |
 | `npm run seed:discounts` | Seed discount codes |
 | `npm run set-admin -- <email>` | Promote a registered user to admin |
+| `npm run backup-db -- [database]` | Copy a database (default: `MONGODB_DB` from `.env.local`) into the git-ignored `backups/` folder |
+| `npm run restore-db -- <folder> <database>` | Load a backup into a new, empty database (refuses one that has collections) |
 
 ## Testing
 
