@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import ContactForm from "@/components/contact/ContactForm";
+import {
+  CONTACT_ADDRESS,
+  CONTACT_EMAIL,
+  CONTACT_HOURS,
+  CONTACT_PHONE,
+  toInternationalPhone,
+  toPersianDigits,
+} from "@/lib/contact";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -9,10 +17,18 @@ export const metadata: Metadata = pageMetadata({
   path: "/pages/contact-us",
 });
 
+// An href makes the value a link: mailto: opens the mail app, tel: dials on a phone.
 const contactInfo = [
-  { icon: Mail, title: "ایمیل", value: "salarkarimi.bag@gmail.com", dir: undefined },
-  { icon: Phone, title: "تلفن", value: "۰۹۱۸۵۵۶۶۵۱۴", dir: "ltr" as const },
-  { icon: MapPin, title: "آدرس", value: "کرمانشاه، صحنه، روستای دسجرده سفلی", dir: undefined },
+  { icon: Mail, title: "ایمیل", value: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}` },
+  {
+    icon: Phone,
+    title: "تلفن",
+    value: toPersianDigits(CONTACT_PHONE),
+    href: `tel:${toInternationalPhone(CONTACT_PHONE)}`,
+    dir: "ltr" as const,
+  },
+  { icon: Clock, title: "ساعت پاسخ‌گویی", value: CONTACT_HOURS },
+  { icon: MapPin, title: "آدرس", value: `استان ${CONTACT_ADDRESS.region}، ${CONTACT_ADDRESS.street}` },
 ];
 
 export default function ContactUsPage() {
@@ -28,7 +44,7 @@ export default function ContactUsPage() {
           سوالی دارید یا نیاز به راهنمایی دارید؟ از راه‌های زیر با ما در ارتباط باشید.
         </p>
 
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {contactInfo.map((item) => (
             <div
               key={item.title}
@@ -42,7 +58,13 @@ export default function ContactUsPage() {
               </div>
 
               <p dir={item.dir} className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-                {item.value}
+                {item.href ? (
+                  <a href={item.href} className="hover:text-sky-600 hover:underline dark:hover:text-sky-400">
+                    {item.value}
+                  </a>
+                ) : (
+                  item.value
+                )}
               </p>
             </div>
           ))}

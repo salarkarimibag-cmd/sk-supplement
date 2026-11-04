@@ -118,13 +118,20 @@ describe("buildBreadcrumbJsonLd", () => {
 
 describe("buildStoreJsonLd", () => {
   it("names the shop, with absolute urls", () => {
-    expect(buildStoreJsonLd(siteUrl)).toEqual({
+    expect(buildStoreJsonLd(siteUrl)).toMatchObject({
       "@context": "https://schema.org",
       "@type": "OnlineStore",
       name: "SK Supplement",
       url: "https://example.com/",
       logo: "https://example.com/images/logo.webp",
     });
+  });
+
+  it("gives the contact details with an international phone number", () => {
+    const store = buildStoreJsonLd(siteUrl);
+    expect(store.email).toBe("info@sksupplement.shop");
+    expect(store.telephone).toMatch(/^\+98/);
+    expect(store.address).toMatchObject({ "@type": "PostalAddress", addressCountry: "IR" });
   });
 });
 
