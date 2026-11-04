@@ -337,3 +337,16 @@ p.shine {
     scroll-behavior: auto !important;
   }
 }
+
+/* iOS Safari zooms the whole page when a text field with a font size under
+   16px gets focus, and stays zoomed afterwards. Touch devices therefore get
+   16px in every field, whatever `text-sm` etc. a component sets. This is
+   deliberately outside @layer: unlayered rules beat Tailwind utilities, which
+   live in a layer. Desktop (mouse) keeps the smaller sizes. */
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
