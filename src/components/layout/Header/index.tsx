@@ -59,14 +59,14 @@ export default function Header({
                   user={user}
                 />
 
-                <Link href="/" className="-ms-2 flex items-center md:ms-0">
+                <Link href="/" className="-ms-2 flex items-center md:ms-0 md:me-6">
                   <Image
-                    src="/images/logo.webp"
+                    src="/images/logo-mark.webp"
                     alt="SK Supplement"
-                    width={680}
-                    height={380}
+                    width={297}
+                    height={169}
                     loading="eager"
-                    className="h-20 w-auto"
+                    className="h-12 w-auto"
                   />
                 </Link>
 
