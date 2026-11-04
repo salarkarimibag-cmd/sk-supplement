@@ -90,7 +90,7 @@ export default function MobileMenu({
           isOpen ? "translate-x-0" : "pointer-events-none translate-x-full"
         }`}
       >
-        <nav dir="rtl" aria-label="منوی موبایل" className="flex-1 overflow-y-auto">
+        <nav dir="rtl" aria-label="منوی موبایل" className="scrollbar-thin-subtle flex-1 overflow-y-auto">
           <ul>
             {categoryLinks.map((link) => (
               <li key={link.href}>
