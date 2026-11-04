@@ -97,7 +97,7 @@ function NavDropdown({ section }: { section: NavSection }) {
           isOpen ? "scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"
         }`}
       >
-        <div className="scrollbar-thin-subtle max-h-[70vh] min-w-48 overflow-y-auto rounded-2xl border border-white/20 bg-white/80 py-2 text-zinc-900 normal-case shadow-2xl backdrop-blur-md dark:border-zinc-700/50 dark:bg-zinc-900/80 dark:text-zinc-100">
+        <div className="scrollbar-thin-subtle max-h-[50vh] min-w-48 overflow-y-auto rounded-2xl border border-white/20 bg-white/80 py-2 text-zinc-900 normal-case shadow-2xl backdrop-blur-md dark:border-zinc-700/50 dark:bg-zinc-900/80 dark:text-zinc-100">
           {section.links.map((link) => (
             <Link
               key={link.href}
