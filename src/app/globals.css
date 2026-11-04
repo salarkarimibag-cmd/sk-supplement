@@ -53,6 +53,17 @@ body {
   }
 }
 
+@layer base {
+  /* The page's own scrollbar (html) and long text fields get the same thin
+     scrollbar as the utility below. Neither property is inherited, so
+     scrollable containers inside the page still need the utility class. */
+  html,
+  textarea {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(113 113 122 / 0.6) transparent;
+  }
+}
+
 @layer utilities {
   /* Thin, theme-aware scrollbar: a translucent grey thumb on an invisible
      track, instead of the browser's wide default with arrow buttons. */
