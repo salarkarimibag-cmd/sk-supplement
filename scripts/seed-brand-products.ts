@@ -3381,8 +3381,9 @@ const products: BrandProduct[] = [
     // Universal's own site has no product pages any more. Label from the
     // NIH Dietary Supplement Label Database (dsld id 274618, Classic Series
     // 400 tablets): 400 ÷ 3 ≈ 133 servings. Pack photo from a retailer
-    // (lifepharmacy.com), backdrop cut out. The label's "typical amino acid
-    // profile" says grams per 100 g but lists mg values, so it is left out.
+    // (mysupplementshop.co.uk: 750 px transparent pack shot, padded to a
+    // square; the earlier lifepharmacy.com photo was blurry). The label's
+    // "typical amino acid profile" says grams per 100 g but lists mg values, so it is left out.
     description:
       "بیف آمینو یونیورسال (سری کلاسیک)؛ قرص اسید آمینه از ایزوله‌ی پروتئین گوشت گاو و جگر خشک‌شده‌ی گاو آرژانتینی، با همه‌ی اسیدهای آمینه‌ی ضروری (EAA) از جمله BCAA، به‌صورت آهسته‌رهش. هر قرص ۱ گرم پروتئین دارد؛ هر وعده ۳ قرص است و قوطی ۴۰۰ قرصی حدود ۱۳۳ وعده است. بدون گلوتن.\nمواد تشکیل‌دهنده: کمپلکس اسید آمینه‌ی ۱۰۰٪ گوشت گاو (ایزوله‌ی پروتئین گوشت گاو، جگر خشک‌شده‌ی گاو آرژانتینی)، دی‌کلسیم فسفات، سلولز میکروکریستالی، استئاریک اسید، استئارات منیزیم، پوشش دارویی.",
     servingSize: "۳ قرص",
