@@ -249,7 +249,7 @@ export default function DiscountManager({ initialCodes }: { initialCodes: Discou
         {error && <p className="col-span-2 text-sm text-red-600 sm:col-span-5">{error}</p>}
       </form>
 
-      <div className="mt-6 overflow-x-auto">
+      <div className="scrollbar-thin-subtle mt-6 overflow-x-auto">
         {/* text-right, not text-start: start is the default, so th cells would center and dir="ltr" cells would go left. */}
         <table className="w-full text-right text-sm">
           <thead>
