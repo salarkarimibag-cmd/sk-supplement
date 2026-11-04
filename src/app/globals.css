@@ -53,6 +53,15 @@ body {
   }
 }
 
+@layer utilities {
+  /* Thin, theme-aware scrollbar: a translucent grey thumb on an invisible
+     track, instead of the browser's wide default with arrow buttons. */
+  .scrollbar-thin-subtle {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(113 113 122 / 0.6) transparent;
+  }
+}
+
 p.shine {
   /* The dark part of the sweep; white in dark mode so it shows on the dark background. */
   --shine-color: #000;

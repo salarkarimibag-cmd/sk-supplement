@@ -192,7 +192,7 @@ export default function VariantRailPanel({ tabs }: { tabs: RailTab[] }) {
           }
         }}
         style={{ transitionDuration: `${LIST_FADE_MS}ms` }}
-        className={`group/list pointer-events-auto max-h-full w-[30vw] overflow-y-auto overscroll-contain rounded-2xl p-1 transition ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${GLASS} ${
+        className={`group/list scrollbar-thin-subtle pointer-events-auto max-h-full w-[30vw] overflow-y-auto overscroll-contain rounded-2xl p-1 transition ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${GLASS} ${
           open ? "translate-x-0 opacity-100" : "opacity-0 ltr:-translate-x-10 rtl:translate-x-10"
         }`}
       >
