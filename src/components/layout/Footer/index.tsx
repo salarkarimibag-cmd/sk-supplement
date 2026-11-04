@@ -10,11 +10,11 @@ export default function Footer() {
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-6 sm:grid-cols-2 md:grid-cols-4">
         <div className="flex flex-col items-center text-center sm:col-span-2 md:col-span-1">
           <Image
-            src="/images/logo.webp"
+            src="/images/logo-mark.webp"
             alt="SK Supplement"
-            width={680}
-            height={380}
-            className="h-32 w-auto"
+            width={297}
+            height={169}
+            className="h-16 w-auto"
           />
           <div className="mt-5 flex gap-5">
             <Link href="#" aria-label="ایکس" className="hover:text-sky-500">
