@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo } from "next/font/google";
+import localFont from "next/font/local";
 import Link from "next/link";
 import ProductCard from "@/components/product/ProductCard";
 import Newsletter from "@/components/home/Newsletter";
@@ -29,12 +29,12 @@ export const metadata: Metadata = {
 const HERO_PRODUCTS = 6;
 
 // Only the "True Strength" line uses it, so only the one face it shows is
-// loaded, self-hosted and only on this page. It sits below the fold, so it
-// isn't preloaded ahead of the hero's images.
-const archivo = Archivo({
+// loaded, self-hosted and only on this page (see app/fonts). It sits below
+// the fold, so it isn't preloaded ahead of the hero's images.
+const archivo = localFont({
+  src: "./fonts/Archivo-BlackItalic.woff2",
   weight: "900",
   style: "italic",
-  subsets: ["latin"],
   preload: false,
   variable: "--font-archivo",
 });

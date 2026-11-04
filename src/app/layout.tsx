@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Vazirmatn } from "next/font/google";
 import SiteChrome from "@/components/layout/SiteChrome";
 import CartDrawer from "@/components/cart/CartDrawer";
 import SiteAnalytics from "@/components/layout/SiteAnalytics";
@@ -8,17 +7,8 @@ import { getAllCategories } from "@/lib/categoryContent";
 import { getAllBrands } from "@/lib/products";
 import { DEFAULT_SHARE_IMAGE, SHARED_OPEN_GRAPH } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
+import { geistMono, vazirmatn } from "./fonts";
 import "./globals.css";
-
-const vazirmatn = Vazirmatn({
-  variable: "--font-vazirmatn",
-  subsets: ["arabic"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 const siteTitle = "SK Supplement | فروشگاه آنلاین مکمل‌های ورزشی";
 const siteDescription =
