@@ -1,14 +1,9 @@
 "use client"; // Error boundaries must be Client Components
 
 import { useEffect } from "react";
-import { Vazirmatn } from "next/font/google";
 import ErrorMessage from "@/components/layout/ErrorMessage";
+import { vazirmatn } from "./fonts";
 import "./globals.css";
-
-const vazirmatn = Vazirmatn({
-  variable: "--font-vazirmatn",
-  subsets: ["arabic"],
-});
 
 // Shown when the root layout itself fails (e.g. the database is down while it
 // loads the categories). It replaces the root layout, so it brings its own
