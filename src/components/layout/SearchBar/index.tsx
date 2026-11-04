@@ -203,7 +203,7 @@ export default function SearchBar({ onClose, categories }: SearchBarProps) {
         </form>
 
         {trimmedQuery && (
-          <div className="absolute inset-x-0 top-full z-50 max-h-[70vh] overflow-y-auto bg-black shadow-2xl">
+          <div className="absolute inset-x-0 top-full z-50 max-h-[70vh] scrollbar-thin-subtle overflow-y-auto bg-black shadow-2xl">
             <div className="px-2 py-6">
               {hasResults ? (
                 <div className="space-y-6">

@@ -70,7 +70,7 @@ export default function CartDrawer() {
             سبد خرید شما خالی است.
           </div>
         ) : (
-          <ul className="flex-1 overflow-y-auto px-6">
+          <ul className="scrollbar-thin-subtle flex-1 overflow-y-auto px-6">
             {items.map((item) => (
               <CartLine key={item.id} item={item} variant="drawer" />
             ))}

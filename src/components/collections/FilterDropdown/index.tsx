@@ -91,7 +91,7 @@ export default function FilterDropdown({ label, paramName, options }: FilterDrop
             </button>
           </div>
 
-          <ul className="max-h-64 overflow-y-auto py-2">
+          <ul className="scrollbar-thin-subtle max-h-64 overflow-y-auto py-2">
             {options.length === 0 ? (
               <li className="px-4 py-2 text-sm text-zinc-500">گزینه‌ای موجود نیست</li>
             ) : (
