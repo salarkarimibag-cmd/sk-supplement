@@ -57,9 +57,16 @@ export default function ContactUsPage() {
                 <h2 className="text-base font-bold">{item.title}</h2>
               </div>
 
-              <p dir={item.dir} className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+              <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
                 {item.href ? (
-                  <a href={item.href} className="hover:text-sky-600 hover:underline dark:hover:text-sky-400">
+                  // dir sits on the link, not the paragraph: the number still
+                  // reads left to right, but the paragraph stays right to left
+                  // so the card's text lines up on the right like the others.
+                  <a
+                    href={item.href}
+                    dir={item.dir}
+                    className="inline-block hover:text-sky-600 hover:underline dark:hover:text-sky-400"
+                  >
                     {item.value}
                   </a>
                 ) : (

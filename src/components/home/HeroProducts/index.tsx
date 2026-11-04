@@ -142,8 +142,10 @@ export default function HeroProducts({ products }: { products: ShowcaseProduct[]
     {/* The short text of the product on show. All of them share one grid cell,
         so the block is as tall as the longest and nothing below it jumps when
         the product changes; they cross-fade like the photos, the new text
-        arriving a moment after its photo. */}
-    <div className="mt-1 grid text-center">
+        arriving a moment after its photo. The column is minmax(0, 1fr), not
+        the default auto, so a long line wraps instead of stretching the cell
+        past the hero and off the edge of the screen. */}
+    <div className="mt-1 grid grid-cols-[minmax(0,1fr)] text-center md:px-6">
       {products.map(
         (product) => {
           if (!product.blurb) return null;
