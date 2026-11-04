@@ -7,7 +7,7 @@ export const CONTACT_EMAIL = "info@sksupplement.shop";
 /** As dialled inside Iran. */
 export const CONTACT_PHONE = "09185569614";
 
-export const CONTACT_HOURS = "ساعت ۹ تا ۱۷";
+export const CONTACT_HOURS = "شنبه تا پنج‌شنبه، ساعت ۹ تا ۱۷";
 
 export const CONTACT_ADDRESS = {
   region: "البرز",
