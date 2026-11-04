@@ -10,6 +10,7 @@ const PERSIAN_BRAND_NAMES: Record<string, string> = {
   BSN: "بی‌اس‌ان",
   Cellucor: "سلوکور",
   Dymatize: "دایماتیز",
+  ESN: "ای‌اس‌ان",
   Evogen: "ایووژن",
   MuscleTech: "ماسل‌تک",
   MyProtein: "مای‌پروتئین",

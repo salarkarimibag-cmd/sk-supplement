@@ -433,6 +433,371 @@ const mtPlatinumEaaUsage =
 const rule1WheyUsage =
   "حدود ۱ اسکوپ را با ۱۸۰ تا ۲۴۰ میلی‌لیتر آب سرد، شیر یا نوشیدنی دلخواه در شیکر یا لیوان با قاشق مخلوط کنید. بهترین زمان مصرف بعد از تمرین است، ولی صبح، بعدازظهر یا بین وعده‌ها هم برای رسیدن به پروتئین روزانه مناسب است.\nبرای تنوع می‌توانید آن را با میوه یا کره‌ی بادام‌زمینی در مخلوط‌کن اسموتی کنید، یا با غلات صبحانه و ماست بخورید.";
 
+// ESN (esn.com, Shopify): label details come from the product pages' "Beschreibung"
+// (ingredients, directions) and "Nährwerte" (per-portion table) panels, read per
+// flavour; pack photos are the variants' own images. ESN sells no mass gainer.
+const esnDesignerWheyUsage =
+  "۳۰ گرم دیزاینر وی را با ۲۰۰ میلی‌لیتر آب سرد یا شیر کم‌چرب در شیکر مخلوط کنید. مصرف ۱ تا ۳ وعده در روز توصیه می‌شود؛ ایده‌آل قبل یا بعد از تمرین یا به‌عنوان میان‌وعده.";
+const esnDesignerWheyClaims = (noAddedSugar: boolean) =>
+  [
+    "ترکیب پروتئین وی: کنسانتره و ایزوله‌ی وی",
+    "تا ۲۵ گرم پروتئین در هر وعده (۳۰ گرم پودر + ۲۰۰ میلی‌لیتر آب یا شیر)",
+    ...(noAddedSugar ? ["بدون قند افزوده (شیرین‌شده با سوکرالوز و استویا)"] : []),
+    "به گفته‌ی سازنده، محبوب‌ترین پودر وی در آلمان بر پایه‌ی نظرسنجی آنلاین ۵۰۱ نفره‌ی ESN با Statista Q",
+    "پروتئین به افزایش و حفظ توده‌ی عضلانی کمک می‌کند (ادعای سلامت مورد تأیید اتحادیه‌ی اروپا)",
+  ].join("\n");
+const esnDesignerWheyWarnings = (extra: string) =>
+  `حساسیت‌زاها: حاوی شیر${extra} و لسیتین سویا (بسته به موجودی).\nمکمل غذایی جایگزین رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم نیست.`;
+const esnWheyFacts = (
+  kcal: string,
+  fat: string,
+  saturated: string,
+  carbs: string,
+  sugars: string,
+  fibre: string,
+  protein: string,
+  salt: string
+) => [
+  { label: "انرژی", amount: `${kcal} کیلوکالری` },
+  { label: "چربی", amount: `${fat} گرم` },
+  { label: "چربی اشباع", amount: `${saturated} گرم` },
+  { label: "کربوهیدرات", amount: `${carbs} گرم` },
+  { label: "قندها", amount: `${sugars} گرم` },
+  { label: "فیبر", amount: `${fibre} گرم` },
+  { label: "پروتئین", amount: `${protein} گرم` },
+  { label: "نمک", amount: `${salt} گرم` },
+];
+// Ingredient lines per flavour. "*": soy lecithin depends on availability.
+const esnDesignerWheyBase = (percent: string) =>
+  `ترکیب پروتئین وی ${percent}٪ (کنسانتره‌ی پروتئین وی فراپالایش‌شده، ایزوله‌ی پروتئین وی میکروفیلتر‌شده‌ی جریان متقاطع، امولسیفایر (لسیتین آفتابگردان و سویا*))`;
+const esnSweeteners = "شیرین‌کننده‌ها (سوکرالوز، گلیکوزیدهای استویول از استویا)";
+const esnDesignerWheyFlavours = [
+  {
+    id: "esn1",
+    slug: "vanilla-milk",
+    flavor: "شیر وانیل",
+    sugarFree: true,
+    allergenExtra: "",
+    ingredients: `ترکیب پروتئین وی ۹۴٪ (کنسانتره‌ی پروتئین وی فراپالایش‌شده، ایزوله‌ی پروتئین وی میکروفیلتر‌شده‌ی جریان متقاطع)، طعم‌دهنده، امولسیفایر (لسیتین آفتابگردان و سویا*)، نمک، ضدکلوخه (دی‌اکسید سیلیکون)، ${esnSweeteners}، رنگ (کاروتن).`,
+    facts: esnWheyFacts("۱۲۵", "۱٫۹", "۱٫۲", "۲٫۲", "۱٫۵", "۰", "۲۳", "۰٫۲۲"),
+  },
+  {
+    id: "esn2",
+    slug: "strawberry-cream",
+    flavor: "خامه و توت‌فرنگی",
+    sugarFree: true,
+    allergenExtra: "",
+    ingredients: `${esnDesignerWheyBase("۹۶")}، طعم‌دهنده، نمک، ضدکلوخه (دی‌اکسید سیلیکون)، مواد غذایی رنگ‌دهنده (پودر چغندر)، اسیدی‌کننده (اسید سیتریک)، ${esnSweeteners}، لاکتاز.`,
+    facts: esnWheyFacts("۱۱۵", "۱٫۵", "۰٫۹", "۱٫۶", "۱٫۴", "۰", "۲۳", "۰٫۱۹"),
+  },
+  {
+    id: "esn3",
+    slug: "milk-chocolate",
+    flavor: "شکلات شیری",
+    sugarFree: true,
+    allergenExtra: "",
+    ingredients: `${esnDesignerWheyBase("۹۲")}، پودر کاکائوی کاملاً چربی‌گیری‌شده ۴٪، طعم‌دهنده، نمک، ضدکلوخه (دی‌اکسید سیلیکون)، ${esnSweeteners}، لاکتاز.`,
+    facts: esnWheyFacts("۱۱۶", "۱٫۷", "۱٫۰", "۱٫۸", "۱٫۵", "۰٫۵", "۲۳", "۰٫۲۹"),
+  },
+  {
+    id: "esn4",
+    slug: "cinnamon-cereal",
+    flavor: "غلات دارچینی",
+    sugarFree: false,
+    allergenExtra: "، گندم و جو (گلوتن)",
+    ingredients: `${esnDesignerWheyBase("۹۱")}، تکه‌های غلات ۵٪ (آرد گندم کامل، شکر، آرد گندم، آرد برنج، روغن آفتابگردان، مالتودکسترین، دارچین، نمک، آرد مالت جو، طعم‌دهنده‌ی طبیعی)، طعم‌دهنده، نمک، ضدکلوخه (دی‌اکسید سیلیکون)، ${esnSweeteners}، غلیظ‌کننده (زانتان)، لاکتاز.`,
+    facts: esnWheyFacts("۱۱۲", "۱٫۵", "۰٫۷", "۲٫۴", "۱٫۴", "۰", "۲۲", "۰٫۳۶"),
+  },
+  {
+    id: "esn5",
+    slug: "dark-cookies-cream",
+    flavor: "کوکی تیره و خامه",
+    sugarFree: false,
+    allergenExtra: " و گندم (گلوتن)",
+    ingredients: `${esnDesignerWheyBase("۸۵")}، پودر کاکائو ۶٪ (کاملاً چربی‌گیری‌شده)، طعم‌دهنده، تکه‌های بیسکویت تیره ۳٪ (آرد گندم، شکر، چربی نخل، پودر کاکائو، مواد ورآورنده (بی‌کربنات آمونیوم، بی‌کربنات سدیم، کربنات پتاسیم)، نمک)، نمک، ${esnSweeteners}، ضدکلوخه (دی‌اکسید سیلیکون)، لاکتاز.`,
+    facts: esnWheyFacts("۱۱۵", "۱٫۷", "۰٫۹", "۲٫۹", "۱٫۷", "۰٫۷", "۲۱", "۰٫۳۰"),
+  },
+  {
+    id: "esn6",
+    slug: "banana-milk",
+    flavor: "شیر موز",
+    sugarFree: true,
+    allergenExtra: "",
+    ingredients: `${esnDesignerWheyBase("۹۶")}، طعم‌دهنده، نمک، ضدکلوخه (دی‌اکسید سیلیکون)، رنگ (کاروتن)، ${esnSweeteners}، لاکتاز.`,
+    facts: esnWheyFacts("۱۱۵", "۱٫۵", "۰٫۹", "۱٫۷", "۱٫۴", "۰", "۲۳", "۰٫۲۷"),
+  },
+  {
+    id: "esn7",
+    slug: "salted-dark-chocolate",
+    flavor: "شکلات تلخ نمکی",
+    sugarFree: false,
+    allergenExtra: "",
+    ingredients: `${esnDesignerWheyBase("۸۶")}، کاکائوی کم‌چرب، طعم‌دهنده، تکه‌های شکلات تلخ ۲٪ (شکر، توده‌ی کاکائو، کاکائوی کم‌چرب، امولسیفایر (لسیتین آفتابگردان))، نمک، ضدکلوخه (دی‌اکسید سیلیکون)، ${esnSweeteners}، لاکتاز.`,
+    facts: esnWheyFacts("۱۱۶", "۲٫۱", "۱٫۲", "۲٫۴", "۱٫۶", "۰٫۷", "۲۱", "۰٫۵۵"),
+  },
+  {
+    id: "esn8",
+    slug: "stracciatella",
+    flavor: "استراچیاتلا",
+    sugarFree: false,
+    allergenExtra: "",
+    ingredients: `${esnDesignerWheyBase("۹۳")}، تکه‌های شکلات تلخ ۲٪ (شکر، توده‌ی کاکائو، کاکائوی کم‌چرب، امولسیفایر (لسیتین آفتابگردان))، طعم‌دهنده، نمک، ضدکلوخه (دی‌اکسید سیلیکون)، غلیظ‌کننده (زانتان)، ${esnSweeteners}، لاکتاز.`,
+    facts: esnWheyFacts("۱۱۳", "۱٫۵", "۰٫۹", "۲٫۱", "۱٫۷", "۰", "۲۳", "۰٫۲۹"),
+  },
+  {
+    id: "esn9",
+    slug: "peanutbutter-cup",
+    flavor: "کره‌ی بادام‌زمینی",
+    sugarFree: true,
+    allergenExtra: "",
+    ingredients: `${esnDesignerWheyBase("۹۰")}، کاکائوی کم‌چرب، طعم‌دهنده، نمک، ضدکلوخه (دی‌اکسید سیلیکون)، غلیظ‌کننده (زانتان)، ${esnSweeteners}، لاکتاز.`,
+    facts: esnWheyFacts("۱۱۴", "۱٫۴", "۰٫۷", "۲٫۷", "۱٫۳", "۰٫۵", "۲۲", "۰٫۴۶"),
+  },
+  {
+    id: "esn10",
+    slug: "neutral",
+    flavor: "بدون طعم",
+    sugarFree: true,
+    allergenExtra: "",
+    ingredients: `${esnDesignerWheyBase("۹۸")}، ضدکلوخه (دی‌اکسید سیلیکون)، لاکتاز.`,
+    facts: esnWheyFacts("۱۱۵", "۱٫۲", "۰٫۷", "۱٫۲", "۱٫۲", "۰", "۲۴", "۰٫۲۳"),
+  },
+];
+// The five flavours ESN also sells in the 2 kg bag (same label as the 908 g
+// tub; the bag photo is the same for every flavour).
+const esnDesignerWhey2kgSlugs = [
+  "vanilla-milk",
+  "strawberry-cream",
+  "milk-chocolate",
+  "cinnamon-cereal",
+  "dark-cookies-cream",
+];
+const esnIsoclearUsage =
+  "۳۰ گرم ایزوکلیر را با ۵۰۰ میلی‌لیتر آب سرد در شیکر مخلوط کنید و ۱ تا ۲ دقیقه بگذارید بنشیند. مصرف تا سه وعده‌ی ۳۰ گرمی در روز توصیه می‌شود؛ مثلاً بعد از بیدار شدن، بعد از تمرین یا حتی حین تمرین، به‌عنوان نوشیدنی خنک و پرپروتئین.";
+const esnIsoclearClaims =
+  "ایزوله‌ی پروتئین وی شفاف و شبیه آبمیوه (به‌جای شیک شیری)\nحدود ۲۴ تا ۲۵ گرم پروتئین و حدود ۱۰۴ کیلوکالری در هر وعده‌ی ۳۰ گرمی\nبدون قند و بدون لاکتوز (طبق ادعای روی بسته)\nپروتئین به افزایش و حفظ توده‌ی عضلانی کمک می‌کند (ادعای سلامت مورد تأیید اتحادیه‌ی اروپا)";
+const esnIsoclearWarnings = (extra: string) =>
+  `حساسیت‌زاها: حاوی شیر.${extra}\nمکمل غذایی جایگزین رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم نیست.`;
+const esnIsoclearFlavours = [
+  {
+    id: "esn20",
+    slug: "cola-orange",
+    flavor: "کولا پرتقال",
+    protein: "۲۴",
+    carbs: "۱٫۱",
+    salt: "۰٫۰۳",
+    warningExtra: " این طعم رنگ کاراملی سولفیت‌آمونیوم دارد.",
+    ingredients:
+      "ایزوله‌ی پروتئین وی ۹۵٪، طعم‌دهنده، رنگ‌ها (کاراملی سولفیت‌آمونیوم، کاروتن)، اسیدی‌کننده (اسید سیتریک)، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام K).",
+  },
+  {
+    id: "esn21",
+    slug: "blue-raspberry",
+    flavor: "تمشک آبی",
+    protein: "۲۵",
+    carbs: "۰٫۸",
+    salt: "۰٫۰۴",
+    warningExtra: "",
+    ingredients:
+      "ایزوله‌ی پروتئین وی ۹۵٪، طعم‌دهنده، اسیدی‌کننده (اسید سیتریک)، ماده‌ی غذایی رنگ‌دهنده (کنسانتره‌ی اسپیرولینا)، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام K).",
+  },
+  {
+    id: "esn22",
+    slug: "cactus-fruit",
+    flavor: "میوه‌ی کاکتوس",
+    protein: "۲۴",
+    carbs: "۰٫۸",
+    salt: "۰٫۰۳",
+    warningExtra: " این طعم رنگ کاراملی سولفیت‌آمونیوم دارد.",
+    ingredients:
+      "ایزوله‌ی پروتئین وی ۹۴٪، طعم‌دهنده، اسیدی‌کننده (اسید سیتریک)، ماده‌ی غذایی رنگ‌دهنده (پودر چغندر)، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام K)، رنگ (کاراملی سولفیت‌آمونیوم).",
+  },
+];
+const esnCreatineUsage =
+  "برای هر وعده ۳٫۵ گرم (بدون طعم) یا ۴ گرم (طعم‌دار) پودر را در ۱۰۰ میلی‌لیتر آب یا نوشیدنی دلخواه حل کنید.";
+const esnCreatineWarnings =
+  "از مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.\nمکمل غذایی جایگزین رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم نیست.\nدور از دسترس کودکان خردسال نگهداری شود.";
+const esnCreatineClaims =
+  "۳ گرم کراتین خالص در هر وعده\nکراتین عملکرد بدنی را در تمرین‌های قدرتی کوتاه‌مدت و پرشدت افزایش می‌دهد؛ این اثر با مصرف روزانه‌ی ۳ گرم کراتین به دست می‌آید (ادعای سلامت مورد تأیید اتحادیه‌ی اروپا)\nبه گفته‌ی سازنده: خلوص بسیار بالا، مش‌فاکتور بالا، حلالیت عالی و کنترل منظم کیفیت";
+const esnCreatineFacts = [
+  { label: "کراتین مونوهیدرات", amount: "۳۵۰۰ میلی‌گرم" },
+  { label: "کراتین", amount: "۳۰۰۰ میلی‌گرم" },
+];
+const esnCreatineProducts: BrandProduct[] = [
+  {
+    id: "esn30",
+    name: "کراتین اولترا پیور - Ultrapure Creatine",
+    slug: "esn-ultrapure-creatine-500g",
+    groupSlug: "esn-ultrapure-creatine",
+    flavor: "بدون طعم",
+    size: "۵۰۰ گرم",
+    imageUrl: "/images/products/esn-creatine-neutral-500g.webp",
+    description:
+      "کراتین مونوهیدرات اولترا پیور ای‌اس‌ان، بدون طعم؛ پودر کراتین مونوهیدرات با خلوص بالا و حلالیت عالی. هر وعده (۳٫۵ گرم) ۳۵۰۰ میلی‌گرم کراتین مونوهیدرات دارد که ۳۰۰۰ میلی‌گرم آن کراتین خالص است و بسته‌ی ۵۰۰ گرمی ۱۴۲ وعده می‌دهد.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات.",
+    servingSize: "۳٫۵ گرم",
+    nutritionFacts: esnCreatineFacts,
+    usage: esnCreatineUsage,
+    warnings: esnCreatineWarnings,
+    manufacturerClaims: esnCreatineClaims,
+    brand: "ESN",
+    price: 1300000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "esn31",
+    name: "کراتین اولترا پیور - Ultrapure Creatine",
+    slug: "esn-ultrapure-creatine-250g",
+    groupSlug: "esn-ultrapure-creatine",
+    flavor: "بدون طعم",
+    size: "۲۵۰ گرم",
+    imageUrl: "/images/products/esn-creatine-neutral-250g.webp",
+    description:
+      "کراتین مونوهیدرات اولترا پیور ای‌اس‌ان، بدون طعم؛ پودر کراتین مونوهیدرات با خلوص بالا و حلالیت عالی. هر وعده (۳٫۵ گرم) ۳۵۰۰ میلی‌گرم کراتین مونوهیدرات دارد که ۳۰۰۰ میلی‌گرم آن کراتین خالص است. قوطی ۲۵۰ گرمی حدود ۷۱ وعده می‌دهد.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات.",
+    servingSize: "۳٫۵ گرم",
+    nutritionFacts: esnCreatineFacts,
+    usage: esnCreatineUsage,
+    warnings: esnCreatineWarnings,
+    manufacturerClaims: esnCreatineClaims,
+    brand: "ESN",
+    price: 800000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "esn32",
+    name: "کراتین اولترا پیور - Ultrapure Creatine",
+    slug: "esn-ultrapure-creatine-watermelon",
+    groupSlug: "esn-ultrapure-creatine",
+    flavor: "هندوانه",
+    size: "۲۵۰ گرم",
+    imageUrl: "/images/products/esn-creatine-watermelon.webp",
+    description:
+      "کراتین مونوهیدرات اولترا پیور ای‌اس‌ان با طعم هندوانه؛ هر وعده (۴ گرم پودر) ۳۵۰۰ میلی‌گرم کراتین مونوهیدرات دارد که ۳۰۰۰ میلی‌گرم آن کراتین خالص است و قوطی ۲۵۰ گرمی ۶۲ وعده می‌دهد.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات ۸۹٪، پرکننده (پلی‌دکستروز)، اسیدی‌کننده (اسید سیتریک)، طعم‌دهنده، ماده‌ی ورآورنده (بی‌کربنات سدیم)، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام K)، ماده‌ی غذایی رنگ‌دهنده (پودر چغندر).",
+    servingSize: "۴ گرم",
+    nutritionFacts: esnCreatineFacts,
+    usage: esnCreatineUsage,
+    warnings: `${esnCreatineWarnings}\nمکمل غذایی دارای شیرین‌کننده.`,
+    manufacturerClaims: esnCreatineClaims,
+    brand: "ESN",
+    price: 850000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "esn33",
+    name: "کراتین اولترا پیور - Ultrapure Creatine",
+    slug: "esn-ultrapure-creatine-fizzy-orange",
+    groupSlug: "esn-ultrapure-creatine",
+    flavor: "پرتقال گازدار",
+    size: "۲۵۰ گرم",
+    imageUrl: "/images/products/esn-creatine-fizzy-orange.webp",
+    description:
+      "کراتین مونوهیدرات اولترا پیور ای‌اس‌ان با طعم پرتقال گازدار؛ هر وعده (۴ گرم پودر) ۳۵۰۰ میلی‌گرم کراتین مونوهیدرات دارد که ۳۰۰۰ میلی‌گرم آن کراتین خالص است و قوطی ۲۵۰ گرمی ۶۲ وعده می‌دهد.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات ۸۹٪، اسیدی‌کننده (اسید سیتریک)، پرکننده (پلی‌دکستروز)، طعم‌دهنده‌ها، تنظیم‌کننده‌ی اسیدیته (بی‌کربنات سدیم)، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام K)، رنگ (کاروتن).",
+    servingSize: "۴ گرم",
+    nutritionFacts: esnCreatineFacts,
+    usage: esnCreatineUsage,
+    warnings: `${esnCreatineWarnings}\nمکمل غذایی دارای شیرین‌کننده.`,
+    manufacturerClaims: esnCreatineClaims,
+    brand: "ESN",
+    price: 850000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "esn40",
+    name: "ال-گلوتامین اولترا پیور - Ultrapure L-Glutamine",
+    slug: "esn-ultrapure-l-glutamine-500g",
+    groupSlug: "esn-ultrapure-l-glutamine",
+    flavor: "بدون طعم",
+    size: "۵۰۰ گرم",
+    imageUrl: "/images/products/esn-l-glutamine-500g.webp",
+    description:
+      "ال-گلوتامین اولترا پیور ای‌اس‌ان؛ پودر میکروفاین ۱۰۰٪ ال-گلوتامین بدون مواد افزودنی و پرکننده، مناسب بعد از تمرین سنگین. هر وعده (۵ گرم) ۵۰۰۰ میلی‌گرم ال-گلوتامین دارد و بسته‌ی ۵۰۰ گرمی ۱۰۰ وعده است.\nمواد تشکیل‌دهنده: ال-گلوتامین.",
+    servingSize: "۵ گرم",
+    nutritionFacts: [{ label: "ال-گلوتامین", amount: "۵۰۰۰ میلی‌گرم" }],
+    usage:
+      "روزانه ۵ گرم را در آب حل کنید و بنوشید. این مقدار را ترجیحاً بعد از تمرین یا پیش از خواب مصرف کنید.",
+    warnings:
+      "از مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.\nمکمل غذایی جایگزین رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم نیست.\nدور از دسترس کودکان نگهداری شود.",
+    manufacturerClaims:
+      "۱۰۰٪ ال-گلوتامین خالص، بدون مواد افزودنی و پرکننده\nپودر میکروفاین و بدون طعم، مناسب برای حل شدن در آب\nبه گفته‌ی سازنده: ال-گلوتامین به ریکاوری و ساخت و حفظ عضله کمک می‌کند و می‌تواند آسیب‌های عضلانی ناشی از تمرین را در ورزش‌های با بار برون‌گرا کاهش دهد (منبع ذکرشده: مقاله‌ای در مجله‌ی Nutrients، ۲۰۲۱)",
+    brand: "ESN",
+    price: 1100000,
+    categorySlug: "creatine",
+  },
+];
+const esnDesignerWheyTub = ({
+  id,
+  slug,
+  flavor,
+  sugarFree,
+  allergenExtra,
+  ingredients,
+  facts,
+}: (typeof esnDesignerWheyFlavours)[number]): BrandProduct => ({
+  id,
+  name: "دیزاینر وی پروتئین - Designer Whey Protein",
+  slug: `esn-designer-whey-${slug}`,
+  groupSlug: "esn-designer-whey",
+  flavor,
+  size: "۹۰۸ گرم",
+  imageUrl: `/images/products/esn-designer-whey-${slug}.webp`,
+  description: `دیزاینر وی پروتئین ای‌اس‌ان با طعم ${flavor}؛ پودر پروتئینی از ترکیب کنسانتره و ایزوله‌ی وی با پروفایل کامل اسیدهای آمینه. هر وعده (۳۰ گرم) ${facts[6].amount} پروتئین و ${facts[0].amount} انرژی دارد و قوطی ۹۰۸ گرمی ۳۰ وعده است.\nمواد تشکیل‌دهنده: ${ingredients}`,
+  servingSize: "۳۰ گرم",
+  nutritionFacts: facts,
+  usage: esnDesignerWheyUsage,
+  warnings: esnDesignerWheyWarnings(allergenExtra),
+  manufacturerClaims: esnDesignerWheyClaims(sugarFree),
+  brand: "ESN",
+  price: 2200000,
+  categorySlug: "protein",
+});
+const esnProducts: BrandProduct[] = [
+  // Designer Whey Protein, ESN's flagship: 908 g tub in ten flavours, then
+  // the 2 kg bag in the five flavours that come in it.
+  ...esnDesignerWheyFlavours.map(esnDesignerWheyTub),
+  ...esnDesignerWhey2kgSlugs.map((slug, index): BrandProduct => {
+    const flavour = esnDesignerWheyFlavours.find((candidate) => candidate.slug === slug)!;
+    const tub = esnDesignerWheyTub(flavour);
+    return {
+      ...tub,
+      id: `esn${11 + index}`,
+      slug: `esn-designer-whey-${slug}-2kg`,
+      size: "۲ کیلوگرم",
+      imageUrl: "/images/products/esn-designer-whey-2000g.webp",
+      description: tub.description!.replace("قوطی ۹۰۸ گرمی ۳۰ وعده", "کیسه‌ی ۲ کیلوگرمی ۶۶ وعده"),
+      price: 4300000,
+    };
+  }),
+  // Isoclear Whey Protein Isolate 908 g: clear, juice-like whey isolate.
+  ...esnIsoclearFlavours.map(
+    ({ id, slug, flavor, protein, carbs, salt, warningExtra, ingredients }): BrandProduct => ({
+      id,
+      name: "ایزوکلیر وی پروتئین ایزوله - Isoclear Whey Protein Isolate",
+      slug: `esn-isoclear-${slug}`,
+      groupSlug: "esn-isoclear",
+      flavor,
+      size: "۹۰۸ گرم",
+      imageUrl: `/images/products/esn-isoclear-${slug}.webp`,
+      description: `ایزوکلیر وی پروتئین ایزوله ای‌اس‌ان با طعم ${flavor}؛ ایزوله‌ی پروتئین وی شفاف که مثل یک نوشیدنی خنک میوه‌ای مصرف می‌شود. هر وعده (۳۰ گرم با ۵۰۰ میلی‌لیتر آب) ${protein} گرم پروتئین و حدود ۱۰۴ کیلوکالری دارد و قوطی ۹۰۸ گرمی ۳۰ وعده است.\nمواد تشکیل‌دهنده: ${ingredients}`,
+      servingSize: "۳۰ گرم",
+      nutritionFacts: [
+        { label: "انرژی", amount: "۱۰۴ کیلوکالری" },
+        { label: "چربی", amount: "۰ گرم" },
+        { label: "چربی اشباع", amount: "۰ گرم" },
+        { label: "کربوهیدرات", amount: `${carbs} گرم` },
+        { label: "قندها", amount: "۰ گرم" },
+        { label: "پروتئین", amount: `${protein} گرم` },
+        { label: "نمک", amount: `${salt} گرم` },
+      ],
+      usage: esnIsoclearUsage,
+      warnings: esnIsoclearWarnings(warningExtra),
+      manufacturerClaims: esnIsoclearClaims,
+      brand: "ESN",
+      price: 2500000,
+      categorySlug: "protein",
+    })
+  ),
+  ...esnCreatineProducts,
+];
+
 const products: BrandProduct[] = [
   // Optimum Nutrition
   {
@@ -3844,6 +4209,8 @@ const products: BrandProduct[] = [
   },
   // Applied Nutrition
   ...appliedProducts,
+  // ESN
+  ...esnProducts,
   // Zoomad Labs: label and directions from zoomadlabs.com (pack photo and the
   // "Uso del producto" image). The unflavoured tub's panel is only partly
   // legible, so the table has just what the pack and the site both state.
