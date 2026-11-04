@@ -1,3 +1,4 @@
+import { CONTACT_ADDRESS, CONTACT_EMAIL, CONTACT_PHONE, toInternationalPhone } from "@/lib/contact";
 import { SITE_NAME } from "@/lib/seo";
 
 // JSON-LD (https://schema.org) describing pages to search engines, so
@@ -117,7 +118,7 @@ export function buildBreadcrumbJsonLd(items: BreadcrumbItem[], siteUrl: string) 
   };
 }
 
-/** The shop itself, so search engines can tie its name to its logo. */
+/** The shop itself, so search engines can tie its name to its logo and contact details. */
 export function buildStoreJsonLd(siteUrl: string) {
   return {
     "@context": "https://schema.org",
@@ -125,6 +126,14 @@ export function buildStoreJsonLd(siteUrl: string) {
     name: SITE_NAME,
     url: absoluteUrl(siteUrl, "/"),
     logo: absoluteUrl(siteUrl, "/images/logo.webp"),
+    email: CONTACT_EMAIL,
+    telephone: toInternationalPhone(CONTACT_PHONE),
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "IR",
+      addressRegion: CONTACT_ADDRESS.region,
+      streetAddress: CONTACT_ADDRESS.street,
+    },
   };
 }
 
