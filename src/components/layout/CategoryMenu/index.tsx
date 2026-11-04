@@ -8,10 +8,6 @@ import type { NavSection } from "@/lib/navigation";
 // off the edge doesn't snap it shut.
 const CLOSE_DELAY_MS = 150;
 
-// A dropdown with more links than this lays them out in two columns, so a
-// long list (like the brands) fits on screen without scrolling.
-const TWO_COLUMN_MIN_LINKS = 8;
-
 const TOP_ITEM_CLASS =
   "inline-flex cursor-pointer items-center gap-1 py-5 underline-offset-4 transition-colors hover:text-sky-500 hover:underline";
 
@@ -101,11 +97,7 @@ function NavDropdown({ section }: { section: NavSection }) {
           isOpen ? "scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"
         }`}
       >
-        <div
-          className={`scrollbar-thin-subtle max-h-[70vh] min-w-48 overflow-y-auto rounded-2xl border border-white/20 bg-white/80 py-2 text-zinc-900 normal-case shadow-2xl backdrop-blur-md dark:border-zinc-700/50 dark:bg-zinc-900/80 dark:text-zinc-100 ${
-            section.links.length > TWO_COLUMN_MIN_LINKS ? "grid grid-cols-2" : ""
-          }`}
-        >
+        <div className="scrollbar-thin-subtle max-h-[70vh] min-w-48 overflow-y-auto rounded-2xl border border-white/20 bg-white/80 py-2 text-zinc-900 normal-case shadow-2xl backdrop-blur-md dark:border-zinc-700/50 dark:bg-zinc-900/80 dark:text-zinc-100">
           {section.links.map((link) => (
             <Link
               key={link.href}
