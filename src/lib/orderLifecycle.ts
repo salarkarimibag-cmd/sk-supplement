@@ -8,6 +8,7 @@ import {
   recordSale,
   releaseStock,
   restoreStock,
+  unrecordSale,
 } from "@/lib/products";
 import { expandStockLines, type StockLine } from "@/lib/stock";
 
@@ -76,6 +77,17 @@ export async function onOrderCancelled(order: OrderEffects): Promise<void> {
         )
       : null,
   ]);
+}
+
+/**
+ * A shipped or delivered order came back. Its items no longer count as
+ * sold; they go back into stock only when the admin says they can be sold
+ * again (an opened supplement can't). Unlike a cancellation, the discount
+ * code stays used: the buyer did make the purchase, and giving the use back
+ * would let a returned order free up a one-time or first-order code.
+ */
+export async function onOrderReturned(order: OrderEffects, restock: boolean): Promise<void> {
+  await (restock ? restoreStock(order.items) : unrecordSale(order.items));
 }
 
 /**

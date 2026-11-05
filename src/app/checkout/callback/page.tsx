@@ -3,6 +3,7 @@ import type { Types } from "mongoose";
 import PaymentResult from "@/components/checkout/PaymentResult";
 import { connectToDatabase } from "@/lib/db";
 import { OrderModel, type Order } from "@/models/Order";
+import { PAID_ORDER_STATUSES } from "@/lib/orderStatus";
 import { verifyZarinPalPayment } from "@/lib/zarinpal";
 import { markZarinPalOrderFailed, markZarinPalOrderPaid } from "@/lib/zarinpalOrders";
 
@@ -41,7 +42,7 @@ export default async function CheckoutCallbackPage(
   // Already settled (e.g. the buyer refreshed this page): show the stored
   // outcome instead of verifying again or letting a crafted Status=NOK undo it.
   if (order.status !== "pending") {
-    return order.status === "paid" || order.status === "shipped" ? (
+    return PAID_ORDER_STATUSES.includes(order.status) ? (
       <PaymentResult success={true} refId={order.paymentRefId ?? undefined} />
     ) : (
       <PaymentResult success={false} message="این پرداخت ناموفق بوده یا لغو شده است." />

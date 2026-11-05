@@ -19,14 +19,16 @@ const PAGE_SIZE = 10;
 // Paid orders are the ones waiting on the admin (to ship), so they're shown by default.
 const DEFAULT_STATUS: OrderStatus = "paid";
 // Tabs in order of how much they need the admin: transfers to verify, then
-// orders to ship, then history.
+// orders to ship, parcels on the way, then history.
 const STATUS_TABS: OrderStatus[] = [
   "awaiting_verification",
   "paid",
   "shipped",
+  "delivered",
   "pending",
   "failed",
   "cancelled",
+  "returned",
 ];
 
 function first(value: string | string[] | undefined): string | undefined {
@@ -87,6 +89,12 @@ export default async function AdminOrdersPage(props: PageProps<"/admin/orders">)
     cardTransfer: order.cardTransfer
       ? { trackingCode: order.cardTransfer.trackingCode, cardLast4: order.cardTransfer.cardLast4 }
       : null,
+    shipmentTrackingCode: order.shipmentTrackingCode ?? null,
+    // Dates go to the client component as ISO strings, like createdAt.
+    shippedAt: order.shippedAt ? new Date(order.shippedAt).toISOString() : null,
+    deliveredAt: order.deliveredAt ? new Date(order.deliveredAt).toISOString() : null,
+    returnedAt: order.returnedAt ? new Date(order.returnedAt).toISOString() : null,
+    returnRestocked: order.returnRestocked ?? null,
   }));
 
   function hrefFor(targetStatus: OrderStatus, page = 1) {

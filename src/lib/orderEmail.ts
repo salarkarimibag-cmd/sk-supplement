@@ -3,7 +3,13 @@ import { PAYMENT_METHOD_LABELS } from "@/lib/orderStatus";
 import type { OrderStatus, PaymentMethod } from "@/models/Order";
 
 /** The order events the customer is emailed about. */
-export type OrderEmailKind = "received" | "paid" | "rejected" | "shipped" | "cancelled";
+export type OrderEmailKind =
+  | "received"
+  | "paid"
+  | "rejected"
+  | "shipped"
+  | "returned"
+  | "cancelled";
 
 export interface OrderEmailLine {
   name: string;
@@ -22,6 +28,8 @@ export interface OrderEmailInput {
   paymentMethod: PaymentMethod;
   /** ZarinPal's reference number, shown on payment confirmations. */
   refId?: number;
+  /** The carrier's tracking number, shown on the shipping email. */
+  shipmentTrackingCode?: string;
   address: { province: string; city: string; address: string; postalCode: string };
   siteUrl: string;
   /** Guests have no account, so they get no "my orders" link. */
@@ -49,6 +57,11 @@ const CONTENT: Record<OrderEmailKind, { subject: string; title: string; body: st
     title: "سفارش شما ارسال شد",
     body: "سفارش شما تحویل پست شد و به‌زودی به دستتان می‌رسد.",
   },
+  returned: {
+    subject: "مرجوعی سفارش شما ثبت شد",
+    title: "مرجوعی سفارش شما ثبت شد",
+    body: "کالاهای این سفارش به فروشگاه برگشت و مرجوعی آن ثبت شد. مبلغ طبق سیاست بازگشت کالا به حساب شما برگردانده می‌شود. برای پیگیری با ما تماس بگیرید.",
+  },
   cancelled: {
     subject: "سفارش شما لغو شد",
     title: "سفارش شما لغو شد",
@@ -60,11 +73,13 @@ const CONTENT: Record<OrderEmailKind, { subject: string; title: string; body: st
  * Which email (if any) an admin's status change sends. Only the changes an
  * admin can actually make are listed (see src/lib/orderStatus.ts): "failed"
  * is reachable only from awaiting_verification, i.e. a rejected card transfer.
+ * "delivered" sends nothing: the customer is the one who just received it.
  */
 const ADMIN_STATUS_EMAILS: Partial<Record<OrderStatus, OrderEmailKind>> = {
   paid: "paid",
   failed: "rejected",
   shipped: "shipped",
+  returned: "returned",
   cancelled: "cancelled",
 };
 
@@ -139,11 +154,13 @@ export function buildOrderEmail(input: OrderEmailInput) {
     : { url: input.siteUrl, label: "رفتن به فروشگاه" };
   const contactUrl = `${input.siteUrl}/pages/contact-us`;
   const showRefId = input.refId !== undefined && input.kind === "paid";
+  const showTrackingCode = Boolean(input.shipmentTrackingCode) && input.kind === "shipped";
 
   const details = [
     `شماره سفارش: ${orderNumber}`,
     `روش پرداخت: ${PAYMENT_METHOD_LABELS[input.paymentMethod]}`,
     ...(showRefId ? [`کد پیگیری پرداخت: ${input.refId}`] : []),
+    ...(showTrackingCode ? [`کد رهگیری مرسوله: ${input.shipmentTrackingCode}`] : []),
   ];
 
   const text = [

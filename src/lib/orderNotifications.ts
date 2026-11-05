@@ -22,6 +22,7 @@ type NotifiableOrder = Pick<
   | "paymentRefId"
   | "userId"
   | "cardTransfer"
+  | "shipmentTrackingCode"
 > & { _id: unknown; paymentMethod?: PaymentMethod | null };
 
 // The fields both the customer and the admin email need, with product names
@@ -49,6 +50,7 @@ async function loadEmailBase(order: NotifiableOrder) {
     discountAmount: order.discountAmount ?? undefined,
     paymentMethod: order.paymentMethod ?? "zarinpal",
     refId: order.paymentRefId ?? undefined,
+    shipmentTrackingCode: order.shipmentTrackingCode ?? undefined,
     address: order.shippingAddress,
     siteUrl: SITE_URL,
   };

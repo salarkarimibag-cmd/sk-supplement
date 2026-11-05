@@ -197,7 +197,9 @@ describe("previousOrdersFilter", () => {
   it("matches the same email or mobile, on orders actually bought", () => {
     expect(previousOrdersFilter({ email: "a@b.com", mobile: "09120000000" })).toEqual({
       $or: [{ "contact.email": "a@b.com" }, { "contact.mobile": "09120000000" }],
-      status: { $in: ["awaiting_verification", "paid", "shipped"] },
+      status: {
+        $in: ["awaiting_verification", "paid", "shipped", "delivered", "returned"],
+      },
     });
   });
 });
