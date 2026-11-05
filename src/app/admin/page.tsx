@@ -46,7 +46,9 @@ function Card({
   return (
     <Link
       href={href}
-      className="rounded border border-zinc-200 p-4 hover:border-sky-600 dark:border-zinc-800 dark:hover:border-sky-600"
+      // A column with the number pushed to the bottom, so the numbers in a
+      // row line up even when one label wraps onto two lines on a phone.
+      className="flex flex-col justify-between rounded border border-zinc-200 p-3 hover:border-sky-600 sm:p-4 dark:border-zinc-800 dark:hover:border-sky-600"
     >
       <span className="block text-sm text-zinc-500">{label}</span>
       <span
@@ -101,7 +103,9 @@ export default async function AdminDashboardPage() {
     <div className="flex flex-col gap-10">
       <section>
         <h2 className="text-lg font-bold">نیاز به اقدام</h2>
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {/* Orders on one row and the rest on another, each filling its row:
+            five cards in one grid would leave a hole on the second row. */}
+        <div className="mt-4 grid grid-cols-3 gap-3">
           {ACTION_STATUSES.map((status) => (
             <Card
               key={status}
@@ -111,6 +115,8 @@ export default async function AdminDashboardPage() {
               alert={status !== "shipped"}
             />
           ))}
+        </div>
+        <div className="mt-3 grid grid-cols-2 gap-3">
           <Card href="/admin/reviews" label="نظر در انتظار تأیید" value={pendingReviews} alert />
           <Card href="/admin/messages" label="پیام‌های ۷ روز اخیر" value={recentMessages} />
         </div>
