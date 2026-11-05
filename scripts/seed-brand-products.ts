@@ -798,6 +798,490 @@ const esnProducts: BrandProduct[] = [
   ...esnCreatineProducts,
 ];
 
+// USN (uk.usn.global, Shopify). Label details come from the per-flavour
+// "Download nutritional information" files on each product page (BlueLab Whey
+// and Muscle Fuel Anabolic), the Hyperbolic Mass page text and its label
+// image, and the Pure Creatine page text and pack photos. USN UK sells no
+// glutamine.
+const usnSoyGlutenEggSulphites = "سویا، گلوتن، تخم‌مرغ و سولفیت";
+const usnNutsFishCrustaceans =
+  "آجیل، بادام‌زمینی، سویا، گلوتن، تخم‌مرغ، ماهی، سخت‌پوستان و سولفیت";
+const usnPerServing = (
+  kcal: string,
+  fat: string,
+  saturated: string,
+  carbs: string,
+  sugars: string,
+  fibre: string,
+  protein: string,
+  salt: string
+) => [
+  { label: "انرژی", amount: `${kcal} کیلوکالری` },
+  { label: "چربی", amount: `${fat} گرم` },
+  { label: "چربی اشباع", amount: `${saturated} گرم` },
+  { label: "کربوهیدرات", amount: `${carbs} گرم` },
+  { label: "قندها", amount: `${sugars} گرم` },
+  { label: "فیبر", amount: `${fibre} گرم` },
+  { label: "پروتئین", amount: `${protein} گرم` },
+  { label: "نمک", amount: `${salt} گرم` },
+];
+
+// BlueLab 100% Whey: one label per flavour (the files are for the 908 g tub;
+// the 2 kg tub has the same recipe, 2000 g / 34 g = about 58 servings).
+const usnBlueLabBlend =
+  "ترکیب پروتئین [کنسانتره‌ی پروتئین وی (حاوی شیر)، ایزوله‌ی پروتئین وی (حاوی شیر)، پروتئین وی هیدرولیزه (حاوی شیر)، امولسیفایر (لسیتین آفتابگردان)]";
+const usnBlueLabThickeners = "غلیظ‌کننده‌ها (صمغ گوار، صمغ زانتان)";
+const usnTolerase = "آنزیم لاکتاز Tolerase L (پایدار در pH)";
+const usnBlueLabUsage = (protein: string) =>
+  `وعده‌ی ${protein} گرم پروتئین: ۱ اسکوپ (۳۴ گرم) را در ۱۵۰ تا ۲۰۰ میلی‌لیتر آب سرد بریزید.\nوعده‌ی دوبل (${protein === "۲۵" ? "۵۰" : "۴۸"} گرم پروتئین): ۲ اسکوپ (۶۸ گرم) را در ۳۰۰ تا ۴۰۰ میلی‌لیتر آب سرد بریزید.\n۳۰ ثانیه خوب تکان دهید، ۶۰ ثانیه بگذارید بماند و پیش از نوشیدن دوباره تکان دهید.\nبسته به هدف ورزشی و نیاز پروتئین، روزانه ۱ تا ۴ وعده در طول روز، قبل یا بعد از تمرین مصرف کنید.\nدر جای خنک و خشک نگهداری کنید.`;
+const usnBlueLabWarnings = (contains: string, traces: string) =>
+  `حساسیت‌زاها: حاوی ${contains}. ممکن است حاوی ردپایی از ${traces} باشد.\nپیش از مصرف با پزشک مشورت کنید، به‌ویژه اگر بیماری خاصی دارید.\nبرای زنان باردار یا شیرده و افراد زیر ۱۲ سال مناسب نیست. افراد ۱۲ تا ۱۸ سال، به‌ویژه اگر از منابع غذایی پروتئین زیاد مصرف می‌کنند، روزانه بیش از یک وعده مصرف نکنند.\nاز مقدار توصیه‌شده‌ی روزانه (۴ وعده) بیشتر مصرف نکنید. مکمل غذایی جایگزین رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم نیست.\nبرای افراد مبتلا به عدم تحمل لاکتوز مناسب نیست.\nدور از دسترس کودکان خردسال نگهداری شود.`;
+const usnBlueLabClaims = (protein: string) =>
+  [
+    "۱۰۰٪ پروتئین وی: ترکیب ایزوله، کنسانتره و هیدرولیزه‌ی وی",
+    `${protein} گرم پروتئین در هر اسکوپ (۳۴ گرم)`,
+    "بیش از ۵٫۵ گرم BCAA طبیعی در هر وعده",
+    "حاوی Tolerase L، آنزیم لاکتازی که به هضم لاکتوز در افرادی که در هضم آن مشکل دارند کمک می‌کند",
+    "به گفته‌ی سازنده: مواد به‌کاررفته جزو مواد ممنوعه‌ی ورزشی نیستند",
+    "به گفته‌ی سازنده: پروتئین به رشد و حفظ عضله کمک می‌کند؛ مناسب بعد از تمرین و هر زمانی از روز برای رساندن پروتئین روزانه",
+  ].join("\n");
+const usnBlueLabFlavours = [
+  {
+    id: "usn1",
+    slug: "chocolate",
+    flavor: "شکلات",
+    facts: usnPerServing("۱۲۹", "۲٫۱", "۱٫۳", "۲٫۶", "۲٫۱", "۱٫۶", "۲۴", "۰٫۴۷"),
+    contains: "شیر",
+    traces: usnSoyGlutenEggSulphites,
+    ingredients: `${usnBlueLabBlend}، پودر کاکائوی کم‌چرب (۶٪)، اینولین، طعم‌دهنده، ${usnBlueLabThickeners}، کلرید سدیم، شیرین‌کننده (سوکرالوز)، ${usnTolerase}.`,
+  },
+  {
+    id: "usn2",
+    slug: "vanilla",
+    flavor: "وانیل",
+    facts: usnPerServing("۱۳۱", "۲٫۰", "۱٫۳", "۲٫۶", "۲٫۲", "۰٫۹", "۲۵", "۰٫۳۳"),
+    contains: "شیر",
+    traces: usnSoyGlutenEggSulphites,
+    ingredients: `${usnBlueLabBlend}، اینولین، طعم‌دهنده، ${usnBlueLabThickeners}، کلرید سدیم، شیرین‌کننده (سوکرالوز)، ${usnTolerase}.`,
+  },
+  {
+    id: "usn3",
+    slug: "strawberry",
+    flavor: "توت‌فرنگی",
+    facts: usnPerServing("۱۳۰", "۱٫۹", "۱٫۳", "۲٫۷", "۲٫۲", "۰٫۹", "۲۵", "۰٫۳۳"),
+    contains: "شیر",
+    traces: usnSoyGlutenEggSulphites,
+    ingredients: `${usnBlueLabBlend}، اینولین، طعم‌دهنده‌ی طبیعی، ${usnBlueLabThickeners}، رنگ (قرمز چغندر)، کلرید سدیم، شیرین‌کننده (سوکرالوز)، ${usnTolerase}.`,
+  },
+  {
+    id: "usn4",
+    slug: "banana",
+    flavor: "موز",
+    facts: usnPerServing("۱۳۲", "۲٫۰", "۱٫۳", "۲٫۴", "۲٫۲", "۰٫۹", "۲۵", "۰٫۳۴"),
+    contains: "شیر",
+    traces: usnNutsFishCrustaceans,
+    ingredients: `${usnBlueLabBlend}، اینولین، ${usnBlueLabThickeners}، طعم‌دهنده، کلرید سدیم، شیرین‌کننده (سوکرالوز)، رنگ (بتاکاروتن)، ${usnTolerase}.`,
+  },
+  {
+    id: "usn5",
+    slug: "wheytella",
+    flavor: "وی‌تلا",
+    facts: usnPerServing("۱۲۹", "۲٫۰", "۱٫۳", "۲٫۶", "۲٫۰", "۱٫۹", "۲۴", "۰٫۴۵"),
+    contains: "شیر",
+    traces: usnNutsFishCrustaceans,
+    ingredients: `${usnBlueLabBlend}، پودر کاکائوی کم‌چرب (۶٪)، اینولین، ${usnBlueLabThickeners}، طعم‌دهنده، کلرید سدیم، طعم‌دهنده‌ی طبیعی (شیر)، شیرین‌کننده (سوکرالوز)، ${usnTolerase}.`,
+  },
+  {
+    id: "usn6",
+    slug: "salted-caramel",
+    flavor: "کارامل نمکی",
+    facts: usnPerServing("۱۳۲", "۲٫۰", "۱٫۳", "۳٫۰", "۲٫۳", "۰٫۵", "۲۵", "۰٫۵۲"),
+    contains: "شیر، جو و گلوتن",
+    traces: usnNutsFishCrustaceans,
+    ingredients: `${usnBlueLabBlend}، طعم‌دهنده‌ی طبیعی (حاوی جو و گلوتن)، ${usnBlueLabThickeners}، کلرید سدیم، اینولین، رنگ (کارامل آمونیاکی)، شیرین‌کننده (سوکرالوز)، طعم‌دهنده‌ی طبیعی، ${usnTolerase}، پودر کاکائوی کم‌چرب.`,
+  },
+  {
+    id: "usn7",
+    slug: "caramel-popcorn",
+    flavor: "پاپ‌کورن کاراملی",
+    facts: usnPerServing("۱۳۴", "۲٫۰", "۱٫۳", "۳٫۰", "۲٫۲", "۰٫۷", "۲۵", "۰٫۳۴"),
+    contains: "شیر",
+    traces: usnNutsFishCrustaceans,
+    ingredients: `${usnBlueLabBlend}، اینولین، طعم‌دهنده، ${usnBlueLabThickeners}، کلرید سدیم، شیرین‌کننده (سوکرالوز)، ${usnTolerase}، پودر کاکائوی کم‌چرب.`,
+  },
+  {
+    id: "usn8",
+    slug: "cookies-cream",
+    flavor: "کوکی و کرم",
+    facts: usnPerServing("۱۳۲", "۲٫۰", "۱٫۳", "۳٫۰", "۲٫۱", "۱٫۳", "۲۴", "۰٫۴۱"),
+    contains: "شیر، گندم و گلوتن",
+    traces: usnNutsFishCrustaceans,
+    ingredients: `${usnBlueLabBlend}، اینولین، تکه‌های کوکی [آرد گندم غنی‌شده (آرد گندم، کربنات کلسیم، آهن، نیاسین‌آمید، تیامین)، روغن گیاهی (روغن پالم، روغن کلزا)، شکر، پودر کاکائو، شربت قند اینورت، ماده‌ی ورآورنده (بی‌کربنات سدیم)، کلرید سدیم] (۲٫۴٪)، طعم‌دهنده، کلرید سدیم، غلیظ‌کننده‌ها (صمغ زانتان، صمغ گوار)، طعم‌دهنده‌ی طبیعی، شیرین‌کننده (سوکرالوز)، ${usnTolerase}.`,
+  },
+  {
+    id: "usn9",
+    slug: "chocolate-blueberry-gateau",
+    flavor: "کیک شکلاتی بلوبری",
+    facts: usnPerServing("۱۲۹", "۲٫۰", "۱٫۴", "۲٫۴", "۱٫۸", "۲٫۲", "۲۴", "۰٫۳۹"),
+    contains: "شیر",
+    traces: usnNutsFishCrustaceans,
+    ingredients: `${usnBlueLabBlend}، پودر کاکائوی کم‌چرب (۸٪)، اینولین، طعم‌دهنده، غلیظ‌کننده (صمغ زانتان)، کلرید سدیم، طعم‌دهنده‌ی طبیعی، شیرین‌کننده (سوکرالوز)، ${usnTolerase}.`,
+  },
+];
+
+// Muscle Fuel Anabolic: one label per flavour (the files are for the 2 kg
+// tub; the 4 kg bucket has the same recipe, 4000 g / 150 g = about 26
+// servings). Vitamins and the added amino acids are the same in every
+// flavour; energy, macros and minerals differ a little.
+const usnMuscleFuelVitamins = [
+  { label: "بیوتین", amount: "۱۱٫۱ میکروگرم" },
+  { label: "اسید فولیک", amount: "۱۵۰ میکروگرم" },
+  { label: "ویتامین A", amount: "۲۲۵ میکروگرم" },
+  { label: "تیامین (ویتامین B1)", amount: "۱٫۴ میلی‌گرم" },
+  { label: "ویتامین B12", amount: "۰٫۶ میکروگرم" },
+  { label: "ریبوفلاوین (ویتامین B2)", amount: "۱٫۵ میلی‌گرم" },
+  { label: "نیاسین (ویتامین B3)", amount: "۱۳٫۵ میلی‌گرم" },
+  { label: "پانتوتنیک اسید (ویتامین B5)", amount: "۲٫۷ میلی‌گرم" },
+  { label: "ویتامین B6", amount: "۱٫۲ میلی‌گرم" },
+  { label: "ویتامین C", amount: "۴۶٫۵ میلی‌گرم" },
+  { label: "ویتامین D", amount: "۱٫۲ میکروگرم" },
+  { label: "ویتامین E", amount: "۴٫۵ میلی‌گرم" },
+];
+const usnMuscleFuelAdded = [
+  { label: "کراتین مونوهیدرات", amount: "۵٫۰ گرم" },
+  { label: "کراتین (از کراتین مونوهیدرات)", amount: "۴٫۴ گرم" },
+  { label: "گلیسین", amount: "۱٫۱ گرم" },
+  { label: "بتا-آلانین", amount: "۱٫۱ گرم" },
+  { label: "کلسیم HMB", amount: "۰٫۸۵ گرم" },
+  { label: "تورین", amount: "۰٫۳ گرم" },
+  { label: "ال-گلوتامین", amount: "۰٫۳ گرم" },
+  { label: "عصاره‌ی دانه‌ی جو دوسر (Avena sativa)", amount: "۱۰۰ میلی‌گرم" },
+  { label: "آنزیم لاکتاز Tolerase L", amount: "۱۵۰۰ میکروگرم" },
+];
+const usnMuscleFuelMinerals = (
+  calcium: string,
+  iron: string,
+  magnesium: string,
+  phosphorus: string,
+  zinc: string,
+  potassium?: string
+) => [
+  { label: "کلسیم", amount: `${calcium} میلی‌گرم` },
+  { label: "آهن", amount: `${iron} میلی‌گرم` },
+  ...(potassium ? [{ label: "پتاسیم", amount: `${potassium} میلی‌گرم` }] : []),
+  { label: "منیزیم", amount: `${magnesium} میلی‌گرم` },
+  { label: "فسفر", amount: `${phosphorus} میلی‌گرم` },
+  { label: "روی", amount: `${zinc} میلی‌گرم` },
+];
+// Ingredient-list pieces shared by the flavours (each flavour's own order is
+// kept below).
+const usnMuscleFuelProtein =
+  "ترکیب پروتئین [ایزوله‌ی پروتئین سویا، پودر شیر بدون چربی، کنسانتره‌ی پروتئین برنج، کنسانتره‌ی پروتئین وی (حاوی شیر)، ایزوله‌ی پروتئین شیر، پودر سفیده‌ی تخم‌مرغ، کازئینات کلسیم (حاوی شیر)]";
+const usnMuscleFuelCarbs = "ترکیب کربوهیدرات (مالتودکسترین، دکستروز، فروکتوز)";
+const usnMuscleFuelThickeners = "غلیظ‌کننده‌ها (صمغ گوار، صمغ زانتان، صمغ سلولز)";
+const usnMuscleFuelFat =
+  "پودر چربی [روغن سویا، شربت گلوکز، پروتئین‌های شیر، پایدارکننده (تری‌فسفات سدیم پتاسیم)، ضدکلوخه (دی‌اکسید سیلیکون)، آنتی‌اکسیدان (عصاره‌ی رزماری)]";
+const usnMuscleFuelHmb = "کلسیم هیدروکسی متیل بوتیرات (HMB)";
+const usnMuscleFuelBcaa =
+  "BCAA با نسبت ۲:۱:۱ [ال-لوسین، ال-ایزولوسین، ال-والین، امولسیفایر (لسیتین آفتابگردان)]";
+const usnMuscleFuelSweeteners = "شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم)";
+const usnOatExtract = "عصاره‌ی دانه‌ی جو دوسر (Avena sativa، حاوی گلوتن)";
+const usnVitaminsCtoE =
+  "ویتامین C (اسید اسکوربیک)، ویتامین B3 (نیکوتین‌آمید)، ویتامین E (دی-آلفا توکوفریل استات)";
+const usnVitaminsB5toB2 =
+  "ویتامین B5 (کلسیم دی-پانتوتنات)، ویتامین B6 (پیریدوکسین هیدروکلراید)، ویتامین A (رتینیل استات)، ویتامین B2 (ریبوفلاوین)";
+const usnVitaminsB12toD3 =
+  "ویتامین B12 (سیانوکوبالامین)، ویتامین B8 (دی-بیوتین)، ویتامین D3 (کوله‌کلسیفرول)";
+// Chocolate, vanilla, banana and strawberry end the same way.
+const usnMuscleFuelVitaminTail = `${usnVitaminsCtoE}، بیس‌گلیسینات روی، ${usnVitaminsB5toB2}، ${usnTolerase}، ویتامین B1 (تیامین هیدروکلراید)، ${usnVitaminsB12toD3}، امولسیفایر (لسیتین آفتابگردان)، ویتامین B9 (اسید فولیک)`;
+const usnMuscleFuelUsage =
+  "۳ اسکوپ سرپر (۱۵۰ گرم) را در ۵۰۰ تا ۶۰۰ میلی‌لیتر آب سرد بریزید و ۳۰ ثانیه خوب تکان دهید.\nافراد زیر ۸۰ کیلوگرم: ۵ روز اول روزی ۲ وعده و پس از آن روزی ۱ وعده.\nافراد بالای ۸۰ کیلوگرم: ۵ روز اول روزی ۲ تا ۳ وعده و پس از آن روزی ۱ تا ۲ وعده.\nدر جای خنک و خشک نگهداری کنید.";
+const usnMuscleFuelWarnings = (contains: string) =>
+  `حساسیت‌زاها: حاوی ${contains}. ممکن است حاوی ردپایی از آجیل، بادام‌زمینی، ماهی، سخت‌پوستان و سولفیت باشد.\nماسل فیول آنابولیک را با هیچ مکمل کراتین دیگری همراه نکنید و از مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.\nمثل هر مکمل دیگری، پیش از مصرف با پزشک مشورت کنید، به‌ویژه اگر بیماری خاصی دارید.\nدر دوران بارداری و شیردهی و برای افراد زیر ۱۸ سال مناسب نیست.\nاین محصول جایگزین رژیم غذایی متنوع و متعادل و شیوه‌ی زندگی سالم نیست.\nتحمل لاکتوز در افراد متفاوت است؛ درباره‌ی جایگاه این محصول در رژیم غذایی خود مشاوره بگیرید.\nدور از دسترس کودکان نگهداری شود.`;
+const usnMuscleFuelClaims = (protein: string) =>
+  [
+    "گینر همه‌کاره (All-in-one) برای عضله‌سازی",
+    `${protein} گرم پروتئین از ۵ منبع مختلف در هر وعده (۱۵۰ گرم)`,
+    "۵ گرم کراتین مونوهیدرات در هر وعده",
+    "همراه با ویتامین‌ها، مواد معدنی، بتا-آلانین، HMB، تورین، ال-گلوتامین، اسیدهای آمینه‌ی آزاد و عصاره‌ی Avena sativa",
+    "حاوی Tolerase L برای هضم راحت‌تر لاکتوز",
+    "کراتین عملکرد بدنی را در تمرین‌های کوتاه‌مدت، پرشدت و پشت‌سرهم افزایش می‌دهد",
+    "به گفته‌ی سازنده: به ساخت توده‌ی عضلانی بدون چربی، بهبود عملکرد ورزشی و ریکاوری سریع‌تر کمک می‌کند",
+    "به گفته‌ی سازنده: مواد به‌کاررفته جزو مواد ممنوعه‌ی ورزشی نیستند",
+  ].join("\n");
+const usnMuscleFuelFlavours = [
+  {
+    id: "usn20",
+    slug: "chocolate",
+    flavor: "شکلات",
+    protein: "۵۴",
+    kcal: "۵۲۶",
+    facts: [
+      ...usnPerServing("۵۲۶", "۳٫۷", "۱٫۶", "۶۹٫۸", "۱۹٫۵", "۶٫۳", "۵۴", "۲٫۲"),
+      ...usnMuscleFuelVitamins,
+      ...usnMuscleFuelMinerals("۵۵۷", "۵٫۱", "۱۱۹", "۶۷۳", "۲٫۶", "۴۲۶"),
+      ...usnMuscleFuelAdded,
+    ],
+    contains: "سویا، شیر، تخم‌مرغ و گلوتن (جو دوسر)",
+    ingredients: `${usnMuscleFuelProtein}، ${usnMuscleFuelCarbs}، پودر کاکائوی کم‌چرب (۶٪)، کراتین مونوهیدرات، طعم‌دهنده، ${usnMuscleFuelThickeners}، نشاسته‌ی تاپیوکا، گلیسین، ${usnMuscleFuelFat}، ${usnMuscleFuelHmb}، بتا-آلانین، ${usnMuscleFuelBcaa}، تری‌کلسیم فسفات، دی‌اکسید سیلیکون، لاکتات منیزیم دی‌هیدرات، کلرید سدیم، سیترات تری‌پتاسیم، تورین، ال-گلوتامین، طعم‌دهنده‌ی طبیعی، ${usnMuscleFuelSweeteners}، ${usnOatExtract}، ${usnMuscleFuelVitaminTail}.`,
+  },
+  {
+    id: "usn21",
+    slug: "vanilla",
+    flavor: "وانیل",
+    protein: "۵۴",
+    kcal: "۵۴۶",
+    facts: [
+      ...usnPerServing("۵۴۶", "۲٫۵", "۰٫۹", "۷۶٫۸", "۲۰٫۰", "۲٫۷", "۵۴", "۲٫۲"),
+      ...usnMuscleFuelVitamins,
+      ...usnMuscleFuelMinerals("۵۴۵", "۳٫۳", "۹۰", "۶۰۴", "۲٫۱"),
+      ...usnMuscleFuelAdded,
+    ],
+    contains: "سویا، شیر، تخم‌مرغ و گلوتن (جو دوسر)",
+    ingredients: `${usnMuscleFuelCarbs}، ${usnMuscleFuelProtein}، کراتین مونوهیدرات، طعم‌دهنده، ${usnMuscleFuelThickeners}، طعم‌دهنده‌ی طبیعی، نشاسته‌ی تاپیوکا، گلیسین، ${usnMuscleFuelFat}، ${usnMuscleFuelHmb}، بتا-آلانین، ${usnMuscleFuelBcaa}، تری‌کلسیم فسفات، لاکتات منیزیم دی‌هیدرات، کلرید سدیم، سیترات تری‌پتاسیم، تورین، ال-گلوتامین، ${usnMuscleFuelSweeteners}، ${usnOatExtract}، ${usnMuscleFuelVitaminTail}، ضدکلوخه (دی‌اکسید سیلیکون).`,
+  },
+  {
+    id: "usn22",
+    slug: "strawberry",
+    flavor: "توت‌فرنگی",
+    protein: "۵۴",
+    kcal: "۵۵۲",
+    facts: [
+      ...usnPerServing("۵۵۲", "۲٫۵", "۰٫۹", "۷۸٫۵", "۲۰٫۱", "۲٫۷", "۵۴", "۲٫۲"),
+      ...usnMuscleFuelVitamins,
+      ...usnMuscleFuelMinerals("۵۴۵", "۳٫۳", "۹۰", "۶۰۴", "۲٫۱"),
+      ...usnMuscleFuelAdded,
+    ],
+    contains: "سویا، شیر، تخم‌مرغ و گلوتن (جو دوسر)",
+    ingredients: `${usnMuscleFuelCarbs}، ${usnMuscleFuelProtein}، کراتین مونوهیدرات، طعم‌دهنده، ${usnMuscleFuelThickeners}، نشاسته‌ی تاپیوکا، گلیسین، ${usnMuscleFuelFat}، ${usnMuscleFuelHmb}، بتا-آلانین، ${usnMuscleFuelBcaa}، تری‌کلسیم فسفات، لاکتات منیزیم دی‌هیدرات، رنگ (قرمز چغندر)، کلرید سدیم، سیترات تری‌پتاسیم، تورین، ال-گلوتامین، طعم‌دهنده‌ی طبیعی، ${usnMuscleFuelSweeteners}، ${usnOatExtract}، ${usnMuscleFuelVitaminTail}، ضدکلوخه (دی‌اکسید سیلیکون).`,
+  },
+  {
+    id: "usn23",
+    slug: "banana",
+    flavor: "موز",
+    protein: "۵۴",
+    kcal: "۵۴۸",
+    facts: [
+      ...usnPerServing("۵۴۸", "۲٫۶", "۰٫۹", "۷۸٫۲", "۲۱٫۱", "۲٫۸", "۵۴", "۲٫۲"),
+      ...usnMuscleFuelVitamins,
+      ...usnMuscleFuelMinerals("۵۴۵", "۳٫۳", "۱۱۸", "۶۰۴", "۲٫۱"),
+      ...usnMuscleFuelAdded,
+    ],
+    contains: "سویا، شیر، تخم‌مرغ و گلوتن (جو دوسر)",
+    ingredients: `${usnMuscleFuelCarbs}، ${usnMuscleFuelProtein}، کراتین مونوهیدرات، طعم‌دهنده، ${usnMuscleFuelThickeners}، طعم‌دهنده‌ی طبیعی، نشاسته‌ی تاپیوکا، گلیسین، ${usnMuscleFuelFat}، ${usnMuscleFuelHmb}، بتا-آلانین، ${usnMuscleFuelBcaa}، تری‌کلسیم فسفات، لاکتات منیزیم دی‌هیدرات، کلرید سدیم، سیترات تری‌پتاسیم، تورین، ال-گلوتامین، ${usnMuscleFuelSweeteners}، ${usnOatExtract}، ${usnMuscleFuelVitaminTail}، ضدکلوخه (دی‌اکسید سیلیکون).`,
+  },
+  {
+    id: "usn24",
+    slug: "cookies-cream",
+    flavor: "کوکی و کرم",
+    protein: "۵۴",
+    kcal: "۵۵۰",
+    facts: [
+      ...usnPerServing("۵۵۰", "۲٫۹", "۱٫۰", "۷۷٫۲", "۲۰٫۴", "۳٫۲", "۵۴", "۲٫۲"),
+      ...usnMuscleFuelVitamins,
+      ...usnMuscleFuelMinerals("۵۴۶", "۳٫۳", "۱۲۱", "۶۰۸", "۲٫۱"),
+      ...usnMuscleFuelAdded,
+    ],
+    contains: "سویا، شیر، تخم‌مرغ، گندم و گلوتن (گندم و جو دوسر)",
+    ingredients: `${usnMuscleFuelCarbs}، ${usnMuscleFuelProtein}، کراتین مونوهیدرات، ${usnMuscleFuelThickeners}، طعم‌دهنده، نشاسته‌ی تاپیوکا، تکه‌های کوکی [آرد گندم غنی‌شده (حاوی گلوتن) (آرد گندم (حاوی گلوتن)، کربنات کلسیم، آهن، نیکوتین‌آمید، تیامین)، روغن‌های گیاهی (روغن پالم، روغن کلزا)، شکر، پودر کاکائو، شربت قند اینورت، ماده‌ی ورآورنده (بی‌کربنات سدیم)، کلرید سدیم] (۲٫۴٪)، گلیسین، بتا-آلانین، ${usnMuscleFuelFat}، ${usnMuscleFuelHmb}، ${usnMuscleFuelBcaa}، تری‌کلسیم فسفات، لاکتات منیزیم دی‌هیدرات، پودر کاکائوی کم‌چرب، کلرید سدیم، سیترات تری‌پتاسیم، تورین، ال-گلوتامین، طعم‌دهنده‌ی طبیعی، ${usnMuscleFuelSweeteners}، ${usnOatExtract}، ${usnVitaminsCtoE}، بیس‌گلیسینات روی، ${usnVitaminsB5toB2}، ویتامین B1 (تیامین هیدروکلراید)، ${usnTolerase}، ${usnVitaminsB12toD3}، ویتامین B9 (اسید فولیک)، ضدکلوخه (دی‌اکسید سیلیکون).`,
+  },
+  {
+    id: "usn25",
+    slug: "chocolate-caramel",
+    flavor: "شکلات کارامل",
+    protein: "۵۵",
+    kcal: "۵۲۱",
+    facts: [
+      ...usnPerServing("۵۲۱", "۳٫۳", "۱٫۴", "۶۹٫۰", "۱۹٫۵", "۵٫۷", "۵۵", "۲٫۳"),
+      ...usnMuscleFuelVitamins,
+      ...usnMuscleFuelMinerals("۵۵۶", "۵٫۱", "۱۳۸", "۶۶۶", "۲٫۶"),
+      ...usnMuscleFuelAdded,
+    ],
+    contains: "سویا، شیر، تخم‌مرغ، جو و گلوتن (جو دوسر)",
+    ingredients: `${usnMuscleFuelProtein}، ${usnMuscleFuelCarbs}، پودر کاکائوی کم‌چرب (۴٪)، کراتین مونوهیدرات، طعم‌دهنده، ${usnMuscleFuelThickeners}، طعم‌دهنده‌ی طبیعی (جو)، کلرید سدیم، ${usnMuscleFuelSweeteners}، نشاسته‌ی تاپیوکا، گلیسین، بتا-آلانین، ${usnMuscleFuelFat}، ${usnMuscleFuelHmb}، ${usnMuscleFuelBcaa}، تری‌کلسیم فسفات، لاکتات منیزیم دی‌هیدرات، سیترات تری‌پتاسیم، تورین، ال-گلوتامین، ${usnOatExtract}، ${usnVitaminsCtoE}، امولسیفایر (لسیتین آفتابگردان)، ضدکلوخه (دی‌اکسید سیلیکون)، بیس‌گلیسینات روی، ${usnVitaminsB5toB2}، ویتامین B1 (تیامین هیدروکلراید)، ${usnTolerase}، ${usnVitaminsB12toD3}، ویتامین B9 (اسید فولیک).`,
+  },
+];
+
+// Hyperbolic Mass: the product page gives one label (ingredients and table
+// per 300 g) for all three flavours; directions are from the label image.
+// 2 kg = about 6 servings, the 6 kg bag says 80 scoops = 20 servings.
+const usnHyperbolicMassFacts = [
+  ...usnPerServing("۱۱۷۸", "۲٫۰", "۱٫۰", "۲۱۱", "۱۳٫۸", "۴٫۷", "۶۰", "۳٫۹"),
+  { label: "ویتامین A", amount: "۷۴۵ میکروگرم RE" },
+  { label: "ویتامین B1", amount: "۱٫۱ میلی‌گرم" },
+  { label: "ویتامین B2", amount: "۱٫۲ میلی‌گرم" },
+  { label: "نیاسین", amount: "۱۲٫۸ میلی‌گرم" },
+  { label: "ویتامین B6", amount: "۱٫۶ میلی‌گرم" },
+  { label: "اسید فولیک", amount: "۴۰۲ میکروگرم" },
+  { label: "ویتامین B12", amount: "۲ میکروگرم" },
+  { label: "بیوتین", amount: "۲۳ میکروگرم" },
+  { label: "پانتوتنیک اسید", amount: "۴٫۳ میلی‌گرم" },
+  { label: "ویتامین C", amount: "۹۰٫۳ میلی‌گرم" },
+  { label: "ویتامین D", amount: "۱۲ میکروگرم" },
+  { label: "ویتامین E", amount: "۱۲٫۷ میلی‌گرم TE" },
+  { label: "کلسیم", amount: "۱۷۶٫۶ میلی‌گرم" },
+  { label: "کروم", amount: "۱۲۲ میکروگرم" },
+  { label: "آهن", amount: "۷٫۷ میلی‌گرم" },
+  { label: "منیزیم", amount: "۹۸٫۸ میلی‌گرم" },
+  { label: "فسفر", amount: "۴۷۲٫۴ میلی‌گرم" },
+  { label: "سلنیوم", amount: "۴۵ میکروگرم" },
+  { label: "روی", amount: "۰٫۹ میلی‌گرم" },
+  { label: "کراتین مونوهیدرات", amount: "۷٫۵ گرم" },
+  { label: "کراتین (از کراتین مونوهیدرات)", amount: "۶٫۶ گرم" },
+];
+const usnHyperbolicMassIngredients =
+  "سیستم کربوهیدرات ۴ مرحله‌ای Glyco-Matrix [مالتودکسترین، نشاسته‌ی ذرت مومی، نشاسته‌ی نخود (Carb10)، ایزومالتولوز (Palatinose، منبع گلوکز و فروکتوز)]، ماتریکس پروتئین آنابولیک ۶ مرحله‌ای [ترکیب کنسانتره و ایزوله‌ی پروتئین وی (شیر)، ایزوله‌ی پروتئین سویا، پودر شیر بدون چربی، کازئینات کلسیم (شیر)، کنسانتره‌ی پروتئین شیر]، پودر کاکائو (۳٫۷٪)، کراتین مونوهیدرات، طعم‌دهنده، گلیسین، تورین، کلرید سدیم، پایدارکننده‌ها (صمغ زانتان، Guarsil)، پیش‌مخلوط ویتامین (اسید اسکوربیک، ویتامین E استات، نیکوتین‌آمید، ویتامین A استات، ویتامین D3، کلسیم دی-پانتوتنات، اسید فولیک، دی-بیوتین، ویتامین B12، پیریدوکسین هیدروکلراید، تیامین مونونیترات، ریبوفلاوین)، پودر روغن گیاهی تری‌گلیسیرید با زنجیره‌ی متوسط (MCT) [(از نارگیل، پالم و مغز پالم، کلزا و دانه‌ی آفتابگردان)، شربت گلوکز، پروتئین شیر، استرهای اسید سیتریک]، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم)، عصاره‌ی Avena sativa (۱۰:۱) (گلوتن)، اکسید منیزیم، ال-گلوتامین، بتا-آلانین، BCAA (لوسین، ایزولوسین، والین)، کلسیم HMB، Tolerase L (لاکتاز پایدار در pH)، پودر روغن ماهی امگا-۳، پیکولینات کروم.";
+const usnHyperbolicMassUsage =
+  "روزی یک بار، بعد از تمرین یا بین وعده‌های غذایی مصرف کنید.\n۲ اسکوپ (۱۵۰ گرم، ۳۰ گرم پروتئین) را در ۳۷۵ تا ۴۵۰ میلی‌لیتر آب سرد، یا ۴ اسکوپ (۳۰۰ گرم، ۶۰ گرم پروتئین) را با ۷۵۰ تا ۹۰۰ میلی‌لیتر آب (تقسیم‌شده در دو شیکر کوچک) مخلوط کنید.\nیک‌جا یا در چند نوبت در روز مصرف کنید؛ به‌عنوان نوشیدنی ریکاوری بعد از تمرین و/یا بین وعده‌ها.";
+const usnHyperbolicMassWarnings =
+  "حساسیت‌زاها: حاوی شیر گاو، سویا، ماهی و گلوتن (جو دوسر). در کارخانه‌ای تولید می‌شود که بادام‌زمینی، گندم (گلوتن)، تخم‌مرغ، سخت‌پوستان و سولفیت را هم فرآوری می‌کند.";
+const usnHyperbolicMassClaims =
+  "گینر همه‌کاره (All-in-one) برای افزایش شدید حجم، قدرت و توان\n۶۰ گرم پروتئین، ۷٫۵ گرم کراتین مونوهیدرات و ۱۱۷۸ کیلوکالری در هر وعده (۳۰۰ گرم)\nماتریکس پروتئین ۶ مرحله‌ای (آزادسازی سریع و آهسته) و سیستم کربوهیدرات ۴ مرحله‌ای\nتا ۱۸ ویتامین و ماده‌ی معدنی\nهمراه با تورین، گلیسین، ال-گلوتامین، BCAA، HMB و Avena sativa\nبه گفته‌ی سازنده: برای افرادی با متابولیسم سریع؛ به رشد عضله، ریکاوری و سنتز پروتئین کمک می‌کند";
+const usnHyperbolicMassFlavours = [
+  { slug: "dutch-chocolate", flavor: "شکلات هلندی" },
+  { slug: "french-vanilla", flavor: "وانیل فرانسوی" },
+  { slug: "strawberry-cheesecake", flavor: "چیزکیک توت‌فرنگی" },
+];
+const usnHyperbolicMassSizes = [
+  { suffix: "2kg", size: "۲ کیلوگرم", pack: "قوطی ۲ کیلوگرمی حدود ۶ وعده", price: 3200000 },
+  { suffix: "6kg", size: "۶ کیلوگرم", pack: "کیسه‌ی ۶ کیلوگرمی ۲۰ وعده", price: 7500000 },
+];
+
+// Pure Creatine Monohydrate: ingredients and directions from the product
+// page; "5 000 mg creatine monohydrate" per serving is on every tub. The
+// flavoured scoop (6.3 g) is from the page's directions image.
+const usnCreatineFacts = [{ label: "کراتین مونوهیدرات", amount: "۵۰۰۰ میلی‌گرم" }];
+const usnCreatineUsage =
+  "۵ گرم (۱ قاشق چای‌خوری) را با ۲۵۰ میلی‌لیتر آب سرد یا آبمیوه مخلوط کنید.\nمصرف کافی مایعات در طول روز مهم است.\nحداکثر مصرف روزانه ۲۰ گرم (برابر ۴ وعده) است.";
+const usnCreatineFlavouredUsage =
+  "۱ اسکوپ (۶٫۳ گرم) را با ۲۵۰ میلی‌لیتر آب سرد یا آبمیوه مخلوط کنید و ۳۰ ثانیه خوب تکان دهید.\nبیش از ۴ وعده در روز مصرف نکنید.\nمصرف کافی مایعات در طول روز مهم است.";
+const usnCreatineWarnings =
+  "ممکن است حاوی شیر، سویا، گلوتن، تخم‌مرغ، ماهی، سخت‌پوستان، سولفیت و آجیل باشد (در کارخانه‌ای تولید می‌شود که این مواد را هم فرآوری می‌کند).\nاز حداکثر مصرف روزانه (۲۰ گرم، برابر ۴ وعده) بیشتر مصرف نکنید.";
+const usnCreatineClaims =
+  "۵۰۰۰ میلی‌گرم کراتین مونوهیدرات در هر وعده\nکراتین مونوهیدرات میکرونیزه با جذب بالا\nافزایش قدرت و استقامت؛ مصرف روزانه‌ی ۳ گرم کراتین عملکرد بدنی را در تمرین‌های کوتاه‌مدت، پرشدت و پشت‌سرهم افزایش می‌دهد\nبه گفته‌ی سازنده: به رشد عضله و عملکرد، استقامت و توان عضلانی کمک می‌کند؛ مناسب آقایان و بانوان";
+const usnCreatine = (
+  id: string,
+  slug: string,
+  flavor: string,
+  size: string,
+  servings: string,
+  ingredients: string,
+  price: number
+): BrandProduct => {
+  const flavoured = flavor !== "بدون طعم";
+  return {
+    id,
+    name: "کراتین مونوهیدرات خالص - Pure Creatine Monohydrate",
+    slug: `usn-pure-creatine-${slug}`,
+    groupSlug: "usn-pure-creatine",
+    flavor,
+    size,
+    imageUrl: `/images/products/usn-pure-creatine-${slug}.webp`,
+    description: `کراتین مونوهیدرات خالص یو‌اس‌ان${flavoured ? ` با طعم ${flavor}` : "، بدون طعم"}؛ پودر کراتین مونوهیدرات میکرونیزه برای تمرین‌های کوتاه، پرشدت و پشت‌سرهم. هر وعده (${flavoured ? "۱ اسکوپ، ۶٫۳ گرم" : "۵ گرم"}) ۵۰۰۰ میلی‌گرم کراتین مونوهیدرات دارد و قوطی ${size}ی ${servings} وعده است.\nمواد تشکیل‌دهنده: ${ingredients}`,
+    servingSize: flavoured ? "۶٫۳ گرم (۱ اسکوپ)" : "۵ گرم (۱ قاشق چای‌خوری)",
+    nutritionFacts: usnCreatineFacts,
+    usage: flavoured ? usnCreatineFlavouredUsage : usnCreatineUsage,
+    warnings: flavoured ? `${usnCreatineWarnings}\nحاوی شیرین‌کننده.` : usnCreatineWarnings,
+    manufacturerClaims: usnCreatineClaims,
+    brand: "USN",
+    price,
+    categorySlug: "creatine",
+  };
+};
+
+const usnProducts: BrandProduct[] = [
+  // BlueLab 100% Whey, 2 kg tub in the nine flavours USN UK sells in that size.
+  ...usnBlueLabFlavours.map(
+    ({ id, slug, flavor, facts, contains, traces, ingredients }): BrandProduct => {
+      const protein = facts[6].amount.replace(" گرم", "");
+      return {
+        id,
+        name: "پروتئین وی بلولب - BlueLab 100% Whey",
+        slug: `usn-bluelab-whey-${slug}-2kg`,
+        groupSlug: "usn-bluelab-whey",
+        flavor,
+        size: "۲ کیلوگرم",
+        imageUrl: `/images/products/usn-bluelab-whey-${slug}-2kg.webp`,
+        description: `پروتئین وی ۱۰۰٪ بلولب یو‌اس‌ان با طعم ${flavor}؛ ترکیب ایزوله، کنسانتره و هیدرولیزه‌ی پروتئین وی برای ساخت و حفظ عضله، با آنزیم لاکتاز Tolerase L. هر اسکوپ (۳۴ گرم) ${protein} گرم پروتئین و ${facts[0].amount} انرژی دارد و قوطی ۲ کیلوگرمی حدود ۵۸ وعده است.\nمواد تشکیل‌دهنده: ${ingredients}`,
+        servingSize: "۳۴ گرم (۱ اسکوپ)",
+        nutritionFacts: facts,
+        usage: usnBlueLabUsage(protein),
+        warnings: usnBlueLabWarnings(contains, traces),
+        manufacturerClaims: usnBlueLabClaims(protein),
+        brand: "USN",
+        price: 5500000,
+        categorySlug: "protein",
+      };
+    }
+  ),
+  // Muscle Fuel Anabolic, 4 kg bucket (Caramel Peanut 4 kg is sold out).
+  ...usnMuscleFuelFlavours.map(
+    ({ id, slug, flavor, protein, kcal, facts, contains, ingredients }): BrandProduct => ({
+      id,
+      name: "گینر ماسل فیول آنابولیک - Muscle Fuel Anabolic",
+      slug: `usn-muscle-fuel-anabolic-${slug}-4kg`,
+      groupSlug: "usn-muscle-fuel-anabolic",
+      flavor,
+      size: "۴ کیلوگرم",
+      imageUrl: `/images/products/usn-muscle-fuel-anabolic-${slug}-4kg.webp`,
+      description: `ماسل فیول آنابولیک یو‌اس‌ان با طعم ${flavor}؛ گینر همه‌کاره با پروتئین از ۵ منبع مختلف، کربوهیدرات، کراتین، اسیدهای آمینه، ویتامین‌ها و مواد معدنی برای عضله‌سازی و ریکاوری. هر وعده (۳ اسکوپ سرپر، ۱۵۰ گرم) ${protein} گرم پروتئین، ۵ گرم کراتین مونوهیدرات و ${kcal} کیلوکالری دارد و سطل ۴ کیلوگرمی حدود ۲۶ وعده است.\nمواد تشکیل‌دهنده: ${ingredients}`,
+      servingSize: "۱۵۰ گرم (۳ اسکوپ سرپر)",
+      nutritionFacts: facts,
+      usage: usnMuscleFuelUsage,
+      warnings: usnMuscleFuelWarnings(contains),
+      manufacturerClaims: usnMuscleFuelClaims(protein),
+      brand: "USN",
+      price: 6500000,
+      categorySlug: "protein",
+    })
+  ),
+  // Hyperbolic Mass: 2 kg tub and 6 kg bag in three flavours.
+  ...usnHyperbolicMassSizes.flatMap(({ suffix, size, pack, price }, sizeIndex) =>
+    usnHyperbolicMassFlavours.map(
+      ({ slug, flavor }, flavourIndex): BrandProduct => ({
+        id: `usn${30 + sizeIndex * 3 + flavourIndex}`,
+        name: "گینر هایپربولیک مس - Hyperbolic Mass",
+        slug: `usn-hyperbolic-mass-${slug}-${suffix}`,
+        groupSlug: "usn-hyperbolic-mass",
+        flavor,
+        size,
+        imageUrl: `/images/products/usn-hyperbolic-mass-${slug}-${suffix}.webp`,
+        description: `هایپربولیک مس یو‌اس‌ان با طعم ${flavor}؛ گینر همه‌کاره و پرکالری برای افزایش حجم و قدرت در افرادی با متابولیسم سریع، با کربوهیدرات و پروتئین چندمرحله‌ای، کراتین، BCAA و گلوتامین. هر وعده (۴ اسکوپ، ۳۰۰ گرم) ۶۰ گرم پروتئین، ۲۱۱ گرم کربوهیدرات، ۷٫۵ گرم کراتین مونوهیدرات و ۱۱۷۸ کیلوکالری دارد و ${pack} است.\nمواد تشکیل‌دهنده (سایت سازنده یک فهرست برای همه‌ی طعم‌ها آورده است): ${usnHyperbolicMassIngredients}`,
+        servingSize: "۳۰۰ گرم (۴ اسکوپ)",
+        nutritionFacts: usnHyperbolicMassFacts,
+        usage: usnHyperbolicMassUsage,
+        warnings: usnHyperbolicMassWarnings,
+        manufacturerClaims: usnHyperbolicMassClaims,
+        brand: "USN",
+        price,
+        categorySlug: "protein",
+      })
+    )
+  ),
+  // Pure Creatine Monohydrate: unflavoured 500 g and 230 g, and the two
+  // flavours (500 g only).
+  usnCreatine("usn40", "500g", "بدون طعم", "۵۰۰ گرم", "۱۰۰", "کراتین مونوهیدرات.", 1600000),
+  usnCreatine("usn41", "230g", "بدون طعم", "۲۳۰ گرم", "۴۶", "کراتین مونوهیدرات.", 900000),
+  usnCreatine(
+    "usn42",
+    "red-fruit-punch",
+    "پانچ میوه‌های قرمز",
+    "۵۰۰ گرم",
+    "حدود ۷۹",
+    "کراتین مونوهیدرات، تنظیم‌کننده‌های اسیدیته (اسید مالیک، اسید سیتریک، تری‌سدیم سیترات، دی‌سدیم فسفات)، طعم‌دهنده‌ی طبیعی، رنگ‌ها (قرمز چغندر، بتاکاروتن)، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم).",
+    1700000
+  ),
+  usnCreatine(
+    "usn43",
+    "tropical-thunder",
+    "تروپیکال تاندر (میوه‌های استوایی)",
+    "۵۰۰ گرم",
+    "حدود ۷۹",
+    "کراتین مونوهیدرات، تنظیم‌کننده‌های اسیدیته (اسید مالیک، اسید سیتریک، تری‌سدیم سیترات، دی‌سدیم فسفات)، طعم‌دهنده، رنگ (بتاکاروتن)، طعم‌دهنده‌ی طبیعی، شیرین‌کننده‌ها (سوکرالوز، آسه‌سولفام پتاسیم).",
+    1700000
+  ),
+];
+
 const products: BrandProduct[] = [
   // Optimum Nutrition
   {
@@ -4282,6 +4766,8 @@ const products: BrandProduct[] = [
     price: 750000,
     categorySlug: "creatine",
   },
+  // USN
+  ...usnProducts,
 ];
 
 async function main() {
