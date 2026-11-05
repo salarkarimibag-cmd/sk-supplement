@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { packContentsSchema, packSavings, packStock, parsePackProductIds } from "@/lib/packs";
+import {
+  packContentsError,
+  packContentsSchema,
+  packSavings,
+  packStock,
+  parsePackProductIds,
+} from "@/lib/packs";
 
 describe("packStock", () => {
   const products = [
@@ -85,5 +91,37 @@ describe("packContentsSchema", () => {
     for (const packProductIds of ["on1", [5], ["وی"], [{ $ne: null }], Array(11).fill("on1")]) {
       expect(packContentsSchema.safeParse({ packProductIds }).success).toBe(false);
     }
+  });
+
+  it("drops repeated ids", () => {
+    expect(packContentsSchema.parse({ packProductIds: ["on1", "mt-3", "on1"] })).toEqual({
+      packProductIds: ["on1", "mt-3"],
+    });
+  });
+});
+
+describe("packContentsError", () => {
+  const found = [{ id: "whey" }, { id: "creatine", packProductIds: [] }];
+
+  it("accepts existing plain products, or no contents at all", () => {
+    expect(packContentsError("pack", ["whey", "creatine"], found, false)).toBeNull();
+    expect(packContentsError("pack", [], [], true)).toBeNull();
+  });
+
+  it("rejects a pack that lists itself", () => {
+    expect(packContentsError("pack", ["whey", "pack"], found, false)).toMatch("خودش");
+  });
+
+  it("names the ids that don't exist", () => {
+    expect(packContentsError("pack", ["whey", "wehy"], found, false)).toMatch("wehy");
+  });
+
+  it("rejects another pack inside, naming it", () => {
+    const withPack = [...found, { id: "pack-mass", packProductIds: ["whey"] }];
+    expect(packContentsError("pack", ["whey", "pack-mass"], withPack, false)).toMatch("pack-mass");
+  });
+
+  it("rejects making a product a pack while another pack lists it", () => {
+    expect(packContentsError("pack", ["whey"], found, true)).toMatch("پک دیگر");
   });
 });

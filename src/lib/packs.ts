@@ -15,8 +15,49 @@ export const packContentsSchema = z.object({
   packProductIds: z
     .array(z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/))
     .max(MAX_PACK_PRODUCTS)
+    // A repeated id would move that product's stock twice per pack sold.
+    .transform((ids) => [...new Set(ids)])
     .optional(),
 });
+
+/** What packContentsError needs to know about a product a pack lists. */
+export interface PackContentCandidate {
+  id: string;
+  packProductIds?: string[] | null;
+}
+
+/**
+ * Why a pack can't list these products, or null when it can. Stock only
+ * moves one level deep (see expandStockLines), so a pack must list plain
+ * products that exist: not itself, not another pack, and it can't become a
+ * pack while another pack lists it. Pure, so the routes pass in what they
+ * loaded: `found` is the listed products found in the database, and
+ * `listedByAnotherPack` whether some other pack already lists this one.
+ */
+export function packContentsError(
+  packId: string,
+  packProductIds: string[],
+  found: PackContentCandidate[],
+  listedByAnotherPack: boolean
+): string | null {
+  if (packProductIds.length === 0) return null;
+  if (packProductIds.includes(packId)) {
+    return "پک نمی‌تواند خودش را در محتویاتش داشته باشد.";
+  }
+  const foundIds = new Set(found.map((product) => product.id));
+  const missing = packProductIds.filter((id) => !foundIds.has(id));
+  if (missing.length > 0) {
+    return `این شناسه‌ها پیدا نشدند: ${missing.join("، ")}`;
+  }
+  const nested = found.filter((product) => product.packProductIds?.length);
+  if (nested.length > 0) {
+    return `پک نمی‌تواند پک دیگری را در خود داشته باشد: ${nested.map((p) => p.id).join("، ")}`;
+  }
+  if (listedByAnotherPack) {
+    return "این محصول در یک پک دیگر آمده، پس خودش نمی‌تواند پک باشد.";
+  }
+  return null;
+}
 
 /** The admin form's "on1, on2" text as ids; a Persian comma works too. */
 export function parsePackProductIds(text: string): string[] {

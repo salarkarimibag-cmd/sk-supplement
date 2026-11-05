@@ -3,7 +3,7 @@ import { connectToDatabase } from "@/lib/db";
 import { ProductModel, type Product } from "@/models/Product";
 import type { CatalogProduct } from "@/data/catalog";
 import { formatProductName } from "@/lib/orderEmail";
-import { packStock } from "@/lib/packs";
+import { packContentsError, packStock, type PackContentCandidate } from "@/lib/packs";
 import { searchPattern } from "@/lib/searchText";
 import { expandStockLines, type StockLine } from "@/lib/stock";
 import { collapseGroups, type VariantProduct, type VariantSummary } from "@/lib/variants";
@@ -36,6 +36,26 @@ export async function withPackStock<T extends Pick<Product, "stock" | "packProdu
     { _id: 0, id: 1, stock: 1 }
   ).lean<Pick<Product, "id" | "stock">[]>();
   return products.map((product) => ({ ...product, stock: packStock(product, contents) }));
+}
+
+/**
+ * Loads what packContentsError needs and runs it, for the admin's product
+ * routes: why `packId` can't list `packProductIds`, or null when it can.
+ * The caller must already be connected to the database.
+ */
+export async function checkPackContents(
+  packId: string,
+  packProductIds: string[]
+): Promise<string | null> {
+  if (packProductIds.length === 0) return null;
+  const [found, listedBy] = await Promise.all([
+    ProductModel.find(
+      { id: { $in: packProductIds } },
+      { _id: 0, id: 1, packProductIds: 1 }
+    ).lean<PackContentCandidate[]>(),
+    ProductModel.exists({ packProductIds: packId, id: { $ne: packId } }),
+  ]);
+  return packContentsError(packId, packProductIds, found, listedBy !== null);
 }
 
 async function toCatalog(products: Product[]): Promise<CatalogProduct[]> {

@@ -3,6 +3,7 @@ import { ProductModel } from "@/models/Product";
 import { getSessionAdmin } from "@/lib/auth";
 import { isDuplicateKeyError } from "@/lib/mongoErrors";
 import { packContentsSchema } from "@/lib/packs";
+import { checkPackContents } from "@/lib/products";
 import { productDetailsSchema, withoutEmptyDetails } from "@/lib/productDetails";
 import { productCreateSchema, productInputErrorMessage } from "@/lib/productInput";
 import { productGroupSchema } from "@/lib/variants";
@@ -58,6 +59,11 @@ export async function POST(request: Request) {
   const existing = await ProductModel.exists({ $or: [{ id: input.id }, { slug: input.slug }] });
   if (existing) {
     return Response.json({ message: DUPLICATE_MESSAGE }, { status: 409 });
+  }
+
+  const packError = await checkPackContents(input.id, pack.data.packProductIds ?? []);
+  if (packError) {
+    return Response.json({ message: packError }, { status: 400 });
   }
 
   try {
