@@ -24,6 +24,12 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
       <nav className="scrollbar-thin-subtle mt-6 flex gap-4 overflow-x-auto border-b border-zinc-200 dark:border-zinc-800">
         <Link
+          href="/admin"
+          className="shrink-0 border-b-2 border-transparent px-1 pb-3 text-sm whitespace-nowrap font-semibold text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:text-zinc-400"
+        >
+          داشبورد
+        </Link>
+        <Link
           href="/admin/orders"
           className="shrink-0 border-b-2 border-transparent px-1 pb-3 text-sm whitespace-nowrap font-semibold text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:text-zinc-400"
         >
