@@ -4,6 +4,7 @@ import { getSessionAdmin } from "@/lib/auth";
 import { isDuplicateKeyError } from "@/lib/mongoErrors";
 import { toSetAndUnset } from "@/lib/mongoUpdate";
 import { packContentsSchema } from "@/lib/packs";
+import { checkPackContents } from "@/lib/products";
 import { productDetailsSchema, withoutEmptyDetails } from "@/lib/productDetails";
 import { productInputErrorMessage, productUpdateSchema } from "@/lib/productInput";
 import { productGroupSchema } from "@/lib/variants";
@@ -45,6 +46,11 @@ export async function PATCH(
   }
 
   await connectToDatabase();
+
+  const packError = await checkPackContents(id, pack.data.packProductIds ?? []);
+  if (packError) {
+    return Response.json({ message: packError }, { status: 400 });
+  }
 
   // Only the fields that were sent are in parsed.data, so the others keep
   // their saved values.
