@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSessionUser } from "@/lib/auth";
+import { toPersianDigits } from "@/lib/contact";
 import DeleteAccountSection from "@/components/account/DeleteAccountSection";
 import LogoutButton from "@/components/account/LogoutButton";
 
@@ -29,7 +30,7 @@ export default async function ProfilePage() {
         </div>
         <div className="flex justify-between border-b border-zinc-200 pb-3 dark:border-zinc-800">
           <dt className="text-zinc-500">شماره موبایل</dt>
-          <dd className="font-semibold">{user.phone}</dd>
+          <dd dir="ltr" className="font-semibold">{toPersianDigits(user.phone)}</dd>
         </div>
       </dl>
 
