@@ -144,8 +144,10 @@ export default function HeroProducts({ products }: { products: ShowcaseProduct[]
         the product changes; they cross-fade like the photos, the new text
         arriving a moment after its photo. The column is minmax(0, 1fr), not
         the default auto, so a long line wraps instead of stretching the cell
-        past the hero and off the edge of the screen. */}
-    <div className="mt-1 grid grid-cols-[minmax(0,1fr)] text-center md:px-6">
+        past the hero and off the edge of the screen. The dark text shadow
+        keeps it readable where it overlaps the hero photo (on phones the
+        products sit over the man's shoulder). */}
+    <div className="mt-1 grid grid-cols-[minmax(0,1fr)] text-center text-shadow-md text-shadow-black/80 md:px-6">
       {products.map(
         (product) => {
           if (!product.blurb) return null;
@@ -162,7 +164,7 @@ export default function HeroProducts({ products }: { products: ShowcaseProduct[]
               {subtitle && (
                 // The English name on its own line, left-to-right, so it
                 // never gets mixed into the Persian title's direction.
-                <p dir="ltr" className="text-xs font-semibold tracking-wide text-zinc-400 sm:text-sm">
+                <p dir="ltr" className="text-xs font-semibold tracking-wide text-zinc-300 sm:text-sm">
                   {subtitle}
                 </p>
               )}
@@ -171,9 +173,19 @@ export default function HeroProducts({ products }: { products: ShowcaseProduct[]
                   ویژگی‌ها به گفته‌ی سازنده
                 </p>
               )}
-              <ul className="mt-2 space-y-1.5 text-start text-sm leading-relaxed font-medium text-zinc-100 sm:text-base">
+              {/* The maker's claims are a checklist, so they line up at the
+                  start like any list; without them the blurb is a single
+                  sentence from the description, centered like the title. */}
+              <ul
+                className={`mt-2 space-y-1.5 text-sm leading-relaxed font-medium text-zinc-100 sm:text-base ${
+                  product.blurb.fromMaker ? "text-start" : ""
+                }`}
+              >
                 {product.blurb.lines.map((line) => (
-                  <li key={line} className="flex items-start gap-2">
+                  <li
+                    key={line}
+                    className={`flex items-start gap-2 ${product.blurb?.fromMaker ? "" : "justify-center"}`}
+                  >
                     {product.blurb?.fromMaker && (
                       <Check aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-sky-400" />
                     )}
