@@ -6,6 +6,7 @@ import { connectToDatabase } from "@/lib/db";
 import { OrderModel, type Order, type OrderStatus, type PaymentMethod } from "@/models/Order";
 import { getProductNames } from "@/lib/products";
 import { ORDER_STATUS_LABELS, isOrderStatus } from "@/lib/orderStatus";
+import { PENDING_RETURN_REQUEST_FILTER, RETURN_REASONS, type ReturnReason } from "@/lib/returnRequest";
 import OrderManager from "@/components/admin/OrderManager";
 import ReconcileButton from "@/components/admin/ReconcileButton";
 import Pagination from "@/components/ui/Pagination";
@@ -16,13 +17,28 @@ export const metadata: Metadata = {
 };
 
 const PAGE_SIZE = 10;
+
+// One tab per status, plus one for delivered orders whose customer asked to
+// return them: those wait on the admin, unlike the other delivered ones.
+type Tab = OrderStatus | "return_requests";
+
+const TAB_LABELS: Record<Tab, string> = {
+  ...ORDER_STATUS_LABELS,
+  return_requests: "درخواست‌های مرجوعی",
+};
+
+function isTab(value: unknown): value is Tab {
+  return value === "return_requests" || isOrderStatus(value);
+}
+
 // Paid orders are the ones waiting on the admin (to ship), so they're shown by default.
-const DEFAULT_STATUS: OrderStatus = "paid";
+const DEFAULT_STATUS: Tab = "paid";
 // Tabs in order of how much they need the admin: transfers to verify, then
-// orders to ship, parcels on the way, then history.
-const STATUS_TABS: OrderStatus[] = [
+// orders to ship, return requests, parcels on the way, then history.
+const STATUS_TABS: Tab[] = [
   "awaiting_verification",
   "paid",
+  "return_requests",
   "shipped",
   "delivered",
   "pending",
@@ -39,19 +55,27 @@ export default async function AdminOrdersPage(props: PageProps<"/admin/orders">)
   await requireAdmin();
   const searchParams = await props.searchParams;
   const statusParam = first(searchParams.status);
-  const status = isOrderStatus(statusParam) ? statusParam : DEFAULT_STATUS;
+  const status = isTab(statusParam) ? statusParam : DEFAULT_STATUS;
+  const filter = status === "return_requests" ? PENDING_RETURN_REQUEST_FILTER : { status };
   const requestedPage = Number(first(searchParams.page)) || 1;
 
   await connectToDatabase();
 
-  const [totalCount, awaitingCount] = await Promise.all([
-    OrderModel.countDocuments({ status }),
+  const [totalCount, awaitingCount, returnRequestCount] = await Promise.all([
+    OrderModel.countDocuments(filter),
     OrderModel.countDocuments({ status: "awaiting_verification" }),
+    OrderModel.countDocuments(PENDING_RETURN_REQUEST_FILTER),
   ]);
+  // The tabs that show how many orders are waiting on the admin.
+  const badges: Partial<Record<Tab, number>> = {
+    awaiting_verification: awaitingCount,
+    return_requests: returnRequestCount,
+  };
+  const badgeOf = (tab: Tab) => badges[tab] ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
   const currentPage = Math.min(Math.max(requestedPage, 1), totalPages);
 
-  const orders = await OrderModel.find({ status })
+  const orders = await OrderModel.find(filter)
     .sort({ createdAt: -1 })
     .skip((currentPage - 1) * PAGE_SIZE)
     .limit(PAGE_SIZE)
@@ -95,9 +119,20 @@ export default async function AdminOrdersPage(props: PageProps<"/admin/orders">)
     deliveredAt: order.deliveredAt ? new Date(order.deliveredAt).toISOString() : null,
     returnedAt: order.returnedAt ? new Date(order.returnedAt).toISOString() : null,
     returnRestocked: order.returnRestocked ?? null,
+    returnRequest: order.returnRequest
+      ? {
+          reason: RETURN_REASONS[order.returnRequest.reason as ReturnReason],
+          details: order.returnRequest.details ?? "",
+          requestedAt: new Date(order.returnRequest.requestedAt).toISOString(),
+          rejectedAt: order.returnRequest.rejectedAt
+            ? new Date(order.returnRequest.rejectedAt).toISOString()
+            : null,
+          rejectionNote: order.returnRequest.rejectionNote ?? null,
+        }
+      : null,
   }));
 
-  function hrefFor(targetStatus: OrderStatus, page = 1) {
+  function hrefFor(targetStatus: Tab, page = 1) {
     const params = new URLSearchParams();
     if (targetStatus !== DEFAULT_STATUS) params.set("status", targetStatus);
     if (page > 1) params.set("page", String(page));
@@ -121,10 +156,10 @@ export default async function AdminOrdersPage(props: PageProps<"/admin/orders">)
                 : "border-zinc-300 text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:border-zinc-700 dark:text-zinc-400"
             }`}
           >
-            {ORDER_STATUS_LABELS[option]}
-            {option === "awaiting_verification" && awaitingCount > 0 && (
+            {TAB_LABELS[option]}
+            {badgeOf(option) > 0 && (
               <span className="ms-1.5 rounded-full bg-amber-500 px-1.5 text-xs font-bold text-white">
-                {awaitingCount.toLocaleString("fa-IR")}
+                {badgeOf(option).toLocaleString("fa-IR")}
               </span>
             )}
           </Link>

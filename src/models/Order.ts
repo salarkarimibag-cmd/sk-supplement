@@ -55,6 +55,25 @@ const CardTransferSchema = new Schema(
   { _id: false }
 );
 
+// A customer asking to send a delivered order back (see
+// src/lib/returnRequest.ts). The admin either records the return once the
+// parcel arrives (status "returned") or turns the request down.
+const ReturnRequestSchema = new Schema(
+  {
+    reason: {
+      type: String,
+      enum: ["changed_mind", "damaged", "wrong_item", "other"],
+      required: true,
+    },
+    details: { type: String, required: false },
+    requestedAt: { type: Date, required: true },
+    rejectedAt: { type: Date, required: false },
+    // Why it was turned down, as emailed to the customer.
+    rejectionNote: { type: String, required: false },
+  },
+  { _id: false }
+);
+
 const OrderSchema = new Schema(
   {
     // Set once a user is logged in (Phase 3); absent for guest checkout.
@@ -107,6 +126,7 @@ const OrderSchema = new Schema(
     // Whether a returned order's items went back into stock: the admin
     // decides per return, since an opened supplement can't be sold again.
     returnRestocked: { type: Boolean, required: false },
+    returnRequest: { type: ReturnRequestSchema, required: false },
     // Whether this order's items are currently out of stock on its account:
     // set when it's placed (see reserveStock) and kept once it's paid; false
     // once it fails, is cancelled or, for an abandoned ZarinPal payment, its

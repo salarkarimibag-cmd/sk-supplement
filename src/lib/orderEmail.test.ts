@@ -92,6 +92,14 @@ describe("buildOrderEmail", () => {
     expect(buildOrderEmail({ ...baseInput, kind: "shipped" }).text).not.toContain("کد رهگیری مرسوله");
   });
 
+  it("gives the admin's reason only on the rejection email, escaped", () => {
+    const withNote = { ...baseInput, rejectionNote: "<b>مهلت</b> تمام شده" };
+    const rejected = buildOrderEmail({ ...withNote, kind: "return_rejected" });
+    expect(rejected.text).toContain("دلیل: <b>مهلت</b> تمام شده");
+    expect(rejected.html).toContain("دلیل: &lt;b&gt;مهلت&lt;/b&gt; تمام شده");
+    expect(buildOrderEmail({ ...withNote, kind: "return_requested" }).text).not.toContain("مهلت");
+  });
+
   it("leaves out the discount line when there is no discount", () => {
     const email = buildOrderEmail({ ...baseInput, discountAmount: undefined });
     expect(email.text).not.toContain("تخفیف");
@@ -117,7 +125,16 @@ describe("buildOrderEmail", () => {
   });
 
   it("uses a different subject for each kind of email", () => {
-    const kinds = ["received", "paid", "rejected", "shipped", "returned", "cancelled"] as const;
+    const kinds = [
+      "received",
+      "paid",
+      "rejected",
+      "shipped",
+      "returned",
+      "cancelled",
+      "return_requested",
+      "return_rejected",
+    ] as const;
     const subjects = new Set(kinds.map((kind) => buildOrderEmail({ ...baseInput, kind }).subject));
     expect(subjects.size).toBe(kinds.length);
   });
@@ -170,6 +187,18 @@ describe("buildAdminOrderEmail", () => {
     });
     expect(email.text).toContain("987654");
     expect(email.text).not.toContain("کد پیگیری واریز");
+  });
+
+  it("gives the customer's return reason and links to the return requests", () => {
+    const email = buildAdminOrderEmail({
+      ...cardOrder,
+      kind: "return_requested",
+      returnRequest: { reason: "کالا آسیب‌دیده یا معیوب است", details: "<i>درب شکسته</i>" },
+    });
+    expect(email.subject).toContain("درخواست مرجوعی جدید");
+    expect(email.text).toContain("دلیل مرجوعی: کالا آسیب‌دیده یا معیوب است");
+    expect(email.html).toContain("&lt;i&gt;درب شکسته&lt;/i&gt;");
+    expect(email.html).toContain('href="https://example.com/admin/orders?status=return_requests"');
   });
 
   it("escapes everything the buyer typed", () => {

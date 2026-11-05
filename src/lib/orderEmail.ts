@@ -9,7 +9,9 @@ export type OrderEmailKind =
   | "rejected"
   | "shipped"
   | "returned"
-  | "cancelled";
+  | "cancelled"
+  | "return_requested"
+  | "return_rejected";
 
 export interface OrderEmailLine {
   name: string;
@@ -30,6 +32,8 @@ export interface OrderEmailInput {
   refId?: number;
   /** The carrier's tracking number, shown on the shipping email. */
   shipmentTrackingCode?: string;
+  /** The admin's reason for turning a return request down, shown on that email. */
+  rejectionNote?: string;
   address: { province: string; city: string; address: string; postalCode: string };
   siteUrl: string;
   /** Guests have no account, so they get no "my orders" link. */
@@ -66,6 +70,16 @@ const CONTENT: Record<OrderEmailKind, { subject: string; title: string; body: st
     subject: "سفارش شما لغو شد",
     title: "سفارش شما لغو شد",
     body: "این سفارش لغو شد. برای پیگیری بازگشت وجه یا هر سؤالی با ما تماس بگیرید.",
+  },
+  return_requested: {
+    subject: "درخواست مرجوعی شما دریافت شد",
+    title: "درخواست مرجوعی شما دریافت شد",
+    body: "درخواست مرجوعی این سفارش ثبت شد و آن را بررسی می‌کنیم. به‌زودی برای هماهنگی بازگرداندن کالا با شما تماس می‌گیریم.",
+  },
+  return_rejected: {
+    subject: "درخواست مرجوعی شما پذیرفته نشد",
+    title: "درخواست مرجوعی شما پذیرفته نشد",
+    body: "درخواست مرجوعی این سفارش پذیرفته نشد. اگر سؤالی دارید با ما تماس بگیرید.",
   },
 };
 
@@ -161,6 +175,9 @@ export function buildOrderEmail(input: OrderEmailInput) {
     `روش پرداخت: ${PAYMENT_METHOD_LABELS[input.paymentMethod]}`,
     ...(showRefId ? [`کد پیگیری پرداخت: ${input.refId}`] : []),
     ...(showTrackingCode ? [`کد رهگیری مرسوله: ${input.shipmentTrackingCode}`] : []),
+    ...(input.kind === "return_rejected" && input.rejectionNote
+      ? [`دلیل: ${input.rejectionNote}`]
+      : []),
   ];
 
   const text = [
@@ -192,8 +209,8 @@ ${buttonHtml(link.url, link.label)}
   return { subject: `${content.subject} | شماره ${orderNumber}`, text, html };
 }
 
-/** The new orders the shop's admins are emailed about. */
-export type AdminOrderEmailKind = "card_received" | "paid";
+/** The order events the shop's admins are emailed about. */
+export type AdminOrderEmailKind = "card_received" | "paid" | "return_requested";
 
 export interface AdminOrderEmailInput extends Omit<OrderEmailInput, "kind" | "hasAccount"> {
   kind: AdminOrderEmailKind;
@@ -202,7 +219,16 @@ export interface AdminOrderEmailInput extends Omit<OrderEmailInput, "kind" | "ha
   cardTransfer?: { trackingCode: string; cardLast4: string };
   /** Products this order left short: it was paid after its stock was sold on. */
   oversold?: string[];
+  /** The customer's return request: the reason as a label, and their own words. */
+  returnRequest?: { reason: string; details?: string };
 }
+
+// Where each email's button leads in the admin.
+const ADMIN_PATHS: Record<AdminOrderEmailKind, string> = {
+  card_received: "/admin/orders",
+  paid: "/admin/orders",
+  return_requested: "/admin/orders?status=return_requests",
+};
 
 const ADMIN_CONTENT: Record<AdminOrderEmailKind, { subject: string; body: string }> = {
   card_received: {
@@ -212,6 +238,10 @@ const ADMIN_CONTENT: Record<AdminOrderEmailKind, { subject: string; body: string
   paid: {
     subject: "سفارش جدید پرداخت‌شده، آماده ارسال",
     body: "یک سفارش از درگاه زرین‌پال پرداخت شد و آماده ارسال است.",
+  },
+  return_requested: {
+    subject: "درخواست مرجوعی جدید",
+    body: "مشتری برای یک سفارش تحویل‌شده درخواست مرجوعی ثبت کرد. با مشتری برای بازگرداندن کالا هماهنگ کنید و بعد از رسیدن کالا، مرجوعی را در پنل مدیریت ثبت کنید؛ یا درخواست را با ذکر دلیل رد کنید.",
   },
 };
 
@@ -224,7 +254,7 @@ export function buildAdminOrderEmail(input: AdminOrderEmailInput) {
       ? `هشدار: این سفارش بعد از پایان مهلت رزرو پرداخت شد و موجودی این محصولات کافی نیست: ${oversold.join("، ")}. مبلغ از مشتری کسر شده است؛ کالا را تهیه کنید یا با مشتری تماس بگیرید و مبلغ را برگردانید.`
       : "";
   const orderNumber = formatOrderNumber(input.orderId);
-  const adminUrl = `${input.siteUrl}/admin/orders`;
+  const adminUrl = `${input.siteUrl}${ADMIN_PATHS[input.kind]}`;
 
   const details = [
     `شماره سفارش: ${orderNumber}`,
@@ -234,6 +264,14 @@ export function buildAdminOrderEmail(input: AdminOrderEmailInput) {
       ? [
           `کد پیگیری واریز: ${input.cardTransfer.trackingCode}`,
           `۴ رقم آخر کارت واریزکننده: ${input.cardTransfer.cardLast4}`,
+        ]
+      : []),
+    ...(input.returnRequest
+      ? [
+          `دلیل مرجوعی: ${input.returnRequest.reason}`,
+          ...(input.returnRequest.details
+            ? [`توضیحات مشتری: ${input.returnRequest.details}`]
+            : []),
         ]
       : []),
     `مشتری: ${input.firstName} ${input.lastName}`.trim(),

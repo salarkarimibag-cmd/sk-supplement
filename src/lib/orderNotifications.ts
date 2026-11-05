@@ -7,6 +7,7 @@ import {
   type AdminOrderEmailKind,
   type OrderEmailKind,
 } from "@/lib/orderEmail";
+import { RETURN_REASONS } from "@/lib/returnRequest";
 import { SITE_URL } from "@/lib/site";
 import type { Order, PaymentMethod } from "@/models/Order";
 import { ProductModel, type Product } from "@/models/Product";
@@ -23,6 +24,7 @@ type NotifiableOrder = Pick<
   | "userId"
   | "cardTransfer"
   | "shipmentTrackingCode"
+  | "returnRequest"
 > & { _id: unknown; paymentMethod?: PaymentMethod | null };
 
 // The fields both the customer and the admin email need, with product names
@@ -51,6 +53,7 @@ async function loadEmailBase(order: NotifiableOrder) {
     paymentMethod: order.paymentMethod ?? "zarinpal",
     refId: order.paymentRefId ?? undefined,
     shipmentTrackingCode: order.shipmentTrackingCode ?? undefined,
+    rejectionNote: order.returnRequest?.rejectionNote ?? undefined,
     address: order.shippingAddress,
     siteUrl: SITE_URL,
   };
@@ -73,8 +76,8 @@ export async function sendOrderEmail(order: NotifiableOrder, kind: OrderEmailKin
 }
 
 /**
- * Tells every admin (users with isAdmin) about a new order that needs them:
- * a card transfer to check, or a paid order to ship. Same rules as
+ * Tells every admin (users with isAdmin) about an order that needs them:
+ * a card transfer to check, a paid order to ship, or a return request. Same rules as
  * sendOrderEmail: run in `after()`, once per order, failures only logged.
  * Each admin gets their own email, so no one sees the others' addresses.
  */
@@ -94,6 +97,12 @@ export async function sendAdminOrderEmail(
       contact: order.contact,
       cardTransfer: order.cardTransfer ?? undefined,
       oversold,
+      returnRequest: order.returnRequest
+        ? {
+            reason: RETURN_REASONS[order.returnRequest.reason as keyof typeof RETURN_REASONS],
+            details: order.returnRequest.details ?? undefined,
+          }
+        : undefined,
     });
     await Promise.all(admins.map((admin) => sendEmail({ to: admin.email, ...email })));
   } catch (error) {
