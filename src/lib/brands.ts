@@ -19,6 +19,7 @@ const PERSIAN_BRAND_NAMES: Record<string, string> = {
   "Rule 1": "رول وان",
   "Scitec Nutrition": "سایتک نوتریشن",
   "Universal Nutrition": "یونیورسال نوتریشن",
+  USN: "یو‌اس‌ان",
   "Zoomad Labs": "زومات لب",
 };
 
