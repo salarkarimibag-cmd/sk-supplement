@@ -14,16 +14,18 @@ export interface PublicReview {
 }
 
 /**
- * Whether the user has a paid (or shipped) order containing the product.
- * Matches on the order's userId only: emails aren't verified, so matching
- * a guest order by email would let anyone claim someone else's purchase.
+ * Whether the user has a paid (or shipped) order containing the product,
+ * on its own line or inside a combo pack (the pack's contents are saved on
+ * its order line). Matches on the order's userId only: emails aren't
+ * verified, so matching a guest order by email would let anyone claim
+ * someone else's purchase.
  */
 export async function hasPurchased(userId: string, productId: string): Promise<boolean> {
   await connectToDatabase();
   const order = await OrderModel.exists({
     userId,
     status: { $in: SOLD_ORDER_STATUSES },
-    "items.productId": productId,
+    $or: [{ "items.productId": productId }, { "items.packProductIds": productId }],
   });
   return order !== null;
 }
