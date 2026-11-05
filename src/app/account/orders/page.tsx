@@ -7,6 +7,8 @@ import { connectToDatabase } from "@/lib/db";
 import { OrderModel, type Order, type OrderStatus } from "@/models/Order";
 import { getProductNames } from "@/lib/products";
 import { ORDER_STATUS_LABELS } from "@/lib/orderStatus";
+import { returnDeadline, returnRequestBlocker } from "@/lib/returnRequest";
+import ReturnRequestForm from "@/components/account/ReturnRequestForm";
 
 export const metadata: Metadata = {
   title: "سفارش‌های من",
@@ -24,6 +26,62 @@ const statusClass: Record<OrderStatus, string> = {
   cancelled: "text-zinc-400",
 };
 
+/** "شنبه ۲۴ آبان", in Tehran time whatever the server's own zone. */
+function formatDeadline(date: Date): string {
+  return date.toLocaleDateString("fa-IR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    timeZone: "Asia/Tehran",
+  });
+}
+
+/**
+ * What this order's footer says about returning it: the request form while
+ * the customer may still ask, or where their request stands. Nothing for
+ * orders a return doesn't apply to.
+ */
+// Only what the return section reads, so the page can pass its own order objects.
+type ReturnSectionOrder = Pick<Order, "status" | "deliveredAt" | "returnRequest"> & {
+  _id: Types.ObjectId;
+};
+
+function ReturnSection({ order, now }: { order: ReturnSectionOrder; now: Date }) {
+  const content = returnSectionContent(order, now);
+  if (!content) return null;
+  return (
+    <div className="mt-3 border-t border-zinc-100 pt-3 dark:border-zinc-900">{content}</div>
+  );
+}
+
+function returnSectionContent(order: ReturnSectionOrder, now: Date) {
+  const request = order.returnRequest;
+  if (!request) {
+    if (returnRequestBlocker(order, now) !== null || !order.deliveredAt) return null;
+    return (
+      <ReturnRequestForm
+        orderId={String(order._id)}
+        deadline={formatDeadline(returnDeadline(order.deliveredAt))}
+      />
+    );
+  }
+  if (request.rejectedAt) {
+    return (
+      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        درخواست مرجوعی شما پذیرفته نشد. دلیل: {request.rejectionNote}
+      </p>
+    );
+  }
+  // Once the parcel is back the status says "مرجوع‌شده"; until then the
+  // request is waiting on the shop.
+  if (order.status === "returned") return null;
+  return (
+    <p className="text-sm text-amber-700 dark:text-amber-500">
+      درخواست مرجوعی شما ثبت شد و در حال بررسی است. برای هماهنگی ارسال کالا با شما تماس می‌گیریم.
+    </p>
+  );
+}
+
 export default async function OrdersPage() {
   const user = await getSessionUser();
   if (!user) redirect("/account/login");
@@ -35,6 +93,7 @@ export default async function OrdersPage() {
   const orders = await OrderModel.find({ userId: user.id })
     .sort({ createdAt: -1 })
     .lean<(Order & { _id: Types.ObjectId })[]>();
+  const now = new Date();
 
   // One query for every product in these orders, instead of one per line.
   const productNames = await getProductNames(
@@ -102,6 +161,8 @@ export default async function OrdersPage() {
               <span>مبلغ کل</span>
               <span>{order.totalPrice.toLocaleString("fa-IR")} تومان</span>
             </div>
+
+            <ReturnSection order={order} now={now} />
           </div>
         ))}
       </div>

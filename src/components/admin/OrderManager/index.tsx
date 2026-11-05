@@ -29,14 +29,28 @@ interface OrderItem {
   deliveredAt: string | null;
   returnedAt: string | null;
   returnRestocked: boolean | null;
+  returnRequest: {
+    reason: string;
+    details: string;
+    requestedAt: string;
+    rejectedAt: string | null;
+    rejectionNote: string | null;
+  } | null;
 }
 
 // These two need more from the admin than a yes, so their button opens a
 // small form under the order instead of a confirm() prompt.
 type FormStatus = "shipped" | "returned";
+// Turning down a return request takes a reason, so it has a form too.
+type FormKind = FormStatus | "reject_return";
 
 function needsForm(status: OrderStatus): status is FormStatus {
   return status === "shipped" || status === "returned";
+}
+
+/** A return request still waiting on the admin: asked for, not turned down, not yet returned. */
+function hasPendingReturnRequest(order: OrderItem): boolean {
+  return order.status === "delivered" && order.returnRequest !== null && !order.returnRequest.rejectedAt;
 }
 
 const ACTION_LABELS: Partial<Record<OrderStatus, string>> = {
@@ -60,11 +74,51 @@ function formatDate(iso: string) {
 
 export default function OrderManager({ initialOrders }: { initialOrders: OrderItem[] }) {
   const [orders, setOrders] = useState(initialOrders);
-  // The order whose shipping or return form is open, if any; one at a time.
-  const [openForm, setOpenForm] = useState<{ orderId: string; status: FormStatus } | null>(null);
+  // The order whose shipping, return or rejection form is open, if any; one at a time.
+  const [openForm, setOpenForm] = useState<{ orderId: string; kind: FormKind } | null>(null);
   const [trackingCode, setTrackingCode] = useState("");
   const [restock, setRestock] = useState(false);
+  const [rejectionNote, setRejectionNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  function openFormFor(order: OrderItem, kind: FormKind) {
+    setOpenForm({ orderId: order.id, kind });
+    setTrackingCode("");
+    setRestock(false);
+    setRejectionNote("");
+  }
+
+  async function sendReturnRejection(order: OrderItem) {
+    setSubmitting(true);
+    try {
+      const response = await fetch(`/api/admin/orders/${order.id}/reject-return`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ note: rejectionNote }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        alert(data.message ?? "رد درخواست ناموفق بود.");
+        return;
+      }
+      // The order keeps its status, so it stays on the list, now showing
+      // the request as turned down.
+      const rejectedAt = new Date().toISOString();
+      setOrders((current) =>
+        current.map((item) =>
+          item.id === order.id && item.returnRequest
+            ? {
+                ...item,
+                returnRequest: { ...item.returnRequest, rejectedAt, rejectionNote: rejectionNote.trim() },
+              }
+            : item
+        )
+      );
+      setOpenForm(null);
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   async function sendStatusChange(
     order: OrderItem,
@@ -98,18 +152,20 @@ export default function OrderManager({ initialOrders }: { initialOrders: OrderIt
   function handleFormSubmit(event: FormEvent<HTMLFormElement>, order: OrderItem) {
     event.preventDefault();
     if (!openForm) return;
+    if (openForm.kind === "reject_return") {
+      void sendReturnRejection(order);
+      return;
+    }
     void sendStatusChange(
       order,
-      openForm.status,
-      openForm.status === "shipped" ? { trackingCode } : { restock }
+      openForm.kind,
+      openForm.kind === "shipped" ? { trackingCode } : { restock }
     );
   }
 
   async function handleStatusChange(order: OrderItem, status: OrderStatus) {
     if (needsForm(status)) {
-      setOpenForm({ orderId: order.id, status });
-      setTrackingCode("");
-      setRestock(false);
+      openFormFor(order, status);
       return;
     }
 
@@ -195,6 +251,33 @@ export default function OrderManager({ initialOrders }: { initialOrders: OrderIt
                 </dd>
               </>
             )}
+            {order.returnRequest && (
+              <>
+                <dt className="text-zinc-500">درخواست مرجوعی</dt>
+                <dd>
+                  <span
+                    className={
+                      hasPendingReturnRequest(order)
+                        ? "font-bold text-amber-600 dark:text-amber-500"
+                        : undefined
+                    }
+                  >
+                    {formatDate(order.returnRequest.requestedAt)} · {order.returnRequest.reason}
+                  </span>
+                  {order.returnRequest.details && (
+                    <span className="block whitespace-pre-line text-zinc-600 dark:text-zinc-400">
+                      {order.returnRequest.details}
+                    </span>
+                  )}
+                  {order.returnRequest.rejectedAt && (
+                    <span className="block text-zinc-500">
+                      رد شد ({formatDate(order.returnRequest.rejectedAt)}):{" "}
+                      {order.returnRequest.rejectionNote}
+                    </span>
+                  )}
+                </dd>
+              </>
+            )}
           </dl>
 
           <ul className="mt-3 flex flex-col gap-1 border-t border-zinc-100 pt-3 dark:border-zinc-900">
@@ -226,7 +309,16 @@ export default function OrderManager({ initialOrders }: { initialOrders: OrderIt
 
           <footer className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-zinc-100 pt-3 dark:border-zinc-900">
             <span className="font-bold">مبلغ کل: {formatToman(order.totalPrice)}</span>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
+              {hasPendingReturnRequest(order) && (
+                <button
+                  type="button"
+                  onClick={() => openFormFor(order, "reject_return")}
+                  className="cursor-pointer text-red-600 hover:underline"
+                >
+                  رد درخواست مرجوعی
+                </button>
+              )}
               {allowedAdminTransitions(order.status, order.paymentMethod).map((status) => (
                 <button
                   key={status}
@@ -247,7 +339,20 @@ export default function OrderManager({ initialOrders }: { initialOrders: OrderIt
               onSubmit={(event) => handleFormSubmit(event, order)}
               className="mt-3 flex flex-col gap-3 rounded bg-zinc-50 p-3 dark:bg-zinc-900"
             >
-              {openForm.status === "shipped" ? (
+              {openForm.kind === "reject_return" ? (
+                <label className="flex flex-col gap-1">
+                  <span>دلیل رد درخواست (برای مشتری ایمیل می‌شود)</span>
+                  <textarea
+                    value={rejectionNote}
+                    onChange={(event) => setRejectionNote(event.target.value)}
+                    rows={3}
+                    maxLength={500}
+                    required
+                    autoFocus
+                    className="rounded border border-zinc-300 bg-white px-3 py-2 dark:border-zinc-700 dark:bg-zinc-950"
+                  />
+                </label>
+              ) : openForm.kind === "shipped" ? (
                 <label className="flex flex-col gap-1">
                   <span>کد رهگیری مرسوله (اختیاری؛ برای مشتری ایمیل می‌شود)</span>
                   <input
@@ -283,7 +388,11 @@ export default function OrderManager({ initialOrders }: { initialOrders: OrderIt
                   disabled={submitting}
                   className="cursor-pointer rounded bg-sky-600 px-4 py-1.5 text-white hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {openForm.status === "shipped" ? "ثبت ارسال" : "ثبت مرجوعی"}
+                  {openForm.kind === "reject_return"
+                    ? "رد درخواست"
+                    : openForm.kind === "shipped"
+                      ? "ثبت ارسال"
+                      : "ثبت مرجوعی"}
                 </button>
                 <button
                   type="button"

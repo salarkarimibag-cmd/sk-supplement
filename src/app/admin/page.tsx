@@ -7,6 +7,7 @@ import { ProductModel, type Product } from "@/models/Product";
 import { ReviewModel } from "@/models/Review";
 import { ContactMessageModel } from "@/models/ContactMessage";
 import { SOLD_ORDER_STATUSES } from "@/lib/orderStatus";
+import { PENDING_RETURN_REQUEST_FILTER } from "@/lib/returnRequest";
 import { formatProductName } from "@/lib/orderEmail";
 import {
   LOW_STOCK_THRESHOLD,
@@ -70,31 +71,33 @@ export default async function AdminDashboardPage() {
   const windows = salesWindows(now);
 
   // Independent reads, so they run at once.
-  const [statusCounts, soldOrders, pendingReviews, recentMessages, lowStock] = await Promise.all([
-    OrderModel.aggregate<{ _id: OrderStatus; count: number }>([
-      { $match: { status: { $in: ACTION_STATUSES } } },
-      { $group: { _id: "$status", count: { $sum: 1 } } },
-    ]),
-    // Only the two fields the totals need, over the longest window. Sales
-    // are counted on the day the order was placed; returned and cancelled
-    // orders aren't sales, so SOLD_ORDER_STATUSES leaves them out.
-    OrderModel.find(
-      { status: { $in: SOLD_ORDER_STATUSES }, createdAt: { $gte: windows[windows.length - 1].since } },
-      { _id: 0, createdAt: 1, totalPrice: 1 }
-    ).lean<{ createdAt: Date; totalPrice: number }[]>(),
-    ReviewModel.countDocuments({ approved: false }),
-    ContactMessageModel.countDocuments({ createdAt: { $gte: new Date(now.getTime() - 7 * DAY_MS) } }),
-    // A combo pack's stock is worked out from the products inside it (see
-    // withPackStock), so only real products are listed; a short pack shows
-    // up through its contents.
-    ProductModel.find(
-      { stock: { $lte: LOW_STOCK_THRESHOLD }, "packProductIds.0": { $exists: false } },
-      { _id: 0, id: 1, name: 1, flavor: 1, size: 1, stock: 1 }
-    )
-      .sort({ stock: 1, name: 1 })
-      .limit(LOW_STOCK_LIMIT)
-      .lean<Pick<Product, "id" | "name" | "flavor" | "size" | "stock">[]>(),
-  ]);
+  const [statusCounts, soldOrders, pendingReviews, returnRequests, recentMessages, lowStock] =
+    await Promise.all([
+      OrderModel.aggregate<{ _id: OrderStatus; count: number }>([
+        { $match: { status: { $in: ACTION_STATUSES } } },
+        { $group: { _id: "$status", count: { $sum: 1 } } },
+      ]),
+      // Only the two fields the totals need, over the longest window. Sales
+      // are counted on the day the order was placed; returned and cancelled
+      // orders aren't sales, so SOLD_ORDER_STATUSES leaves them out.
+      OrderModel.find(
+        { status: { $in: SOLD_ORDER_STATUSES }, createdAt: { $gte: windows[windows.length - 1].since } },
+        { _id: 0, createdAt: 1, totalPrice: 1 }
+      ).lean<{ createdAt: Date; totalPrice: number }[]>(),
+      ReviewModel.countDocuments({ approved: false }),
+      OrderModel.countDocuments(PENDING_RETURN_REQUEST_FILTER),
+      ContactMessageModel.countDocuments({ createdAt: { $gte: new Date(now.getTime() - 7 * DAY_MS) } }),
+      // A combo pack's stock is worked out from the products inside it (see
+      // withPackStock), so only real products are listed; a short pack shows
+      // up through its contents.
+      ProductModel.find(
+        { stock: { $lte: LOW_STOCK_THRESHOLD }, "packProductIds.0": { $exists: false } },
+        { _id: 0, id: 1, name: 1, flavor: 1, size: 1, stock: 1 }
+      )
+        .sort({ stock: 1, name: 1 })
+        .limit(LOW_STOCK_LIMIT)
+        .lean<Pick<Product, "id" | "name" | "flavor" | "size" | "stock">[]>(),
+    ]);
 
   const countOf = new Map(statusCounts.map((row) => [row._id, row.count]));
   const sales = summarizeSales(soldOrders, windows);
@@ -116,7 +119,13 @@ export default async function AdminDashboardPage() {
             />
           ))}
         </div>
-        <div className="mt-3 grid grid-cols-2 gap-3">
+        <div className="mt-3 grid grid-cols-3 gap-3">
+          <Card
+            href="/admin/orders?status=return_requests"
+            label="درخواست مرجوعی"
+            value={returnRequests}
+            alert
+          />
           <Card href="/admin/reviews" label="نظر در انتظار تأیید" value={pendingReviews} alert />
           <Card href="/admin/messages" label="پیام‌های ۷ روز اخیر" value={recentMessages} />
         </div>
