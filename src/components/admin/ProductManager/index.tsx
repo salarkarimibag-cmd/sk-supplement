@@ -449,7 +449,7 @@ export default function ProductManager({
                 <td className="py-2">{item.price.toLocaleString("fa-IR")} تومان</td>
                 <td className="py-2">
                   {item.stock > 0 ? (
-                    item.stock
+                    item.stock.toLocaleString("fa-IR")
                   ) : (
                     <span className="text-red-500">ناموجود</span>
                   )}

@@ -12,6 +12,17 @@ import type { NavLink } from "@/lib/navigation";
 // Tailwind's md breakpoint, where the menu button and panel are hidden.
 const DESKTOP_QUERY = "(min-width: 48rem)";
 
+/**
+ * Where the header ends on screen, so the panel starts right below it. This
+ * is the header's bottom edge, not its height: at the top of the page the
+ * announcement bar sits above the sticky header and pushes it down, and once
+ * the page is scrolled past the bar it doesn't.
+ */
+function getHeaderBottom(): number {
+  const header = document.querySelector("header");
+  return header ? header.getBoundingClientRect().bottom : 0;
+}
+
 const ITEM_CLASS =
   "px-6 py-4 text-lg transition-colors hover:bg-zinc-100 hover:text-sky-600 dark:hover:bg-zinc-800";
 
@@ -30,14 +41,20 @@ export default function MobileMenu({
 
   useEffect(() => {
     function measureHeader() {
-      const header = document.querySelector("header");
-      if (header) setTopOffset(header.getBoundingClientRect().height);
+      setTopOffset(getHeaderBottom());
     }
 
     measureHeader();
     window.addEventListener("resize", measureHeader);
     return () => window.removeEventListener("resize", measureHeader);
   }, []);
+
+  function open() {
+    // The header's bottom edge moves with scrolling (see getHeaderBottom), so
+    // measure it again right before the panel appears.
+    setTopOffset(getHeaderBottom());
+    setIsOpen(true);
+  }
 
   function close() {
     setIsOpen(false);
@@ -70,7 +87,7 @@ export default function MobileMenu({
         type="button"
         aria-label={isOpen ? "بستن منو" : "باز کردن منو"}
         aria-expanded={isOpen}
-        onClick={() => (isOpen ? close() : setIsOpen(true))}
+        onClick={() => (isOpen ? close() : open())}
         className="group flex h-9 w-9 cursor-pointer items-center justify-center text-white hover:text-sky-500 md:hidden"
       >
         {isOpen ? (
