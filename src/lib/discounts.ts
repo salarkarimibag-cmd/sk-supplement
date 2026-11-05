@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { DiscountCode } from "@/models/DiscountCode";
+import { PAID_ORDER_STATUSES } from "@/lib/orderStatus";
 
 export type DiscountCheckResult =
   | { valid: true; code: string; discountAmount: number }
@@ -102,12 +103,13 @@ export interface Customer {
  * codes: any earlier purchase under the same email or the same mobile (so a
  * new email alone doesn't make someone new), paid or a card transfer sent.
  * Unpaid ZarinPal orders don't count, so a buyer who left the gateway can
- * try again with the code; nor do failed or cancelled ones.
+ * try again with the code; nor do failed or cancelled ones. A returned order
+ * does: the buyer did buy, so returning it doesn't make the code new again.
  */
 export function previousOrdersFilter(customer: Customer) {
   return {
     $or: [{ "contact.email": customer.email }, { "contact.mobile": customer.mobile }],
-    status: { $in: ["awaiting_verification", "paid", "shipped"] },
+    status: { $in: ["awaiting_verification", ...PAID_ORDER_STATUSES] },
   };
 }
 

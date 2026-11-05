@@ -19,6 +19,8 @@ const statusClass: Record<OrderStatus, string> = {
   paid: "text-emerald-600",
   failed: "text-red-600",
   shipped: "text-sky-600",
+  delivered: "text-emerald-600",
+  returned: "text-zinc-400",
   cancelled: "text-zinc-400",
 };
 
@@ -86,6 +88,15 @@ export default async function OrdersPage() {
                 </li>
               ))}
             </ul>
+
+            {order.shipmentTrackingCode && (
+              <p className="mt-3 border-t border-zinc-100 pt-3 text-sm dark:border-zinc-900">
+                <span className="text-zinc-500">کد رهگیری مرسوله: </span>
+                <span dir="ltr" className="font-mono">
+                  {order.shipmentTrackingCode}
+                </span>
+              </p>
+            )}
 
             <div className="mt-3 flex justify-between border-t border-zinc-100 pt-3 text-sm font-bold dark:border-zinc-900">
               <span>مبلغ کل</span>

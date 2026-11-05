@@ -7,6 +7,8 @@ export type OrderStatus =
   | "paid"
   | "failed"
   | "shipped"
+  | "delivered"
+  | "returned"
   | "cancelled";
 
 export type PaymentMethod = "zarinpal" | "card";
@@ -62,7 +64,16 @@ const OrderSchema = new Schema(
     shippingAddress: { type: ShippingAddressSchema, required: true },
     status: {
       type: String,
-      enum: ["pending", "awaiting_verification", "paid", "failed", "shipped", "cancelled"],
+      enum: [
+        "pending",
+        "awaiting_verification",
+        "paid",
+        "failed",
+        "shipped",
+        "delivered",
+        "returned",
+        "cancelled",
+      ],
       default: "pending",
     },
     totalPrice: { type: Number, required: true },
@@ -84,6 +95,18 @@ const OrderSchema = new Schema(
     // ZarinPal's ref_id, set only after a successful verification.
     paymentRefId: { type: Number, required: false },
     cardTransfer: { type: CardTransferSchema, required: false },
+    // What happened after payment, set by the admin with each status change
+    // (see orderStatusUpdate). All optional: orders shipped before these
+    // existed have none of them.
+    // The carrier's tracking number (Post or Tipax), shown to the customer.
+    shipmentTrackingCode: { type: String, required: false },
+    shippedAt: { type: Date, required: false },
+    // The return window in the refund policy counts from this day.
+    deliveredAt: { type: Date, required: false },
+    returnedAt: { type: Date, required: false },
+    // Whether a returned order's items went back into stock: the admin
+    // decides per return, since an opened supplement can't be sold again.
+    returnRestocked: { type: Boolean, required: false },
     // Whether this order's items are currently out of stock on its account:
     // set when it's placed (see reserveStock) and kept once it's paid; false
     // once it fails, is cancelled or, for an abandoned ZarinPal payment, its

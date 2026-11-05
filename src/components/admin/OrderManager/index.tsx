@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import type { OrderStatus, PaymentMethod } from "@/models/Order";
 import {
   ORDER_STATUS_LABELS,
@@ -24,25 +24,95 @@ interface OrderItem {
   paymentRefId: number | null;
   paymentMethod: PaymentMethod;
   cardTransfer: { trackingCode: string; cardLast4: string } | null;
+  shipmentTrackingCode: string | null;
+  shippedAt: string | null;
+  deliveredAt: string | null;
+  returnedAt: string | null;
+  returnRestocked: boolean | null;
+}
+
+// These two need more from the admin than a yes, so their button opens a
+// small form under the order instead of a confirm() prompt.
+type FormStatus = "shipped" | "returned";
+
+function needsForm(status: OrderStatus): status is FormStatus {
+  return status === "shipped" || status === "returned";
 }
 
 const ACTION_LABELS: Partial<Record<OrderStatus, string>> = {
   paid: "تأیید پرداخت",
   failed: "رد پرداخت",
   shipped: "علامت‌گذاری به‌عنوان ارسال‌شده",
+  delivered: "تحویل داده شد",
+  returned: "ثبت مرجوعی",
   cancelled: "لغو سفارش",
 };
 
-const DESTRUCTIVE_STATUSES: OrderStatus[] = ["failed", "cancelled"];
+const DESTRUCTIVE_STATUSES: OrderStatus[] = ["failed", "cancelled", "returned"];
 
 function formatToman(amount: number) {
   return `${amount.toLocaleString("fa-IR")} تومان`;
 }
 
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString("fa-IR");
+}
+
 export default function OrderManager({ initialOrders }: { initialOrders: OrderItem[] }) {
   const [orders, setOrders] = useState(initialOrders);
+  // The order whose shipping or return form is open, if any; one at a time.
+  const [openForm, setOpenForm] = useState<{ orderId: string; status: FormStatus } | null>(null);
+  const [trackingCode, setTrackingCode] = useState("");
+  const [restock, setRestock] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  async function sendStatusChange(
+    order: OrderItem,
+    status: OrderStatus,
+    extra: { trackingCode?: string; restock?: boolean } = {}
+  ) {
+    setSubmitting(true);
+    try {
+      const response = await fetch(`/api/admin/orders/${order.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status, ...extra }),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message ?? "تغییر وضعیت ناموفق بود.");
+        return;
+      }
+
+      // The list is filtered by status, so an order that changed status no
+      // longer belongs on this tab.
+      setOrders((current) => current.filter((item) => item.id !== order.id));
+      setOpenForm(null);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  // The form itself is the admin's confirmation, so no confirm() here.
+  function handleFormSubmit(event: FormEvent<HTMLFormElement>, order: OrderItem) {
+    event.preventDefault();
+    if (!openForm) return;
+    void sendStatusChange(
+      order,
+      openForm.status,
+      openForm.status === "shipped" ? { trackingCode } : { restock }
+    );
+  }
 
   async function handleStatusChange(order: OrderItem, status: OrderStatus) {
+    if (needsForm(status)) {
+      setOpenForm({ orderId: order.id, status });
+      setTrackingCode("");
+      setRestock(false);
+      return;
+    }
+
     // Confirming a transfer is the step that can cost money, so the prompt
     // repeats exactly what to look for on the bank statement.
     // Cancelling a paid order puts its items back in stock, but the money has
@@ -54,22 +124,7 @@ export default function OrderManager({ initialOrders }: { initialOrders: OrderIt
           ? `سفارش «${order.customerName}» لغو شود؟ کالاها به موجودی برمی‌گردند، ولی مبلغ ${formatToman(order.totalPrice)} را باید خودتان به مشتری برگردانید.`
           : `وضعیت سفارش «${order.customerName}» به «${ORDER_STATUS_LABELS[status]}» تغییر کند؟`;
     if (!confirm(question)) return;
-
-    const response = await fetch(`/api/admin/orders/${order.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
-    const data = await response.json();
-
-    if (!response.ok) {
-      alert(data.message ?? "تغییر وضعیت ناموفق بود.");
-      return;
-    }
-
-    // The list is filtered by status, so an order that changed status no
-    // longer belongs on this tab.
-    setOrders((current) => current.filter((item) => item.id !== order.id));
+    await sendStatusChange(order, status);
   }
 
   if (orders.length === 0) {
@@ -111,6 +166,35 @@ export default function OrderManager({ initialOrders }: { initialOrders: OrderIt
             <dd>
               {order.address} — کد پستی: {order.postalCode}
             </dd>
+            {order.shippedAt && (
+              <>
+                <dt className="text-zinc-500">ارسال</dt>
+                <dd>
+                  {formatDate(order.shippedAt)}
+                  {order.shipmentTrackingCode && (
+                    <>
+                      {" "}
+                      · کد رهگیری: <span dir="ltr">{order.shipmentTrackingCode}</span>
+                    </>
+                  )}
+                </dd>
+              </>
+            )}
+            {order.deliveredAt && (
+              <>
+                <dt className="text-zinc-500">تحویل</dt>
+                <dd>{formatDate(order.deliveredAt)}</dd>
+              </>
+            )}
+            {order.returnedAt && (
+              <>
+                <dt className="text-zinc-500">مرجوعی</dt>
+                <dd>
+                  {formatDate(order.returnedAt)} ·{" "}
+                  {order.returnRestocked ? "به موجودی برگشت" : "به موجودی برنگشت"}
+                </dd>
+              </>
+            )}
           </dl>
 
           <ul className="mt-3 flex flex-col gap-1 border-t border-zinc-100 pt-3 dark:border-zinc-900">
@@ -157,6 +241,60 @@ export default function OrderManager({ initialOrders }: { initialOrders: OrderIt
               ))}
             </div>
           </footer>
+
+          {openForm?.orderId === order.id && (
+            <form
+              onSubmit={(event) => handleFormSubmit(event, order)}
+              className="mt-3 flex flex-col gap-3 rounded bg-zinc-50 p-3 dark:bg-zinc-900"
+            >
+              {openForm.status === "shipped" ? (
+                <label className="flex flex-col gap-1">
+                  <span>کد رهگیری مرسوله (اختیاری؛ برای مشتری ایمیل می‌شود)</span>
+                  <input
+                    type="text"
+                    dir="ltr"
+                    value={trackingCode}
+                    onChange={(event) => setTrackingCode(event.target.value)}
+                    maxLength={60}
+                    autoComplete="off"
+                    autoFocus
+                    className="rounded border border-zinc-300 bg-white px-3 py-2 dark:border-zinc-700 dark:bg-zinc-950"
+                  />
+                </label>
+              ) : (
+                <>
+                  <p>
+                    مرجوعی سفارش «{order.customerName}» ثبت شود؟ مبلغ{" "}
+                    {formatToman(order.totalPrice)} را باید خودتان به مشتری برگردانید.
+                  </p>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={restock}
+                      onChange={(event) => setRestock(event.target.checked)}
+                    />
+                    کالاها سالم و باز نشده‌اند؛ به موجودی برگردند
+                  </label>
+                </>
+              )}
+              <div className="flex gap-3">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="cursor-pointer rounded bg-sky-600 px-4 py-1.5 text-white hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {openForm.status === "shipped" ? "ثبت ارسال" : "ثبت مرجوعی"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setOpenForm(null)}
+                  className="cursor-pointer text-zinc-500 hover:underline"
+                >
+                  انصراف
+                </button>
+              </div>
+            </form>
+          )}
         </article>
       ))}
     </div>

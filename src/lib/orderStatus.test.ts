@@ -17,10 +17,17 @@ describe("allowedAdminTransitions", () => {
     expect(adminSourcesFor("paid", "zarinpal")).toEqual([]);
   });
 
+  it("lets a shipped order be delivered or come back, and a delivered one be returned", () => {
+    for (const method of ["zarinpal", "card"] as const) {
+      expect(allowedAdminTransitions("shipped", method)).toEqual(["delivered", "returned"]);
+      expect(allowedAdminTransitions("delivered", method)).toEqual(["returned"]);
+    }
+  });
+
   it("allows nothing from final states", () => {
     for (const method of ["zarinpal", "card"] as const) {
       expect(allowedAdminTransitions("failed", method)).toEqual([]);
-      expect(allowedAdminTransitions("shipped", method)).toEqual([]);
+      expect(allowedAdminTransitions("returned", method)).toEqual([]);
       expect(allowedAdminTransitions("cancelled", method)).toEqual([]);
     }
   });
@@ -32,6 +39,8 @@ describe("adminSourcesFor", () => {
     expect(adminSourcesFor("cancelled", "card")).toEqual(["paid"]);
     expect(adminSourcesFor("paid", "card")).toEqual(["awaiting_verification"]);
     expect(adminSourcesFor("failed", "card")).toEqual(["awaiting_verification"]);
+    expect(adminSourcesFor("delivered", "card")).toEqual(["shipped"]);
+    expect(adminSourcesFor("returned", "zarinpal")).toEqual(["shipped", "delivered"]);
   });
 });
 
@@ -46,13 +55,15 @@ describe("isOrderStatus", () => {
 });
 
 describe("holdsStock", () => {
-  it("keeps the stock of a paid or shipped order", () => {
+  it("keeps the stock of a paid, shipped or delivered order", () => {
     expect(holdsStock("paid")).toBe(true);
     expect(holdsStock("shipped")).toBe(true);
+    expect(holdsStock("delivered")).toBe(true);
   });
 
-  it("gives the stock back once an order fails or is cancelled", () => {
+  it("no longer holds stock once an order fails, is cancelled or is returned", () => {
     expect(holdsStock("failed")).toBe(false);
     expect(holdsStock("cancelled")).toBe(false);
+    expect(holdsStock("returned")).toBe(false);
   });
 });

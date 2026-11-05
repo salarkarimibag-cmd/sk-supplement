@@ -338,3 +338,12 @@ export async function findOversold(productIds: string[]): Promise<string[]> {
 export function restoreStock(items: StockLine[]): Promise<void> {
   return adjustStock(items, { stock: 1, salesCount: -1 });
 }
+
+/**
+ * Takes a returned order's quantities off the sales count without putting
+ * them back in stock: the units came back opened or damaged and can't be
+ * sold again.
+ */
+export function unrecordSale(items: StockLine[]): Promise<void> {
+  return adjustStock(items, { stock: 0, salesCount: -1 });
+}

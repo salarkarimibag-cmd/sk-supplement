@@ -51,7 +51,12 @@ describe("emailKindForAdminStatus", () => {
     expect(emailKindForAdminStatus("paid")).toBe("paid");
     expect(emailKindForAdminStatus("failed")).toBe("rejected");
     expect(emailKindForAdminStatus("shipped")).toBe("shipped");
+    expect(emailKindForAdminStatus("returned")).toBe("returned");
     expect(emailKindForAdminStatus("cancelled")).toBe("cancelled");
+  });
+
+  it("sends nothing when an order is delivered", () => {
+    expect(emailKindForAdminStatus("delivered")).toBeNull();
   });
 
   it("sends nothing for statuses an admin can't set", () => {
@@ -76,6 +81,15 @@ describe("buildOrderEmail", () => {
   it("shows the ZarinPal reference only on payment confirmations", () => {
     expect(buildOrderEmail(baseInput).text).toContain("987654");
     expect(buildOrderEmail({ ...baseInput, kind: "shipped" }).text).not.toContain("987654");
+  });
+
+  it("shows the shipment tracking number only on the shipping email", () => {
+    const withCode = { ...baseInput, shipmentTrackingCode: "TRACK123456" };
+    const shipped = buildOrderEmail({ ...withCode, kind: "shipped" });
+    expect(shipped.text).toContain("کد رهگیری مرسوله: TRACK123456");
+    expect(shipped.html).toContain("TRACK123456");
+    expect(buildOrderEmail({ ...withCode, kind: "paid" }).text).not.toContain("TRACK123456");
+    expect(buildOrderEmail({ ...baseInput, kind: "shipped" }).text).not.toContain("کد رهگیری مرسوله");
   });
 
   it("leaves out the discount line when there is no discount", () => {
@@ -103,7 +117,7 @@ describe("buildOrderEmail", () => {
   });
 
   it("uses a different subject for each kind of email", () => {
-    const kinds = ["received", "paid", "rejected", "shipped", "cancelled"] as const;
+    const kinds = ["received", "paid", "rejected", "shipped", "returned", "cancelled"] as const;
     const subjects = new Set(kinds.map((kind) => buildOrderEmail({ ...baseInput, kind }).subject));
     expect(subjects.size).toBe(kinds.length);
   });
