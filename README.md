@@ -90,6 +90,8 @@ Open [http://localhost:3000](http://localhost:3000).
 
 Unit tests (Vitest) cover pure logic in `src/lib/*.ts` — things like discount calculation, product sorting/filtering, and IP parsing — colocated as `*.test.ts` next to the code they test. No database, server, or browser is involved. There's no end-to-end or component test coverage yet.
 
+GitHub Actions runs `npm run lint` and `npm test` (`.github/workflows/ci.yml`) on every pull request to `master`.
+
 ## Notes
 
 - Contact form submissions and newsletter signups can be viewed and deleted at `/admin/messages` and `/admin/subscribers`, but nothing sends an email/SMS notification when a new one comes in yet.
