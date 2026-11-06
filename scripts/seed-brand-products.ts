@@ -4835,13 +4835,13 @@ const products: BrandProduct[] = [
     flavor: "بدون طعم",
     size: "۳۰۰ گرم",
     imageUrl: "/images/products/kevin-levrone-gold-creatine.webp",
-    // Pack photo from fitcookie.co.uk; the table is from shop-apotheke.com
-    // (EU label, 60 × 5 g = 300 g). Directions are the shops' wording; the
-    // pack photo itself shows no back label.
+    // Pack photo and table both from shop-apotheke.com (EU label, 60 × 5 g
+    // = 300 g; its pack front says "Support muscle build / Maximum power and
+    // strength"). Directions are the shops' wording; no back label found.
     description:
       "گلد کراتین کوین لورون (Signature Series، Gold Line)؛ کراتین مونوهیدرات بدون طعم و بدون قند برای ترکیب با سایر مکمل‌ها. هر وعده (۱ اسکوپ، ۵ گرم) ۵ گرم کراتین مونوهیدرات (معادل ۴٫۴ گرم کراتین) و ۱٫۴ میلی‌گرم ویتامین B6 دارد و بسته‌ی ۳۰۰ گرمی ۶۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات، ویتامین B6 (پیریدوکسین هیدروکلراید).",
     manufacturerClaims:
-      "۵ گرم کراتین مونوهیدرات و ۰ گرم قند در هر وعده\nحداکثر قدرت بدنی و کاهش خستگی (طبق بسته‌بندی)\nبدون طعم برای ترکیب با مکمل‌های دیگر\nاثر مثبت کراتین با مصرف روزانه‌ی ۳ گرم به دست می‌آید",
+      "۵ گرم کراتین مونوهیدرات و ۰ گرم قند در هر وعده\nحمایت از ساخت عضله و حداکثر قدرت و توان (طبق بسته‌بندی)\nبدون طعم برای ترکیب با مکمل‌های دیگر\nاثر مثبت کراتین با مصرف روزانه‌ی ۳ گرم به دست می‌آید",
     servingSize: "۱ اسکوپ (۵ گرم)",
     nutritionFacts: [
       { label: "کراتین مونوهیدرات", amount: "۵ گرم" },
