@@ -2713,6 +2713,7 @@ const products: BrandProduct[] = [
     // Latin name instead of letting right-to-left text move it to the front.
     name: "سل‌تک کراتین اچ‌سی‌ال پلاس - Cell-Tech Creatine HCl+\u200E",
     slug: "muscletech-cell-tech-creatine-hcl",
+    groupSlug: "muscletech-cell-tech-creatine-hcl",
     flavor: "فروت پانچ اکستریم",
     size: "۲۵۷ گرم",
     imageUrl: "/images/products/muscletech-cell-tech-creatine-hcl.webp",
@@ -2735,6 +2736,39 @@ const products: BrandProduct[] = [
       "برای افراد زیر ۱۸ سال مناسب نیست. در دوران بارداری و شیردهی مصرف نکنید. در صورت داشتن بیماری یا قبل از شروع هر رژیم غذایی یا برنامه‌ی ورزشی با پزشک مشورت کنید. دور از دسترس کودکان نگه دارید. در محل خنک و خشک (۱۶ تا ۲۷ درجه‌ی سانتی‌گراد) نگهداری کنید و اگر بسته‌بندی دستکاری شده بود، مصرف نکنید.\nحساسیت‌زاها: در مجموعه‌ای تولید می‌شود که بادام‌زمینی، آجیل درختی، شیر، سویا، گندم، تخم‌مرغ، ماهی، سخت‌پوستان و کنجد را هم فرآوری می‌کند.\n\nاین بیانیه‌ها توسط سازمان غذا و داروی آمریکا (FDA) ارزیابی نشده‌اند و این محصول برای تشخیص، درمان یا پیشگیری از هیچ بیماری‌ای نیست.",
     brand: "MuscleTech",
     price: 1250000,
+    categorySlug: "creatine",
+  },
+  {
+    // The unflavored version of Cell-Tech Creatine HCl+ (sold in some shops
+    // under the name "Creactor"); it shares a group with mt5.
+    id: "mt5u",
+    name: "سل‌تک کراتین اچ‌سی‌ال پلاس - Cell-Tech Creatine HCl+‎",
+    slug: "muscletech-cell-tech-creatine-hcl-unflavored",
+    groupSlug: "muscletech-cell-tech-creatine-hcl",
+    flavor: "بدون طعم",
+    size: "۲۱۱ گرم",
+    imageUrl: "/images/products/muscletech-cell-tech-creatine-hcl-unflavored.webp",
+    // Pack photo and label from muscletech.com/products/cell-tech-creactor.
+    // The pack says NET WT. 7.45 OZ. (211 G), 120 servings; the site has no
+    // warnings box, only the allergen line and a hydration note.
+    description:
+      "سل‌تک کراتین اچ‌سی‌ال پلاس مسل‌تک با طعم‌دهنده‌ی طبیعی (نسخه‌ی بدون طعم)؛ ترکیب ۱ به ۱ کراتین هیدروکلراید (CON-CRĒT) و کراتین آزاد. هر اسکوپ (۲ گرم) ۷۵۰ میلی‌گرم از هر کدام دارد، چربی و کربوهیدرات ندارد و بسته‌ی ۲۱۱ گرمی ۱۲۰ وعده است. در برخی فروشگاه‌ها با نام Creactor شناخته می‌شود.\nسایر مواد: صمغ زانتان، اسید سیتریک، طعم‌دهنده‌ی طبیعی، سیلیکات کلسیم، دی‌اکسید سیلیکون، استاسولفام پتاسیم، سوکرالوز.",
+    manufacturerClaims:
+      "فرمول کامل کراتین HCl+ با نسبت دقیق ۱ به ۱ کراتین هیدروکلراید CON-CRĒT و کراتین آزاد\n۱٬۵۰۰ میلی‌گرم کراتین بسیار خالص در هر وعده\nبدون نفخ، حلالیت بالا و بدون نیاز به دوره‌ی بارگیری\nبرچسب کاملاً شفاف و بدون ترکیب اختصاصی\nکمک به افزایش قدرت و حجم عضله",
+    servingSize: "۱ اسکوپ (۲ گرم)",
+    nutritionFacts: [
+      { label: "چربی کل", amount: "۰ گرم" },
+      { label: "کربوهیدرات کل", amount: "۰ گرم" },
+      { label: "سدیم", amount: "۱۰ میلی‌گرم" },
+      { label: "کراتین هیدروکلراید - CON-CRĒT", amount: "۷۵۰ میلی‌گرم" },
+      { label: "کراتین آزاد (Free-acid)", amount: "۷۵۰ میلی‌گرم" },
+    ],
+    usage:
+      "۱ وعده (۱ اسکوپ) را با ۱۸۰ تا ۲۴۰ میلی‌لیتر (۶ تا ۸ اونس) آب مخلوط کنید، یا ۲ وعده را با ۳۵۰ تا ۴۷۰ میلی‌لیتر (۱۲ تا ۱۶ اونس) آب. تا ۲ بار در روز مصرف کنید. در روزهای تمرین، ۱ وعده را ۳۰ تا ۴۵ دقیقه پیش از تمرین بخورید.\nمانند همه‌ی کراتین‌ها، در طول مصرف مایعات کافی بنوشید. نیازی به دوره‌ی بارگیری نیست.",
+    warnings:
+      "حساسیت‌زاها: در مجموعه‌ای فرآوری می‌شود که شیر، تخم‌مرغ، گندم، سویا، بادام‌زمینی، آجیل درختی، کنجد، ماهی و صدف را هم فرآوری می‌کند.",
+    brand: "MuscleTech",
+    price: 7190000,
     categorySlug: "creatine",
   },
   {
@@ -2828,6 +2862,33 @@ const products: BrandProduct[] = [
       "۵ گرم گلوتامین خالص در هر وعده\nبی‌بو، بی‌مزه و بدون محرک\nبه گفته‌ی سازنده: گلوتامین بیش از ۲۰٪ اسیدهای آمینه‌ی بدن را تشکیل می‌دهد و یک جلسه‌ی تمرین سنگین می‌تواند تا ۵۰٪ ذخایر گلوتامین عضله را کم کند؛ این محصول برای جبران گلوتامین از دست‌رفته در تمرین شدید طراحی شده است (این ادعاها توسط FDA ارزیابی نشده است)",
     brand: "MuscleTech",
     price: 1200000,
+    categorySlug: "creatine",
+  },
+  {
+    id: "mt17",
+    name: "کراتین جویدنی - Creatine Chews",
+    slug: "muscletech-creatine-chews",
+    flavor: "سیتروس برست",
+    size: "۹۰ قرص جویدنی",
+    imageUrl: "/images/products/muscletech-creatine-chews.webp",
+    // Pack photo and label from muscletech.com/products/creatine-chews
+    // (Citrus Burst panel). The page has no warnings or allergen line.
+    description:
+      "کراتین جویدنی مسل‌تک با طعم سیتروس برست؛ ۳ گرم کراتین مونوهیدرات در قالب قرص جویدنی شبیه آبنبات، برای مصرف آسان بدون نیاز به شیکر. هر وعده ۳ قرص است و بسته‌ی ۹۰ عددی ۳۰ وعده دارد.\nسایر مواد: دکستروز، اسید استئاریک، طعم‌دهنده‌های طبیعی و مصنوعی، اسید سیتریک، استئارات منیزیم، دی‌اکسید سیلیکون، سوکرالوز.",
+    manufacturerClaims:
+      "۳ گرم کراتین مونوهیدرات در هر وعده\nبرچسب کاملاً شفاف و بدون ترکیب اختصاصی\nکمک به ساخت عضله‌ی بدون چربی و افزایش قدرت کل بدن\nبه گفته‌ی سازنده: در یک مطالعه‌ی ۱۲ هفته‌ای، افرادی که معادل دو وعده از این کراتین مصرف کردند بیش از ۴ برابر گروه دارونما عضله‌ی بدون چربی ساختند (۷٫۱۲ در برابر ۱٫۳۰ پوند)",
+    servingSize: "۳ قرص جویدنی",
+    nutritionFacts: [
+      { label: "کالری", amount: "۲۰" },
+      { label: "کربوهیدرات کل", amount: "۵ گرم" },
+      { label: "قندها", amount: "۴ گرم" },
+      { label: "قند افزوده", amount: "۴ گرم" },
+      { label: "کراتین مونوهیدرات", amount: "۳ گرم" },
+    ],
+    usage:
+      "۱ وعده (۳ قرص) را کامل بجوید و ۱ تا ۲ بار در روز مصرف کنید. در روزهای تمرین، ۱ وعده را صبح و ۱ وعده را بعد از تمرین بخورید.\nپیش از قورت‌دادن خوب بجوید و در طول مصرف مایعات کافی بنوشید.",
+    brand: "MuscleTech",
+    price: 7130000,
     categorySlug: "creatine",
   },
 
@@ -4764,6 +4825,59 @@ const products: BrandProduct[] = [
     manufacturerClaims: bodyAttackCreatineClaims,
     brand: "Body Attack",
     price: 750000,
+    categorySlug: "creatine",
+  },
+  // Kevin Levrone
+  {
+    id: "kl1",
+    name: "گلد کراتین - Gold Creatine",
+    slug: "kevin-levrone-gold-creatine",
+    flavor: "بدون طعم",
+    size: "۳۰۰ گرم",
+    imageUrl: "/images/products/kevin-levrone-gold-creatine.webp",
+    // Pack photo and table both from shop-apotheke.com (EU label, 60 × 5 g
+    // = 300 g; its pack front says "Support muscle build / Maximum power and
+    // strength"). Directions are the shops' wording; no back label found.
+    description:
+      "گلد کراتین کوین لورون (Signature Series، Gold Line)؛ کراتین مونوهیدرات بدون طعم و بدون قند برای ترکیب با سایر مکمل‌ها. هر وعده (۱ اسکوپ، ۵ گرم) ۵ گرم کراتین مونوهیدرات (معادل ۴٫۴ گرم کراتین) و ۱٫۴ میلی‌گرم ویتامین B6 دارد و بسته‌ی ۳۰۰ گرمی ۶۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات، ویتامین B6 (پیریدوکسین هیدروکلراید).",
+    manufacturerClaims:
+      "۵ گرم کراتین مونوهیدرات و ۰ گرم قند در هر وعده\nحمایت از ساخت عضله و حداکثر قدرت و توان (طبق بسته‌بندی)\nبدون طعم برای ترکیب با مکمل‌های دیگر\nاثر مثبت کراتین با مصرف روزانه‌ی ۳ گرم به دست می‌آید",
+    servingSize: "۱ اسکوپ (۵ گرم)",
+    nutritionFacts: [
+      { label: "کراتین مونوهیدرات", amount: "۵ گرم" },
+      { label: "که از آن کراتین", amount: "۴٫۴ گرم" },
+      { label: "ویتامین B6", amount: "۱٫۴ میلی‌گرم" },
+    ],
+    usage:
+      "۱ اسکوپ (حدود ۵ گرم) را با ۱۵۰ تا ۲۵۰ میلی‌لیتر آب مخلوط کنید؛ نیمی را قبل از تمرین و نیمی را بعد از تمرین بنوشید.",
+    warnings:
+      "مکمل غذایی جایگزین رژیم غذایی متعادل و متنوع نیست.\nاز مقدار توصیه‌شده‌ی روزانه بیشتر مصرف نکنید.\nدور از دسترس کودکان، در جای خنک و خشک نگهداری شود.",
+    brand: "Kevin Levrone",
+    price: 3590000,
+    categorySlug: "creatine",
+  },
+  // Ronnie Coleman
+  {
+    id: "rc1",
+    name: "کراتین ایکس‌اس - Creatine XS",
+    slug: "ronnie-coleman-creatine-xs",
+    flavor: "بدون طعم",
+    size: "۳۰۰ گرم",
+    imageUrl: "/images/products/ronnie-coleman-creatine-xs.webp",
+    // Label (supplement facts, directions, warnings, allergen line) from the
+    // pack's wrap-around label photo on supp.co; pack photo from lifepharmacy.com.
+    description:
+      "کراتین ایکس‌اس رونی کلمن (Signature Series، Vital Edition)؛ پودر کراتین مونوهیدرات میکرونیزه‌ی خالص و بدون طعم. هر وعده (نصف اسکوپ، ۲٫۵ گرم) ۲٫۵ گرم کراتین مونوهیدرات دارد و قوطی ۳۰۰ گرمی ۱۲۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات.",
+    manufacturerClaims:
+      "پودر کراتین مونوهیدرات میکرونیزه‌ی خالص\n۱۲۰ وعده در هر قوطی\nمناسب برای استقامت و قدرت (طبق بسته‌بندی)\nاین ادعاها توسط FDA ارزیابی نشده است",
+    servingSize: "نصف اسکوپ (۲٫۵ گرم)",
+    nutritionFacts: [{ label: "کراتین مونوهیدرات", amount: "۲٫۵ گرم" }],
+    usage:
+      "۱ وعده (۲٫۵ گرم) را با ۱۲۰ تا ۱۸۰ میلی‌لیتر (۴ تا ۶ اونس) آب سرد، آبمیوه یا نوشیدنی دلخواه مخلوط کنید. همراه رژیم غذایی مناسب و برنامه‌ی ورزشی مصرف کنید.",
+    warnings:
+      "دور از دسترس کودکان نگه دارید. خرید و مصرف فقط برای افراد ۱۸ سال به بالا.\nدر صورت بارداری، شیردهی، مصرف دارو یا داشتن بیماری، پیش از مصرف با پزشک مشورت کنید. در صورت بروز هر واکنش نامطلوب، مصرف را قطع کنید و به پزشک مراجعه کنید.\nحساسیت‌زاها: در مجموعه‌ای تولید می‌شود که تخم‌مرغ، گندم، شیر، سویا، آجیل درختی، ماهی و صدف را هم فرآوری می‌کند.",
+    brand: "Ronnie Coleman",
+    price: 3490000,
     categorySlug: "creatine",
   },
   // USN
