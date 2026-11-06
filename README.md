@@ -92,6 +92,8 @@ Unit tests (Vitest) cover pure logic in `src/lib/*.ts` — things like discount 
 
 GitHub Actions runs `npm run lint` and `npm test` (`.github/workflows/ci.yml`) on every pull request to `master`.
 
+Another workflow (`.github/workflows/backup.yml`) backs up the production database every night, encrypts it and keeps 14 days of backups as workflow artifacts. It needs the `MONGODB_URI` and `BACKUP_PASSPHRASE` repository secrets; restore steps are in the file's header comment.
+
 ## Notes
 
 - Contact form submissions and newsletter signups can be viewed and deleted at `/admin/messages` and `/admin/subscribers`, but nothing sends an email/SMS notification when a new one comes in yet.
