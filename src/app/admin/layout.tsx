@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
+import ScrollFade from "@/components/ui/ScrollFade";
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const user = await getSessionUser();
@@ -22,49 +23,53 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     <div className="mx-auto w-full max-w-4xl px-6 py-12">
       <h1 className="text-2xl font-bold">پنل مدیریت</h1>
 
-      <nav className="scrollbar-thin-subtle mt-6 flex gap-4 overflow-x-auto border-b border-zinc-200 dark:border-zinc-800">
-        <Link
-          href="/admin"
-          className="shrink-0 border-b-2 border-transparent px-1 pb-3 text-sm whitespace-nowrap font-semibold text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:text-zinc-400"
-        >
-          داشبورد
-        </Link>
-        <Link
-          href="/admin/orders"
-          className="shrink-0 border-b-2 border-transparent px-1 pb-3 text-sm whitespace-nowrap font-semibold text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:text-zinc-400"
-        >
-          سفارش‌ها
-        </Link>
-        <Link
-          href="/admin/products"
-          className="shrink-0 border-b-2 border-transparent px-1 pb-3 text-sm whitespace-nowrap font-semibold text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:text-zinc-400"
-        >
-          محصولات
-        </Link>
-        <Link
-          href="/admin/discounts"
-          className="shrink-0 border-b-2 border-transparent px-1 pb-3 text-sm whitespace-nowrap font-semibold text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:text-zinc-400"
-        >
-          کدهای تخفیف
-        </Link>
-        <Link
-          href="/admin/reviews"
-          className="shrink-0 border-b-2 border-transparent px-1 pb-3 text-sm whitespace-nowrap font-semibold text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:text-zinc-400"
-        >
-          نظرات
-        </Link>
-        <Link
-          href="/admin/messages"
-          className="shrink-0 border-b-2 border-transparent px-1 pb-3 text-sm whitespace-nowrap font-semibold text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:text-zinc-400"
-        >
-          پیام‌های تماس
-        </Link>
-        <Link
-          href="/admin/subscribers"
-          className="shrink-0 border-b-2 border-transparent px-1 pb-3 text-sm whitespace-nowrap font-semibold text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:text-zinc-400"
-        >
-          مشترکین خبرنامه
-        </Link>
+      {/* On phones the tabs don't all fit; ScrollFade fades the edge that has
+          more tabs past it, so it's clear the row scrolls. */}
+      <nav className="mt-6 border-b border-zinc-200 dark:border-zinc-800">
+        <ScrollFade className="flex gap-4">
+          <Link
+            href="/admin"
+            className="shrink-0 border-b-2 border-transparent px-1 pb-3 text-sm whitespace-nowrap font-semibold text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:text-zinc-400"
+          >
+            داشبورد
+          </Link>
+          <Link
+            href="/admin/orders"
+            className="shrink-0 border-b-2 border-transparent px-1 pb-3 text-sm whitespace-nowrap font-semibold text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:text-zinc-400"
+          >
+            سفارش‌ها
+          </Link>
+          <Link
+            href="/admin/products"
+            className="shrink-0 border-b-2 border-transparent px-1 pb-3 text-sm whitespace-nowrap font-semibold text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:text-zinc-400"
+          >
+            محصولات
+          </Link>
+          <Link
+            href="/admin/discounts"
+            className="shrink-0 border-b-2 border-transparent px-1 pb-3 text-sm whitespace-nowrap font-semibold text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:text-zinc-400"
+          >
+            کدهای تخفیف
+          </Link>
+          <Link
+            href="/admin/reviews"
+            className="shrink-0 border-b-2 border-transparent px-1 pb-3 text-sm whitespace-nowrap font-semibold text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:text-zinc-400"
+          >
+            نظرات
+          </Link>
+          <Link
+            href="/admin/messages"
+            className="shrink-0 border-b-2 border-transparent px-1 pb-3 text-sm whitespace-nowrap font-semibold text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:text-zinc-400"
+          >
+            پیام‌های تماس
+          </Link>
+          <Link
+            href="/admin/subscribers"
+            className="shrink-0 border-b-2 border-transparent px-1 pb-3 text-sm whitespace-nowrap font-semibold text-zinc-600 hover:border-sky-600 hover:text-sky-600 dark:text-zinc-400"
+          >
+            مشترکین خبرنامه
+          </Link>
+        </ScrollFade>
       </nav>
 
       <div className="mt-8">{children}</div>
