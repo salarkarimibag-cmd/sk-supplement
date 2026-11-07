@@ -4865,7 +4865,7 @@ const products: BrandProduct[] = [
     size: "۳۰۰ گرم",
     imageUrl: "/images/products/ronnie-coleman-creatine-xs.webp",
     // Label (supplement facts, directions, warnings, allergen line) from the
-    // pack's wrap-around label photo on supp.co; pack photo from lifepharmacy.com.
+    // pack's wrap-around label photo on supp.co; pack photo from ronniecoleman.net.
     description:
       "کراتین ایکس‌اس رونی کلمن (Signature Series، Vital Edition)؛ پودر کراتین مونوهیدرات میکرونیزه‌ی خالص و بدون طعم. هر وعده (نصف اسکوپ، ۲٫۵ گرم) ۲٫۵ گرم کراتین مونوهیدرات دارد و قوطی ۳۰۰ گرمی ۱۲۰ وعده است.\nمواد تشکیل‌دهنده: کراتین مونوهیدرات.",
     manufacturerClaims:
