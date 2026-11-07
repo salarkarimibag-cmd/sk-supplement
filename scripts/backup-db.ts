@@ -5,9 +5,11 @@
 //        npm run backup-db -- sk-supplement   (production)
 // The files hold customers' details and password hashes: backups/ is
 // git-ignored, and a copy kept elsewhere should stay private too.
-process.loadEnvFile(".env.local");
+// The nightly GitHub Action (.github/workflows/backup.yml) has no .env.local:
+// it passes MONGODB_URI as an environment variable instead.
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 
-import { mkdirSync, writeFileSync } from "node:fs";
+if (existsSync(".env.local")) process.loadEnvFile(".env.local");
 import path from "node:path";
 import mongoose from "mongoose";
 
