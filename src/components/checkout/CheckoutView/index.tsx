@@ -24,7 +24,12 @@ import { EMAIL_MAX_LENGTH } from "@/lib/publicForms";
 import type { CartCatalogEntry } from "@/lib/cartSync";
 import { SALES_CLOSED_MESSAGE, SALES_OPEN } from "@/lib/sales";
 import { MAX_PER_ORDER } from "@/lib/stock";
-import { amountUntilFreeShipping, shippingFee } from "@/lib/shipping";
+import {
+  amountUntilFreeShipping,
+  FREE_SHIPPING_MIN,
+  IRAN_PROVINCES,
+  shippingFee,
+} from "@/lib/shipping";
 
 const checkoutSchema = z
   .object({
@@ -170,6 +175,7 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
   });
   // useWatch (not watch()) so React's compiler can track the value safely.
   const paymentMethod = useWatch({ control, name: "paymentMethod" });
+  const province = useWatch({ control, name: "province" });
 
   // What every text input needs: its id (for the label), the form binding,
   // and, while it has an error, aria-invalid plus a link to the error text
@@ -188,9 +194,14 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
   // The same rule the server charges by (see buildOrderDraft); this copy only
   // drives what the page shows, the server works the fee out again itself.
   const itemsTotal = totalPrice - (appliedDiscount?.amount ?? 0);
-  const shipping = shippingFee(itemsTotal);
+  const isFreeShipping = itemsTotal >= FREE_SHIPPING_MIN;
+  // Below the threshold the fee depends on the province, so until one is
+  // chosen the total isn't known yet.
+  const shippingKnown = isFreeShipping || Boolean(province);
+  const shipping = shippingKnown ? shippingFee(itemsTotal, province ?? "") : 0;
   const finalTotal = itemsTotal + shipping;
   const pricesReady = priceStatus === "ready";
+  const totalReady = pricesReady && shippingKnown;
 
   // A string, not the items array, so the effect runs again only when the
   // products in the cart change, not on every quantity or price update.
@@ -416,12 +427,17 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
               />
             </Field>
             <Field id="province" label="استان" error={errors.province?.message}>
-              <input
-                type="text"
-                autoComplete="address-level1"
-                maxLength={PLACE_MAX_LENGTH}
-                {...fieldProps("province")}
-              />
+              {/* A list, not free text: the shipping fee depends on it. */}
+              <select autoComplete="address-level1" defaultValue="" {...fieldProps("province")}>
+                <option value="" disabled>
+                  انتخاب کنید
+                </option>
+                {IRAN_PROVINCES.map((name) => (
+                  <option key={name} value={name}>
+                    {name}
+                  </option>
+                ))}
+              </select>
             </Field>
             <Field id="city" label="شهر" error={errors.city?.message}>
               <input
@@ -499,7 +515,9 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
                   <p>
                     مبلغ{" "}
                     <strong>
-                      {pricesReady ? `${finalTotal.toLocaleString("fa-IR")} تومان` : "…"}
+                      {totalReady
+                        ? `${finalTotal.toLocaleString("fa-IR")} تومان`
+                        : "… (پس از انتخاب استان)"}
                     </strong>{" "}
                     را به کارت زیر واریز کنید، سپس کد پیگیری واریز را وارد کنید.
                   </p>
@@ -707,14 +725,16 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
           )}
           <div className="flex items-center justify-between">
             <span className="text-zinc-600 dark:text-zinc-400">ارسال</span>
-            {shipping === 0 ? (
+            {isFreeShipping ? (
               // Same green as the discount line: both are savings for the buyer.
               <span className="text-emerald-600">رایگان</span>
-            ) : (
+            ) : shippingKnown ? (
               <span>{shipping.toLocaleString("fa-IR")} تومان</span>
+            ) : (
+              <span className="text-xs text-zinc-500">پس از انتخاب استان</span>
             )}
           </div>
-          {shipping > 0 && pricesReady && (
+          {!isFreeShipping && pricesReady && (
             <p className="text-xs text-zinc-500">
               با {amountUntilFreeShipping(itemsTotal).toLocaleString("fa-IR")} تومان خرید بیشتر،
               ارسال رایگان می‌شود.
@@ -722,7 +742,7 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
           )}
           <div className="mt-2 flex items-center justify-between border-t border-zinc-200 pt-3 text-base font-bold dark:border-zinc-800">
             <span>جمع کل</span>
-            <span>{finalTotal.toLocaleString("fa-IR")} تومان</span>
+            <span>{totalReady ? `${finalTotal.toLocaleString("fa-IR")} تومان` : "…"}</span>
           </div>
         </div>
       </div>

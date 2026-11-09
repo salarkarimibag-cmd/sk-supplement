@@ -88,7 +88,7 @@ export async function buildOrderDraft(
     return { ok: false, message: "مبلغ نامعتبر است.", status: 400 };
   }
   // Charged here, like the prices, so the browser can't leave it out.
-  const shipping = shippingFee(itemsTotal);
+  const shipping = shippingFee(itemsTotal, body.shippingAddress.province);
   const totalPrice = itemsTotal + shipping;
 
   return {

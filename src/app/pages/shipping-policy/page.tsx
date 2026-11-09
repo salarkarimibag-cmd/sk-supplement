@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Truck, Clock, BadgePercent, MapPinned } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
-import { FREE_SHIPPING_MIN_LABEL, SHIPPING_FEE_LABEL } from "@/lib/shipping";
+import { FREE_SHIPPING_MIN_LABEL, SHIPPING_FEES_LABEL } from "@/lib/shipping";
 
 export const metadata: Metadata = pageMetadata({
   title: "قوانین ارسال",
@@ -20,7 +20,7 @@ const sections = [
     icon: BadgePercent,
     title: "هزینه ارسال",
     stat: `رایگان بالای ${FREE_SHIPPING_MIN_LABEL}`,
-    body: `ارسال سفارش‌هایی که مبلغ کالاهای آن‌ها (پس از کسر تخفیف) ${FREE_SHIPPING_MIN_LABEL} یا بیشتر باشد، در سراسر کشور رایگان است. برای سفارش‌های کمتر از این مبلغ، هزینه‌ی ارسال ${SHIPPING_FEE_LABEL} است و پیش از پرداخت در صفحه‌ی تسویه حساب نمایش داده می‌شود.`,
+    body: `ارسال سفارش‌هایی که مبلغ کالاهای آن‌ها (پس از کسر تخفیف) ${FREE_SHIPPING_MIN_LABEL} یا بیشتر باشد، در سراسر کشور رایگان است. برای سفارش‌های کمتر از این مبلغ، هزینه‌ی ارسال به استان مقصد بستگی دارد (${SHIPPING_FEES_LABEL}) و پیش از پرداخت در صفحه‌ی تسویه حساب نمایش داده می‌شود.`,
   },
   {
     icon: MapPinned,

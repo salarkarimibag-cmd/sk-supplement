@@ -31,14 +31,16 @@ const RIAL_PER_TOMAN = 10;
 
 // The shipping rules from /pages/shipping-policy; keep the two in sync.
 // Nationwide; the rate is what buying this one product costs to ship (free
-// from FREE_SHIPPING_MIN up, see src/lib/shipping.ts); handed to the
-// courier the same day, delivered within 2–7 business days (Saturday to
-// Thursday; Friday is the weekend).
+// from FREE_SHIPPING_MIN up, see src/lib/shipping.ts). Below that it
+// depends on the province; the higher, outside-Tehran fee is given so the
+// listing never promises less than a buyer pays. Handed to the courier the
+// same day, delivered within 2–7 business days (Saturday to Thursday;
+// Friday is the weekend).
 const shippingDetails = (priceToman: number) => ({
   "@type": "OfferShippingDetails",
   shippingRate: {
     "@type": "MonetaryAmount",
-    value: shippingFee(priceToman) * RIAL_PER_TOMAN,
+    value: shippingFee(priceToman, "") * RIAL_PER_TOMAN,
     currency: "IRR",
   },
   shippingDestination: { "@type": "DefinedRegion", addressCountry: "IR" },

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { CircleHelp } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
-import { FREE_SHIPPING_MIN_LABEL, SHIPPING_FEE_LABEL } from "@/lib/shipping";
+import { FREE_SHIPPING_MIN_LABEL, SHIPPING_FEES_LABEL } from "@/lib/shipping";
 
 export const metadata: Metadata = pageMetadata({
   title: "سوالات متداول",
@@ -23,7 +23,7 @@ const faqs = [
   {
     question: "هزینه و زمان ارسال چقدر است؟",
     answer:
-      `ارسال سفارش‌های ${FREE_SHIPPING_MIN_LABEL} و بیشتر (پس از کسر تخفیف) در سراسر کشور رایگان است و برای سفارش‌های کمتر ${SHIPPING_FEE_LABEL} هزینه دارد. زمان تحویل در تهران ۲ تا ۵ روز کاری و در سایر شهرها ۳ تا ۷ روز کاری است.`,
+      `ارسال سفارش‌های ${FREE_SHIPPING_MIN_LABEL} و بیشتر (پس از کسر تخفیف) در سراسر کشور رایگان است. هزینه‌ی ارسال سفارش‌های کمتر: ${SHIPPING_FEES_LABEL}. زمان تحویل در تهران ۲ تا ۵ روز کاری و در سایر شهرها ۳ تا ۷ روز کاری است.`,
   },
   {
     question: "آیا امکان بازگشت کالا وجود دارد؟",
