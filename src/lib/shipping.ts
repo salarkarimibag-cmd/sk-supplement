@@ -2,17 +2,20 @@
 // (which charges it, see buildOrderDraft) and every page that mentions it
 // use the same numbers. Changing a number here changes the whole site.
 
-/** Shipping to an address in Tehran province, for orders below FREE_SHIPPING_MIN. */
-export const TEHRAN_SHIPPING_FEE = 250_000;
+/**
+ * Provinces near enough for a lower fee than PROVINCE_SHIPPING_FEE, for
+ * orders below FREE_SHIPPING_MIN. Names spelled as in IRAN_PROVINCES.
+ */
+export const NEARBY_SHIPPING_FEES: Readonly<Record<string, number>> = {
+  تهران: 250_000,
+  البرز: 300_000,
+};
 
-/** Shipping to every other province, for orders below FREE_SHIPPING_MIN. */
+/** Shipping to every province not in NEARBY_SHIPPING_FEES, for orders below FREE_SHIPPING_MIN. */
 export const PROVINCE_SHIPPING_FEE = 700_000;
 
 /** From this amount of goods (after the discount) shipping is free. */
 export const FREE_SHIPPING_MIN = 10_000_000;
-
-/** The province the lower fee applies to; its spelling in IRAN_PROVINCES. */
-export const TEHRAN_PROVINCE = "تهران";
 
 /**
  * Iran's 31 provinces, for the checkout's province list. A fixed list (not
@@ -59,7 +62,10 @@ export const IRAN_PROVINCES = [
  */
 export function shippingFee(itemsTotal: number, province: string): number {
   if (itemsTotal >= FREE_SHIPPING_MIN) return 0;
-  return province === TEHRAN_PROVINCE ? TEHRAN_SHIPPING_FEE : PROVINCE_SHIPPING_FEE;
+  // Object.hasOwn, not `in` or a plain lookup: "toString" must not count.
+  return Object.hasOwn(NEARBY_SHIPPING_FEES, province)
+    ? NEARBY_SHIPPING_FEES[province]
+    : PROVINCE_SHIPPING_FEE;
 }
 
 /** How much more the buyer would have to add for free shipping (0 once it's free). */
@@ -78,5 +84,7 @@ export function formatShippingFee(fee: number | null | undefined): string {
 /** The threshold as shown on the site, e.g. "۱۰٬۰۰۰٬۰۰۰ تومان". */
 export const FREE_SHIPPING_MIN_LABEL = `${FREE_SHIPPING_MIN.toLocaleString("fa-IR")} تومان`;
 
-/** Both fees as shown on the site. */
-export const SHIPPING_FEES_LABEL = `تهران ${TEHRAN_SHIPPING_FEE.toLocaleString("fa-IR")} و سایر استان‌ها ${PROVINCE_SHIPPING_FEE.toLocaleString("fa-IR")} تومان`;
+/** Every fee as shown on the site, e.g. "تهران ۲۵۰٬۰۰۰، البرز ۳۰۰٬۰۰۰ و سایر استان‌ها ۷۰۰٬۰۰۰ تومان". */
+export const SHIPPING_FEES_LABEL = `${Object.entries(NEARBY_SHIPPING_FEES)
+  .map(([name, fee]) => `${name} ${fee.toLocaleString("fa-IR")}`)
+  .join("، ")} و سایر استان‌ها ${PROVINCE_SHIPPING_FEE.toLocaleString("fa-IR")} تومان`;
