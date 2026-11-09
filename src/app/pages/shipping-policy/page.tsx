@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Truck, Clock, BadgePercent, MapPinned } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
-import { FREE_SHIPPING_MIN_LABEL, SHIPPING_FEES_LABEL } from "@/lib/shipping";
+import { FREE_SHIPPING_MIN_LABEL, shippingFeeTiers } from "@/lib/shipping";
 
 export const metadata: Metadata = pageMetadata({
   title: "قوانین ارسال",
@@ -20,7 +20,7 @@ const sections = [
     icon: BadgePercent,
     title: "هزینه ارسال",
     stat: `رایگان بالای ${FREE_SHIPPING_MIN_LABEL}`,
-    body: `ارسال سفارش‌هایی که مبلغ کالاهای آن‌ها (پس از کسر تخفیف) ${FREE_SHIPPING_MIN_LABEL} یا بیشتر باشد، در سراسر کشور رایگان است. برای سفارش‌های کمتر از این مبلغ، هزینه‌ی ارسال به استان مقصد بستگی دارد (${SHIPPING_FEES_LABEL}) و پیش از پرداخت در صفحه‌ی تسویه حساب نمایش داده می‌شود.`,
+    body: `ارسال سفارش‌هایی که مبلغ کالاهای آن‌ها (پس از کسر تخفیف) ${FREE_SHIPPING_MIN_LABEL} یا بیشتر باشد، در سراسر کشور رایگان است. برای سفارش‌های کمتر از این مبلغ، هزینه‌ی ارسال به استان مقصد بستگی دارد (جدول زیر) و پیش از پرداخت در صفحه‌ی تسویه حساب نمایش داده می‌شود.`,
   },
   {
     icon: MapPinned,
@@ -68,6 +68,33 @@ export default function ShippingPolicyPage() {
             </div>
           ))}
         </div>
+
+        <h2 className="mt-10 text-lg font-bold">هزینه‌ی ارسال هر استان</h2>
+        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+          برای سفارش‌های کمتر از {FREE_SHIPPING_MIN_LABEL}. سفارش‌ها از تهران ارسال می‌شوند.
+        </p>
+        <table className="mt-4 w-full border-collapse text-sm">
+          <thead>
+            <tr className="border-b border-zinc-200 text-zinc-500 dark:border-zinc-800">
+              <th scope="col" className="py-2 text-start font-medium">
+                استان
+              </th>
+              <th scope="col" className="py-2 ps-4 text-end font-medium whitespace-nowrap">
+                هزینه‌ی ارسال
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {shippingFeeTiers().map(([fee, provinces]) => (
+              <tr key={fee} className="border-b border-zinc-100 dark:border-zinc-900">
+                <td className="py-3 leading-relaxed">{provinces.join("، ")}</td>
+                <td className="py-3 ps-4 text-end font-bold whitespace-nowrap">
+                  {fee.toLocaleString("fa-IR")} تومان
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

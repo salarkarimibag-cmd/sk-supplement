@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { FREE_SHIPPING_MIN, PROVINCE_SHIPPING_FEE } from "./shipping";
+import { FREE_SHIPPING_MIN, MAX_SHIPPING_FEE } from "./shipping";
 import {
   buildBreadcrumbJsonLd,
   buildProductJsonLd,
@@ -81,7 +81,7 @@ describe("buildProductJsonLd", () => {
   it("gives the highest shipping rate for buying that one product, in Rial", () => {
     const rateOf = (price: number) =>
       offersOf({ ...product, price }).shippingDetails.shippingRate.value;
-    expect(rateOf(FREE_SHIPPING_MIN - 1)).toBe(PROVINCE_SHIPPING_FEE * 10);
+    expect(rateOf(FREE_SHIPPING_MIN - 1)).toBe(MAX_SHIPPING_FEE * 10);
     expect(rateOf(FREE_SHIPPING_MIN)).toBe(0);
   });
 

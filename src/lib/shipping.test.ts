@@ -3,25 +3,26 @@ import {
   amountUntilFreeShipping,
   FREE_SHIPPING_MIN,
   IRAN_PROVINCES,
-  NEARBY_SHIPPING_FEES,
-  PROVINCE_SHIPPING_FEE,
+  MAX_SHIPPING_FEE,
+  MIN_SHIPPING_FEE,
+  SHIPPING_FEES,
   SHIPPING_FEES_LABEL,
   shippingFee,
+  shippingFeeTiers,
 } from "./shipping";
 
 describe("shippingFee", () => {
-  it("charges the nearby provinces' own fees below the threshold", () => {
+  it("charges each province its own fee below the threshold", () => {
     expect(shippingFee(FREE_SHIPPING_MIN - 1, "تهران")).toBe(250_000);
     expect(shippingFee(FREE_SHIPPING_MIN - 1, "البرز")).toBe(300_000);
+    expect(shippingFee(FREE_SHIPPING_MIN - 1, "اصفهان")).toBe(450_000);
+    expect(shippingFee(1, "سیستان و بلوچستان")).toBe(700_000);
   });
 
-  it("doesn't treat inherited object keys as provinces", () => {
-    expect(shippingFee(1, "toString")).toBe(PROVINCE_SHIPPING_FEE);
-  });
-
-  it("charges the other provinces' fee below the threshold", () => {
-    expect(shippingFee(FREE_SHIPPING_MIN - 1, "اصفهان")).toBe(PROVINCE_SHIPPING_FEE);
-    expect(shippingFee(1, "سیستان و بلوچستان")).toBe(PROVINCE_SHIPPING_FEE);
+  it("charges the most for a province not on the list, never less", () => {
+    expect(shippingFee(1, "Tehran")).toBe(MAX_SHIPPING_FEE);
+    // Inherited object keys aren't provinces either.
+    expect(shippingFee(1, "toString")).toBe(MAX_SHIPPING_FEE);
   });
 
   it("is free from the threshold up, wherever it goes", () => {
@@ -36,19 +37,28 @@ describe("IRAN_PROVINCES", () => {
     expect(new Set(IRAN_PROVINCES).size).toBe(31);
   });
 
-  it("spells every nearby province the way the checkout list does", () => {
-    // A typo here would silently charge that province the full fee.
-    for (const name of Object.keys(NEARBY_SHIPPING_FEES)) {
-      expect(IRAN_PROVINCES).toContain(name);
-    }
+  it("has a fee for exactly the provinces on the checkout list", () => {
+    expect(Object.keys(SHIPPING_FEES).sort()).toEqual([...IRAN_PROVINCES].sort());
+  });
+
+  it("keeps every fee between 250,000 and 700,000 Toman", () => {
+    expect(MIN_SHIPPING_FEE).toBe(250_000);
+    expect(MAX_SHIPPING_FEE).toBe(700_000);
+  });
+});
+
+describe("shippingFeeTiers", () => {
+  it("groups all 31 provinces by fee, cheapest first", () => {
+    const tiers = shippingFeeTiers();
+    expect(tiers[0]).toEqual([250_000, ["تهران"]]);
+    expect(tiers.map(([fee]) => fee)).toEqual([...tiers.map(([fee]) => fee)].sort((a, b) => a - b));
+    expect(tiers.flatMap(([, provinces]) => provinces)).toHaveLength(31);
   });
 });
 
 describe("SHIPPING_FEES_LABEL", () => {
-  it("lists every fee", () => {
-    expect(SHIPPING_FEES_LABEL).toBe(
-      "تهران ۲۵۰٬۰۰۰، البرز ۳۰۰٬۰۰۰ و سایر استان‌ها ۷۰۰٬۰۰۰ تومان"
-    );
+  it("gives the range", () => {
+    expect(SHIPPING_FEES_LABEL).toBe("بسته به استان، ۲۵۰٬۰۰۰ تا ۷۰۰٬۰۰۰ تومان");
   });
 });
 
