@@ -4,6 +4,7 @@ import { acceptedTermsSchema, contactSchema, shippingAddressSchema } from "@/lib
 import { checkDiscountForVisitor, type Visitor } from "@/lib/discountLookup";
 import { discountableSubtotal, priceCart, type PricedLine } from "@/lib/pricing";
 import { reserveStock, withPackStock } from "@/lib/products";
+import { shippingFee } from "@/lib/shipping";
 
 // Only what the buyer actually chooses: who they are, where to ship, which
 // products and how many. Prices, the discount amount and the total are
@@ -33,7 +34,9 @@ export interface OrderDraft {
   items: PricedLine[];
   contact: OrderRequest["contact"];
   shippingAddress: OrderRequest["shippingAddress"];
+  /** Everything the buyer pays: the goods after the discount, plus shipping. */
   totalPrice: number;
+  shippingFee: number;
   discountCode?: string;
   discountAmount?: number;
 }
@@ -80,10 +83,13 @@ export async function buildOrderDraft(
     discountAmount = result.discountAmount;
   }
 
-  const totalPrice = priced.subtotal - discountAmount;
-  if (totalPrice <= 0) {
+  const itemsTotal = priced.subtotal - discountAmount;
+  if (itemsTotal <= 0) {
     return { ok: false, message: "مبلغ نامعتبر است.", status: 400 };
   }
+  // Charged here, like the prices, so the browser can't leave it out.
+  const shipping = shippingFee(itemsTotal);
+  const totalPrice = itemsTotal + shipping;
 
   return {
     ok: true,
@@ -92,6 +98,7 @@ export async function buildOrderDraft(
       contact: body.contact,
       shippingAddress: body.shippingAddress,
       totalPrice,
+      shippingFee: shipping,
       discountCode,
       discountAmount: discountCode ? discountAmount : undefined,
     },

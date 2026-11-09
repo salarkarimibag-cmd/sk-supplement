@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import CartLine from "@/components/cart/CartLine";
+import FreeShippingNote from "@/components/cart/FreeShippingNote";
 import Price from "@/components/ui/Price";
 import { useCart } from "@/context/CartContext";
 import { COMING_SOON_LABEL, SALES_OPEN } from "@/lib/sales";
@@ -42,9 +43,7 @@ export default function CartPageClient() {
               <Price amount={totalPrice} />
             </span>
           </div>
-          <p className="mt-1 text-xs text-zinc-500">
-            ارسال به سراسر کشور رایگان است.
-          </p>
+          <FreeShippingNote itemsTotal={totalPrice} />
 
           {SALES_OPEN ? (
             <Link

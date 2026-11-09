@@ -7,6 +7,7 @@ import { connectToDatabase } from "@/lib/db";
 import { OrderModel, type Order, type OrderStatus } from "@/models/Order";
 import { getProductNames } from "@/lib/products";
 import { ORDER_STATUS_LABELS } from "@/lib/orderStatus";
+import { formatShippingFee } from "@/lib/shipping";
 import { returnDeadline, returnRequestBlocker } from "@/lib/returnRequest";
 import ReturnRequestForm from "@/components/account/ReturnRequestForm";
 
@@ -157,7 +158,12 @@ export default async function OrdersPage() {
               </p>
             )}
 
-            <div className="mt-3 flex justify-between border-t border-zinc-100 pt-3 text-sm font-bold dark:border-zinc-900">
+            <div className="mt-3 flex justify-between border-t border-zinc-100 pt-3 text-sm">
+              <span>ارسال</span>
+              <span className="text-zinc-500">{formatShippingFee(order.shippingFee)}</span>
+            </div>
+
+            <div className="mt-2 flex justify-between text-sm font-bold">
               <span>مبلغ کل</span>
               <span>{order.totalPrice.toLocaleString("fa-IR")} تومان</span>
             </div>

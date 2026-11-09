@@ -1,5 +1,6 @@
 import { escapeHtml } from "@/lib/escapeHtml";
 import { PAYMENT_METHOD_LABELS } from "@/lib/orderStatus";
+import { formatShippingFee } from "@/lib/shipping";
 import type { OrderStatus, PaymentMethod } from "@/models/Order";
 
 /** The order events the customer is emailed about. */
@@ -27,6 +28,8 @@ export interface OrderEmailInput {
   lines: OrderEmailLine[];
   totalPrice: number;
   discountAmount?: number;
+  /** Included in totalPrice; absent or 0 means free. */
+  shippingFee?: number;
   paymentMethod: PaymentMethod;
   /** ZarinPal's reference number, shown on payment confirmations. */
   refId?: number;
@@ -116,26 +119,30 @@ function toman(amount: number): string {
   return `${amount.toLocaleString("fa-IR")} تومان`;
 }
 
-type OrderSummary = Pick<OrderEmailInput, "lines" | "totalPrice" | "discountAmount">;
+type OrderSummary = Pick<
+  OrderEmailInput,
+  "lines" | "totalPrice" | "discountAmount" | "shippingFee"
+>;
 
 function formatAddress(address: OrderEmailInput["address"]): string {
   return `${address.province}، ${address.city}، ${address.address} — کد پستی ${address.postalCode}`;
 }
 
-function itemsText({ lines, totalPrice, discountAmount }: OrderSummary): string[] {
+function itemsText({ lines, totalPrice, discountAmount, shippingFee }: OrderSummary): string[] {
   return [
     ...lines.map(
       (line) =>
         `${line.name} × ${line.quantity.toLocaleString("fa-IR")}: ${toman(line.unitPrice * line.quantity)}`
     ),
     ...(discountAmount ? [`تخفیف: ${toman(discountAmount)}`] : []),
+    `ارسال: ${formatShippingFee(shippingFee)}`,
     `مبلغ کل: ${toman(totalPrice)}`,
   ];
 }
 
 // Inline styles and a table layout: most email apps ignore <style> blocks
 // and modern CSS such as flexbox. Product names are escaped like any text.
-function itemsTableHtml({ lines, totalPrice, discountAmount }: OrderSummary): string {
+function itemsTableHtml({ lines, totalPrice, discountAmount, shippingFee }: OrderSummary): string {
   const cell = "padding:6px 0;border-bottom:1px solid #e4e4e7";
   const rows = lines
     .map(
@@ -146,7 +153,8 @@ function itemsTableHtml({ lines, totalPrice, discountAmount }: OrderSummary): st
   const discountRow = discountAmount
     ? `<tr><td style="${cell}">تخفیف</td><td style="${cell};text-align:left">− ${toman(discountAmount)}</td></tr>`
     : "";
-  return `<table style="width:100%;border-collapse:collapse;font-size:14px">${rows}${discountRow}
+  const shippingRow = `<tr><td style="${cell}">ارسال</td><td style="${cell};text-align:left">${formatShippingFee(shippingFee)}</td></tr>`;
+  return `<table style="width:100%;border-collapse:collapse;font-size:14px">${rows}${discountRow}${shippingRow}
 <tr><td style="padding:8px 0;font-weight:bold">مبلغ کل</td><td style="padding:8px 0;font-weight:bold;text-align:left">${toman(totalPrice)}</td></tr>
 </table>`;
 }

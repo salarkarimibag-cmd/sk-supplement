@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { FREE_SHIPPING_MIN, SHIPPING_FEE } from "./shipping";
 import {
   buildBreadcrumbJsonLd,
   buildProductJsonLd,
@@ -67,15 +68,21 @@ describe("buildProductJsonLd", () => {
     );
   });
 
-  it("advertises free same-day-dispatch shipping within Iran", () => {
+  it("advertises same-day-dispatch shipping within Iran", () => {
     const { shippingDetails } = offersOf(product);
-    expect(shippingDetails.shippingRate.value).toBe(0);
     expect(shippingDetails.shippingDestination.addressCountry).toBe("IR");
     expect(shippingDetails.deliveryTime.handlingTime).toMatchObject({ minValue: 0, maxValue: 0 });
     expect(shippingDetails.deliveryTime.transitTime).toMatchObject({ minValue: 2, maxValue: 7 });
     expect(shippingDetails.deliveryTime.businessDays.dayOfWeek).not.toContain(
       "https://schema.org/Friday"
     );
+  });
+
+  it("gives the shipping rate for buying that one product, in Rial", () => {
+    const rateOf = (price: number) =>
+      offersOf({ ...product, price }).shippingDetails.shippingRate.value;
+    expect(rateOf(FREE_SHIPPING_MIN - 1)).toBe(SHIPPING_FEE * 10);
+    expect(rateOf(FREE_SHIPPING_MIN)).toBe(0);
   });
 
   it("includes the rating only when there are reviews", () => {

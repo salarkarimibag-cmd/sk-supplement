@@ -1,5 +1,6 @@
 import { CONTACT_ADDRESS, CONTACT_EMAIL, CONTACT_PHONE, toInternationalPhone } from "@/lib/contact";
 import { SITE_NAME } from "@/lib/seo";
+import { shippingFee } from "@/lib/shipping";
 
 // JSON-LD (https://schema.org) describing pages to search engines, so
 // Google can show a product's price, stock and rating right in the results.
@@ -29,11 +30,17 @@ export interface BreadcrumbItem {
 const RIAL_PER_TOMAN = 10;
 
 // The shipping rules from /pages/shipping-policy; keep the two in sync.
-// Free nationwide, handed to the courier the same day, delivered within
-// 2–7 business days (Saturday to Thursday; Friday is the weekend).
-const SHIPPING_DETAILS = {
+// Nationwide; the rate is what buying this one product costs to ship (free
+// from FREE_SHIPPING_MIN up, see src/lib/shipping.ts); handed to the
+// courier the same day, delivered within 2–7 business days (Saturday to
+// Thursday; Friday is the weekend).
+const shippingDetails = (priceToman: number) => ({
   "@type": "OfferShippingDetails",
-  shippingRate: { "@type": "MonetaryAmount", value: 0, currency: "IRR" },
+  shippingRate: {
+    "@type": "MonetaryAmount",
+    value: shippingFee(priceToman) * RIAL_PER_TOMAN,
+    currency: "IRR",
+  },
   shippingDestination: { "@type": "DefinedRegion", addressCountry: "IR" },
   deliveryTime: {
     "@type": "ShippingDeliveryTime",
@@ -46,7 +53,7 @@ const SHIPPING_DETAILS = {
       ),
     },
   },
-};
+});
 
 function absoluteUrl(siteUrl: string, path: string): string {
   return new URL(path, siteUrl).toString();
@@ -86,7 +93,7 @@ export function buildProductJsonLd(
               ? "https://schema.org/InStock"
               : "https://schema.org/OutOfStock",
             itemCondition: "https://schema.org/NewCondition",
-            shippingDetails: SHIPPING_DETAILS,
+            shippingDetails: shippingDetails(product.price),
           },
         }
       : {}),

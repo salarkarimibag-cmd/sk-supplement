@@ -106,6 +106,16 @@ describe("buildOrderEmail", () => {
     expect(email.html).not.toContain("تخفیف");
   });
 
+  it("shows the shipping fee, or free when there was none", () => {
+    const paidShipping = buildOrderEmail({ ...baseInput, shippingFee: 150_000 });
+    expect(paidShipping.text).toContain("ارسال: ۱۵۰٬۰۰۰ تومان");
+    expect(paidShipping.html).toContain("۱۵۰٬۰۰۰ تومان");
+    // Orders from before shipping had a price have no fee stored.
+    expect(buildOrderEmail({ ...baseInput, shippingFee: undefined }).text).toContain(
+      "ارسال: رایگان"
+    );
+  });
+
   it("links members to their orders and guests to the shop", () => {
     expect(buildOrderEmail(baseInput).html).toContain('href="https://example.com/account/orders"');
     const guest = buildOrderEmail({ ...baseInput, hasAccount: false });

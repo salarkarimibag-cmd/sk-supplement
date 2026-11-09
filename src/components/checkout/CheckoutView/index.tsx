@@ -24,6 +24,7 @@ import { EMAIL_MAX_LENGTH } from "@/lib/publicForms";
 import type { CartCatalogEntry } from "@/lib/cartSync";
 import { SALES_CLOSED_MESSAGE, SALES_OPEN } from "@/lib/sales";
 import { MAX_PER_ORDER } from "@/lib/stock";
+import { amountUntilFreeShipping, shippingFee } from "@/lib/shipping";
 
 const checkoutSchema = z
   .object({
@@ -184,7 +185,11 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
     };
   }
 
-  const finalTotal = totalPrice - (appliedDiscount?.amount ?? 0);
+  // The same rule the server charges by (see buildOrderDraft); this copy only
+  // drives what the page shows, the server works the fee out again itself.
+  const itemsTotal = totalPrice - (appliedDiscount?.amount ?? 0);
+  const shipping = shippingFee(itemsTotal);
+  const finalTotal = itemsTotal + shipping;
   const pricesReady = priceStatus === "ready";
 
   // A string, not the items array, so the effect runs again only when the
@@ -702,9 +707,19 @@ export default function CheckoutView({ shopCard }: { shopCard: ShopCard | null }
           )}
           <div className="flex items-center justify-between">
             <span className="text-zinc-600 dark:text-zinc-400">ارسال</span>
-            {/* Same green as the discount line: both are savings for the buyer. */}
-            <span className="text-emerald-600">رایگان</span>
+            {shipping === 0 ? (
+              // Same green as the discount line: both are savings for the buyer.
+              <span className="text-emerald-600">رایگان</span>
+            ) : (
+              <span>{shipping.toLocaleString("fa-IR")} تومان</span>
+            )}
           </div>
+          {shipping > 0 && pricesReady && (
+            <p className="text-xs text-zinc-500">
+              با {amountUntilFreeShipping(itemsTotal).toLocaleString("fa-IR")} تومان خرید بیشتر،
+              ارسال رایگان می‌شود.
+            </p>
+          )}
           <div className="mt-2 flex items-center justify-between border-t border-zinc-200 pt-3 text-base font-bold dark:border-zinc-800">
             <span>جمع کل</span>
             <span>{finalTotal.toLocaleString("fa-IR")} تومان</span>

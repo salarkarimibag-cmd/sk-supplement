@@ -107,6 +107,7 @@ export default async function AdminOrdersPage(props: PageProps<"/admin/orders">)
     })),
     discountCode: order.discountCode ?? null,
     discountAmount: order.discountAmount ?? 0,
+    shippingFee: order.shippingFee ?? 0,
     totalPrice: order.totalPrice,
     paymentRefId: order.paymentRefId ?? null,
     paymentMethod: (order.paymentMethod ?? "zarinpal") as PaymentMethod,

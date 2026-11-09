@@ -7,6 +7,7 @@ import {
   PAYMENT_METHOD_LABELS,
   allowedAdminTransitions,
 } from "@/lib/orderStatus";
+import { formatShippingFee } from "@/lib/shipping";
 
 interface OrderItem {
   id: string;
@@ -20,6 +21,7 @@ interface OrderItem {
   items: { name: string; quantity: number; unitPrice: number; packContents: string[] }[];
   discountCode: string | null;
   discountAmount: number;
+  shippingFee: number;
   totalPrice: number;
   paymentRefId: number | null;
   paymentMethod: PaymentMethod;
@@ -305,6 +307,12 @@ export default function OrderManager({ initialOrders }: { initialOrders: OrderIt
                 <span className="whitespace-nowrap">-{formatToman(order.discountAmount)}</span>
               </li>
             )}
+            <li className="flex justify-between gap-4">
+              <span>ارسال</span>
+              <span className="whitespace-nowrap text-zinc-500">
+                {formatShippingFee(order.shippingFee)}
+              </span>
+            </li>
           </ul>
 
           <footer className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-zinc-100 pt-3 dark:border-zinc-900">
