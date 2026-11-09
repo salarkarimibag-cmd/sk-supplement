@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Truck, Clock, BadgePercent, MapPinned } from "lucide-react";
+import { Truck, Clock, BadgePercent, Map, MapPinned } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
+import { FREE_SHIPPING_MIN_LABEL, shippingFeeTiers } from "@/lib/shipping";
 
 export const metadata: Metadata = pageMetadata({
   title: "قوانین ارسال",
@@ -18,8 +19,8 @@ const sections = [
   {
     icon: BadgePercent,
     title: "هزینه ارسال",
-    stat: "رایگان",
-    body: "ارسال تمامی سفارش‌ها، در سراسر کشور و بدون محدودیت مبلغ خرید، کاملاً رایگان است.",
+    stat: `رایگان بالای ${FREE_SHIPPING_MIN_LABEL}`,
+    body: `ارسال سفارش‌هایی که مبلغ کالاهای آن‌ها (پس از کسر تخفیف) ${FREE_SHIPPING_MIN_LABEL} یا بیشتر باشد، در سراسر کشور رایگان است. برای سفارش‌های کمتر از این مبلغ، هزینه‌ی ارسال به استان مقصد بستگی دارد (فهرست زیر) و پیش از پرداخت در صفحه‌ی تسویه حساب نمایش داده می‌شود.`,
   },
   {
     icon: MapPinned,
@@ -46,7 +47,9 @@ export default function ShippingPolicyPage() {
           {sections.map((section) => (
             <div
               key={section.title}
-              className="rounded-xl border border-zinc-200 p-5 dark:border-zinc-800"
+              // A card left alone on the last row of the two columns takes
+              // the whole row instead of leaving a gap beside it.
+              className="rounded-xl border border-zinc-200 p-5 sm:odd:last:col-span-2 dark:border-zinc-800"
             >
               <div className="flex items-center gap-3">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sky-50 text-sky-600 dark:bg-sky-950 dark:text-sky-400">
@@ -67,6 +70,35 @@ export default function ShippingPolicyPage() {
             </div>
           ))}
         </div>
+
+        {/* Same card style as the sections above, full width for the list. */}
+        <section className="mt-4 rounded-xl border border-zinc-200 p-5 dark:border-zinc-800">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sky-50 text-sky-600 dark:bg-sky-950 dark:text-sky-400">
+              <Map className="h-5 w-5" aria-hidden="true" />
+            </span>
+            <h2 className="text-base font-bold">هزینه‌ی ارسال هر استان</h2>
+          </div>
+          <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+            برای سفارش‌های کمتر از {FREE_SHIPPING_MIN_LABEL}؛ سفارش‌ها از تهران ارسال می‌شوند.
+          </p>
+
+          <ul className="mt-4 divide-y divide-zinc-100 dark:divide-zinc-800">
+            {shippingFeeTiers().map(([fee, provinces]) => (
+              <li
+                key={fee}
+                className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6"
+              >
+                <span className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
+                  {provinces.join("، ")}
+                </span>
+                <span className="w-fit shrink-0 rounded-full bg-sky-50 px-3 py-1 text-sm font-bold whitespace-nowrap text-sky-700 dark:bg-sky-950 dark:text-sky-300">
+                  {fee.toLocaleString("fa-IR")} تومان
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
       </div>
     </div>
   );

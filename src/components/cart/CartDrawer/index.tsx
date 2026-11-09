@@ -4,6 +4,7 @@ import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import CartLine from "@/components/cart/CartLine";
+import FreeShippingNote from "@/components/cart/FreeShippingNote";
 import Price from "@/components/ui/Price";
 import { useCart } from "@/context/CartContext";
 import { useOverlay } from "@/hooks/useOverlay";
@@ -85,7 +86,7 @@ export default function CartDrawer() {
                 <Price amount={totalPrice} />
               </span>
             </div>
-            <p className="mt-1 text-xs text-zinc-500">ارسال به سراسر کشور رایگان است.</p>
+            <FreeShippingNote itemsTotal={totalPrice} />
 
             {SALES_OPEN ? (
               <Link

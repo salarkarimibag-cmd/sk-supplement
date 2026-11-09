@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Dumbbell, Target, Sparkles } from "lucide-react";
 import { pageMetadata } from "@/lib/seo";
+import { FREE_SHIPPING_MIN_LABEL } from "@/lib/shipping";
 
 export const metadata: Metadata = pageMetadata({
   title: "درباره ما",
@@ -10,7 +11,7 @@ export const metadata: Metadata = pageMetadata({
 
 const whyUs = [
   "مجموعه‌ای متنوع از پروتئین‌ها، پیش‌تمرین‌ها، آمینو اسیدها، ویتامین‌ها و مکمل‌های سلامت.",
-  "ارسال رایگان به سراسر کشور.",
+  `ارسال رایگان به سراسر کشور برای خریدهای بالای ${FREE_SHIPPING_MIN_LABEL}.`,
   "۷ روز کاری مهلت بازگشت کالا و ضمانت بازگشت وجه.",
   "پشتیبانی مستقیم و پاسخ‌گو به سوالات مشتریان.",
 ];

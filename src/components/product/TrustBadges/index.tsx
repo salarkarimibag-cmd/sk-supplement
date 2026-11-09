@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BadgeCheck, RotateCcw, ShieldCheck, Truck } from "lucide-react";
+import { FREE_SHIPPING_MIN_LABEL } from "@/lib/shipping";
 
 // Each claim mirrors a policy page, so keep the wording in sync with it.
 // Exported so the home hero shows the same claims in its own layout.
@@ -13,7 +14,7 @@ export const trustBadges = [
   {
     icon: Truck,
     title: "ارسال رایگان سراسری",
-    detail: "تحویل ۲ تا ۷ روز کاری",
+    detail: `برای خرید بالای ${FREE_SHIPPING_MIN_LABEL}`,
     href: "/pages/shipping-policy",
   },
   {

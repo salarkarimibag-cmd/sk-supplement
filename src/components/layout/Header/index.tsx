@@ -9,6 +9,7 @@ import { useCart } from "@/context/CartContext";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import SearchBar from "@/components/layout/SearchBar";
 import { buildNavSections } from "@/lib/navigation";
+import { FREE_SHIPPING_MIN_LABEL } from "@/lib/shipping";
 
 export interface HeaderUser {
   id: string;
@@ -37,7 +38,7 @@ export default function Header({
   return (
     <>
       <div className="relative z-50 bg-sky-600 py-2.5 text-center text-xs font-bold tracking-widest text-white uppercase">
-        ارسال رایگان سراسری
+        ارسال رایگان سراسری برای خرید بالای {FREE_SHIPPING_MIN_LABEL}
       </div>
       {isSearchOpen && (
         <div

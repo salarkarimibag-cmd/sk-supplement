@@ -75,6 +75,13 @@ describe("shippingAddressSchema", () => {
     expect(shippingAddressSchema.parse({ ...address, postalCode: "۱۲۳۴۵-۶۷۸۹۰" })).toEqual(address);
   });
 
+  it("accepts only a province from the list, since shipping is priced by it", () => {
+    expect(shippingAddressSchema.safeParse({ ...address, province: "اصفهان" }).success).toBe(true);
+    for (const province of ["Tehran", "تهرون", "", "تهران "]) {
+      expect(shippingAddressSchema.safeParse({ ...address, province }).success).toBe(false);
+    }
+  });
+
   it("rejects a postal code that isn't 10 digits", () => {
     for (const postalCode of ["123456789", "12345678901", "12345abcde", ""]) {
       expect(shippingAddressSchema.safeParse({ ...address, postalCode }).success).toBe(false);

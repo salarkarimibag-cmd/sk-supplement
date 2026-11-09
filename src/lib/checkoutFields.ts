@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { toEnglishDigits } from "@/lib/cardPayment";
 import { EMAIL_MAX_LENGTH } from "@/lib/publicForms";
+import { IRAN_PROVINCES } from "@/lib/shipping";
 
 // The buyer's contact and shipping fields, shared by the checkout form and
 // the order API (orderRequestSchema), so the two can't drift apart. The
@@ -57,7 +58,9 @@ export const shippingAddressSchema = z.object({
     "نام خانوادگی الزامی است.",
     "نام خانوادگی بیش از حد طولانی است."
   ),
-  province: requiredText(PLACE_MAX_LENGTH, "استان الزامی است.", "نام استان بیش از حد طولانی است."),
+  // One of a fixed list (chosen, not typed), since the shipping fee depends
+  // on it: see src/lib/shipping.ts.
+  province: z.enum(IRAN_PROVINCES, "استان را انتخاب کنید."),
   city: requiredText(PLACE_MAX_LENGTH, "شهر الزامی است.", "نام شهر بیش از حد طولانی است."),
   address: requiredText(ADDRESS_MAX_LENGTH, "آدرس الزامی است.", "آدرس بیش از حد طولانی است."),
   // Iranian postal codes are 10 digits.

@@ -95,7 +95,11 @@ const OrderSchema = new Schema(
       ],
       default: "pending",
     },
+    // What the buyer paid in all: the goods after the discount, plus shippingFee.
     totalPrice: { type: Number, required: true },
+    // Shipping included in totalPrice (0 when free). Orders placed while
+    // shipping was free for everyone have none stored: read that as 0.
+    shippingFee: { type: Number, required: false },
     discountCode: { type: String, required: false },
     discountAmount: { type: Number, required: false },
     // Orders created before card-to-card existed have no value stored and

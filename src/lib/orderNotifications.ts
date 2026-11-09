@@ -20,6 +20,7 @@ type NotifiableOrder = Pick<
   | "shippingAddress"
   | "totalPrice"
   | "discountAmount"
+  | "shippingFee"
   | "paymentRefId"
   | "userId"
   | "cardTransfer"
@@ -50,6 +51,7 @@ async function loadEmailBase(order: NotifiableOrder) {
     }),
     totalPrice: order.totalPrice,
     discountAmount: order.discountAmount ?? undefined,
+    shippingFee: order.shippingFee ?? undefined,
     paymentMethod: order.paymentMethod ?? "zarinpal",
     refId: order.paymentRefId ?? undefined,
     shipmentTrackingCode: order.shipmentTrackingCode ?? undefined,
