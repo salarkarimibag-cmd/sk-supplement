@@ -2633,6 +2633,28 @@ const products: BrandProduct[] = [
     categorySlug: "creatine",
   },
   {
+    id: "mt2b",
+    name: "پلاتینیوم کراتین مونوهیدرات",
+    slug: "muscletech-platinum-creatine-450g",
+    groupSlug: "muscletech-platinum-creatine",
+    flavor: "بدون طعم",
+    size: "۴۵۰ گرم",
+    // Bonus-size pack (450 g, 90 servings) sold in Latin America; pack photo
+    // from chilesuplementos.cl, which shows MuscleTech's own render.
+    imageUrl: "/images/products/muscletech-platinum-creatine-450g.webp",
+    description:
+      "کراتین مونوهیدرات میکرونیزه و بسیار خالص از مدل پلاتینیوم مسل‌تک. هر وعده ۵ گرم کراتین مونوهیدرات دارد و در بسته‌ی ۴۵۰ گرمی (طرح «بونوس سایز») ۹۰ وعده‌ای عرضه می‌شود.",
+    manufacturerClaims:
+      "افزایش ۶ پوند (حدود ۲٫۷ کیلوگرم) عضله در ۶ هفته\nمیکرونیزه و بسیار خالص\nحجم، قدرت و ریکاوری\nبسته‌ی بونوس سایز: ۱۰ وعده‌ی رایگان",
+    servingSize: "۵ گرم",
+    nutritionFacts: [{ label: "کراتین مونوهیدرات", amount: "۵ گرم" }],
+    usage: mtPlatinumCreatineUsage,
+    warnings: mtPlatinumCreatineWarnings,
+    brand: "MuscleTech",
+    price: 1000000,
+    categorySlug: "creatine",
+  },
+  {
     id: "mt2o",
     name: "پلاتینیوم کراتین مونوهیدرات",
     slug: "muscletech-platinum-creatine-orange-splash",
