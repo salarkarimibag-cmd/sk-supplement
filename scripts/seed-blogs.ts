@@ -11,7 +11,7 @@ const posts: BlogPost[] = [
     slug: "two-week-ab-touch-up",
     title: "برنامه‌ی دو هفته‌ای تقویت شکم",
     excerpt: "یک برنامه‌ی رایگان دو هفته‌ای بدون نیاز به تجهیزات، با پنج حرکت و راهنمای روز به روز.",
-    coverImage: "/images/blog-two-week-ab-touch-up.jpg",
+    coverImage: "/images/blog-two-week-ab-touch-up.webp",
     author: "SK Supplement",
     publishedAt: new Date("2025-07-24"),
     pdfUrl: "/files/two-week-ab-touch-up.pdf",
@@ -29,7 +29,7 @@ const posts: BlogPost[] = [
     slug: "apple-cider-vinegar",
     title: "سرکه سیب: خواص، کاربردها و روش درست مصرف",
     excerpt: "سرکه سیب چیست، چطور تولید می‌شود، چه خواص و کاربردهایی دارد و چطور باید از آن استفاده کرد؟",
-    coverImage: "/images/blog-apple-cider-vinegar.jpg",
+    coverImage: "/images/blog-apple-cider-vinegar.webp",
     author: "SK Supplement",
     publishedAt: new Date("2025-07-09"),
     content: `سرکه سیب یکی از قدیمی‌ترین مواد غذایی تخمیری است که بشر می‌شناسد. سرکه از دوران باستان هم برای طعم‌دادن و نگهداری غذا و هم در طب سنتی استفاده می‌شده و حتی نام بقراط، پزشک یونانی، هم در کنار آن آورده شده است. امروز هم سرکه سیب در آشپزخانه‌ی خیلی از خانه‌ها پیدا می‌شود؛ از سالاد و ترشی تا نوشیدنی‌های خانگی. در این مقاله از سرکه سیب چیست و چطور تولید می‌شود تا خواص، کاربردها، روش درست مصرف و نکته‌های احتیاطی آن را مرور می‌کنیم.
@@ -66,7 +66,7 @@ const posts: BlogPost[] = [
     slug: "whey-protein-beginners-guide",
     title: "راهنمای کامل پروتئین وی برای تازه‌کارها",
     excerpt: "پروتئین وی چیست، چه تفاوتی با سایر پروتئین‌ها داره، و چطور باید مصرفش کنید؟",
-    coverImage: "/images/blog-whey-protein-beginners-guide.jpg",
+    coverImage: "/images/blog-whey-protein-beginners-guide.webp",
     author: "SK Supplement",
     publishedAt: new Date("2025-08-05"),
     content: `پروتئین وی (Whey Protein) یکی از محبوب‌ترین مکمل‌های ورزشی دنیاست و از جداسازی پروتئین موجود در آب‌پنیر شیر به دست می‌آید. این پروتئین به دلیل جذب سریع و داشتن تمام اسیدهای آمینه‌ی ضروری، یکی از بهترین گزینه‌ها برای ریکاوری عضلات بعد از تمرین محسوب می‌شود.
@@ -81,7 +81,7 @@ const posts: BlogPost[] = [
     slug: "creatine-monohydrate-basics",
     title: "کراتین مونوهیدرات: چرا و چطور مصرف کنیم؟",
     excerpt: "یکی از پرمطالعه‌ترین و موثرترین مکمل‌های ورزشی دنیا، با یه راهنمای ساده برای شروع.",
-    coverImage: "/images/blog-creatine-monohydrate-basics.jpg",
+    coverImage: "/images/blog-creatine-monohydrate-basics.webp",
     author: "SK Supplement",
     publishedAt: new Date("2025-08-20"),
     content: `کراتین مونوهیدرات یکی از پرمطالعه‌ترین مکمل‌های ورزشی در دنیاست و ده‌ها سال تحقیق علمی، ایمنی و اثربخشی آن را برای افزایش قدرت و حجم عضلانی تایید کرده‌اند. کراتین به‌صورت طبیعی در بدن و در گوشت قرمز و ماهی هم وجود دارد، اما مقدار آن برای عملکرد ورزشی بالا معمولاً کافی نیست.
@@ -96,7 +96,7 @@ const posts: BlogPost[] = [
     slug: "pre-workout-timing",
     title: "بهترین زمان مصرف پیش‌تمرین کی هست؟",
     excerpt: "چرا زمان‌بندی مصرف پیش‌تمرین به اندازه‌ی خود مکمل مهمه، و چطور با حساسیت به کافئین کنار بیایید.",
-    coverImage: "/images/blog-pre-workout-timing.jpg",
+    coverImage: "/images/blog-pre-workout-timing.webp",
     author: "SK Supplement",
     publishedAt: new Date("2025-09-02"),
     content: `مکمل‌های پیش‌تمرین معمولاً ترکیبی از کافئین، بتا-آلانین و سیترولین هستند که هدفشان افزایش انرژی، تمرکز و استقامت در طول تمرین است. اما برای گرفتن بهترین نتیجه، زمان‌بندی مصرف به همان اندازه‌ی انتخاب محصول مهم است.
@@ -111,7 +111,7 @@ const posts: BlogPost[] = [
     slug: "beginner-4-day-workout-plan",
     title: "برنامه‌ی تمرینی ۴ روزه برای تازه‌کارها",
     excerpt: "یک برنامه‌ی ساده و اصولی برای کسانی که تازه باشگاه رفتن رو شروع کردن، همراه با چندتا توصیه‌ی مهم.",
-    coverImage: "/images/blog-beginner-4-day-workout-plan.jpg",
+    coverImage: "/images/blog-beginner-4-day-workout-plan.webp",
     author: "SK Supplement",
     publishedAt: new Date("2025-09-18"),
     pdfUrlMen: "/files/beginner-4-day-workout-plan-men.pdf",
@@ -132,7 +132,7 @@ const posts: BlogPost[] = [
     slug: "warm-up-before-workout",
     title: "گرم کردن درست قبل از تمرین: ۱۰ دقیقه‌ای که نباید حذف کنی",
     excerpt: "چرا گرم کردن فقط یه کار تشریفاتی نیست، و یه گرم کردن اصولی قبل از تمرین با وزنه چه شکلیه.",
-    coverImage: "/images/blog-warm-up-before-workout.jpg",
+    coverImage: "/images/blog-warm-up-before-workout.webp",
     author: "SK Supplement",
     publishedAt: new Date("2025-10-02"),
     content: `خیلی‌ها وقتی وارد باشگاه می‌شن، مستقیم می‌رن سراغ اولین دستگاه و گرم کردن رو یه کار وقت‌گیر و اضافه می‌دونن. ولی همین ده دقیقه‌ای که حذف می‌کنی، می‌تونه فرق بین یه تمرین خوب و یه آسیب چندهفته‌ای باشه.
@@ -149,7 +149,7 @@ const posts: BlogPost[] = [
     slug: "hydration-during-workout",
     title: "آب و تمرین: چقدر و کی باید آب بنوشیم؟",
     excerpt: "کم‌آبی حتی به مقدار کم هم روی قدرت و تمرکز اثر می‌ذاره. راهنمای ساده‌ی آب‌رسانی قبل، حین و بعد از تمرین.",
-    coverImage: "/images/blog-hydration-during-workout.jpg",
+    coverImage: "/images/blog-hydration-during-workout.webp",
     author: "SK Supplement",
     publishedAt: new Date("2025-10-16"),
     content: `آب ساده‌ترین و ارزون‌ترین «مکمل» ورزشیه، ولی عجیبه که خیلی‌ها کمتر از همه بهش توجه می‌کنن. بدن ما بیشتر از نصفش آبه و هر انقباض عضله، هر تنظیم دمای بدن و حتی تمرکزت حین تمرین، به آب کافی وابسته‌ست.
@@ -166,7 +166,7 @@ const posts: BlogPost[] = [
     slug: "sleep-and-muscle-recovery",
     title: "خواب؛ مکملی که هیچ فروشگاهی نمی‌فروشه",
     excerpt: "عضله توی باشگاه ساخته نمی‌شه، توی استراحت ساخته می‌شه. نقش خواب در ریکاوری و چندتا نکته برای خواب بهتر.",
-    coverImage: "/images/blog-sleep-and-muscle-recovery.jpg",
+    coverImage: "/images/blog-sleep-and-muscle-recovery.webp",
     author: "SK Supplement",
     publishedAt: new Date("2025-10-30"),
     content: `یه جمله‌ی معروف بین ورزشکارها هست که می‌گه: عضله توی باشگاه تخریب می‌شه و توی خواب ساخته می‌شه. تمرین فقط محرکه؛ ترمیم و رشد واقعی عضله وقتی اتفاق می‌افته که داری استراحت می‌کنی، و مهم‌ترین بخش این استراحت، خواب شبانه‌ست.
@@ -183,7 +183,7 @@ const posts: BlogPost[] = [
     slug: "cardio-vs-weights-fat-loss",
     title: "کاردیو یا وزنه؛ کدوم برای چربی‌سوزی بهتره؟",
     excerpt: "یکی از پرتکرارترین سوال‌های باشگاه، و جوابی که احتمالاً انتظارش رو نداری: بهترین انتخاب، ترکیب هر دوئه.",
-    coverImage: "/images/blog-cardio-vs-weights-fat-loss.jpg",
+    coverImage: "/images/blog-cardio-vs-weights-fat-loss.webp",
     author: "SK Supplement",
     publishedAt: new Date("2025-11-13"),
     content: `اگه هدفت کاهش چربیه، احتمالاً این سوال برات پیش اومده: ساعت‌ها روی تردمیل بدوم یا برم سراغ وزنه؟ بحث بین طرفدارهای این دو تا تمومی نداره، ولی جواب واقعی ساده‌تر از چیزیه که فکر می‌کنی.
@@ -200,7 +200,7 @@ const posts: BlogPost[] = [
     slug: "liver-health-and-detox",
     title: "کبد و پاک‌سازی: واقعیت‌ها و راه‌های مراقبت",
     excerpt: "کبد چه کارهایی می‌کند، چه چیزهایی به آن آسیب می‌زند و آیا پاک‌سازی کبد واقعاً لازم است؟",
-    coverImage: "/images/blog-liver-health-and-detox.jpg",
+    coverImage: "/images/blog-liver-health-and-detox.webp",
     author: "SK Supplement",
     publishedAt: new Date("2025-11-27"),
     content: `کبد بزرگ‌ترین غده‌ی بدن و یکی از پرکارترین اعضای آن است. این عضو که زیر دنده‌های سمت راست و بالای شکم قرار دارد، صدها کار مختلف انجام می‌دهد و بیشتر اوقات بی‌سروصدا کار می‌کند؛ به همین دلیل خیلی‌ها تا وقتی مشکلی پیش نیاید به آن فکر نمی‌کنند. در این مقاله می‌بینیم کبد دقیقاً چه کارهایی می‌کند، چه چیزهایی به آن آسیب می‌زند، «پاک‌سازی کبد» واقعاً چیست و چطور می‌توان از آن مراقبت کرد.
@@ -243,7 +243,7 @@ const posts: BlogPost[] = [
     slug: "sex-and-exercise",
     title: "رابطه‌ی جنسی و ورزش: فواید، ضررها و باورهای غلط",
     excerpt: "رابطه‌ی جنسی چه اثری روی ورزش و عضله دارد؟ ورزش چه تأثیری روی زندگی جنسی می‌گذارد؟ واقعیت‌ها و افسانه‌ها.",
-    coverImage: "/images/blog-sex-and-exercise.jpg",
+    coverImage: "/images/blog-sex-and-exercise.webp",
     author: "SK Supplement",
     publishedAt: new Date("2025-12-11"),
     content: `رابطه‌ی جنسی بخشی طبیعی از زندگی بزرگسالان و از عوامل مهم سلامت جسمی و روانی است، ولی درباره‌ی آن، به‌خصوص در دنیای ورزش، باورهای غلط زیادی وجود دارد. «آیا قبل از مسابقه یا تمرین سنگین رابطه ضرر دارد؟»، «آیا انرژی و عضله را کم می‌کند؟» و «ورزش چه اثری روی میل و عملکرد جنسی دارد؟» از پرسش‌های رایج ورزشکاران و علاقه‌مندان به تناسب‌اندام است. در این مقاله با نگاهی علمی و ساده، فواید، ضررها و رابطه‌ی دوطرفه‌ی ورزش و زندگی جنسی را مرور می‌کنیم.
