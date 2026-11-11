@@ -41,17 +41,28 @@ export const metadata: Metadata = {
 };
 
 // Runs before hydration so the correct theme applies on first paint (no flash of the wrong theme).
+// The visitor's choice is "light", "dark" or, with nothing saved, "system"
+// (follow the device); it goes on <html data-theme> for ThemeToggle, and the
+// `dark` class does the styling. In "system" mode the class follows the
+// device live, e.g. when a phone turns dark at night.
 // localStorage can throw (blocked site data, some private modes), and an
 // uncaught error here would stop the script before the class is set, so a
 // failed read just falls back to the system preference.
 const themeInitScript = `
   (function () {
+    var root = document.documentElement;
+    var media = window.matchMedia("(prefers-color-scheme: dark)");
     var stored = null;
     try {
       stored = localStorage.getItem("theme");
     } catch (error) {}
-    var isDark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
-    document.documentElement.classList.toggle("dark", isDark);
+    root.dataset.theme = stored === "light" || stored === "dark" ? stored : "system";
+    function apply() {
+      var mode = root.dataset.theme;
+      root.classList.toggle("dark", mode === "dark" || (mode === "system" && media.matches));
+    }
+    apply();
+    media.addEventListener("change", apply);
   })();
 `;
 
