@@ -1282,6 +1282,54 @@ const usnProducts: BrandProduct[] = [
   ),
 ];
 
+// Shared by both Elite 100% Whey Rich Chocolate sizes: label from Dymatize's US
+// site (dymatize.com/products/elite-100-whey-rich-chocolate: facts, amino
+// profile, ingredients, claims) and NIH DSLD 328737 (2 lb, 2025: same facts,
+// directions, storage and warnings). Weight and servings are from each pack
+// photo (2 lb = 907 g, 25 servings; 5 lb = 2.3 kg, 63 servings).
+const dyEliteWheyFacts = [
+  { label: "انرژی", amount: "۱۴۰ کیلوکالری" },
+  { label: "چربی", amount: "۳ گرم" },
+  { label: "چربی اشباع", amount: "۲ گرم" },
+  { label: "چربی ترانس", amount: "۰ گرم" },
+  { label: "کلسترول", amount: "۷۵ میلی‌گرم" },
+  { label: "سدیم", amount: "۱۶۰ میلی‌گرم" },
+  { label: "کربوهیدرات", amount: "۳ گرم" },
+  { label: "فیبر", amount: "کمتر از ۱ گرم" },
+  { label: "قندها", amount: "۲ گرم" },
+  { label: "قند افزوده", amount: "۰ گرم" },
+  { label: "پروتئین", amount: "۲۵ گرم" },
+  { label: "کلسیم", amount: "۱۴۰ میلی‌گرم" },
+  { label: "آهن", amount: "۱٫۱ میلی‌گرم" },
+  { label: "پتاسیم", amount: "۳۳۰ میلی‌گرم" },
+  { label: "آلانین", amount: "۱٫۲۴۳ گرم" },
+  { label: "آرژنین", amount: "۰٫۶۹ گرم" },
+  { label: "آسپارتیک اسید", amount: "۲٫۶۱۵ گرم" },
+  { label: "سیستین", amount: "۰٫۵۲۴ گرم" },
+  { label: "گلوتامین و گلوتامیک اسید", amount: "۴٫۴۲۷ گرم" },
+  { label: "گلیسین", amount: "۰٫۴۵۷ گرم" },
+  { label: "هیستیدین", amount: "۰٫۴۴۳ گرم" },
+  { label: "ایزولوسین (BCAA)", amount: "۱٫۴۲۸ گرم" },
+  { label: "لوسین (BCAA)", amount: "۲٫۷ گرم" },
+  { label: "لیزین", amount: "۲٫۳۶ گرم" },
+  { label: "متیونین", amount: "۰٫۵۷ گرم" },
+  { label: "فنیل‌آلانین", amount: "۰٫۷۸۱ گرم" },
+  { label: "پرولین", amount: "۱٫۴۴۳ گرم" },
+  { label: "سرین", amount: "۱٫۲۶۵ گرم" },
+  { label: "ترئونین", amount: "۱٫۷۲۹ گرم" },
+  { label: "تریپتوفان", amount: "۰٫۴۱۷ گرم" },
+  { label: "تیروزین", amount: "۰٫۷۲۴ گرم" },
+  { label: "والین (BCAA)", amount: "۱٫۴۵۴ گرم" },
+];
+const dyEliteWheyIngredients =
+  "مواد تشکیل‌دهنده: ترکیب پروتئین وی (کنسانتره‌ی پروتئین وی، ایزوله‌ی پروتئین وی، کنسانتره‌ی هیدرولیزه‌ی پروتئین وی)، پودر کاکائو (قلیایی‌شده) و کمتر از ۱٪ از: طعم‌دهنده‌های طبیعی و مصنوعی، لسیتین سویا، کلرید پتاسیم، نمک، سوکرالوز، آسه‌سولفام پتاسیم و ترکیب صمغ (صمغ سلولز، صمغ زانتان، کاراگینان).";
+const dyEliteWheyUsage =
+  "برای مخلوط‌شدن آسان فرموله شده است. ۱ اسکوپ (داخل بسته) را به ۱۸۰ تا ۲۴۰ میلی‌لیتر آب، شیر یا نوشیدنی دلخواه اضافه کنید و خوب هم بزنید. قبل از تمرین، تا ۳۰ دقیقه بعد از تمرین یا هر وقت یک نوشیدنی پرپروتئین باکیفیت خواستید مصرف کنید.\nدر جای خنک و خشک نگهداری شود.";
+const dyEliteWheyWarnings =
+  "حساسیت‌زاها: حاوی شیر و سویا. حاوی یک ماده‌ی غذایی مهندسی‌شده‌ی زیستی (تراریخته).\nفقط به‌عنوان مکمل غذایی مصرف شود؛ برای کاهش وزن استفاده نشود.\nدور از دسترس کودکان نگه دارید.";
+const dyEliteWheyClaims =
+  "۲۵ گرم پروتئین، ۵٫۵ گرم BCAA و ۲٫۷ گرم لوسین در هر وعده\n۱۰۰٪ پروتئین آن از وی است (کنسانتره، ایزوله و پپتیدهای وی) و اسید آمینه به آن افزوده نشده\nهضم و جذب سریع؛ برای قبل و بعد از تمرین یا هر زمان از روز\nبه‌راحتی حل می‌شود و برای آشپزی و پخت هم مناسب است\nآزمایش‌شده برای مواد ممنوعه (Informed Choice)\nبدون گلوتن\nتولید در کارخانه‌های دارای GMP";
+
 const products: BrandProduct[] = [
   // Optimum Nutrition
   {
@@ -2058,6 +2106,46 @@ const products: BrandProduct[] = [
     usage: "۱ وعده را به ۱۵۰ تا ۱۸۰ میلی‌لیتر آب، شیر یا نوشیدنی دلخواه اضافه کنید و خوب هم بزنید. قبل از تمرین، تا ۳۰ دقیقه بعد از تمرین، یا هر زمان که به نوشیدنی پرپروتئین نیاز دارید مصرف کنید.",
     brand: "Dymatize",
     price: 1290000,
+    categorySlug: "protein",
+  },
+  {
+    id: "dy6",
+    name: "الیت ۱۰۰٪ وی - Elite 100% Whey",
+    slug: "dymatize-elite-100-whey",
+    groupSlug: "dymatize-elite-100-whey",
+    flavor: "شکلات",
+    size: "۹۰۷ گرم",
+    imageUrl: "/images/products/dymatize-elite-100-whey.webp",
+    // 2 lb pack photo: dymatize.com product thumbnail (540x678, padded to square).
+    description:
+      "الیت ۱۰۰٪ وی دایماتیز با طعم شکلات؛ پودر پروتئین وی با کنسانتره، ایزوله و پپتیدهای وی برای هضم و جذب سریع، مناسب قبل و بعد از تمرین یا هر زمان از روز. هر اسکوپ (۳۶ گرم) ۲۵ گرم پروتئین دارد و بسته‌ی ۹۰۷ گرمی ۲۵ وعده است.\n" + dyEliteWheyIngredients,
+    servingSize: "۱ اسکوپ (۳۶ گرم)",
+    nutritionFacts: dyEliteWheyFacts,
+    usage: dyEliteWheyUsage,
+    warnings: dyEliteWheyWarnings,
+    manufacturerClaims: dyEliteWheyClaims,
+    brand: "Dymatize",
+    price: 3500000,
+    categorySlug: "protein",
+  },
+  {
+    id: "dy6b",
+    name: "الیت ۱۰۰٪ وی - Elite 100% Whey",
+    slug: "dymatize-elite-100-whey-5lb",
+    groupSlug: "dymatize-elite-100-whey",
+    flavor: "شکلات",
+    size: "۲٫۳ کیلوگرم",
+    imageUrl: "/images/products/dymatize-elite-100-whey-5lb.webp",
+    // 5 lb pack photo: dymatize.com product hero image, cut out.
+    description:
+      "الیت ۱۰۰٪ وی دایماتیز با طعم شکلات؛ پودر پروتئین وی با کنسانتره، ایزوله و پپتیدهای وی برای هضم و جذب سریع، مناسب قبل و بعد از تمرین یا هر زمان از روز. هر اسکوپ (۳۶ گرم) ۲۵ گرم پروتئین دارد و بسته‌ی ۲٫۳ کیلوگرمی ۶۳ وعده است.\n" + dyEliteWheyIngredients,
+    servingSize: "۱ اسکوپ (۳۶ گرم)",
+    nutritionFacts: dyEliteWheyFacts,
+    usage: dyEliteWheyUsage,
+    warnings: dyEliteWheyWarnings,
+    manufacturerClaims: dyEliteWheyClaims,
+    brand: "Dymatize",
+    price: 7900000,
     categorySlug: "protein",
   },
   {
