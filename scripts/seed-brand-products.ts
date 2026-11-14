@@ -5236,8 +5236,8 @@ const products: BrandProduct[] = [
     flavor: "بدون طعم",
     size: "۴۰۰ گرم",
     imageUrl: "/images/products/allmax-creatine-400g.webp",
-    // Pack render from mkpowerland.com (AllMax-Nutrition-Creatine-400g.png,
-    // 500x500, already transparent; the shop's own photos show the same tub).
+    // Pack render from canex.ca (allmax_creatine_400g_1_e.jpg, 797x797, cut out):
+    // silver lid and NPN 80010765, as on the real tub in mkpowerland's photos.
     // Label: NIH DSLD 325793 (Creatine 400 g, 2025): same formula and warnings
     // as the 100 g, but scoop-based directions and an 8-on/2-off cycle.
     description:
