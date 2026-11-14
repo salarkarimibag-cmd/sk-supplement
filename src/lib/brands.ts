@@ -4,6 +4,7 @@
  * so this is only used where the name is shown to the customer.
  */
 const PERSIAN_BRAND_NAMES: Record<string, string> = {
+  Allmax: "آلمکس",
   "Applied Nutrition": "اپلاید نوتریشن",
   "Body Attack": "بادی اتک",
   "BPI Sports": "بی‌پی‌آی اسپورتس",
